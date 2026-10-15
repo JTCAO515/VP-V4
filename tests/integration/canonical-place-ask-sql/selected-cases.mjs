@@ -180,7 +180,7 @@ test('accepted707 original Trip producer and canonical Place admission export al
  assert.ok(sources.get('turn_private.grounded_turns').some(g=>g.turn_id===f.submission.turnId&&g.selected_place_request));
  writeFileSync(root+'/mixed-export3-page.json',JSON.stringify({owner:trip.a.owner,limit:100,now:Date.now(),page:mixed},null,2)+'\n');
 });
-test('ordinary text/read/Task history attach only current selected result and hide all selected content after source withdrawal',async()=>{
+test('ordinary text/read/Task history attach only current selected result and retain own Task with unavailable facts after source withdrawal',async()=>{
  const f=await fixture();const accepted=await submit(f);const lease=await actorRpc(null,'claim_grounded_work',{p_owner_id:f.owner.id,p_policy_id:f.policy},'service_role');const keys={p_turn_id:lease.turnId,p_lease_token:lease.leaseToken};const input=await actorRpc(null,'read_grounded_work',keys,'service_role');
  await actorRpc(null,'authorize_grounded_dispatch',{...keys,p_policy_id:f.policy,p_provider:'qwen',p_context_digest:input.contextDigest},'service_role');assert.equal((await actorRpc(null,'complete_grounded_place_work',{...keys,p_intent:'place_opening_hours',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'ignored'},'service_role')).kind,'finished');
  const read=await actorRpc(f.owner,'read_text_turn',{p_turn_id:f.submission.turnId});const textHistory=await actorRpc(f.owner,'list_text_turns',{p_policy_id:f.policy,p_limit:20});const history=await actorRpc(f.owner,'list_service_task_turns',{p_policy_id:f.policy,p_limit:20});
@@ -192,7 +192,7 @@ test('ordinary text/read/Task history attach only current selected result and hi
   assert.equal((await c.query('select public.read_text_turn($1) value',[f.submission.turnId])).rows[0].value.input,f.submission.text);assert.equal((await c.query('select public.list_service_task_turns($1,20) value',[f.policy])).rows[0].value.turns.length,1);
  }finally{await c.query('rollback');await c.end();}
  const withdrawnRead=await actorRpc(f.owner,'read_text_turn',{p_turn_id:f.submission.turnId}),withdrawnTextHistory=await actorRpc(f.owner,'list_text_turns',{p_policy_id:f.policy,p_limit:20}),withdrawnTaskHistory=await actorRpc(f.owner,'list_service_task_turns',{p_policy_id:f.policy,p_limit:20});
- assert.equal(withdrawnRead.kind,'unavailable');assert.deepEqual(withdrawnTextHistory.turns,[]);assert.deepEqual(withdrawnTaskHistory.turns,[]);
+ assert.equal(withdrawnRead.kind,'text');assert.equal(withdrawnRead.input,f.submission.text);assert.equal(withdrawnRead.result.projection,'unavailable');assert.equal(withdrawnRead.result.knowledge,null);for(const h of [withdrawnTextHistory,withdrawnTaskHistory]){assert.equal(h.turns.length,1);assert.equal(h.turns[0].result.projection,'unavailable');assert.equal(h.turns[0].result.knowledge,null);assert.equal(h.turns[0].outcome,'answered');}
  const captured=JSON.parse(readFileSync(root+'/history-positive.json','utf8'));captured.withdrawn={now:Date.now(),sqlRead:withdrawnRead,sqlTextHistory:withdrawnTextHistory,sqlTaskHistory:withdrawnTaskHistory};writeFileSync(root+'/history-positive.json',JSON.stringify(captured,null,2)+'\n');
 });
 test('enabled original capacity settles once or releases every selected terminal; rollback and unknown never duplicate reservation',async()=>{
@@ -250,4 +250,27 @@ test('selected cancel waits for mobile before acquiring capacity34; real blocked
  }finally{
   await barrier.query('rollback');if(cancelTask)await cancelTask;if(completionTask)await completionTask;await cancel.end();await completion.end();await barrier.end();await query('update turn_private.service_task_capacity_settings set enabled=$1 where singleton',[prior]);
  }
+});
+
+test('source-withdrawn pending selected Task remains owner-visible and original Cancel releases its reservation',async()=>{
+ const prior=await scalar('select enabled value from turn_private.service_task_capacity_settings where singleton');await query('update turn_private.service_task_capacity_settings set enabled=true where singleton');
+ try{const f=await fixture();await submit(f);await privileged(f.reviewer,'ops_review_workspace',{p_input:{action:'revoke_statement',operationId:randomUUID(),candidateId:f.source.candidate,expectedPublicationVersion:1,note:'Withdraw pending selection'}});
+ const history=await actorRpc(f.owner,'list_service_task_turns',{p_policy_id:f.policy,p_limit:20});assert.equal(history.turns.length,1);const row=history.turns[0];assert.equal(row.turnId,f.submission.turnId);assert.equal(row.input,f.submission.text);assert.equal(row.result.projection,'unavailable');assert.equal(row.result.knowledge,null);assert.equal(row.result.completedAt,null);assert.equal(row.output,null);
+ assert.equal((await actorRpc(f.reviewer,'read_text_turn',{p_turn_id:f.submission.turnId})).kind,'unavailable');
+ await actorRpc(f.owner,'cancel_chat_turn',{p_turn_id:f.submission.turnId});assert.equal(await scalar('select state value from turn_private.service_task_capacity where task_id=$1',[f.submission.serviceTask.id]),'released');const cancelled=await actorRpc(f.owner,'list_service_task_turns',{p_policy_id:f.policy,p_limit:20});assert.equal(cancelled.turns[0].status,'cancelled');assert.equal(cancelled.turns[0].result.knowledge,null);
+ writeFileSync(root+'/pending-unavailable-history.json',JSON.stringify({owner:f.owner.id,now:Date.now(),history,cancelled},null,2)+'\n');
+ }finally{await query('update turn_private.service_task_capacity_settings set enabled=$1 where singleton',[prior]);}
+});
+test('qualified dispatched non-Place classification becomes original unsupported terminal and releases capacity',async()=>{
+ const prior=await scalar('select enabled value from turn_private.service_task_capacity_settings where singleton');await query('update turn_private.service_task_capacity_settings set enabled=true where singleton');
+ try{const f=await fixture();await submit(f);const l=await actorRpc(null,'claim_grounded_work',{p_owner_id:f.owner.id,p_policy_id:f.policy},'service_role');const keys={p_turn_id:l.turnId,p_lease_token:l.leaseToken};
+ assert.equal((await actorRpc(null,'complete_grounded_work_with_needs',{...keys,p_intent:'rail_boarding_documents',p_request_scope:'additional_needs',p_unanswered_needs:JSON.stringify(['What time'])},'service_role')).kind,'blocked');assert.equal(await scalar('select completed_at value from turn_private.grounded_turns where turn_id=$1',[l.turnId]),null);
+ const input=await actorRpc(null,'read_grounded_work',keys,'service_role');await actorRpc(null,'authorize_grounded_dispatch',{...keys,p_policy_id:f.policy,p_provider:'qwen',p_context_digest:input.contextDigest},'service_role');
+ assert.equal((await actorRpc(null,'complete_grounded_work_with_needs',{...keys,p_lease_token:randomUUID(),p_intent:'rail_boarding_documents',p_request_scope:'additional_needs',p_unanswered_needs:JSON.stringify(['What time'])},'service_role')).kind,'blocked');
+ assert.equal((await actorRpc(null,'complete_grounded_work_with_needs',{...keys,p_intent:'rail_boarding_documents',p_request_scope:'additional_needs',p_unanswered_needs:JSON.stringify(['What time'])},'service_role')).kind,'finished');const row=await scalar('select to_jsonb(g) value from turn_private.grounded_turns g where turn_id=$1',[l.turnId]);assert.equal(row.intent,'unsupported');assert.equal(row.original_outcome,'blocked');assert.equal(row.place_subject_id,null);assert.equal(row.basis,null);assert.deepEqual(row.unanswered_needs,[]);assert.equal(await scalar('select state value from turn_private.service_task_capacity where task_id=$1',[f.submission.serviceTask.id]),'released');assert.equal((await actorRpc(null,'claim_grounded_work',{p_owner_id:f.owner.id,p_policy_id:f.policy},'service_role')).kind,'empty');
+ }finally{await query('update turn_private.service_task_capacity_settings set enabled=$1 where singleton',[prior]);}
+});
+test('explicit C0 qwen endpoint is inserted once without changing policy purpose or enabling a provider',async()=>{
+ const endpoint='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';const f=await fixture('current_input_v1',null,endpoint);const p=await scalar('select jsonb_build_object(\'endpoint\',endpoint,\'mode\',context_mode) value from turn_private.text_policies where id=$1',[f.policy]);assert.deepEqual(p,{endpoint,mode:'current_input_v1'});
+ const users=await scalar('select count(*)::int value from auth.users');await assert.rejects(fixture('current_input_v1',null,'https://not-allowed.invalid'),/Unsupported C0 fixture endpoint/);assert.equal(await scalar('select count(*)::int value from auth.users'),users);
 });

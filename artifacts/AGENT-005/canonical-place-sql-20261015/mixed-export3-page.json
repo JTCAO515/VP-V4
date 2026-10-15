@@ -1,48 +1,48 @@
 {
-  "owner": "fcd1c318-8326-4847-b193-6827b849f330",
+  "owner": "748604ed-aac4-40e2-8190-819bb02568fd",
   "limit": 100,
-  "now": 1792056888343,
+  "now": 1792058989540,
   "page": {
     "items": [
       {
         "fences": [],
-        "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
+        "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
         "sources": [
           {
             "rows": [
               {
-                "id": "2fea7101-5481-489c-8829-93d562cb81cf",
-                "state": "accepted",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "event_id": "accepted",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "sequence": 1,
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "created_at": "2026-10-15T09:34:46.330844+00:00",
-                "event_type": "accepted",
-                "schema_version": "turn-sse-v1"
-              },
-              {
-                "id": "3b492d11-1c6f-40fd-85fe-9edef81eef9d",
+                "id": "1070d252-27dd-47c0-9ec9-a6d651a98aee",
                 "state": "completed",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
                 "event_id": "worker-terminal-1",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "sequence": 2,
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "created_at": "2026-10-15T09:34:47.375616+00:00",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:48.594736+00:00",
                 "event_type": "terminal",
                 "schema_version": "turn-sse-v1"
               },
               {
-                "id": "602cc113-8952-466a-898a-a6af1e950641",
+                "id": "c0b9595a-b390-4e7d-acc7-36a3d930321c",
                 "state": "accepted",
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
                 "event_id": "accepted",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "sequence": 1,
-                "thread_id": "ed000b98-2078-4a61-9824-331486e3ffda",
-                "created_at": "2026-10-15T09:34:48.046894+00:00",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "event_type": "accepted",
+                "schema_version": "turn-sse-v1"
+              },
+              {
+                "id": "e4903949-312d-4b22-8778-bf8d8a5083ed",
+                "state": "accepted",
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "event_id": "accepted",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "sequence": 1,
+                "thread_id": "e9c4130b-5816-454f-bc3b-d9dce876abed",
+                "created_at": "2026-10-15T10:09:49.252669+00:00",
                 "event_type": "accepted",
                 "schema_version": "turn-sse-v1"
               }
@@ -53,19 +53,19 @@
             "rows": [
               {
                 "digest": "chat-state-control-v1",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "created_at": "2026-10-15T09:34:46.330844+00:00",
-                "idempotency_key": "ac592814-03b2-42ab-bf29-a323de3280b1"
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "idempotency_key": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
               },
               {
                 "digest": "chat-state-control-v1",
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "thread_id": "ed000b98-2078-4a61-9824-331486e3ffda",
-                "created_at": "2026-10-15T09:34:48.046894+00:00",
-                "idempotency_key": "e48fa10d-e215-4228-bf9b-b07ccad5dc23"
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "e9c4130b-5816-454f-bc3b-d9dce876abed",
+                "created_at": "2026-10-15T10:09:49.252669+00:00",
+                "idempotency_key": "67c5ab31-c815-440b-8348-2eae8925bf40"
               }
             ],
             "relation": "public.chat_turn_idempotency"
@@ -79,12 +79,12 @@
               {
                 "model": "qwen3.7-plus-2026-05-26",
                 "status": "settled",
-                "task_id": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
                 "provider": "qwen",
-                "scope_id": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                "attempt_id": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                "created_at": "2026-10-15T09:34:46.660309+00:00",
-                "updated_at": "2026-10-15T09:34:47.36401+00:00",
+                "scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                "attempt_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "created_at": "2026-10-15T10:09:47.89109+00:00",
+                "updated_at": "2026-10-15T10:09:48.583072+00:00",
                 "actual_micros": "15",
                 "price_version": "synthetic-v1",
                 "reserved_micros": "100"
@@ -103,23 +103,23 @@
           {
             "rows": [
               {
-                "id": "2d950b25-d93e-4041-a739-82270c0c7061",
+                "id": "f075af20-077c-44ff-a87e-cb97d9e79434",
                 "locale": "en",
-                "goal_id": "e517c3da-50ed-4dfd-a0de-f875ee425b98",
-                "task_id": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
+                "goal_id": "33de1d52-474c-423c-8c72-6b250165209e",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
                 "turn_id": null,
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "sequence": "2",
-                "policy_id": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
-                "consent_id": "fc123a02-8abd-46a8-b586-008a8069c004",
-                "created_at": "2026-10-15T09:34:46.218392+00:00",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.454377+00:00",
                 "input_text": "Adjust the selected Trip day",
                 "relationship": "follow_up",
                 "scope_version": 2,
-                "request_digest": "0c9974d59c21e0f6f7dbe73582ede0809a59793b0d4204e26438627c9f3141f3",
-                "conversation_id": "f94de3b0-f4a2-4ea1-9ffa-6f3bb4d55521",
-                "idempotency_key": "3ff46025-9b06-4b57-a561-e08a3749e629",
-                "parent_message_id": "a6a3a05a-c6df-4248-bcf8-d3c2a3cc0804"
+                "request_digest": "661a06da15638ea11ebf1377449f4b595df8bcc125493f77f9865c03aeb64d48",
+                "conversation_id": "63358795-3d61-4001-9583-022da92f8a77",
+                "idempotency_key": "62a887c2-2b97-4773-a4bd-1e7a141ce407",
+                "parent_message_id": "705e30e7-ca73-495e-bc64-d1eabfbd597c"
               }
             ],
             "relation": "turn_private.assistant_messages"
@@ -139,9 +139,9 @@
                 "basis": null,
                 "intent": null,
                 "locale": "en",
-                "task_id": "04d9a499-5293-4b2b-bef4-140f5cbec00f",
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "task_id": "13baa2a2-f719-48df-8a7a-f2322bde8900",
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "place_name": null,
                 "completed_at": null,
                 "request_scope": null,
@@ -154,41 +154,41 @@
                   "basis": {
                     "city": "shanghai",
                     "scene": "attraction",
-                    "subjectId": "fixture_d8da794164184d278ddb3767517dea6e",
-                    "sourceDigest": "a393088d481c5582d0547bf29bceabdf03223c28359d054dc8b388e67532184b"
+                    "subjectId": "fixture_ffd15b1c26d44a40b911159da16c2c49",
+                    "sourceDigest": "1d670cadacc11131d633a7cc86e2b5913a9d48555400a6e2e0a27142795e56a5"
                   },
-                  "scopeId": "ed000b98-2078-4a61-9824-331486e3ffda",
+                  "scopeId": "e9c4130b-5816-454f-bc3b-d9dce876abed",
                   "operation": {
-                    "turnId": "835b872a-6024-45df-8fed-9090c826f2d0",
-                    "scopeId": "ed000b98-2078-4a61-9824-331486e3ffda",
+                    "turnId": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                    "scopeId": "e9c4130b-5816-454f-bc3b-d9dce876abed",
                     "messageId": null,
                     "scopeKind": "thread",
-                    "operationId": "e48fa10d-e215-4228-bf9b-b07ccad5dc23"
+                    "operationId": "67c5ab31-c815-440b-8348-2eae8925bf40"
                   },
                   "scopeKind": "thread",
                   "expectation": {
                     "locale": "en",
-                    "tripId": "a522dadb-bfe7-40ad-ac9b-0e260ea6cbee",
+                    "tripId": "6a8646a7-c8cd-4734-9b03-710d1fb7cecd",
                     "provider": "amap",
                     "headVersion": 0,
-                    "referenceId": "eecc7458-0ff8-40f8-861a-689907e3ce04",
-                    "contextDigest": "3327773244f0d80b51a87cc2427d286059769be61036989a92b6e66e030cd856",
-                    "mappingDigest": "773a80436c1d65cd0bee9ccb0f4e5a7e297259fbc7cdd6847b19342bd0fcefc8",
-                    "providerPoiId": "self-only-cbaa4fa1-ec1d-4cd0-bc25-e35cf4524062",
-                    "canonicalPoiId": "c8408a72-5cf2-4856-b92f-e89ca4d4a516"
+                    "referenceId": "95aabad1-985f-4e7d-ac48-1cfabc4ff3f8",
+                    "contextDigest": "a79f64885951abfc1de94e46e589d472bee75ac55d89348c8ff207247c21ae7c",
+                    "mappingDigest": "6e5d6a9cb75ee398da871f8a329012b1dddfc2c77c569045c7746262cb3dc5b5",
+                    "providerPoiId": "self-only-58989b88-7fe0-4949-8a5a-79a1e763cfb7",
+                    "canonicalPoiId": "bc8facf0-1aa7-499c-bb25-9986ccd93531"
                   },
-                  "operationId": "e48fa10d-e215-4228-bf9b-b07ccad5dc23",
-                  "requestDigest": "ebb4451c506a700d7a4d658a13477fbd73fa2d391a2a67e97a11ade291834aa4",
+                  "operationId": "67c5ab31-c815-440b-8348-2eae8925bf40",
+                  "requestDigest": "b3431eecd97738e14b6508cfd6be297ae2dbe3db42fb8ce12326e812b8eb0a54",
                   "schemaVersion": "canonical-place-proof/1",
                   "originalReceipt": {
                     "kind": "accepted",
                     "reused": false,
-                    "turnId": "835b872a-6024-45df-8fed-9090c826f2d0",
+                    "turnId": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
                     "version": 2,
                     "parentTurnId": null,
                     "relationship": "new_goal",
                     "scopeVersion": 1,
-                    "serviceTaskId": "04d9a499-5293-4b2b-bef4-140f5cbec00f"
+                    "serviceTaskId": "13baa2a2-f719-48df-8a7a-f2322bde8900"
                   }
                 }
               }
@@ -274,22 +274,22 @@
           {
             "rows": [
               {
-                "task_id": "04d9a499-5293-4b2b-bef4-140f5cbec00f",
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "task_id": "13baa2a2-f719-48df-8a7a-f2322bde8900",
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "relationship": "new_goal",
                 "parent_turn_id": null,
-                "request_digest": "a8dba5057614c21a4c190616c870405262144bebbb772308295e88f8af81f9ef",
-                "idempotency_key": "e48fa10d-e215-4228-bf9b-b07ccad5dc23"
+                "request_digest": "6c47e4f8ec3e4fc39380e8547935135cc72d290d9219f87441bf39b1d9c0cf21",
+                "idempotency_key": "67c5ab31-c815-440b-8348-2eae8925bf40"
               },
               {
-                "task_id": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "relationship": "new_goal",
                 "parent_turn_id": null,
-                "request_digest": "f6965f7b25f509aa7ba8012bc8bca41553953786246aa9e491f2719a620112c2",
-                "idempotency_key": "ac592814-03b2-42ab-bf29-a323de3280b1"
+                "request_digest": "48fd627200d8b1f4665e60925c40f4e2b36f7f07a82ecf9b8279164cf2146bd3",
+                "idempotency_key": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
               }
             ],
             "relation": "turn_private.service_task_turns"
@@ -297,15 +297,15 @@
           {
             "rows": [
               {
-                "id": "04d9a499-5293-4b2b-bef4-140f5cbec00f",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "policy_id": "6b89841c-142c-4a70-978d-3a96bd5d4c54",
-                "thread_id": "ed000b98-2078-4a61-9824-331486e3ffda",
-                "consent_id": "9a91730c-19e4-4bce-b1b3-47f6fba3b8c1",
-                "created_at": "2026-10-15T09:34:48.053376+00:00",
+                "id": "13baa2a2-f719-48df-8a7a-f2322bde8900",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "policy_id": "72c9f986-1833-40a6-a792-34ecdbb37b72",
+                "thread_id": "e9c4130b-5816-454f-bc3b-d9dce876abed",
+                "consent_id": "62610294-1255-4556-8b67-c83554c07d85",
+                "created_at": "2026-10-15T10:09:49.258774+00:00",
                 "goal_digest": "a1aa3e7afdab62fcea3d6540ad23b1f52cbb1c8f90845edb8af5ce2044238ac8",
-                "goal_turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
-                "last_turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
+                "goal_turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "last_turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
                 "scope_version": 1,
                 "trip_objective": null,
                 "budget_scope_id": null,
@@ -313,54 +313,54 @@
                 "capacity_enforced": false
               },
               {
-                "id": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "policy_id": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "consent_id": "fc123a02-8abd-46a8-b586-008a8069c004",
-                "created_at": "2026-10-15T09:34:46.431055+00:00",
+                "id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.66182+00:00",
                 "goal_digest": "beebd5a43335d24866b6255242c54eb95eddb854d3b4c625ef0f44a8d1d97e94",
-                "goal_turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "last_turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
+                "goal_turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "last_turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
                 "scope_version": 1,
                 "trip_objective": {
-                  "goalId": "e517c3da-50ed-4dfd-a0de-f875ee425b98",
-                  "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
+                  "goalId": "33de1d52-474c-423c-8c72-6b250165209e",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
                   "outcome": "rejected",
-                  "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                  "messageId": "2d950b25-d93e-4041-a739-82270c0c7061",
-                  "proposalId": "14a0909b-42ae-4da3-a4a0-624e80444cb5",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "messageId": "f075af20-077c-44ff-a87e-cb97d9e79434",
+                  "proposalId": "f423df97-ac15-4c96-8560-9c3684015b30",
                   "baseVersion": 0,
                   "goalVersion": 2,
                   "linkVersion": 1,
-                  "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
-                  "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab",
-                  "requestDigest": "f6965f7b25f509aa7ba8012bc8bca41553953786246aa9e491f2719a620112c2",
-                  "conversationId": "f94de3b0-f4a2-4ea1-9ffa-6f3bb4d55521",
-                  "proposalDigest": "trip-v2:51bc23905b156dbfc103eb7d6d0e682463e9df75b864422e6951fd8b5da37498",
-                  "linkOperationId": "29cdf587-a82d-4829-a682-8f2b17f3fff2",
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                  "requestDigest": "48fd627200d8b1f4665e60925c40f4e2b36f7f07a82ecf9b8279164cf2146bd3",
+                  "conversationId": "63358795-3d61-4001-9583-022da92f8a77",
+                  "proposalDigest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
+                  "linkOperationId": "11844163-bf89-4bbc-9ff4-aecb30423327",
                   "messageSequence": 2,
                   "producerBinding": {
                     "model": "qwen3.7-plus-2026-05-26",
-                    "taskId": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                    "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                    "turnId": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                    "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                    "scopeId": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                    "policyId": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
+                    "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                    "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                    "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                    "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
                     "provider": "qwen",
-                    "attemptId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                    "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                    "leaseToken": "787ef953-604c-4061-88c7-c628b858fef4",
+                    "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
                     "baseVersion": 0,
-                    "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                     "priceVersion": "synthetic-v1",
                     "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
-                    "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                   },
                   "proposalRevision": 1
                 },
-                "budget_scope_id": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
+                "budget_scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
                 "expected_result": "trip_modification",
                 "capacity_enforced": false
               }
@@ -371,26 +371,26 @@
             "rows": [
               {
                 "locale": "en",
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "hidden_at": null,
-                "policy_id": "6b89841c-142c-4a70-978d-3a96bd5d4c54",
-                "thread_id": "ed000b98-2078-4a61-9824-331486e3ffda",
-                "consent_id": "9a91730c-19e4-4bce-b1b3-47f6fba3b8c1",
-                "created_at": "2026-10-15T09:34:48.064438+00:00",
+                "policy_id": "72c9f986-1833-40a6-a792-34ecdbb37b72",
+                "thread_id": "e9c4130b-5816-454f-bc3b-d9dce876abed",
+                "consent_id": "62610294-1255-4556-8b67-c83554c07d85",
+                "created_at": "2026-10-15T10:09:49.269655+00:00",
                 "input_text": "What time does it open?",
                 "output_kind": null,
                 "output_text": null
               },
               {
                 "locale": "en",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "hidden_at": null,
-                "policy_id": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "consent_id": "fc123a02-8abd-46a8-b586-008a8069c004",
-                "created_at": "2026-10-15T09:34:46.441601+00:00",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.672126+00:00",
                 "input_text": "Move B to d2",
                 "output_kind": null,
                 "output_text": null
@@ -407,12 +407,12 @@
               {
                 "state": "queued",
                 "attempt": 0,
-                "turn_id": "835b872a-6024-45df-8fed-9090c826f2d0",
+                "turn_id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
                 "lease_ms": 120000,
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "created_at": "2026-10-15T09:34:48.067385+00:00",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "created_at": "2026-10-15T10:09:49.272309+00:00",
                 "expires_at": null,
-                "session_id": "072ede8d-aac8-487e-854b-92df10b206f3",
+                "session_id": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
                 "lease_token": null,
                 "max_attempts": 3,
                 "execution_mode": "text"
@@ -420,12 +420,12 @@
               {
                 "state": "completed",
                 "attempt": 1,
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
                 "lease_ms": 120000,
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "created_at": "2026-10-15T09:34:46.444153+00:00",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "created_at": "2026-10-15T10:09:47.674693+00:00",
                 "expires_at": null,
-                "session_id": "072ede8d-aac8-487e-854b-92df10b206f3",
+                "session_id": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
                 "lease_token": null,
                 "max_attempts": 3,
                 "execution_mode": "scoped_trip_edit_v1"
@@ -436,22 +436,22 @@
           {
             "rows": [
               {
-                "id": "835b872a-6024-45df-8fed-9090c826f2d0",
+                "id": "5eb590ba-af26-4c0b-bc5d-7ed478476b54",
                 "status": "accepted",
                 "trip_id": null,
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "thread_id": "ed000b98-2078-4a61-9824-331486e3ffda",
-                "created_at": "2026-10-15T09:34:48.046894+00:00",
-                "updated_at": "2026-10-15T09:34:48.046894+00:00"
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "e9c4130b-5816-454f-bc3b-d9dce876abed",
+                "created_at": "2026-10-15T10:09:49.252669+00:00",
+                "updated_at": "2026-10-15T10:09:49.252669+00:00"
               },
               {
-                "id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
+                "id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
                 "status": "completed",
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "thread_id": "190c57f3-c384-4ca2-99a4-ca368d081866",
-                "created_at": "2026-10-15T09:34:46.330844+00:00",
-                "updated_at": "2026-10-15T09:34:47.488215+00:00"
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "updated_at": "2026-10-15T10:09:48.704367+00:00"
               }
             ],
             "relation": "public.turns"
@@ -459,7 +459,7 @@
           {
             "rows": [
               {
-                "id": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
+                "id": "508dcdd9-362b-452b-b067-424740b10296",
                 "input": {
                   "scope": {
                     "dayIds": [
@@ -472,9 +472,9 @@
                   "expectedHeadVersion": 0,
                   "reservationBindings": []
                 },
-                "digest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab",
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "digest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "snapshot": {
                   "days": [
                     {
@@ -510,15 +510,15 @@
                   "title": "Synthetic Trip"
                 },
                 "fixed_ids": [],
-                "created_at": "2026-10-15T09:34:46.323352+00:00",
-                "expires_at": "2026-10-15T09:43:46.323352+00:00",
+                "created_at": "2026-10-15T10:09:47.556463+00:00",
+                "expires_at": "2026-10-15T10:18:47.556463+00:00",
                 "locked_ids": [],
                 "actor_basis": {
                   "epoch": 1,
-                  "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                  "sessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "mobileSessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "sessionCreatedAt": "2026-10-15T09:34:46.172496+00:00"
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
                 },
                 "base_version": 0,
                 "source_basis": {
@@ -557,55 +557,55 @@
                 },
                 "binding": {
                   "model": "qwen3.7-plus-2026-05-26",
-                  "taskId": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                  "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                  "turnId": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                  "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                  "scopeId": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                  "policyId": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
+                  "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                  "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
                   "provider": "qwen",
-                  "attemptId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                  "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                  "leaseToken": "787ef953-604c-4061-88c7-c628b858fef4",
+                  "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
                   "baseVersion": 0,
-                  "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                   "priceVersion": "synthetic-v1",
                   "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
-                  "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                 },
-                "task_id": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "scope_id": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                "policy_id": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
-                "attempt_id": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "attempt_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
                 "completion": {
                   "kind": "candidate_saved",
                   "binding": {
                     "model": "qwen3.7-plus-2026-05-26",
-                    "taskId": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                    "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                    "turnId": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                    "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                    "scopeId": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                    "policyId": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
+                    "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                    "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                    "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                    "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
                     "provider": "qwen",
-                    "attemptId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                    "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                    "leaseToken": "787ef953-604c-4061-88c7-c628b858fef4",
+                    "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
                     "baseVersion": 0,
-                    "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                     "priceVersion": "synthetic-v1",
                     "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
-                    "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                   },
                   "receipt": {
                     "kind": "scoped_edit_candidates/1",
                     "reused": false,
-                    "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                    "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                    "expiresAt": "2026-10-15T09:43:46.323Z",
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "expiresAt": "2026-10-15T10:18:47.556Z",
                     "candidates": [
                       {
                         "diff": {
@@ -640,11 +640,11 @@
                             "toDayId": "d2"
                           }
                         ],
-                        "candidateId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf"
+                        "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb"
                       }
                     ],
                     "baseVersion": 0,
-                    "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                     "returnScope": {
                       "dayIds": [
                         "d1",
@@ -652,10 +652,10 @@
                       ],
                       "itemIds": []
                     },
-                    "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                   }
                 },
-                "context_id": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
                 "known_usage": {
                   "cost": "unknown",
                   "inputTokens": 10,
@@ -665,8 +665,8 @@
                   "cachedInputTokens": null,
                   "uncachedInputTokens": null
                 },
-                "candidate_id": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                "operation_id": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                "candidate_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "operation_id": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                 "actual_micros": "15",
                 "known_outcome": "protocol_validated",
                 "paused_reason": null,
@@ -696,40 +696,40 @@
               {
                 "binding": {
                   "model": "qwen3.7-plus-2026-05-26",
-                  "taskId": "1fecf3d1-6cf7-4426-b7ae-c810d11ab2c6",
-                  "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                  "turnId": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                  "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                  "scopeId": "9d2593b0-247f-4bc7-8ebf-9b9854375aa1",
-                  "policyId": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
+                  "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                  "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
                   "provider": "qwen",
-                  "attemptId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                  "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                  "leaseToken": "787ef953-604c-4061-88c7-c628b858fef4",
+                  "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
                   "baseVersion": 0,
-                  "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                   "priceVersion": "synthetic-v1",
                   "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
-                  "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                 },
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "turn_id": "a40aaecf-93a5-4efc-a68d-62feba2324f8",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "created_at": "2026-10-15T09:34:46.96439+00:00",
-                "request_id": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "created_at": "2026-10-15T10:09:48.190286+00:00",
+                "request_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
                 "destination": {
                   "model": "qwen3.7-plus-2026-05-26",
                   "phase": "response_buffered",
                   "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
                   "provider": "qwen",
-                  "observedAt": "2026-10-15T09:34:47.069Z",
-                  "invocationId": "8ede1d86-4455-49c8-a4cb-95d67b4d5a05",
+                  "observedAt": "2026-10-15T10:09:48.290Z",
+                  "invocationId": "6f622021-4dea-4c23-9a66-4403ccb3680b",
                   "schemaVersion": "provider-destination/1",
-                  "configurationId": "f0766d0d-9d7c-443b-b86e-a5004e9bbc30",
+                  "configurationId": "6c675933-527c-4ed8-b649-d3c8d186c758",
                   "configurationVersion": 1
                 },
                 "payload_digest": "2e63ae5fa03905c1c6d824f4b29b6cbb9ca51d304247f7e6f74bfbd230937f70",
-                "request_digest": "7674fbac9eb6f44278608dcc097347333e12aa68234bc4c0ab89912d217f5183"
+                "request_digest": "6b5174153f473f90ecb5b1ce131f952eccf198f2e0525c92ddf31d4b56b603cd"
               }
             ],
             "relation": "scoped_edit_private.requests_v1"
@@ -737,86 +737,13 @@
           {
             "rows": [
               {
-                "digest": "4dadf2991be3b6f679483cb1e59aa10c9472fed53c5eb366f49fafe839a20ea0",
-                "receipt": {
-                  "diff": {
-                    "changes": [
-                      {
-                        "kind": "moved",
-                        "after": {
-                          "id": "b",
-                          "dayId": "d2",
-                          "title": "B"
-                        },
-                        "before": {
-                          "id": "b",
-                          "dayId": "d1",
-                          "title": "B"
-                        },
-                        "itemId": "b"
-                      }
-                    ],
-                    "transferImpact": "pending",
-                    "preservedItemIds": [
-                      "a",
-                      "z"
-                    ],
-                    "walkingImprovement": "unverified",
-                    "externalOrderEffect": "none"
-                  },
-                  "kind": "scoped_edit_proposal/1",
-                  "reused": false,
-                  "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                  "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                  "expiresAt": "2026-10-15T09:43:46.323Z",
-                  "proposalId": "14a0909b-42ae-4da3-a4a0-624e80444cb5",
-                  "baseVersion": 0,
-                  "operationId": "21377194-232f-441b-8e67-3ba7d2e752ac",
-                  "returnScope": {
-                    "dayIds": [
-                      "d1",
-                      "d2"
-                    ],
-                    "itemIds": []
-                  },
-                  "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab",
-                  "proposalDigest": "trip-v2:51bc23905b156dbfc103eb7d6d0e682463e9df75b864422e6951fd8b5da37498",
-                  "proposalRevision": 1
-                },
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "mutation": {
-                  "basis": {
-                    "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                    "baseVersion": 0,
-                    "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
-                  },
-                  "action": "select_candidate",
-                  "candidateId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf",
-                  "operationId": "21377194-232f-441b-8e67-3ba7d2e752ac",
-                  "askOperationId": "ac592814-03b2-42ab-bf29-a323de3280b1"
-                },
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "cancelled": false,
-                "context_id": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                "created_at": "2026-10-15T09:34:47.590489+00:00",
-                "actor_basis": {
-                  "epoch": 1,
-                  "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                  "sessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "mobileSessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "sessionCreatedAt": "2026-10-15T09:34:46.172496+00:00"
-                },
-                "proposal_id": "14a0909b-42ae-4da3-a4a0-624e80444cb5",
-                "operation_id": "21377194-232f-441b-8e67-3ba7d2e752ac"
-              },
-              {
-                "digest": "66a99cd86af2fe8960129b3753ed4c87685566c0e34b22bb1c40615df8e7dd73",
+                "digest": "defaeee51076e3cf6649ac2451981878608e0a5bfb019b0f068b8781497cccf2",
                 "receipt": {
                   "kind": "scoped_edit_candidates/1",
                   "reused": false,
-                  "tripId": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                  "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                  "expiresAt": "2026-10-15T09:43:46.323Z",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "expiresAt": "2026-10-15T10:18:47.556Z",
                   "candidates": [
                     {
                       "diff": {
@@ -851,11 +778,11 @@
                           "toDayId": "d2"
                         }
                       ],
-                      "candidateId": "c731d4e9-16c1-4cc8-89e1-da2ef8dce7bf"
+                      "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb"
                     }
                   ],
                   "baseVersion": 0,
-                  "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1",
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
                   "returnScope": {
                     "dayIds": [
                       "d1",
@@ -863,32 +790,105 @@
                     ],
                     "itemIds": []
                   },
-                  "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                 },
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
                 "mutation": {
                   "text": "Move B to d2",
                   "basis": {
-                    "contextId": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
                     "baseVersion": 0,
-                    "contextDigest": "46718e9461825751368f794edf2b70c5eca7499193e84fe964127504af9291ab"
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
                   },
                   "action": "ask",
-                  "operationId": "ac592814-03b2-42ab-bf29-a323de3280b1"
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
                 },
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
                 "cancelled": false,
-                "context_id": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                "created_at": "2026-10-15T09:34:46.426879+00:00",
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "created_at": "2026-10-15T10:09:47.657735+00:00",
                 "actor_basis": {
                   "epoch": 1,
-                  "ownerId": "fcd1c318-8326-4847-b193-6827b849f330",
-                  "sessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "mobileSessionId": "072ede8d-aac8-487e-854b-92df10b206f3",
-                  "sessionCreatedAt": "2026-10-15T09:34:46.172496+00:00"
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
                 },
                 "proposal_id": null,
-                "operation_id": "ac592814-03b2-42ab-bf29-a323de3280b1"
+                "operation_id": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+              },
+              {
+                "digest": "bfe091aadb0793a9861aaebe0786f3adad977f53d3e27e51fb0120ab04a7a510",
+                "receipt": {
+                  "diff": {
+                    "changes": [
+                      {
+                        "kind": "moved",
+                        "after": {
+                          "id": "b",
+                          "dayId": "d2",
+                          "title": "B"
+                        },
+                        "before": {
+                          "id": "b",
+                          "dayId": "d1",
+                          "title": "B"
+                        },
+                        "itemId": "b"
+                      }
+                    ],
+                    "transferImpact": "pending",
+                    "preservedItemIds": [
+                      "a",
+                      "z"
+                    ],
+                    "walkingImprovement": "unverified",
+                    "externalOrderEffect": "none"
+                  },
+                  "kind": "scoped_edit_proposal/1",
+                  "reused": false,
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "expiresAt": "2026-10-15T10:18:47.556Z",
+                  "proposalId": "f423df97-ac15-4c96-8560-9c3684015b30",
+                  "baseVersion": 0,
+                  "operationId": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                  "returnScope": {
+                    "dayIds": [
+                      "d1",
+                      "d2"
+                    ],
+                    "itemIds": []
+                  },
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                  "proposalDigest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
+                  "proposalRevision": 1
+                },
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "mutation": {
+                  "basis": {
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "baseVersion": 0,
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  },
+                  "action": "select_candidate",
+                  "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "operationId": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                  "askOperationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+                },
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "cancelled": false,
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "created_at": "2026-10-15T10:09:48.80541+00:00",
+                "actor_basis": {
+                  "epoch": 1,
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
+                },
+                "proposal_id": "f423df97-ac15-4c96-8560-9c3684015b30",
+                "operation_id": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4"
               }
             ],
             "relation": "scoped_edit_private.operations_v1"
@@ -912,13 +912,13 @@
                   ],
                   "expectedVersion": 0
                 },
-                "trip_id": "e0a66bb7-9a9e-4f1c-9680-fbae8c88dfdb",
-                "owner_id": "fcd1c318-8326-4847-b193-6827b849f330",
-                "context_id": "c982bdb6-3308-4f15-a7e5-be5a6d45b487",
-                "proposal_id": "14a0909b-42ae-4da3-a4a0-624e80444cb5",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "proposal_id": "f423df97-ac15-4c96-8560-9c3684015b30",
                 "base_version": 0,
-                "operation_id": "21377194-232f-441b-8e67-3ba7d2e752ac",
-                "proposal_digest": "trip-v2:51bc23905b156dbfc103eb7d6d0e682463e9df75b864422e6951fd8b5da37498",
+                "operation_id": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                "proposal_digest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
                 "proposal_revision": 1
               }
             ],
@@ -946,12 +946,12 @@
         },
         "sourceAuthorities": [
           {
-            "policyId": "2455943f-d6f8-4d84-9967-72e5cd6c8c8f",
-            "consentId": "fc123a02-8abd-46a8-b586-008a8069c004"
+            "policyId": "72c9f986-1833-40a6-a792-34ecdbb37b72",
+            "consentId": "62610294-1255-4556-8b67-c83554c07d85"
           },
           {
-            "policyId": "6b89841c-142c-4a70-978d-3a96bd5d4c54",
-            "consentId": "9a91730c-19e4-4bce-b1b3-47f6fba3b8c1"
+            "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+            "consentId": "09bad9f7-c84f-4974-8186-0aa449ddb3b6"
           }
         ],
         "sourceIdentityKeys": []
@@ -960,7 +960,7 @@
     "hasMore": false,
     "section": "snapshot",
     "nextCursor": null,
-    "sourceDigest": "e281fb4c5020955dd5fe651a0f157d60ead0206d9408d2cb2801d805e01d0a59",
+    "sourceDigest": "c1fd9951b0ef00d5218176d483c00115f904fc6c76953183ede6dd1126118314",
     "schemaVersion": "turn-core-export/3",
     "sectionComplete": true
   }
