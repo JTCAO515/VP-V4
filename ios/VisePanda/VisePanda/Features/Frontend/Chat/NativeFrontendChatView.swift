@@ -8,6 +8,7 @@ import UIKit
     var onOpenExpression: (() -> Void)? = nil
     var onOpenPlace: (() -> Void)? = nil
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.locale) private var locale
     var avatarImage: Image? = nil
     var avatarScale: CGFloat = 1
     var avatarVerticalOffset: CGFloat = 0
@@ -95,7 +96,7 @@ import UIKit
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
-            if let materialText = state.libraryChatText(materialID: text) {
+            if let materialText = state.libraryChatText(materialID: text, locale: locale) {
                 Text(materialText)
                     .font(.subheadline).textSelection(.enabled)
             } else {
