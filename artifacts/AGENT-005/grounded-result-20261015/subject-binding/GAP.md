@@ -30,3 +30,11 @@ Current holder for these shared files/SQL is coordinated by Main; historical Git
 PASS: repository/branch/clean status, Node and dependencies present, official existing GitHub account has pull/push capability, source-chain inspection. Requested Sol/medium is not effective/tier proof: effective/tier UNKNOWN.
 
 UNRUN: shared candidate source execution/typecheck, SQL fixture/ordinary authenticated role, Native/Web consumer execution, real Auth/source/provider/persistence/QA/device. No release, database, provider, new credential or permission action ran. #206 remains OPEN. No filler helper or replacement sample has been created.
+
+## Authorized source follow-up, 89334409
+
+The leased original job done branch now consumes a matched, exact-turn, syntactically valid subject only from its owner-authorized context RPC, then uses the existing current-evidence replay gate. It does not resolve a title or create an admission/binding wrapper. Dedicated source tests first reproduced initial and done failures; after this source edit, the done positive and old-turn/ambiguous/unavailable/invalid-subject/client-forgery negatives pass without a model or evidence read on denial.
+
+Actual affected execution: 54 tests, 53 PASS / 1 FAIL. The remaining initial-call FAIL is the unchanged unleased grounded-ai-assist.ts dropping the context subject. The context fields in these fixtures are explicitly prerequisites for the proposed owner-RPC projection, not proof current SQL emits or requalifies them. typecheck and lint PASS for actual repo source. Shared TS/SQL candidate files remain NOT_APPLIED/UNRUN. This is not a completed canonical Ask user flow or a merge-ready delivery.
+
+Push 89334409 first failed with LibreSSL SSL_connect: SSL_ERROR_SYSCALL github.com:443. Same-origin ls-remote then proved remote remained6332b53b, allowing one normal push retry without identity/proxy/credential changes. This transport failure is retained as an observation, not treated as an authorization rejection or hidden successful write.
