@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "case": "normal native full append and rollback",
+      "result": "PASS"
+    },
+    {
+      "case": "ten true / only Trip runtime false, known cost drift",
+      "result": "PASS",
+      "details": {
+        "guards": {
+          "turn_hooks": true,
+          "turn_schema": true,
+          "export_hooks": true,
+          "trip_runtime": false,
+          "turn_runtime": true,
+          "result_schema": true,
+          "profile_schema": true,
+          "selected_schema": true,
+          "turn_write_hooks": true,
+          "conversation_schema": true,
+          "result_infrastructure": true
+        },
+        "postgres": "17.11 (Homebrew)",
+        "trip_failure": {
+          "stage": "function_metadata",
+          "differences": [
+            {
+              "field": "definition",
+              "signature": "turn_private.trip_objective_source_erased_v1()",
+              "actual_hash": "8d6a0beb2b7595e7f0429909c95a45f1cf6ac42246db837f8f452f95debcf032",
+              "expected_hash": "a20e2d1b92061d1ed52fdc2c7c3464f71477f464339013e048f090040c72453f"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "unknownManagedHashAccepted": false,
+  "guardConditionsChanged": false,
+  "sourceBodyOrAclEmitted": false,
+  "managedSupabaseCause": "UNKNOWN pending official metadata diagnostic"
+}

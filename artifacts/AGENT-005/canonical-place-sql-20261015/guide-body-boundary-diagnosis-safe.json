@@ -1,0 +1,115 @@
+{
+  "sharedTestChanged": false,
+  "productSourceChanged": false,
+  "baselineBoundary": "immediately before20261005080000 Guide",
+  "comparisonBoundary": "after all future current migrations",
+  "normalizer": "exact unmodified source span from the old test",
+  "evidence": [
+    {
+      "signature": "read_grounded_turn(uuid)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "d678a6e2f321b3ebe7210cae6f4932b574b7a4a2620f5e9bc96faebfe25fbd82",
+      "actualNormalizedSha256": "613183cf023dbcaba336ea32a81afb9e693c0fafc4b950aee0c527a8565368a6",
+      "firstDifference": {
+        "line": 5,
+        "expected": " if not turn_private.lock_turn(p_turn_id,u,(auth.jwt()->>'session_id')::uuid) then return jsonb_build_object('kind','unavailable'); end if;",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and place_actions_private.ask_bound_v1(p_turn_id,null) is null then return jsonb_build_object('kind','blocked');end if;"
+      }
+    },
+    {
+      "signature": "read_grounded_work(uuid,uuid)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "39815bb03f81c5a4f21612bb1da420512dae3db18dd65393cb281155043d6235",
+      "actualNormalizedSha256": "e433f1978d706c2a09a4d0eeb1f351a1f361482f1b3814c069f13683e4b3c64f",
+      "firstDifference": {
+        "line": 4,
+        "expected": "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and place_actions_private.ask_bound_v1(p_turn_id,p_lease_token) is null then return jsonb_build_object('kind','blocked');end if;"
+      }
+    },
+    {
+      "signature": "turn_private.lock_text_work(uuid,uuid)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": true
+    },
+    {
+      "signature": "start_text_turn(uuid,uuid,uuid,uuid,text,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": true
+    },
+    {
+      "signature": "enqueue_turn_work(uuid,uuid,uuid,integer,integer)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": true
+    },
+    {
+      "signature": "authorize_grounded_dispatch(uuid,uuid,uuid,text,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "0c7546b266f8b95fc196c3c2a26e55cbb83db938522f067bde9a62c53778c963",
+      "actualNormalizedSha256": "6abec72ef2f4402735049299f24a00a2ffa663d91f0557f28eeb19aa665f8512",
+      "firstDifference": {
+        "line": 4,
+        "expected": "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and place_actions_private.ask_bound_v1(p_turn_id,p_lease_token) is null then return jsonb_build_object('kind','blocked');end if;"
+      }
+    },
+    {
+      "signature": "complete_grounded_place_work(uuid,uuid,text,text,text,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "edf8e8bac8cbfa6f85ec01f7275bb60f7b6f58260ffef17ba7ee80e4ea065586",
+      "actualNormalizedSha256": "d11dbe990f43a727fb50c6968ee7aa0084ff824e5ce402cd0b39d9a476b6d1d1",
+      "firstDifference": {
+        "line": 4,
+        "expected": "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','stale'); end if;",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) then return place_actions_private.ask_complete_v1(p_turn_id,p_lease_token,p_intent,p_request_scope,p_unanswered_needs,p_place_name);end if;"
+      }
+    },
+    {
+      "signature": "complete_grounded_work_with_needs(uuid,uuid,text,text,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "9b0e41a2b34402626a8222875563314f204dbd7eed2c4112289e94db75e8ad4e",
+      "actualNormalizedSha256": "f1c027493cacb6650553f3c49afbd37a54ca1736673d089d70c78f478993f8f1",
+      "firstDifference": {
+        "line": 4,
+        "expected": "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','stale'); end if;",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and place_actions_private.ask_bound_v1(p_turn_id,p_lease_token) is null then return jsonb_build_object('kind','blocked');end if;"
+      }
+    },
+    {
+      "signature": "turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": false,
+      "canonicalAuthoredAfterExact": true,
+      "canonicalBeforePassesOriginalNormalizer": true,
+      "expectedSha256": "350966d57b2c7d1bc7bdfee1864879d66d50ab1fe13ad2b27a8ed9c3abea94da",
+      "actualNormalizedSha256": "15cb1f50e7507063286f2ba5e57e3fbc5ab8486ba18b98fb56aaf71c70fa0388",
+      "firstDifference": {
+        "line": 4,
+        "expected": " if p_intent is null or p_request_scope is null or not (",
+        "actual": " if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and knowledge_review_private.question_definition(p_intent) is not null and p_intent not in('place_address','place_opening_hours','place_address_and_hours') and p_request_scope in('sin"
+      }
+    },
+    {
+      "signature": "submit_grounded_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid,text)",
+      "aclUnchanged": true,
+      "ordinaryBodyMatches": true
+    }
+  ],
+  "verdict": "six known canonical body changes are outside the old normalizer; no arbitrary body/hash accepted",
+  "managedGoTrueProof": false
+}

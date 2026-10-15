@@ -1,0 +1,10 @@
+file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-canonical-place-sql-20261015/tests/integration/canonical-place-ask-sql/diagnostic-owned-pg.mjs:14
+   if(!nonceLine.test(source)||!sharedLine.test(source))throw Error('Unrecognized diagnostic bootstrap ownership anchors');
+                                                              ^
+
+Error: Unrecognized diagnostic bootstrap ownership anchors
+    at Object.bootstrap (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-canonical-place-sql-20261015/tests/integration/canonical-place-ask-sql/diagnostic-owned-pg.mjs:14:63)
+    at file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-canonical-place-sql-20261015/tests/integration/canonical-place-ask-sql/verify-diagnostic-resource-safety.mjs:11:22
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.8.2
