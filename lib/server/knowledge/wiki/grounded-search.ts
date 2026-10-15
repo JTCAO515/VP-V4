@@ -149,24 +149,6 @@ async function finalizeAnswer(
   const current = await buildPublishedWikiCorpus(scopedRpc, { city: input.city, scene, locale: input.locale });
   if (signal.aborted) return { kind: "cancelled", rounds: outcome.rounds, usage: outcome.usage };
   if (current.kind === "unavailable") return { kind: "unavailable", reason: current.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure" };
-  // A no-content proposal gets one bounded direct lookup of obligations,
-  // so complete eligible evidence cannot be refused just by model choice.
-  const lookup = corpusOutcome.entries.filter((entry) => {
-    const prov = corpusOutcome.provenance.get(entry.pageKey);
-    return entry.text.length < 4000 && definition.claims.some((claim) => prov
-      && originalSubjects.get(entry.pageKey) === claim.subjectId
-      && prov.predicate === claim.predicate && prov.objectId === claim.objectId);
-  });
-  // Reserve one match per obligation before extra sources; keep the original
-  // eight-citation bound even when a no-content proposal needs direct lookup.
-  const primary = definition.claims.flatMap((claim) => {
-    const match = lookup.find((entry) => {
-      const prov = corpusOutcome.provenance.get(entry.pageKey);
-      return prov && originalSubjects.get(entry.pageKey) === claim.subjectId
-        && prov.predicate === claim.predicate && prov.objectId === claim.objectId;
-    });
-    return match ? [match] : [];
-  });
   const stillCurrent = (citation: WikiSearchCitation): boolean => {
     const previous = corpusOutcome.entries.find((entry) => entry.pageKey === citation.pageKey);
     const now = current.entries.find((entry) => entry.pageKey === citation.pageKey);
@@ -202,6 +184,26 @@ async function finalizeAnswer(
         : `Unresolved published evidence variants: ${claim.objectId}.`);
     }
   }
+  // Filter original candidates by current eligibility and variant resolution
+  // before reserving obligation slots or applying the eight-citation bound.
+  // Withdrawn candidates must not consume the remaining evidence budget.
+  const lookup = corpusOutcome.entries.filter((entry) => {
+    const prov = corpusOutcome.provenance.get(entry.pageKey);
+    return entry.text.length < 4000 && !unresolved.has(entry.pageKey)
+      && stillCurrent({ pageKey: entry.pageKey, quote: entry.text }) && definition.claims.some((claim) => prov
+      && originalSubjects.get(entry.pageKey) === claim.subjectId
+      && prov.predicate === claim.predicate && prov.objectId === claim.objectId);
+  });
+  // Reserve one match per obligation before extra sources; keep the original
+  // eight-citation bound even when a no-content proposal needs direct lookup.
+  const primary = definition.claims.flatMap((claim) => {
+    const match = lookup.find((entry) => {
+      const prov = corpusOutcome.provenance.get(entry.pageKey);
+      return prov && originalSubjects.get(entry.pageKey) === claim.subjectId
+        && prov.predicate === claim.predicate && prov.objectId === claim.objectId;
+    });
+    return match ? [match] : [];
+  });
   const modelHasRequired = outcome.citations.some((citation) => {
     const prov = current.provenance.get(citation.pageKey);
     return stillCurrent(citation) && !unresolved.has(citation.pageKey) && definition.claims.some((claim) => prov

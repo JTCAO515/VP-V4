@@ -196,3 +196,16 @@ test('fallback does not grant new evidence to a persisted result after its own s
   const out=await runGroundedAiAssistJob('turn',rpc,input,{...deps(replacements),fetch:async()=>{throw Error('must not run');},contextRpc:async()=>({data:context,error:null})},signal());
   assert.equal(out.outcome.kind,'unavailable');
 });
+test('fallback filters eight withdrawn publications before capping so a ninth original current source answers', async () => {
+  const single={...input,intent:{intent:'payment_card_acceptance',requestScope:'single'}};
+  const original=Array.from({length:9},(_,i)=>({...statements[0],factId:`publication-${i}`,assertionId:`assertion-${i}`}));
+  const background={...statements[0],factId:'background-nine',assertionId:'background-nine-a',assertion:{...statements[0].assertion,subjectId:'other_subject'}};
+  let reads=0,models=0;
+  const d=deps([...original,background],answer([background]),async()=>read(++reads===1?[...original,background]:[original[8],background]));
+  const transport=d.fetch;
+  const out=await runGroundedWikiSearch(single,{...d,fetch:async(...args)=>{models++;return transport(...args);}},signal());
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'answered');assert.equal(out.summary,original[8].text);
+  assert.deepEqual(out.citations,[{pageKey:original[8].factId,quote:original[8].text}]);
+  assert.equal(out.evidence.required[0].refs[0].publicationId,original[8].assertionId);
+  assert.equal(reads,2);assert.equal(models,1);
+});
