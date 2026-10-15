@@ -1,0 +1,2 @@
+runtime [ { runtime: true } ]
+Seven fixed lifecycle registrations PASS; infrastructure/write-hooks unchanged.

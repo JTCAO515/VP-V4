@@ -1,0 +1,40 @@
+✔ registered lifecycle keeps original guards; unknown columns and source functions stay denied (2495.31775ms)
+✖ source erase strips new metadata, releases pending capacity and permanently fences late work (2665.884542ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5203.761833
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/lifecycle-current.test.mjs:17:1
+✖ source erase strips new metadata, releases pending capacity and permanently fences late work (2665.884542ms)
+  error: update or delete on table "users" violates foreign key constraint "model_budget_scopes_owner_id_fkey" on table "model_budget_scopes"
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:135)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/lifecycle-current.test.mjs:27:23)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 368,
+    severity: 'ERROR',
+    code: '23503',
+    detail: 'Key (id)=(58a7e49a-32c8-47a4-a2e5-0dc4d86dc6f0) is still referenced from table "model_budget_scopes".',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'model_budget_scopes',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'model_budget_scopes_owner_id_fkey',
+    file: 'ri_triggers.c',
+    line: '2624',
+    routine: 'ri_ReportViolation'
+  }

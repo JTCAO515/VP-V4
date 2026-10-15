@@ -1,0 +1,9 @@
+✔ Trip ServiceTask: full historical SQL, rollback, default gates and role ACL (2638.26ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2677.660917

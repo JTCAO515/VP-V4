@@ -1,0 +1,33 @@
+✔ registered lifecycle keeps original guards; unknown columns and source functions stay denied (2580.641792ms)
+✔ source erase strips new metadata, releases pending capacity and permanently fences late work (2764.030833ms)
+actual scoped source conflicts {"conversation":["SCOPED_EDIT_REFERENCE"],"turn":["ACTIVE_WORK","CROSS_TURN_REFERENCE","SCOPED_EDIT_REFERENCE"]}
+✔ actual original privacy graph reports the retained scoped producer references honestly (2431.59925ms)
+preupgrade lifecycle [ { conversation: true, turn: true } ]
+registry baseline [
+  {
+    signature: 'conversation_data_private.schema_supported_v1()',
+    source_hash: '236f8c22da3b7a93035c4b1758f2f25280d5137f2cb9e1aadecc5dcaa2839a02'
+  },
+  {
+    signature: 'conversation_data_private.sources_v1()',
+    source_hash: '27c19f5223b6fd5a0034ed29cab6912b7d43625bb4f27e542431f87f85b6f8c7'
+  },
+  {
+    signature: 'turn_data_private.schema_supported_v1()',
+    source_hash: '22a58d694c11726a04207df7acf09f4b2b03a558428930b7bb98fd8646578d09'
+  },
+  {
+    signature: 'turn_data_private.sources_v1()',
+    source_hash: 'dcc36222ad9b9e92438c6a1bb8d4ad16b2565e6018f8b88e083fbf7936cd567c'
+  }
+]
+✔ Trip ServiceTask: full historical SQL, rollback, default gates and role ACL (2417.498625ms)
+✔ ordinary owner → canonical goal → original worker candidate → exact original confirm → same-transaction capacity (2764.480917ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7816.256583

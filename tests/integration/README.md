@@ -14,7 +14,7 @@ written reason; an unclassified gated file fails `pnpm test:unit` (governance) a
 | --- | --- | --- |
 | `postgres` | Docker + pinned images (`--images`) | isolated, network-disabled PostgreSQL SQL/RLS suites |
 | `postgres-native` | `VP_WIKI_PG_BIN`, `VP_WIKI_PG_MODULE` | Wiki migrations/ACLs on native PostgreSQL |
-| `postgres-native-17` | the same variables, exact PostgreSQL 17 | resolved-subject qualification and original-role QA cancellation on isolated full-source snapshots |
+| `postgres-native-17` | caller-supplied PostgreSQL 17 binaries + `pg@8.13.1` via the same Wiki variables | resolved-subject qualification and original-role QA cancellation, then complete Trip ServiceTask suite including real nine-minute Proposal expiry |
 | `supabase-rls` | Docker + Supabase CLI | one disposable stack with all migrations: function EXECUTE allowlist, identity, profile/privacy RPC, RLS, Trip confirm/revise/reject/rollback (v2 protocol) |
 | `supabase-http-native` | Docker + Supabase CLI | real Auth → Next.js native routes → PostgreSQL |
 | `supabase-http-ops` | Docker + Supabase CLI | Ops review, knowledge publication/private source (34→35), service cases |
@@ -36,3 +36,10 @@ uses a private Unix-socket PostgreSQL fixture and synthetic Auth claims, not a r
 provider acceptance claim; its HTTP fixture runs independently without a database switch.
 
 To add a gated test: put its switch in a lane (or add a reasoned `EXCLUDED` entry) in the same PR.
+
+The native-17 Trip step invokes `service-task-trip/run-integration.mjs`. Its registry lists every
+Trip test explicitly; the runner maps the Wiki variables to `VP_TRIP_PG_BIN` / `VP_TRIP_PG_MODULE`
+and enables `VP_TRIP_EXPIRY_TEST=1`. Missing dependencies, unknown classification, failures and skips
+fail the lane. The existing Wiki lane and subject-binding step remain separate and unchanged.
+Native fixtures use private Unix sockets and synthetic SQL claims; these checks do not prove
+GoTrue, provider, deployment or user acceptance. The default integration suite remains incomplete.
