@@ -132,9 +132,9 @@ end $$;
 
 create function subscription_development.read_owner_v1(own uuid) returns jsonb
 language plpgsql security invoker set search_path='' as $$
-declare r record; n integer; body jsonb; state text; stamp timestamptz:=clock_timestamp();
+declare r record; n integer; body jsonb; state text; lifetime integer; stamp timestamptz:=clock_timestamp();
 begin
- body:=jsonb_build_object('schemaVersion','subscription-entitlement/1','sourceEnvironment',null,'localTest',false,'ownerId',null,'catalogVersion',3,'policyVersion','subscription-development-policy/1','state','unavailable','period',null,'remainingCapacity',null,'purchaseEnabled',false,'runtimeCapacityEnabled',false);
+ body:=jsonb_build_object('schemaVersion','subscription-entitlement/1','sourceEnvironment',null,'localTest',false,'ownerId',null,'catalogVersion',3,'policyVersion','subscription-development-policy/1','checkedAt',null,'lifetimeMs',0,'state','unavailable','period',null,'remainingCapacity',null,'purchaseEnabled',false,'runtimeCapacityEnabled',false);
  if own is null then return body; end if;
  select count(*) into n from subscription_development.periods p join subscription_development.families f using(environment,original_transaction_id)
   where f.owner_id=own and not f.erased and p.purchase_at<=stamp and p.expires_at>stamp and p.revoked_at is null;
@@ -142,11 +142,12 @@ begin
  select p.*,f.product_id,f.subscription_group_id into r from subscription_development.periods p join subscription_development.families f using(environment,original_transaction_id)
   where f.owner_id=own and not f.erased
   order by (p.purchase_at<=stamp and p.expires_at>stamp and p.revoked_at is null) desc,p.purchase_at desc,p.transaction_id desc limit 1;
- if not found then return body||jsonb_build_object('sourceEnvironment','Sandbox','ownerId',own,'state','none'); end if;
+ if not found then return body||jsonb_build_object('sourceEnvironment','Sandbox','ownerId',own,'checkedAt',to_char(stamp at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'state','none'); end if;
  if r.purchase_at>stamp then return body||jsonb_build_object('state','reconciliation_required'); end if;
  state:=case when r.revoked_at is not null then 'revoked' when r.expires_at<=stamp then 'expired' else 'active' end;
- if state='active' and r.checked_at<stamp-interval '5 minutes' then return body||jsonb_build_object('state','reconciliation_required'); end if;
- return body||jsonb_build_object('sourceEnvironment','Sandbox','ownerId',own,'state',state,'period',jsonb_build_object(
+ lifetime:=case when state='active' then greatest(0,floor(least(300000,extract(epoch from r.checked_at+interval '5 minutes'-stamp)*1000,extract(epoch from r.expires_at-stamp)*1000)))::integer else 0 end;
+ if state='active' and lifetime<=0 then return body||jsonb_build_object('state','reconciliation_required'); end if;
+ return body||jsonb_build_object('sourceEnvironment','Sandbox','ownerId',own,'checkedAt',to_char(r.checked_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'lifetimeMs',lifetime,'state',state,'period',jsonb_build_object(
   'transactionId',r.transaction_id,'originalTransactionId',r.original_transaction_id,'productId',r.product_id,'subscriptionGroupId',r.subscription_group_id,
   'purchaseAt',to_char(r.purchase_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
   'expiresAt',to_char(r.expires_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),

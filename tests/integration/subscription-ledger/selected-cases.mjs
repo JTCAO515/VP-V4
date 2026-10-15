@@ -39,7 +39,7 @@ export async function run(t){
   await t.test('durable original period, exact replay, restart adapter and owner projection',async()=>{
    const first=await apply(original,0);assert.equal(first.epoch,1);assert.equal(first.replayed,false);
    assert.equal((await apply(original,1)).replayed,true);
-   assert.equal((await read(owner)).state,'active');assert.ok(parseSnapshot(await read(owner)));
+   const snapshot=await read(owner);assert.equal(snapshot.state,'active');assert.ok(parseSnapshot(snapshot));assert.ok(snapshot.lifetimeMs>0&&snapshot.lifetimeMs<=240000);assert.ok(snapshot.checkedAt);assert.ok(snapshot.lifetimeMs<=Date.parse(snapshot.period.expiresAt)-Date.now()+50);
    const nextAdapter=developmentLedger(query);assert.equal((await nextAdapter.read(owner)).period.descriptorId,'Sandbox:2001');
    assert.equal((await read(other)).state,'none');
   });
@@ -71,6 +71,17 @@ export async function run(t){
    assert.equal((await apply(late,epoch)).epoch,3);
    assert.equal((await db.query("select purchase_at from subscription_development.periods where transaction_id='2001'")).rows[0].purchase_at.toISOString(),original.purchaseAt);
    assert.equal((await db.query("select count(*)::int as n from subscription_development.periods where original_transaction_id='2001'")).rows[0].n,2);
+  });
+  await t.test('distinct verified renewal creates one next descriptor; restore/refund never replenishes it',async()=>{
+   const own='33333333-3333-4333-8333-333333333333';const stamp=Date.now()-10;
+   const initial=raw('11001','11001',own,{purchaseAt:new Date(stamp-600000).toISOString(),expiresAt:new Date(stamp-300000).toISOString()});
+   const renewal=raw('11002','11001',own,{purchaseAt:initial.expiresAt,expiresAt:new Date(stamp+300000).toISOString()});
+   await apply(initial,0);assert.equal((await apply(renewal,1)).epoch,2);
+   assert.equal((await apply(renewal,2)).replayed,true);
+   const revoked={...initial,signedAt:new Date(Date.now()-100).toISOString(),checkedAt:new Date(Date.now()-5).toISOString(),revokedAt:new Date(Date.now()-200).toISOString()};revoked.receiptDigest=digest(revoked);
+   await apply(revoked,2);const projected=await read(own);assert.equal(projected.state,'active');assert.equal(projected.period.descriptorId,'Sandbox:11002');assert.equal(projected.remainingCapacity,null);
+   const replay=await apply(renewal,3);assert.equal(replay.epoch,3);assert.equal(replay.descriptorId,'Sandbox:11002');
+   const periods=await db.query("select count(*)::int as n from subscription_development.periods where original_transaction_id='11001'");assert.equal(periods.rows[0].n,2);
   });
   await t.test('expiry is server time and unknown/future state never active',async()=>{
    const p=raw('5001','5001','11111111-1111-4111-8111-111111111111',{purchaseAt:new Date(Date.now()-600000).toISOString(),expiresAt:new Date(Date.now()-1000).toISOString()});
@@ -113,6 +124,11 @@ export async function run(t){
      for(const call of ["read_owner_v1(null)","apply_period_v1('{}',0)","export_owner_v1(null,null)","erase_owner_v1(null)"]) await assert.rejects(db.query(`select subscription_development.${call}`),/permission denied/);
     }finally{await db.query('reset role');}
    }
+   for(const role of ['anon','authenticated','service_role']){
+    const permissions=await db.query("select has_schema_privilege($1,'subscription_development','USAGE') as usage, (select bool_or(has_table_privilege($1,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')) from pg_class c where c.relnamespace='subscription_development'::regnamespace and c.relkind='r') as tables, (select bool_or(has_function_privilege($1,p.oid,'EXECUTE')) from pg_proc p where p.pronamespace='subscription_development'::regnamespace) as functions",[role]);
+    assert.deepEqual(permissions.rows[0],{usage:false,tables:false,functions:false});
+   }
+   const rls=await db.query("select relrowsecurity,relforcerowsecurity from pg_class where relnamespace='subscription_development'::regnamespace and relkind='r'");assert.equal(rls.rows.length,3);assert.ok(rls.rows.every(r=>r.relrowsecurity&&r.relforcerowsecurity));
    const functions=await db.query("select proname,prosecdef,has_function_privilege('service_role',oid,'EXECUTE') as executable from pg_proc where pronamespace='subscription_development'::regnamespace");
    assert.equal(functions.rows.length,4);assert.ok(functions.rows.every(r=>!r.prosecdef&&!r.executable));
   });
@@ -128,7 +144,8 @@ export async function run(t){
   await t.test('freshness expiration and ambiguous active families conceal private period',async()=>{
    const own='22222222-2222-4222-8222-222222222222';const p=raw('10001','10001',own,{purchaseAt:new Date(Date.now()-1200000).toISOString(),signedAt:new Date(Date.now()-900000).toISOString()});await apply(p,0);
    await db.query("update subscription_development.periods set checked_at=clock_timestamp()-interval '10 minutes' where transaction_id='10001'");
-   const stale=await read(own);assert.equal(stale.state,'reconciliation_required');assert.equal(stale.period,null);assert.equal(stale.ownerId,null);
+   const stale=await read(own);assert.equal(stale.checkedAt,null);assert.equal(stale.lifetimeMs,0);assert.equal(stale.state,'reconciliation_required');assert.equal(stale.period,null);assert.equal(stale.ownerId,null);
+   await db.query("update subscription_development.periods set checked_at=clock_timestamp()-interval '299 seconds' where transaction_id='10001'");const short=await read(own);assert.equal(short.state,'active');assert.ok(short.lifetimeMs>0&&short.lifetimeMs<=1000);
    await apply(raw('10002','10002',own),0);const ambiguous=await read(own);assert.equal(ambiguous.state,'reconciliation_required');assert.equal(ambiguous.period,null);
   });
   await t.test('private dump/restore retains erased family, revocation and epochs without adding role grants',async()=>{
