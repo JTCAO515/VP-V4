@@ -187,3 +187,27 @@ Original output SHA-256: `6ef37bbdf6456c5d59627a6d18ba7bc78abdc2b026c8ef90e0b5bf
 VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
 AI Core and VPJ documentation baseline passed.
 ```
+
+## Existing locale/presentation contract compatibility
+
+The old exact-origin-enum snapshot failed because this feature adds an explicit recovered origin. The updated check removes only that new case before comparing all original enum bytes against accepted QA. Every prior source/AI/sample label remains byte-identical; the new recovered source labels are now directly executed in both languages. Product source is unchanged from ba42c895.
+
+- `tests/contract/ios005-expression-ui/verify.py` SHA-256: `f65ee58c4556e21e9a60ca2698cd43e8acae83c294f458e8b4b260d47dfb568b`
+
+- `tests/contract/ios005-expression-ui/verify_locale.py` SHA-256: `d83213398cc12b8bb7c385a71e4a45f5b85f2b6c2e88c708131c2db055a11742`
+
+Command: `python3 tests/contract/ios005-expression-ui/verify_locale.py`
+
+```text
+PASS: actual Expression/Sample selectors in en and zh-Hans
+PASS: dynamic payload, fixed fixture factory, authority/readiness/history guard source unchanged
+```
+
+Command: `python3 tests/contract/ios005-expression-ui/verify.py`
+
+```text
+PASS: explicit sample-origin bilingual labels; real recent/saved AI labels preserved
+PASS: actual phrase/presentation readiness and actor/consent/current-result negative predicates
+PASS: actual SwiftUI card, DEBUG sample and shared-state expression wrapper typecheck against installed iOS Simulator SDK (no Simulator boot or app build)
+PASS: full changed view syntax parse; runtime UI/provider/device remains UNRUN
+```
