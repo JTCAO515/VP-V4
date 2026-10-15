@@ -1,0 +1,11 @@
+import {createHash} from 'node:crypto';
+export const ids={thread:'11111111-1111-4111-8111-111111111111',turn:'22222222-2222-4222-8222-222222222222',op:'33333333-3333-4333-8333-333333333333',policy:'44444444-4444-4444-8444-444444444444',task:'55555555-5555-4555-8555-555555555555',trip:'66666666-6666-4666-8666-666666666666',poi:'77777777-7777-4777-8777-777777777777',ref:'88888888-8888-4888-8888-888888888888',conversation:'99999999-9999-4999-8999-999999999999',message:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',goal:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'};
+export const expectation={tripId:ids.trip,headVersion:0,canonicalPoiId:ids.poi,provider:'amap',providerPoiId:'ProviderCaseA',mappingDigest:'a'.repeat(64),contextDigest:'b'.repeat(64),referenceId:ids.ref,locale:'en'};
+export const taskRequest={schemaVersion:'canonical-place-ask/1',submission:{threadId:ids.thread,turnId:ids.turn,idempotencyKey:ids.op,policyId:ids.policy,locale:'en',text:'  What are the selected gallery hours?\n',serviceTask:{id:ids.task,scopeVersion:1,relationship:'new_goal',parentTurnId:null}},expectation};
+export const assistantRequest={schemaVersion:'canonical-place-ask/1',submission:{conversationId:ids.conversation,messageId:ids.message,idempotencyKey:ids.op,policyId:ids.policy,locale:'en',text:'Original question',relationship:'follow_up',goalId:ids.goal,expectedGoalVersion:1,taskId:null,parentMessageId:ids.message,turnId:null},expectation};
+export const taskOperation={operationId:ids.op,scopeKind:'thread',scopeId:ids.thread,messageId:null,turnId:ids.turn};
+export const assistantOperation={operationId:ids.op,scopeKind:'conversation',scopeId:ids.conversation,messageId:ids.message,turnId:null};
+export function receipt(bytes=JSON.stringify(taskRequest)){
+ return {schemaVersion:'canonical-place-ask/1',kind:'accepted',operation:taskOperation,originalReceipt:{version:3,kind:'accepted',turnId:ids.turn,reused:false,serviceTaskId:ids.task,scopeVersion:1,relationship:'new_goal',parentTurnId:null},binding:{turnId:ids.turn,serviceTaskId:ids.task,goalId:null,goalVersion:null,requestDigest:createHash('sha256').update(bytes,'utf8').digest('hex'),expectation},readyForProvider:false,currentEligibilityRequiresRead:true};
+}
+export const clone=v=>structuredClone(v);
