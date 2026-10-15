@@ -1,5 +1,7 @@
 # IOS-004 Web source and integration wire
 
+Update: final root/prepare integration is `ROOT-INTEGRATION.md`. The optional addressBinding candidate below is historical and superseded; do not mount it as the final product.
+
 Owned implementation: `components/trip-address/**`. This file is integration evidence for Main, not a second project handoff. Shared files remain untouched.
 
 ## Read port (Main/backend must agree before mounting)

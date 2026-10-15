@@ -1,0 +1,28 @@
+✔ current source and manual addition retain separate provenance and original bytes (1.051458ms)
+✔ country/title do not grant Chinese observation and ambiguous lines stay unknown (0.432791ms)
+✔ stale versions/items, missing evidence, revoked, unmatched and expired sources fail closed (0.393958ms)
+✔ source transport failure differs from a successful empty/missing read (0.119ms)
+✔ late response, route/actor change and unmount cannot publish into successor read (0.504083ms)
+✔ prepare uses only original versioned patch, preserves bytes, and never confirms or retries unknown ACK (0.378667ms)
+✔ online read binds exact item/version and preserves cookie GET/no-store/abort without model egress (10.561875ms)
+✔ real Cookie prepare POST preserves exact body then reads exact receipt id without confirm (12.853625ms)
+✔ unknown POST recovery only GETs and never clears original bytes or fabricates receipt on empty read (0.53325ms)
+✔ original pending validation rejects wrong receipt/revision/base/digest/extra ops/forged after (0.194875ms)
+✔ actor/route replacement after await cannot adopt a POST receipt or pending diff (0.182ms)
+✔ verified claims create ephemeral sub/session/generation root; unknown and late claims cannot restore it (0.411375ms)
+✔ claims expiry and 8s unknown claims timeout invalidate without late restore (0.386584ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (3.619083ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (13.022792ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (1.340125ms)
+✔ real Section starts fail closed until verified claims, without rendering stale item facts (0.351792ms)
+✔ manual value preserves supplied bytes and cannot acquire verified provenance (0.851125ms)
+✔ bounded address input rejects blank, controls, malformed Unicode and overflow without clipping (0.160917ms)
+✔ Chinese text observation uses only real address content and leaves ambiguous scripts unknown (0.144625ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 270.409833
