@@ -297,7 +297,7 @@ export function executionMatrix(lanes) {
     || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
     || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
   return { include: lanes.flatMap(lane => {
-    const count = lane === "supabase-http-native" ? 8 : 1;
+    const count = lane === "supabase-http-native" ? 12 : 1;
     return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
       name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
   }) };
@@ -306,7 +306,7 @@ export function executionSteps(lane, shard = null) {
   if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
   const steps = LANES[lane].steps;
   if (shard === null) return steps;
-  const count = lane === "supabase-http-native" ? 8 : 1;
+  const count = lane === "supabase-http-native" ? 12 : 1;
   const match = /^([1-9][0-9]*)\/([1-9][0-9]*)$/.exec(shard);
   if (!match || Number(match[2]) !== count || Number(match[1]) > count)
     throw Error("Invalid DB lane shard");
