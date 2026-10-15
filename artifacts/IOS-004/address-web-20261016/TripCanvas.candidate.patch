@@ -20,7 +20,16 @@
    const [locale, setLocale] = useState<Locale>("zh");
    const [data, setData] = useState<TripRead | null>(null);
    const [pendingProposal, setPendingProposal] = useState<PendingProposalRead | null>(null);
-@@ -201,6 +205,21 @@
+@@ -32,6 +36,8 @@
+   const [notice, setNotice] = useState<Notice | null>(null);
+   const confirmKeys = useRef(new Map<string, string>());
+   const requestGeneration = useRef(0);
++  const addressFence = useRef({ actorKey: addressBinding?.actorKey, tripId, version: data?.trip.headVersion });
++  addressFence.current = { actorKey: addressBinding?.actorKey, tripId, version: data?.trip.headVersion };
+   const copy = tripCanvasCopy[locale];
+
+   useEffect(() => {
+@@ -201,6 +207,23 @@
      <p className={styles.notice}>{copy.rollbackNotice}</p>
      <TripComparisonResult tripId={tripId} tripVersion={data.trip.headVersion} locale={locale} />
      <TripDirectionsResult tripId={tripId} tripVersion={data.trip.headVersion} locale={locale} bindBlocked={mutation !== null || pendingProposal !== null || pendingRollback !== null || initialProposalReference !== undefined} onProposalCreated={proposal => { setPendingProposal(proposal); setDraftTitle(proposal.proposal.titleDiff.after); if (proposal.proposal.patch) setManualPatch(JSON.stringify(proposal.proposal.patch, null, 2)); }} />
@@ -30,10 +39,12 @@
 +        <h2>{item.title}</h2>
 +        <TripItemAddress context={context} locale={locale} blocked={addressBinding.blocked || mutation !== null || pendingProposal !== null || pendingRollback !== null || initialProposalReference !== undefined} settledEpoch={addressBinding.settledEpoch} read={addressBinding.read} prepare={async request => {
 +          const generation = requestGeneration.current;
++          const current = () => generation === requestGeneration.current && addressFence.current.actorKey === request.context.actorKey && addressFence.current.tripId === request.context.tripId && addressFence.current.version === request.context.tripVersion;
++          if (!current()) throw new Error("ADDRESS_CONTEXT_CHANGED");
 +          await addressBinding.prepare(request);
-+          if (generation !== requestGeneration.current) return;
++          if (!current()) throw new Error("ADDRESS_CONTEXT_CHANGED");
 +          const pending = await readPendingProposal(generation);
-+          if (generation !== requestGeneration.current || !pending || pending.trip.id !== tripId || pending.proposal.baseTripVersion !== request.context.tripVersion || !pending.proposal.digest) throw new Error("ADDRESS_PROPOSAL_READ_UNAVAILABLE");
++          if (!current() || !pending || pending.trip.id !== tripId || pending.proposal.baseTripVersion !== request.context.tripVersion || !pending.proposal.digest) throw new Error("ADDRESS_PROPOSAL_READ_UNAVAILABLE");
 +          setPendingProposal(pending);
 +        }} />
 +        {pendingProposal ? <AddressProposalDiff pending={pendingProposal} context={context} locale={locale} /> : null}
