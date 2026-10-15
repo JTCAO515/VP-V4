@@ -1,0 +1,7 @@
+after conversation_data_private.schema_supported_v1() true
+after turn_data_private.schema_supported_v1() false
+after profile_data_private.schema_v1() false
+after result_data_private.schema_supported_v1() false
+after turn_data_private.runtime_supported_v1() false
+runtime [ { runtime: false } ]
+Seven fixed lifecycle registrations PASS; infrastructure/write-hooks unchanged.

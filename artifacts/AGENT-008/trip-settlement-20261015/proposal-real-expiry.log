@@ -1,0 +1,10 @@
+REAL_PROPOSAL_EXPIRY_WAIT 2026-10-15T05:08:16.869Z private PostgreSQL only; no clock/trigger mutation
+✔ original immutable Proposal reaches real expiry and releases without Trip settlement (543132.993875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 543178.59525

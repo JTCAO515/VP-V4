@@ -1,0 +1,70 @@
+{
+  "sourceHead": "c8939650effb47bb09ff01b283520111e1692b84",
+  "acceptedQABase": "f60c024441ec87e2dfe910c925a10119d99f62b4",
+  "migration": "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql",
+  "migrationSHA256": "cdbe97c1931cac1a077ae3f898377cb6ee552dada66a23a2490a9565e9134021",
+  "checks": [
+    {
+      "log": "c893-final-native.log",
+      "result": "PASS",
+      "tests": 20,
+      "skip": 0,
+      "scope": "new Trip, lifecycle, roles, real locks, known/unknown cost; private native PG17.11 UTC"
+    },
+    {
+      "log": "f60-related-legacy-final.log",
+      "result": "PASS",
+      "tests": 59,
+      "skip": 0,
+      "scope": "original complete text/scoped SQL after public text lock fix"
+    },
+    {
+      "log": "c893-related-scoped-final.log",
+      "result": "PASS",
+      "tests": 25,
+      "skip": 0,
+      "scope": "original scoped SQL after new restore fence"
+    },
+    {
+      "log": "proposal-real-expiry.log",
+      "result": "PASS",
+      "tests": 1,
+      "skip": 0,
+      "scope": "original immutable Proposal true nine-minute wall-clock expiry; unchanged expiry semantics reused"
+    },
+    {
+      "log": "final-owned-privacy-contract.log",
+      "result": "PASS",
+      "tests": 90,
+      "skip": 0
+    },
+    {
+      "log": "affected-full-contract.log",
+      "result": "PASS",
+      "tests": 103,
+      "skip": 0,
+      "overlapNote": "includes shared privacy tests; do not sum with the 90-test suite"
+    },
+    {
+      "log": "final-typecheck.log",
+      "result": "PASS"
+    },
+    {
+      "log": "final-lint.log",
+      "result": "PASS"
+    },
+    {
+      "log": "final-docs.log",
+      "result": "PASS"
+    }
+  ],
+  "boundaries": {
+    "newTripRoleFixtures": "no extra GRANT; real SET ROLE authenticated/service_role SQL claims only",
+    "legacyD2Export": "original local C0 fixture explicit privacy_core_export_v1 GRANT and opaque policy key_id label, before-GRANT deny asserted; no actual key/artifact/encryption or production permission proof",
+    "targetPostgreSQL17_6GoTrueProviderUI": "UNRUN; CI/target evidence separate",
+    "accountDelete": "baseline model_budget_scopes_owner_id_fkey blocks physical account deletion; exact failed transaction rollback retained; no new FK/ownership bypass",
+    "billing": "development only, flags default off/record-only; no real provider/capacity/billing enablement",
+    "parentIssue227": "remains open for broader unresolved implementation/economics/client/policy scope"
+  },
+  "originalFailures": "retained in named chronological logs and raw .gz where display whitespace was normalized"
+}

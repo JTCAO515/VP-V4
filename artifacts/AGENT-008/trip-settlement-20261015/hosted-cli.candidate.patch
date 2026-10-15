@@ -1,0 +1,23 @@
+--- a/lib/server/jobs/run-hosted-text-worker.mjs
++++ b/lib/server/jobs/run-hosted-text-worker.mjs
+@@ -22,8 +22,11 @@
+  const rawProfile=env.VISEPANDA_HOSTED_WORKER_PROFILE;
+  if(typeof rawProfile!=='string' || Buffer.byteLength(rawProfile)<2 || Buffer.byteLength(rawProfile)>16384)throw Error('unavailable');
+  const scopedEdit=env.VISEPANDA_HOSTED_SCOPED_EDIT_WORKER==='true';
++ const tripServiceTask=env.VISEPANDA_HOSTED_TRIP_SERVICE_TASK_WORKER==='true';
++ if(env.VISEPANDA_HOSTED_TRIP_SERVICE_TASK_WORKER!==undefined&&!['true','false'].includes(env.VISEPANDA_HOSTED_TRIP_SERVICE_TASK_WORKER)||tripServiceTask&&scopedEdit)throw Error('unavailable');
+  if(env.VISEPANDA_HOSTED_SCOPED_EDIT_WORKER!==undefined&&!['true','false'].includes(env.VISEPANDA_HOSTED_SCOPED_EDIT_WORKER))throw Error('unavailable');
+- const scopedProfile=scopedEdit?parseScopedHostedProfile(JSON.parse(rawProfile)):null;
++ const scopedProfile=scopedEdit||tripServiceTask?parseScopedHostedProfile(JSON.parse(rawProfile)):null;
++ if(scopedProfile&&(scopedProfile.schemaVersion==='vpj10-hosted-trip-service-task/1')!==tripServiceTask)throw Error('unavailable');
+  const profile=scopedProfile?scopedProfile.loop:parseHostedWorkerProfile(JSON.parse(rawProfile));
+  const databaseUrl=getHostedWorkerDatabaseTarget(profile,env.VISEPANDA_QA_SUPABASE_PROJECT_REF);
+  const qaTarget=profile.schemaVersion==='vpj07-hosted-text-worker/4'?requireQaProfileTarget(profile,env.VISEPANDA_QA_SUPABASE_PROJECT_REF):null;
+@@ -87,6 +90,7 @@
+   requireInitialDisabled:env.VISEPANDA_HOSTED_WORKER_SECRET_MODE==='files',
+   planningEnabled:planning,amapCredential:()=>amapKey,
+   ...(scopedEdit?{scopedEditEnabled:true}:{}),
++  ...(tripServiceTask?{tripServiceTaskEnabled:true}:{}),
+   workerCredential:()=>workerKey,providerCredential:()=>providerKey,
+   onHeartbeat:(ok,value)=>{if(ok){lastOk=Date.now();enabled=value;}},
+   journal:{

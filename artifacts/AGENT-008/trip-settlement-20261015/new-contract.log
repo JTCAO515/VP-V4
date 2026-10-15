@@ -1,0 +1,10 @@
+✔ explicit versioned Trip intent is closed; legacy ask/manual retain their meaning (0.648875ms)
+✔ admission uses authenticated SQL source validation and performs one call; unknown ACK never retries (0.339334ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74.893084

@@ -1,0 +1,37 @@
+✔ explicit versioned Trip intent is closed; legacy ask/manual retain their meaning (0.771084ms)
+✔ admission uses authenticated SQL source validation and performs one call; unknown ACK never retries (0.413542ms)
+✔ add reuses a real current item, generates server-bound ID and has no invented time (7.111125ms)
+✔ add rejects item-only scope, missing source, arbitrary title/POI and id injection (0.172958ms)
+✔ replace/remove produce actual before-after effects while preserving locked object (0.748208ms)
+✔ remove followed by a manual edit uses original surviving selection only (1.024333ms)
+✔ replace/remove cannot alter locked/fixed/unselected objects (0.121042ms)
+✔ read-only candidate receipt never contains original Proposal confirmation authority (0.405958ms)
+✔ select requires independent mutation identity and never accepts a client patch (0.094625ms)
+✔ operation polling invokes only the read RPC and cannot create a Proposal (0.233333ms)
+✔ durable exact declined receipt is a result, distinct from cancellation, Proposal rejection and unknown (6.066833ms)
+✔ stored rollback target retains exact sparse manualOrder and historic array order (1.724916ms)
+✔ closed request rejects authority, model patch, ambiguous operation and invalid time (0.84775ms)
+✔ selection rejects missing/duplicate IDs and snapshot mismatch (0.74625ms)
+✔ direct time edit affects selected only, explicit null removes time (5.388417ms)
+✔ manual move preserves untouched fields and relative order through natural shift (0.224292ms)
+✔ locked and fixed items are immutable even if explicitly selected (0.189541ms)
+✔ sorting permutes selected slots and persists only moved item order (0.855084ms)
+✔ invalid order cannot touch unselected slots or omit/add/duplicate IDs (0.216ms)
+✔ general patch cannot rename Trip/day, remove unselected, or add outside selected days (0.259291ms)
+✔ time edits preserve existing manualOrder (0.282459ms)
+✔ draft emits a real order patch from reordered same-day objects (0.181167ms)
+✔ context validates TTL, exact ordered IDs, fixed provenance and closed metadata (0.197708ms)
+✔ context service binds exactly the requested real base and passes explicit bindings (0.333541ms)
+✔ submit ACK requires original immutable mutation and matching exact receipt (0.495542ms)
+✔ original Proposal proof rejects revision/digest/base/diff/expiry/stale substitutions (0.485625ms)
+✔ missing operation is unknown, never proof of an unexecuted or cancelled write (0.048917ms)
+✔ abandon fences unsubmitted mutation but does not undo a committed Proposal (0.372792ms)
+✔ retry reads the original already-applied Proposal operation without reopening pending or writing again (0.529375ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.358584
