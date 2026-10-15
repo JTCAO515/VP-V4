@@ -1,0 +1,81 @@
+✔ claimed answered cannot hide an unresolved required claim or add free prose (11.028958ms)
+✔ complete OPS_CONFLICT cannot display succeeded (0.702958ms)
+✔ zh: complete multiple obligations cannot be refused by a model no-content assertion (0.379209ms)
+✔ en: complete multiple obligations cannot be refused by a model no-content assertion (0.244708ms)
+✔ unknown fact (0.292625ms)
+✔ wrong quote (0.203625ms)
+✔ wrong subject cannot satisfy an exact required triple (0.234542ms)
+✔ display recheck excludes expired evidence (0.19075ms)
+✔ display recheck excludes source-revoked evidence (0.516292ms)
+✔ display recheck excludes missing evidence (0.209041ms)
+✔ display recheck excludes wrong-scope evidence (0.157ms)
+✔ different wording for one triple is not a contradiction classifier (0.17ms)
+✔ unlocalized model disagreement retains reliable statements with explicit uncertainty and no free model conflict prose (0.288625ms)
+✔ same fact with two agreeing published evidence chains stays answerable (0.143583ms)
+✔ conditions and exclusions cannot be removed by model summary or quote (0.194625ms)
+✔ completion error: no successful display, one model call and one completion only (0.189042ms)
+✔ completion throw: no successful display, one model call and one completion only (0.118375ms)
+✔ completion unknown: no successful display, one model call and one completion only (0.121875ms)
+✔ completion wrong job: no successful display, one model call and one completion only (0.097834ms)
+✔ completion wrong status: no successful display, one model call and one completion only (0.1485ms)
+✔ completion cancelled: no successful display, one model call and one completion only (0.099791ms)
+✔ explicit receipt succeeds; a subsequent done poll does not run the model again (0.324333ms)
+✔ cancellation after model reply never completes successfully (0.232875ms)
+✔ done answer is rechecked after source withdrawal without a new model or completion (0.184584ms)
+✔ done legacy invented summary is replaced with current evidence text without running the model (0.175708ms)
+✔ unknown completion followed by a server pending poll does not repeat model or complete (0.18ms)
+✔ long canonical statements keep every condition and exclusion within eight whole citation entries (0.20325ms)
+✔ bounded direct lookup reserves one result per obligation before repeated supporting sources (0.163292ms)
+✔ malformed persisted answer is failed without model or completing (0.263375ms)
+✔ explicit first-party resolved place subject with complete required facts answers; missing subject remains unavailable (0.399709ms)
+✔ resolved place partial answer retains reliable claim and names the missing obligation (0.112541ms)
+✖ a valid background citation cannot hide complete exact obligations from bounded fallback (0.51775ms)
+✖ model omission of a current place evidence variant cannot assert full coverage (0.180541ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 31
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 105.212083
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/result.test.mjs:158:1
+✖ a valid background citation cannot hide complete exact obligations from bounded fallback (0.51775ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'unavailable'
+  - 'answered'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/result.test.mjs:162:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unavailable',
+    expected: 'answered',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/contract/agent-grounded-result/result.test.mjs:164:1
+✖ model omission of a current place evidence variant cannot assert full coverage (0.180541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'answered'
+  - 'partial'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/result.test.mjs:170:44)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'answered',
+    expected: 'partial',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
