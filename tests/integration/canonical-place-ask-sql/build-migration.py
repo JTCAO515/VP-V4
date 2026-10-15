@@ -17,7 +17,7 @@ pre="""-- AGENT-005 canonical Place Ask; ordinary original Task admission and on
 pre+=guard('before')
 pre+="do $absent$begin\n if exists(select 1 from pg_attribute where attrelid='turn_private.grounded_turns'::regclass and attname='selected_place_request' and not attisdropped) then raise exception 'CANONICAL_PLACE_SLOT_ALREADY_EXISTS';end if;\n"
 pre+=" if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname||'.'||p.proname=any(array["+','.join("'"+x+"'" for x in new)+"])) then raise exception 'CANONICAL_PLACE_PRIVATE_FUNCTION_ALREADY_EXISTS';end if;\nend $absent$;\n"
-sql=pre+'\n'.join((r/f).read_text() for f in parts)+'\n'+'\n'.join(p.read_text() for p in sorted((r/'after').glob('*.sql')))+'\n'+guard('after')
+sql=pre+(r/'auth-only-acl.sql').read_text()+'\n'.join((r/f).read_text() for f in parts)+'\n'+'\n'.join(p.read_text() for p in sorted((r/'after').glob('*.sql')))+'\n'+guard('after')
 sql+=(r/'trip-failure-diagnostic.sql').read_text()
 
 p=Path('supabase/migrations/20261015083120_agent005_canonical_place_ask.sql');assert p.exists();p.write_text(sql);print('AUTHORED_PRODUCT_MIGRATION',len(sql.encode()),'pinned existing functions',len(pins),'authored changes',sum(p['beforeMd5']!=p['afterMd5'] for p in pins),'new private',len(new))

@@ -1,0 +1,64 @@
+{
+  "public.confirm_and_apply_trip_proposal(uuid,text,text)": {
+    "source": "1103f421e240cb50f45d603b93e4b9cb4363ff0efa66aa1bc694b0d34014c3ee",
+    "definition": "fd5bfbca0bbc8116d3c21df4e1577144ff5879454d18e3237710d270ca2e7f52",
+    "owner": "postgres",
+    "secdef": true,
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=public",
+      "TimeZone=UTC"
+    ],
+    "kind": "f",
+    "language": "plpgsql"
+  },
+  "public.create_trip_proposal_patch(uuid,jsonb)": {
+    "source": "b07a3697dce2d77dc6066c14441e1ffcadb034d1b158014d23ff1f81cfc1a4b3",
+    "definition": "554cc86ac4b71f00f750f4e617cac73dbf2ded0dd3bff5f4643274f285256542",
+    "owner": "postgres",
+    "secdef": true,
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=pg_catalog, public, pg_temp"
+    ],
+    "kind": "f",
+    "language": "plpgsql"
+  },
+  "public.native_session_v2(text,uuid)": {
+    "source": "213e2e29b3d9eac1a73dd7bbf5afde3eb0b7de1a2d47d5073856ba3b8cded389",
+    "definition": "e6d68643eda3d65c6c1980e7599009d581d722554c22adc6b76df4208617851f",
+    "owner": "postgres",
+    "secdef": false,
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "kind": "f",
+    "language": "sql"
+  },
+  "public.read_trip_proposal_v2(uuid)": {
+    "source": "6a7fec990eef1e980d22ae28b73f85d0ee2eae1119c1cc9f9de10c04602176ab",
+    "definition": "589cb8a0957e780fd0652fac99b97f402b6b08de20d0acabbca7e289d118b5f9",
+    "owner": "postgres",
+    "secdef": false,
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=\"\"",
+      "TimeZone=UTC"
+    ],
+    "kind": "f",
+    "language": "sql"
+  },
+  "public.reject_trip_proposal_v2(uuid)": {
+    "source": "e9eacb99ca1a23078a6f1be9cdf0444c73edd88213e15f7881aa66afe39005d7",
+    "definition": "6a92a7d8cfcec91f863f885a54ba08df0720149dc41c94db2bc4be242b042d24",
+    "owner": "postgres",
+    "secdef": true,
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "kind": "f",
+    "language": "plpgsql"
+  }
+}

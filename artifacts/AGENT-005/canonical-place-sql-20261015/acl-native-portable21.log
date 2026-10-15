@@ -1,0 +1,37 @@
+{"marker":"REAL_SQL_FULL_BASELINE","postgres":"PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit","functions":["authorize_grounded_dispatch(uuid,uuid,uuid,text,text)","authorize_text_dispatch(uuid,uuid,uuid,text)","authorize_text_task_dispatch(uuid,uuid,uuid,text,text)","cancel_chat_turn(uuid)","claim_turn_work()","complete_grounded_place_work(uuid,uuid,text,text,text,text)","complete_grounded_work_with_needs(uuid,uuid,text,text,text)","complete_text_work(uuid,uuid,text,text)","conversation_data_private.schema_supported_v1()","conversation_data_private.source_v1(uuid,text,uuid)","export_private.core_turn_page_v1(jsonb)","grounded_ai_assist_work_v1(jsonb)","knowledge_read_v1(jsonb)","list_text_turns(uuid,integer)","place_actions_private.sources_v1(uuid,text)","profile_data_private.schema_v1()","read_grounded_ai_assist_context_v1(uuid)","read_grounded_turn(uuid)","read_grounded_work(uuid,uuid)","read_place_action_context_v1(uuid,jsonb)","read_text_turn(uuid)","read_text_work(uuid,uuid)","result_data_private.schema_supported_v1()","result_data_private.source_v1(uuid,uuid)","trip_support_private.claim_basis(uuid,integer,text,text,text,text)","trip_support_private.mapping_basis(uuid,boolean)","turn_data_private.export_row_v1(text,jsonb)","turn_data_private.export_source_v1(uuid)","turn_data_private.guard_source_v1()","turn_data_private.runtime_supported_v1()","turn_data_private.schema_supported_v1()","turn_data_private.source_v1(uuid,uuid)","turn_private.claim_text_mode(uuid,uuid,text)","turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)","turn_private.trip_privacy_t_export_source_v1(uuid)","turn_private.trip_service_task_runtime_v1()"],"socket":"/private/tmp/a005sql-4wAiZG/s"}
+LEGACY_REAL_PRODUCER_BASELINE_CAPTURED
+DECLARED_SOURCE_DEPENDENCY_DRIFT_REJECTED
+UNKNOWN_SCHEMA_DELTA_REJECTED_WITHOUT_ADOPTION
+FULL_APPEND_ROLLBACK_EXACT_CATALOG_ACL_ROLES_POLICIES_PASS
+MISSING_NEW_CONSTRAINT_FAIL_CLOSED_AND_ORIGINAL_TRIP_RUNTIME_TRUE
+PRODUCT_APPEND_CATALOG_PASS 31 authored existing functions, 22 private functions; all nine guards TRUE
+LEGACY_NULL_GROUNDED_TURN_CONVERSATION_EXPORT_EXACT_JSON_BYTES_PASS
+✔ ordinary authenticated original Task admission and canonical proof share one original Turn transaction (307.017334ms)
+✔ wrong actor/entity/provider/head/source/ref/locale and stale scope leave zero admission or accounting rows (431.602083ms)
+✔ assistant envelope unavailable, extra/unknown input rejected, incompatible original Task never spawns replacement (146.614333ms)
+✔ concurrent exact byte submissions admit one Task/Turn; recovery preserves receipt separately from withdrawn current selection (156.244375ms)
+✔ proof immutability, cancel and withdrawn consent block claim/read/dispatch without reviving work (275.580458ms)
+✔ new selected export keeps proof and typed answer basis; actual original erasure removes slot and permanent source-PK fence rejects late restore (723.855875ms)
+✔ strict new proof/input versions, input authority, UUID identity casing and current worker fences stay closed (368.491375ms)
+✔ original AI-assist job current/read/complete/replay requalifies canonical proof after legitimate blocked resolver (343.175083ms)
+✔ original mobile account/attempt epoch and stored root session fence both actor and service worker (264.602ms)
+✔ actual original D2 request and lease emit complete Place-only export3 page without fixture grants (334.491792ms)
+✔ unknown selected proof shapes cannot be restored through existing root source row contract (122.780208ms)
+✔ a legitimate original technical-failure repair keeps the same compatible Task and original parent/goal bytes (194.792167ms)
+✔ accepted707 original Trip producer and canonical Place admission export all 43 sources together without losing original Trip wire (2461.464667ms)
+✔ ordinary text/read/Task history attach only current selected result and retain own Task with unavailable facts after source withdrawal (337.444042ms)
+✔ enabled original capacity settles once or releases every selected terminal; rollback and unknown never duplicate reservation (1362.032208ms)
+✔ generic claim_turn_work cannot lease or consume attempts from selected queued work, including concurrent canonical claim and revoked source (284.219334ms)
+✔ original synthetic Sandbox grant is rechecked atomically and completion/cancel serialize without capacity leakage (435.25225ms)
+✔ selected cancel waits for mobile before acquiring capacity34; real blocked completion/cancel then serialize (208.940375ms)
+✔ source-withdrawn pending selected Task remains owner-visible and original Cancel releases its reservation (175.68325ms)
+✔ qualified dispatched non-Place classification becomes original unsupported terminal and releases capacity (251.271375ms)
+✔ explicit C0 qwen endpoint is inserted once without changing policy purpose or enabling a provider (74.799292ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12917.670917
