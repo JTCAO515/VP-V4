@@ -1,0 +1,36 @@
+{
+  "base": "124da5cf138c72ae4b7ae4f1116f1fad4f416ec0",
+  "status": "candidate_only_not_applied",
+  "files": {
+    "contract.ts": {
+      "before": {
+        "blob": "df1b4fd223be48da805cc707aa187ca2db9172b7",
+        "sha256": "8e9a435e7877d5679af1b0ec56730a83346f14eceb75431f6d08f144c03f2c51"
+      },
+      "after": {
+        "blob": "bdc077598b9fdad04419852d27ebaac572c367c3",
+        "sha256": "efec72f4d3c8c05f4b4d6b045a3f565451a6f6f73b7caa1f2d3f8c55a8cb99d6"
+      }
+    },
+    "export.ts": {
+      "before": {
+        "blob": "a74f158b8596a265f9334508329326f4393eee0f",
+        "sha256": "862655d43e0214bf8fa6c127ec05841e54e60317eca6c5aa9454da930adc0cd7"
+      },
+      "after": {
+        "blob": "c660d309f291047117ff1f49edeb81205271565c",
+        "sha256": "882a1553ec01fab3f5afde7f49265d01c21756f33affe65aca15f53218b3723f"
+      }
+    },
+    "source-schema.json": {
+      "before": {
+        "blob": "76f90acc1425596e49430897d5bcf9d6932b1de1",
+        "sha256": "9dee2e26e25a1915b92f30a0b72c657e3e872927897880207969f826f016fe65"
+      },
+      "after": {
+        "blob": "8e5c63768897a08ba0c3b857ad97effdbf1cc739",
+        "sha256": "42a478a41321b17a8c2b900214bede241e6ab348b3e1edf24ca3e9f6e3983553"
+      }
+    }
+  }
+}
