@@ -518,6 +518,18 @@
 		E216C0000000000000000004 /* NativeTranslationRecoveryJournalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000004; };
 		E216C0000000000000000005 /* NativeTranslationRecoveryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000005; };
 		E216C0000000000000000006 /* NativeTranslationSessionRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000006; };
+        396814A397F1728D9A29CC5A = {isa = PBXBuildFile; fileRef = 4D06FC82064CAF216E650079; };
+        3D86D8AE4CD7B52444E354C1 = {isa = PBXBuildFile; fileRef = 6A95FBCECD66814380FCB5B3; };
+        0E71B9DE04882AA146A73912 = {isa = PBXBuildFile; fileRef = 2E7A39A677945001F1D5C9BB; };
+        7367F2444AB4FC0A40C1FE20 = {isa = PBXBuildFile; fileRef = 8FF2161D7E26BB07FBB1A40B; };
+        0348E1255BF2FCEB98A81278 = {isa = PBXBuildFile; fileRef = E0219957A2514B7FA19A32C8; };
+        53F4F2F2948144E6E7489CEC = {isa = PBXBuildFile; fileRef = 8E7B3149168E0DEAED0489C8; };
+        729C29D3BE766F4323D9846C = {isa = PBXBuildFile; fileRef = F3E88A444B31D0D2FE27CE6F; };
+        8D22CE2637C793999702A0F6 = {isa = PBXBuildFile; fileRef = BB65E9F990FA8078AEA570E7; };
+        A3E6E95A2F9C85C59858A38D = {isa = PBXBuildFile; fileRef = 26BA2DEEFDCA0D48D935F3FD; };
+        B0A004012FA3B5A990E2B44F = {isa = PBXBuildFile; fileRef = 08CB1E42747F8284AD836334; };
+        D148B89C71A1274BDDBA4A87 = {isa = PBXBuildFile; fileRef = 05A00CC9EB8BCF02F3552643; };
+        F5ECB1DA69B8AD65C2013152 = {isa = PBXBuildFile; fileRef = E1D7EB11C92A08D7A201494A; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1042,6 +1054,18 @@
 		E216B0000000000000000004 /* NativeTranslationRecoveryJournalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryJournalTests.swift; sourceTree = "<group>"; };
 		E216B0000000000000000005 /* NativeTranslationRecoveryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryStoreTests.swift; sourceTree = "<group>"; };
 		E216B0000000000000000006 /* NativeTranslationSessionRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationSessionRecoveryTests.swift; sourceTree = "<group>"; };
+        4D06FC82064CAF216E650079 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionCodec.swift"; sourceTree = SOURCE_ROOT; };
+        6A95FBCECD66814380FCB5B3 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionCopy.swift"; sourceTree = SOURCE_ROOT; };
+        2E7A39A677945001F1D5C9BB = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionModels.swift"; sourceTree = SOURCE_ROOT; };
+        8FF2161D7E26BB07FBB1A40B = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionPort.swift"; sourceTree = SOURCE_ROOT; };
+        E0219957A2514B7FA19A32C8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionStore.swift"; sourceTree = SOURCE_ROOT; };
+        8E7B3149168E0DEAED0489C8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionView.swift"; sourceTree = SOURCE_ROOT; };
+        F3E88A444B31D0D2FE27CE6F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/App/NativeSubscriptionComposition.swift"; sourceTree = SOURCE_ROOT; };
+        BB65E9F990FA8078AEA570E7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeSubscriptionTests.swift"; sourceTree = SOURCE_ROOT; };
+        26BA2DEEFDCA0D48D935F3FD = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeSubscriptionCompositionTests.swift"; sourceTree = SOURCE_ROOT; };
+        08CB1E42747F8284AD836334 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "../../docs/commercial/subscription-development/presentation.en.json"; sourceTree = SOURCE_ROOT; };
+        05A00CC9EB8BCF02F3552643 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "../../docs/commercial/subscription-development/presentation.zh.json"; sourceTree = SOURCE_ROOT; };
+        E1D7EB11C92A08D7A201494A = {isa = PBXFileReference; lastKnownFileType = folder; path = "../../tests/contract/subscription-native/Fixtures"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1246,8 +1270,8 @@ F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */, 978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */, 7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */, 0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
+		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (D148B89C71A1274BDDBA4A87, B0A004012FA3B5A990E2B44F, 200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (F5ECB1DA69B8AD65C2013152, 8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */, 978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */, 7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */, 0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
 				3E202B16F8CA949052172819,
 73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -1273,7 +1297,7 @@ F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
 		800000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
+			files = (729C29D3BE766F4323D9846C, 53F4F2F2948144E6E7489CEC, 0348E1255BF2FCEB98A81278, 7367F2444AB4FC0A40C1FE20, 0E71B9DE04882AA146A73912, 3D86D8AE4CD7B52444E354C1, 396814A397F1728D9A29CC5A,
 				E216C0000000000000000001 /* NativeTranslationRecoveryIdentity.swift in Sources */,
 				E216C0000000000000000002 /* NativeTranslationRecoveryJournal.swift in Sources */,
 				E216C0000000000000000003 /* NativeTranslationRecoveryReceipt.swift in Sources */,
@@ -1410,7 +1434,7 @@ FAAB3A946EA0F180D0C047FA, 39679E2115C244EBC0A2E7B1, 2E678B6E23FFBB6AC16AF3E3, 29
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (E216C0000000000000000004, E216C0000000000000000005, E216C0000000000000000006, F576C92FB976ABC73273D941, A20600000000000000000013, F10C15000000000000000401, B203200000000000000000008, B19720000000000000000000A,
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A3E6E95A2F9C85C59858A38D, 8D22CE2637C793999702A0F6, E216C0000000000000000004, E216C0000000000000000005, E216C0000000000000000006, F576C92FB976ABC73273D941, A20600000000000000000013, F10C15000000000000000401, B203200000000000000000008, B19720000000000000000000A,
 				0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */,
 AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
 210A5218D6BDE6B5029405EA,

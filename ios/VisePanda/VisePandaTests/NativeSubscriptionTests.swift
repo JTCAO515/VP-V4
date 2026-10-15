@@ -16,7 +16,7 @@ import Testing
             return try Data(contentsOf: URL(fileURLWithPath: root).appendingPathComponent("\(name).json"))
         }
         let url = try #require(Bundle(for: NativeSubscriptionFixtureAnchor.self).url(
-            forResource: name, withExtension: "json", subdirectory: "SubscriptionNative"))
+            forResource: name, withExtension: "json", subdirectory: "Fixtures"))
         return try Data(contentsOf: url)
     }
     private func catalog(_ locale: String = "en") throws -> [String: Any] {
