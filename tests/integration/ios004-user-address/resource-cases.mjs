@@ -15,6 +15,11 @@ export async function resourceCases(){
   finally{await owner.cleanup();}
   assert.equal(existsSync(owner.descriptor.root),false);
  }
+ const endFailure=createOwnedPg();endFailure.start();
+ const client=await endFailure.connect(),end=client.end.bind(client);
+ client.end=async()=>{await end();throw Error('injected connection end failure');};
+ await assert.rejects(()=>endFailure.cleanup(),/Owned fixture cleanup failed/);
+ assert.equal(existsSync(endFailure.descriptor.root),false,'client end failure must still clean owned cluster');
  for(const part of ['data','root']){
   const owner=createOwnedPg();owner.start();const path=owner.descriptor[part],saved=path+'-preserved';
   renameSync(path,saved);mkdirSync(path,{mode:0o700});writeFileSync(join(path,'foreign-sentinel'),'preserve replacement');
@@ -24,5 +29,5 @@ export async function resourceCases(){
   rmSync(path,{recursive:true});renameSync(saved,path);await owner.cleanup();
   assert.equal(existsSync(owner.descriptor.root),false);
  }
- console.log('PASS real init/start/connect failure cleanup and data/parent replacement refusal; foreign sentinels preserved');
+ console.log('PASS real init/start/connect/end failure cleanup and data/parent replacement refusal; foreign sentinels preserved');
 }
