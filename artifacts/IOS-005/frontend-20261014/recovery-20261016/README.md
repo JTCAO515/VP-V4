@@ -352,3 +352,17 @@ Build complete! (8.12秒)
 ✔ Suite NativeTranslationTests passed after 0.077 seconds.
 ✔ Test run with 39 tests in 2 suites passed after 0.077 seconds.
 ```
+
+## Final UI scope-isolation correction
+
+Recovery UI is now rendered only when activeScope is non-nil and Store.scope equals it. Session scope changes synchronously call Store.clear(), hiding old actor metadata/buttons before the next load task is consumed. This clear is memory-only and does not erase a durable original identity. No other UI flow or Store logic changed.
+
+PASS: current full Translation View/Store/journal scoped iOS SDK typecheck and diff check. The Store, test files and recovery runner have zero diff from the 39-test passing source, so existing scope/journal/39-test evidence is reused without a repeat matrix. Actual Session factory/App/Simulator evidence remains Main-owned.
+
+Command: `python3 tests/contract/ios005-expression-ui/verify_recovery.py --sdk-only`
+
+Current View SHA-256: `2670165bf95d180bff183162f5e1a19af812b96f499b08dbd6fd2242461c15c5`
+
+```text
+PASS: actual full Translation View, Store and journal iOS SDK typecheck; neighboring app interfaces unavailable stubs only
+```

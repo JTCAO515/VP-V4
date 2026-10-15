@@ -50,7 +50,7 @@ struct NativeTranslationView: View {
                     Text(text("Sign in in Profile to translate.", "请在「我的」登录后翻译。"))
                 }
                 policyView
-                recoveryView
+                if activeScope != nil, store.scope == activeScope { recoveryView }
                 tripSourceView
                 Picker(text("Translate", "翻译方向"), selection: $source) {
                     Text("English → 中文").tag("en")
@@ -117,6 +117,7 @@ struct NativeTranslationView: View {
             await store.load(scope: activeScope, currentScope: { activeScope }, request: request)
         }
         .onChange(of: session.dataScope) { _, _ in
+            store.clear()
             confirmLocalAbandon = false; reviewedAbandonRecord = nil
             action?.cancel(); historyAction?.cancel(); input = ""; savedQuery = ""; card = nil; savedCard = nil; savedHistory.clear(); savedDetail.clear()
             tripStore.clear(); tripSelection = nil; tripReturn = nil; tripChanged = false
