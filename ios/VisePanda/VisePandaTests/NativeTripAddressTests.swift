@@ -295,4 +295,45 @@ nonisolated final class NativeTripAddressTests: XCTestCase {
         }
     }
 
+
+    @MainActor func testCanonicalEquivalentAddressFormsRetainDistinctUTF8ThroughDraftReadbackAndRecovery() async throws {
+        let nfc = "\u{00e9}", nfd = "e\u{0301}"
+        XCTAssertEqual(nfc, nfd) // Swift's ordinary string equality is intentionally unchanged.
+        XCTAssertFalse(nfc.utf8.elementsEqual(nfd.utf8))
+        let first = try NativeUserProvidedAddress(text: nfc)
+        let second = try NativeUserProvidedAddress(text: nfd)
+        XCTAssertNotEqual(first, second)
+        XCTAssertNotEqual(NativeAddressOperationText.set(nfc), .set(nfd))
+        XCTAssertEqual(NativeAddressOperationText.clear, .clear)
+        XCTAssertNotEqual(NativeAddressOperationText.clear, .set(nfc))
+        let decoded = try JSONDecoder().decode(NativeUserProvidedAddress.self, from: JSONEncoder().encode(second))
+        XCTAssertTrue(decoded.text.utf8.elementsEqual(nfd.utf8))
+        let before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "Item", userAddress: first)])])
+        var draft = NativeTripDraft(before)
+        draft.days[0].items[0].userAddress = second
+        let operation = NativeTripOperation(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set(nfd))
+        XCTAssertEqual(draft.patch.operations, [operation])
+        guard case .set(let raw)? = draft.patch.operations.first?.addressText else { return XCTFail("Expected the original NFD address operation") }
+        XCTAssertTrue(raw.utf8.elementsEqual(nfd.utf8))
+        let originalOperation = NativeTripOperation(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set(nfc))
+        XCTAssertNotEqual(operation, originalOperation)
+        let pending = reviewPending(before, after: .init(days: draft.days), operations: [operation])
+        let review = NativeTripAddressReview.evaluate(before: before, pending: pending)
+        XCTAssertTrue(review.canConfirm)
+        XCTAssertEqual(review.changes.count, 1)
+        let normalizedReadback = reviewDetail(before.content.days, version: 6)
+        XCTAssertFalse(NativeTripAddressConfirmation.matches(normalizedReadback, proposal: pending.proposal, resultingVersion: 6))
+        XCTAssertTrue(NativeTripAddressConfirmation.matches(reviewDetail(draft.days, version: 6), proposal: pending.proposal, resultingVersion: 6))
+        let normalizedPending = reviewPending(before, after: before.content, operations: [originalOperation])
+        var reads = 0
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: pending.proposal.patch, retained: normalizedPending.proposal.patch, draft: pending.proposal.patch, tripID: before.trip.id, current: { true }, get: { reads += 1; return pending })
+            XCTFail("Different retained UTF8 must not enter recovery")
+        } catch { XCTAssertEqual(reads, 0) }
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: pending.proposal.patch, retained: pending.proposal.patch, draft: pending.proposal.patch, tripID: before.trip.id, current: { true }, get: { reads += 1; return normalizedPending })
+            XCTFail("A canonically equal but byte-different server patch is not the original request")
+        } catch { XCTAssertEqual(reads, 1) }
+    }
+
 }

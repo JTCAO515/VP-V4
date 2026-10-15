@@ -29,7 +29,7 @@ enum NativeTripAddressConfirmation {
             guard let day = detail.content.days.first(where: { $0.id == operation.dayId }),
                   let item = day.items.first(where: { $0.id == operation.itemId }) else { return false }
             switch operation.addressText {
-            case .set(let text): return item.userAddress?.text == text
+            case .set(let text): return item.userAddress.map { $0.text.utf8.elementsEqual(text.utf8) } ?? false
             case .clear: return item.userAddress == nil
             case nil: return false
             }
