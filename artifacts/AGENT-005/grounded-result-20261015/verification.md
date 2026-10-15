@@ -2,7 +2,7 @@
 
 2026-10-15 Asia/Shanghai. Related to #206; this package does not close the full Issue.
 
-Base `ded26ad709027350433c78fc746fdd3d6aaff575`; source/test head `72b76c2e`.
+Base `ded26ad709027350433c78fc746fdd3d6aaff575`; source/test head `92e5bf29`.
 Writer: this dedicated chat/worktree. Main management files remain read-only. Main additionally leased exactly two existing Wiki contract tests and the frozen eval harness: assertion.subjectId fixture construction plus explicitly versioned current-versus-legacy contract reporting. No scenarios, qrels, holdout truth or thresholds changed.
 
 ## Changes and observations
@@ -21,7 +21,7 @@ Writer: this dedicated chat/worktree. Main management files remain read-only. Ma
 | Check | Result |
 | --- | --- |
 | Original two controlled production-function regressions | FAIL before, PASS after |
-| Full tests/contract/knowledge plus dedicated regressions | PASS 212/212 (31 dedicated) |
+| Full tests/contract/knowledge plus dedicated regressions | PASS 218/218 (37 dedicated) |
 | tests/security/knowledge | PASS 21/21 |
 | pnpm typecheck | PASS |
 | pnpm lint | PASS, 843 source files |
@@ -44,3 +44,15 @@ Frozen place provenance check: cases.ts builds place cases with claims=[] and Co
 Current eval artifact frozen-current-contract-results.json retains all 34 rows, 17/17 development/holdout, original denominators and fixture-only p50/p95/declared-token metrics. Its git commit identifies the tested source/harness head. No performance or cost claim extends beyond that fixture process.
 
 Evidence formatting: full-base diff check detected whitespace emitted by the Node assertion reporter in raw logs. Text logs were whitespace-normalized for review; matching .raw.log.gz archives retain the original bytes, including original failures. Full-base diff check passed after this evidence-only correction.
+
+## Formal review repair (2026-10-15)
+
+Main's formal Standards review found one P3 outdated place-contract statement; Main's exact single-file c36c22f9 was cherry-picked unchanged as 5647556e. Local source comments were corrected in 9ba19dd9; neither changed behavior.
+
+The original formal Spec review found P1 (model could omit another current evidence variant) and P2 (valid background-only citation missed the bounded lookup). Both were reproduced against the actual producer: spec-before.log contains the two FAILs. Functional repair is 92e5bf29; later commits only capture evidence. Original review FAIL is retained by Main.
+
+P1 now reuses the accepted unresolved_variants rule from 20260914041000_vpj_16_place_questions.sql, across all current exact-obligation candidates rather than only citations. Local capture from the same parsed authorized RPC response retains assertion/current-locale text/conditions/exclusions and value when present. Canonical JSONB object ordering preserves equality; separate publication/source IDs do not create variants. Observable distinct variants mark that obligation unresolved and are excluded from factual body/required refs; other reliable claims remain partial with specific gaps/conflicts. This is the existing structural variant gate, not NLP semantic contradiction detection. The actual knowledge_read_v1 projection omits full bilingual expressions and value, so this package cannot prove equality over hidden full upstream payloads or claim complete contradiction exclusion. A future wider authority projection requires Main's shared-interface/SQL coordination.
+
+P2 now invokes the same bounded lookup when no safe required citation remains, including legitimate background/other-subject citations. Historical done replay explicitly disables this lookup, so withdrawn sources cannot be silently replaced by new publications.
+
+Checks on the repaired behavior: complete knowledge contracts plus 37 dedicated regressions PASS 218/218; affected claims/Wiki evals PASS 12/12 under current contract, all 34 frozen rows match, legacy FAIL retained; typecheck/lint/docs/diff PASS. spec-contract.log, spec-evals.log, spec-typecheck.log, spec-lint.log and spec-docs.log are the follow-up evidence; spec-frozen-results.json records the tested source/harness SHA. Prior 21/21 source/security evidence is retained without rerunning unchanged SQL/security contracts. No new provider/DB/device/production execution or permission occurred. Final exact-head delta review and all applicable CI remain Main's gates.

@@ -1,0 +1,20 @@
+✔ reports deterministic claim ordering and an honest no-evidence outcome (2.216833ms)
+✔ orders opaque subject identifiers by stable code point rather than host locale (0.687875ms)
+✔ MIRACL-method retrieval diagnosis: every case's real searchWikiCorpus result matches its documented, empirically-verified behavior (1.977042ms)
+✔ BIPIA-method injection structural containment: a citation to a pageKey the corpus never returned is excluded from EvidencePack, not fabricated (0.485708ms)
+✔ BIPIA attack-category coverage: task_override, information_exfiltration, scam_link_injection, and content_manipulation each have a zh and an en case, and the report is written (12.509292ms)
+✔ 34 frozen scenarios cover every real question definition (zh+en) plus every non-gate terminal, split development/holdout without overlap (0.362875ms)
+✔ real pipeline run over the frozen set: every scenario's outcome matches its ground truth, and the report is written (28.502042ms)
+✔ frozen bilingual cross-source materials: multi-source evidence binds independently per source, in both zh and en (2.05475ms)
+✔ cross-source category coverage: same_city_contradiction, cross_city_difference and condition_exception each have a zh and an en case (0.071834ms)
+✔ documented boundary, locked as a regression: one proposal citing two contradictory sources as its OWN evidence is still accepted -- quote identity is not claim entailment (0.079834ms)
+✔ frozen bilingual adversarial fixture set: an injected source instruction cannot smuggle reviewer/publication authority or fabricate a quote, in both zh and en (13.7275ms)
+✔ injection attack-category coverage: authority_injection, role_override and fabricated_quote each have a zh and an en case, and the report is written (10.474625ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 123.585667
