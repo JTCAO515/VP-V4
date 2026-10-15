@@ -3,7 +3,7 @@ import {createRequire} from 'node:module';
 import {setTimeout as delay} from 'node:timers/promises';
 
 /** Fixture-only view predicate is an execution barrier, not another reader implementation.
- * The actual migrated read_owner_v1 executes unchanged against a one-to-one updatable view.
+ * The actual candidate read_owner_v1 executes unchanged against a one-to-one updatable view.
  * The table snapshot is pinned before the writer commits a second overlapping family.
  */
 export async function snapshotConcurrency({db,apply,read,raw,socket}) {

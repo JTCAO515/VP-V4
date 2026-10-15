@@ -13,7 +13,7 @@ import {owner,other,jws,payload,options} from '../../contract/subscription-ledge
 // Baseline is the pinned, unapplied prior source and is only used for deterministic RED proof.
 const sql=readFileSync(new URL(process.env.SUBSCRIPTION_SNAPSHOT_BASELINE==='1'
  ? '../../../artifacts/AGENT-009/subscription-ledger-20261016/snapshot-fix/baseline.sql'
- : '../../../supabase/migrations/20261016051000_subscription_development_ledger.sql',import.meta.url),'utf8');
+ : '../../../lib/server/entitlements/subscription-ledger/development-schema.sql',import.meta.url),'utf8');
 const legacy=readFileSync(new URL('../../../supabase/migrations/20260926113804_vpj34_storekit_grants.sql',import.meta.url),'utf8');
 const digest=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 function raw(tx,family=tx,who=owner,changes={}){
@@ -34,7 +34,7 @@ export async function run(t){
   resource.start();db=await resource.connect();
   await db.query("create role anon; create role authenticated; create role service_role bypassrls; create schema auth; create function auth.uid() returns uuid language sql as 'select null::uuid'; create function auth.role() returns text language sql as 'select current_setting(''request.jwt.claim.role'',true)';");
   await db.query(legacy);const before=await fingerprint();
-  await t.test('migration apply rollback leaves no schema, old table/functions/policy/data unchanged',async()=>{
+  await t.test('development candidate apply rollback leaves no schema, old table/functions/policy/data unchanged',async()=>{
    await db.query('begin');await db.query(sql);await db.query('rollback');
    assert.equal((await db.query("select to_regnamespace('subscription_development') as n")).rows[0].n,null);assert.equal(await fingerprint(),before);
    await db.query(sql);assert.equal(await fingerprint(),before);
