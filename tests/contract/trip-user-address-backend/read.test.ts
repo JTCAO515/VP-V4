@@ -15,8 +15,8 @@ test('manual and qualified references are independent same-version facts; Chines
  if(latin.kind==='addresses'&&latin.reference.kind==='qualified')assert.equal(latin.reference.entries[0].chineseText,'not_chinese');else assert.fail('valid original reference remains distinct');
 });
 test('errors and changed context are never missing; stale blocks both source facts',()=>{
- assert.deepEqual(readOnlineItemAddress(context,undefined,null),{kind:'unavailable'});
- assert.deepEqual(readOnlineItemAddress(context,undefined,{...support([]),tripVersion:1}),{kind:'unavailable'});
+ assert.deepEqual(readOnlineItemAddress(context,undefined,null),{kind:'addresses',context,userProvided:{kind:'missing'},reference:{kind:'unavailable'}});
+ assert.deepEqual(readOnlineItemAddress(context,undefined,{...support([]),tripVersion:1}),{kind:'addresses',context,userProvided:{kind:'missing'},reference:{kind:'unavailable'}});
  assert.deepEqual(readOnlineItemAddress(context,undefined,{kind:'stale'}),{kind:'conflict'});
  const read=readOnlineItemAddress(context,undefined,support([]));
  assert.equal(read.kind,'addresses');if(read.kind==='addresses'){assert.equal(read.userProvided.kind,'missing');assert.equal(read.reference.kind,'missing');}
@@ -28,4 +28,12 @@ test('unmatched, revoked, expired, untraceable and forged verified never qualify
  if(read.kind==='addresses')assert.equal(read.userProvided.kind,'unsupported');else assert.fail();
  const expired=readOnlineItemAddress(context,undefined,support([entry]),Date.parse('2100-01-01'));
  if(expired.kind==='addresses')assert.equal(expired.reference.kind,'not_qualified');else assert.fail();
+});
+
+test('unavailable or invalid support preserves independently scoped confirmed user value',()=>{
+ const manual={text:'用户自填',source:'user_provided',verification:'unverified'};
+ for(const raw of [null,{kind:'blocked'},{...support([entry]),tripId:'wrong'}]){
+  const read=readOnlineItemAddress(context,manual,raw);assert.equal(read.kind,'addresses');
+  if(read.kind==='addresses'){assert.equal(read.userProvided.kind,'provided');assert.equal(read.reference.kind,'unavailable');}
+ }
 });

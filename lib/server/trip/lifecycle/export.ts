@@ -1,3 +1,4 @@
+import { readUserProvidedAddress } from "../../../trip-user-address.ts";
 import type { ExportLease } from "../../privacy/export-dispatcher.ts";
 import { exact, record, uuid, revision, isLifecycleTrip, isLifecycleReceipt } from "./contract.ts";
 
@@ -10,7 +11,8 @@ function content(value: unknown): boolean {
   return record(value) && exact(value, ["days"]) && Array.isArray(value.days) && value.days.every(day => record(day)
     && known(day, ["id", "date", "items"], ["timeZone"]) && text(day.id, 160) && typeof day.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(day.date)
     && (!Object.hasOwn(day, "timeZone") || text(day.timeZone, 160)) && Array.isArray(day.items) && day.items.every(item => record(item)
-      && known(item, ["id", "dayId", "title"], ["startsAt", "endsAt"]) && text(item.id, 160) && item.dayId === day.id && text(item.title, 160)
+      && known(item, ["id", "dayId", "title"], ["startsAt", "endsAt", "chineseAddress"])
+      && (!Object.hasOwn(item, "chineseAddress") || readUserProvidedAddress(item.chineseAddress).kind === "provided") && text(item.id, 160) && item.dayId === day.id && text(item.title, 160)
       && ["startsAt", "endsAt"].every(key => !Object.hasOwn(item, key) || typeof item[key] === "string" && Number.isFinite(Date.parse(item[key] as string)))));
 }
 

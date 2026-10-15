@@ -1,5 +1,5 @@
 import { readOnlineItemAddress, type OnlineItemAddressRead } from "../trip/address/read.ts";
-import type { UserProvidedChineseAddress } from "../../trip-user-address.ts";
+import { readUserProvidedAddress, type UserProvidedChineseAddress } from "../../trip-user-address.ts";
 import { nativeFetch } from "./native-fetch.ts";
 import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
 import { validSavedFields } from "../privacy/profile-data/saved-fields.ts";
@@ -810,14 +810,15 @@ function createDataOperations(
     const support = await client.rpc("read_trip_item_support_v1", {
       p_trip: tripId, p_expected_trip_version: expectedTripVersion, p_day: dayId, p_item: itemId,
     });
-    if (support.error) return { data: { kind: "unavailable" } };
     const after = await getTrip(tripId);
     if ("error" in after) return after;
     if (after.data.trip.headVersion !== expectedTripVersion) return { data: { kind: "conflict" } };
     const currentActor = await authenticated();
     if ("error" in currentActor) return currentActor;
     if (currentActor.data !== actor.data) return { error: "UNAUTHENTICATED" };
-    return { data: readOnlineItemAddress({ tripId, tripVersion: expectedTripVersion, dayId, itemId }, item.chineseAddress, support.data) };
+    const context = { tripId, tripVersion: expectedTripVersion, dayId, itemId };
+    if (support.error) return { data: { kind: "addresses", context, userProvided: readUserProvidedAddress(item.chineseAddress), reference: { kind: "unavailable" } } };
+    return { data: readOnlineItemAddress(context, item.chineseAddress, support.data) };
   };
 
   const getTripPlaces = async (
