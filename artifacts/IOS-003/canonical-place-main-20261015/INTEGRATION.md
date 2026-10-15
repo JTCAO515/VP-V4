@@ -1,5 +1,13 @@
 # Main canonical Native integration
 
+## Backend accepted; pure Native delivery
+
+PR715 final `f23ae9d751271d69f0a4f8a9a6d20f7a28b89002` passed all 22 applicable checks and both deployment statuses, then normally merged at `2026-10-15T15:17:53Z` into QA `64d410623f80e0597eef56dfd884a3909d8eb0b2`. Main normally merged that accepted QA into this branch as `b532c0cfb22edb050dd62dbafe49209368ff770c`. This supersedes the historical waiting statements below; it does not imply a shared database application or real target acceptance.
+
+The exact QA delta is now 25 files: 11 iOS, six Native contract files and eight Native evidence files. No backend, shared database, other project, script or CI code is included. Independent final boundary/source-reuse review at `f23…9bfd808d` returned Standards 0 / Spec 0; iOS and contract bytes are identical through the accepted-QA merge. Core/PBX blobs remain the original nine-test source, and the only adjacent sample locale fragment was separately accepted in PR717. Current App compile evidence at `52e3bcf2` remains applicable without an unrelated rerun.
+
+Original owner `f2df5500` (Main `4adbf272`) losslessly archived 28 obsolete candidate/shadow materials into Markdown, keeping allowed raw logs and actual contract inputs. Main independently extracted every payload and verified original Git bytes, length and SHA256. Source/tests/scripts/CI were unchanged. Existing check-policy evaluation of this pure delta is affected with no database lanes; the actual PR's exact-head CI remains required. No selector or gate was changed.
+
 ## Current accepted-UI integration
 
 Main normally merged accepted QA PR717 (`c1fc57a9`) and PR718 (`da86217c`) into this existing branch, yielding source `52e3bcf2ac82ecf2f267f82e71f193b753594d29`. This is local integration preparation; PR715 backend acceptance is still required before the pure Native QA PR.
