@@ -12,3 +12,9 @@ Spec findings in owned Section, fixed locally:
 Main integration compatibility: existing epoch values already use the exact accepted tokens; existing `onAddressBlockChange` fieldsets consume the additional hidden-review lock, and that boolean remains excluded from Section's own external blocked prop. No new Main API/prop or source hunk is required for these fixes.
 
 Added two regression cases against production predicates for both failures, retaining original contract/SSR/claims/HTTP evidence. Parent browser interaction, actual Cookie/DB and full same-version terminal readback remain Main-owned and UNRUN here.
+
+## Reload version-gap follow-up
+
+Main identified the real `reload()` ordering: new Trip data can be published before the pending GET resolves, leaving old-base pending with `stale:false`. Confirm locking previously only checked actor/confirmed root, while AddressProposalDiff already hid this mismatched diff. Fixed by sharing one pure `addressProposalReview` projection between the renderer and address-only Confirm fence. Every address operation must target a rendered current day/item, match current route/data/pending Trip id and head/base/patch version, carry pending/nonstale revision/digest, and have codec-valid before/after at the authoritative base/base+1 with the exact operation text. An old pending during the new-version window now keeps the existing parent lock. Mixed/duplicate/hidden address diffs fail closed; non-address proposals remain unaffected. No reference/source-availability input participates, so an unavailable grounded source cannot block an otherwise valid manual-address diff.
+
+Added the concrete old-pending/new-authoritative-version regression and extended actual SSR rendering checks for the same version-gap. No shared Main source was edited. Main owns the narrow actual offline/hidden-Confirm/online-requalification browser follow-up.

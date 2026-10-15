@@ -43,10 +43,11 @@ test('initial unloaded component never offers an enabled editor or a false missi
   assert.match(html, /Reading the current version/); assert.match(html, /disabled/); assert.doesNotMatch(html, /Not provided/);
 });
 test('original proposal diff renders authoritative raw before/after only for exact base/item/digest', () => {
-  const snapshot = address => ({ version: address ? 4 : 3, days: [{ id: 'day', items: [{ id: 'item', ...(address ? { chineseAddress: address } : {}) }] }] });
-  const pending = { trip: { id: 'trip' }, proposal: { baseTripVersion: 3, digest: 'digest', before: snapshot(null), after: snapshot(manual), patch: { expectedVersion: 3, operations: [{ kind: 'set_item_chinese_address', dayId: 'day', itemId: 'item', text: manual.text }] } } };
+  const snapshot = address => ({ version: address ? 4 : 3, days: [{ id: 'day', items: [{ id: 'item', dayId: 'day', ...(address ? { chineseAddress: address } : {}) }] }] });
+  const pending = { trip: { id: 'trip', headVersion: 3 }, proposal: { status: 'pending', stale: false, revision: 1, baseTripVersion: 3, digest: 'a'.repeat(64), before: snapshot(null), after: snapshot(manual), patch: { expectedVersion: 3, operations: [{ kind: 'set_item_chinese_address', dayId: 'day', itemId: 'item', text: manual.text }] } } };
   const render = p => renderToStaticMarkup(React.createElement(AddressProposalDiff, { context, locale: 'en', pending: p }));
   assert.match(render(pending), /Not provided/); assert.match(render(pending), /&lt;script&gt;/); assert.doesNotMatch(render(pending), /<button/);
+  assert.equal(renderToStaticMarkup(React.createElement(AddressProposalDiff, { context: { ...context, tripVersion: 4 }, locale: 'en', pending })), '');
   for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { after: snapshot({ ...manual, verification: 'verified' }) }, { after: snapshot({ ...manual, text: 'different' }) }]) assert.equal(render({ ...pending, proposal: { ...pending.proposal, ...change } }), '');
 });
 

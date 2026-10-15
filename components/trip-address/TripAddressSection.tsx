@@ -39,7 +39,10 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
   const ownBlocked = currentIntent !== undefined || retainedUnknown;
   const parentLock = currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown
-    || addressReviewBlocked(props.pending, qualifiedRoot);
+    || addressReviewBlocked(props.pending, qualifiedRoot, {
+      tripId: props.tripId, snapshotTripId: props.data.trip.id, tripVersion: props.data.trip.headVersion,
+      items: props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({ dayId: day.id, itemId: item.id }))),
+    });
   const contexts = useMemo(() => actor ? props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({
     title: item.title, context: { actorKey: actor.key, tripId: props.tripId, tripVersion: props.data.trip.headVersion, dayId: day.id, itemId: item.id },
   }))) : [], [actor, props.tripId, props.data]);

@@ -112,9 +112,25 @@ test("only exact authoritative terminal token settles a handed intent; old epoch
 
 test("hidden address review blocks original Confirm including restored pending with no local ledger", () => {
   const read = matchingAddressProposal(pending(), intent())!;
-  assert.equal(addressReviewBlocked(read, false), true);
-  assert.equal(addressReviewBlocked(read, true), false);
-  assert.equal(addressReviewBlocked(null, false), false);
+  const reviewContext = { tripId: actor, snapshotTripId: actor, tripVersion: 3, items: [{ dayId: "day", itemId: "item" }] };
+  assert.equal(addressReviewBlocked(read, false, reviewContext), true);
+  assert.equal(addressReviewBlocked(read, true, reviewContext), false);
+  assert.equal(addressReviewBlocked(null, false, reviewContext), false);
   const other = { ...read, proposal: { ...read.proposal, patch: { expectedVersion: 3, operations: [{ kind: "set_title" as const, title: "new title" }] } } };
-  assert.equal(addressReviewBlocked(other, false), false);
+  assert.equal(addressReviewBlocked(other, false, reviewContext), false);
+});
+
+
+test("reload's new authoritative version with old nonstale pending keeps original Confirm locked", () => {
+  const read = matchingAddressProposal(pending(), intent())!;
+  const current = { tripId: actor, snapshotTripId: actor, tripVersion: 3, items: [{ dayId: "day", itemId: "item" }] };
+  assert.equal(addressReviewBlocked(read, true, current), false);
+  // reload() first publishes the v4 Trip; old pending base3 can still have stale:false until its GET resolves.
+  assert.equal(addressReviewBlocked(read, true, { ...current, tripVersion: 4 }), true);
+  assert.equal(addressReviewBlocked(read, true, { ...current, snapshotTripId: session }), true);
+  assert.equal(addressReviewBlocked(read, true, { ...current, tripId: session }), true);
+  assert.equal(addressReviewBlocked(read, true, { ...current, items: [] }), true);
+  for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { patch: { ...read.proposal.patch, expectedVersion: 4 } }, { after: { ...read.proposal.after, version: 5 } }]) {
+    assert.equal(addressReviewBlocked({ ...read, proposal: { ...read.proposal, ...change } } as typeof read, true, current), true);
+  }
 });
