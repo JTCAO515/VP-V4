@@ -17,7 +17,7 @@ export async function nativeDatabase(t){
  const db=async(sql,params=[])=>{const c=await open();try{const r=await c.query(sql,params);return Array.isArray(r)?r.at(-1).rows:r.rows;}finally{await c.end();}};
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- const seed='20261015034446_agent008_trip_service_task_settlement_current.sql';
+ const seed='20261015055708_agent008_trip_service_task_settlement_current.sql';
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<seed).sort()){
   try{await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');}catch(e){throw new Error('Historical migration '+f+': '+e.message);}
  }

@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {nativeDatabase} from './native-db.mjs';
 const sha=s=>createHash('sha256').update(s).digest('hex'),md5=s=>createHash('md5').update(s).digest('hex');
-const migration='supabase/migrations/20261015034446_agent008_trip_service_task_settlement_current.sql';
+const migration='supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql';
 const marker='-- AGENT008_LIFECYCLE_PINS_BEGIN';
 const cleanups=[];
 try{
@@ -49,7 +49,7 @@ try{
    const names=/names text\[\]:=(array\[[^\]]+\])/.exec(src);assert.ok(names);
    const triggerSQL="select coalesce(jsonb_agg(jsonb_build_array(tgrelid::regclass::text,tgname,pg_get_triggerdef(oid),tgfoid::regprocedure::text) order by tgrelid::regclass::text,tgname),'[]') v from pg_trigger where not tgisinternal and tgrelid=any("+"("+names[1]+"||array(select relation_name from profile_data_private.sources_v1()))::regclass[])";
    const current=(await db(triggerSQL))[0].v;const added=current.filter(t=>!oldTriggers.some(b=>JSON.stringify(t)===JSON.stringify(b)));const removed=oldTriggers.filter(b=>!current.some(t=>JSON.stringify(t)===JSON.stringify(b)));
-   if(removed.length)console.log('trigger comparison',JSON.stringify(oldTriggers[0]),JSON.stringify(current[0]));assert.equal(removed.length,0);assert.ok(added.length>0);for(const t of added)assert.ok(['settle_trip_service_task','trip_proposal_terminal','trip_worker_terminal','trip_objective_text_erased','trip_objective_message_erased','trip_objective_trip_erased','trip_objective_account_erased'].includes(t[1]),'only authored new deletion hooks');
+   if(removed.length)console.log('trigger comparison',JSON.stringify(oldTriggers[0]),JSON.stringify(current[0]));assert.equal(removed.length,0);assert.ok(added.length>0);for(const t of added)assert.ok(['settle_trip_service_task','trip_proposal_terminal','trip_worker_terminal','trip_objective_text_erased','trip_objective_message_erased','trip_objective_trip_erased','trip_objective_account_erased','trip_privacy_source_fence'].includes(t[1]),'only authored new deletion hooks');
    replace(triggers[0],"if actual is distinct from '"+JSON.stringify(current).replaceAll("'","''")+"'::jsonb");
   }
   if(!d.signature.startsWith('conversation_data_private.')&&!d.signature.endsWith('.sources_v1()')){

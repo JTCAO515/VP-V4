@@ -81,3 +81,14 @@ declare s turn_private.service_tasks%rowtype;source_task_id uuid;begin
  or not recovery_private.uuid_v1(s.trip_objective->'goalId') or s.trip_objective ? 'proposalId' and not recovery_private.uuid_v1(s.trip_objective->'proposalId') then raise exception 'TRIP_OBJECTIVE_ERASURE_INCOMPLETE';end if;
  end loop;
 end $$;
+-- Reuse original immutable deletion operations as the permanent PK fence.
+create function turn_private.trip_privacy_source_fence_v1() returns trigger language plpgsql volatile security definer set search_path='' as $$
+declare rel text:=tg_table_schema||'.'||tg_table_name;keys text[];v jsonb;k jsonb;begin
+ select pk into keys from turn_private.trip_privacy_t_sources_v1() where relation_name=rel and relation_name like 'scoped_edit_private.%';
+ if keys is null then raise exception 'TRIP_PRIVACY_SOURCE_UNSUPPORTED';end if;
+ for v in select x from(select case when tg_op='DELETE' then to_jsonb(old) else to_jsonb(new) end x union select to_jsonb(old) where tg_op='UPDATE') rows loop
+ k:=jsonb_build_object('relation',rel,'pk',turn_data_private.row_key_v1(v,keys));
+ if exists(select 1 from turn_data_private.operations_v1 r where r.scope='turn-sensitive-data/1' and r.state='erased' and r.source_identity_keys @> jsonb_build_array(k))
+ or exists(select 1 from conversation_data_private.operations_v1 r where r.scope='conversation-sensitive-data/1' and r.state='erased' and r.decision @> jsonb_build_object('tripSourceIdentityKeys',jsonb_build_array(k))) then raise exception 'TRIP_SOURCE_ERASED';end if;
+ end loop;if tg_op='DELETE' then return old;else return new;end if;
+end $$;

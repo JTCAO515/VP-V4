@@ -5,7 +5,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 const sha=s=>createHash('sha256').update(s).digest('hex'),lit=s=>"'"+s.replaceAll("'","''")+"'";
-const file='supabase/migrations/20261015034446_agent008_trip_service_task_settlement_current.sql',pins='-- AGENT008_LIFECYCLE_PINS_BEGIN',start='-- AGENT008_TRIP_PRIVACY_VERSION_BEGIN';
+const file='supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql',pins='-- AGENT008_LIFECYCLE_PINS_BEGIN',start='-- AGENT008_TRIP_PRIVACY_VERSION_BEGIN';
 const cleanups=[];
 try{
  const {db:raw,upgrade}=await nativeDatabase({after:f=>cleanups.push(f)});const db=q=>raw("set search_path='';"+q);
@@ -20,6 +20,7 @@ try{
  const original=kind==='c'?'conversation_data_private':'turn_data_private';
  output.push(`create function turn_private.trip_privacy_${kind}_sources_v1() returns table(relation_name text,count_key text,effect text,pk text[],columns_n text[],has_owner boolean) language sql stable set search_path='' as $$ select * from ${original}.sources_v1() union all values\n`+extra.map(s=>`(${lit(s.relation)},${lit(s.countKey)},'erase',array[${s.pk.map(lit).join(',')}]::text[],array[${s.columns.map(c=>lit(c.name)).join(',')}]::text[],true)`).join(',\n')+'\n$$;');
  }
+ output.push("create trigger trip_privacy_source_fence before insert or update or delete on scoped_edit_private.contexts_v1 for each row execute function turn_private.trip_privacy_source_fence_v1();create trigger trip_privacy_source_fence before insert or update or delete on scoped_edit_private.work_v1 for each row execute function turn_private.trip_privacy_source_fence_v1();create trigger trip_privacy_source_fence before insert or update or delete on scoped_edit_private.requests_v1 for each row execute function turn_private.trip_privacy_source_fence_v1();create trigger trip_privacy_source_fence before insert or update or delete on scoped_edit_private.operations_v1 for each row execute function turn_private.trip_privacy_source_fence_v1();create trigger trip_privacy_source_fence before insert or update or delete on scoped_edit_private.lineage_v1 for each row execute function turn_private.trip_privacy_source_fence_v1();");
  const audit=[];
  for(const s of specs){
  const kind=s.schema==='conversation_data_private'?'c':s.schema==='turn_data_private'?'t':s.name.includes('conversation')?'c':'t';
@@ -66,6 +67,7 @@ try{
   body=body.replace(kind==='c'?" if actual_erase is distinct":" if ec is distinct",(kind==='c'?" perform turn_private.trip_privacy_require_erased_v1(u,source_n->'graph');actual_redact:=jsonb_set(actual_redact,'{tripObjectives}',to_jsonb(objectives_n));\n if actual_erase is distinct":" perform turn_private.trip_privacy_require_erased_v1(u,src->'graph');rc:=jsonb_set(rc,'{tripObjectives}',to_jsonb(objectives_n));\n if ec is distinct"));
  }
  if(s.schema==='public')body=body.replace('from jsonb_each(r.graph);',"from jsonb_each(r.graph) where key not in('tripTaskIds','tripPrivacyTripIds');");
+ if(s.schema==='public'&&kind==='c')body=body.replace("update conversation_data_private.operations_v1 set state='erased',request_digest=digest_n,decision=decision_n","decision_n:=decision_n||jsonb_build_object('tripSourceIdentityKeys',(select coalesce(jsonb_agg(jsonb_build_object('relation',x->'table','pk',x->'pk') order by x->>'table' collate \"C\",(x->'pk')::text collate \"C\"),'[]'::jsonb) from jsonb_array_elements(source_n->'rows') x where x->>'effect'='erase' and x->>'table' like 'scoped_edit_private.%'));\n     update conversation_data_private.operations_v1 set state='erased',request_digest=digest_n,decision=decision_n");
  if(s.name==='binding_v1'||s.schema==='public')body=body.replaceAll(kind==='c'?"'conversation-data/1'":"'turn-data/1'",kind==='c'?"'conversation-trip-data/1'":"'turn-trip-data/1'");
  let def=s.definition.replace(s.schema+'.'+s.name,newNames.get(s.schema+'.'+s.name));
  def=def.replace(s.prosrc,()=>body);

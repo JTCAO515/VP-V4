@@ -205,6 +205,7 @@
     "turn_private.trip_privacy_ids_v1(jsonb,jsonb)",
     "turn_private.trip_privacy_related_v1(text,jsonb,jsonb)",
     "turn_private.trip_privacy_require_erased_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_source_fence_v1()",
     "turn_private.trip_privacy_t_api_v1(text,text,bigint)",
     "turn_private.trip_privacy_t_binding_v1(turn_data_private.operations_v1)",
     "turn_private.trip_privacy_t_boundaries_v1(text)",
@@ -296,6 +297,41 @@
       "definition": "CREATE TRIGGER trip_proposal_terminal AFTER UPDATE OF status ON public.trip_proposals FOR EACH ROW EXECUTE FUNCTION turn_private.trip_proposal_terminal_v1()"
     },
     {
+      "name": "trip_privacy_source_fence",
+      "enabled": "O",
+      "function": "turn_private.trip_privacy_source_fence_v1()",
+      "relation": "scoped_edit_private.contexts_v1",
+      "definition": "CREATE TRIGGER trip_privacy_source_fence BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.contexts_v1 FOR EACH ROW EXECUTE FUNCTION turn_private.trip_privacy_source_fence_v1()"
+    },
+    {
+      "name": "trip_privacy_source_fence",
+      "enabled": "O",
+      "function": "turn_private.trip_privacy_source_fence_v1()",
+      "relation": "scoped_edit_private.lineage_v1",
+      "definition": "CREATE TRIGGER trip_privacy_source_fence BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.lineage_v1 FOR EACH ROW EXECUTE FUNCTION turn_private.trip_privacy_source_fence_v1()"
+    },
+    {
+      "name": "trip_privacy_source_fence",
+      "enabled": "O",
+      "function": "turn_private.trip_privacy_source_fence_v1()",
+      "relation": "scoped_edit_private.operations_v1",
+      "definition": "CREATE TRIGGER trip_privacy_source_fence BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.operations_v1 FOR EACH ROW EXECUTE FUNCTION turn_private.trip_privacy_source_fence_v1()"
+    },
+    {
+      "name": "trip_privacy_source_fence",
+      "enabled": "O",
+      "function": "turn_private.trip_privacy_source_fence_v1()",
+      "relation": "scoped_edit_private.requests_v1",
+      "definition": "CREATE TRIGGER trip_privacy_source_fence BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.requests_v1 FOR EACH ROW EXECUTE FUNCTION turn_private.trip_privacy_source_fence_v1()"
+    },
+    {
+      "name": "trip_privacy_source_fence",
+      "enabled": "O",
+      "function": "turn_private.trip_privacy_source_fence_v1()",
+      "relation": "scoped_edit_private.work_v1",
+      "definition": "CREATE TRIGGER trip_privacy_source_fence BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.work_v1 FOR EACH ROW EXECUTE FUNCTION turn_private.trip_privacy_source_fence_v1()"
+    },
+    {
       "name": "trip_worker_terminal",
       "enabled": "O",
       "function": "turn_private.trip_worker_terminal_v1()",
@@ -369,8 +405,8 @@
       "language": "plpgsql"
     },
     "profile_data_private.schema_v1()": {
-      "source": "65de87772d673ce6fe8ca2d81fecc087bac8f00897c73ce816d97c63f805accb",
-      "definition": "b02eedecc414ceacbd21cbece3bb73d4ef3443a98540d684171272cd9a55b139",
+      "source": "e3d04253c9a6f22c60288deaa2a5e92385e018353a80735be6d7b3c8af01dc6c",
+      "definition": "f7a32517892eecaf411c5aaac14d1091006066c73cae48e7b3deeb660ba4aef9",
       "owner": "postgres",
       "secdef": true,
       "acl": "{postgres=X/postgres}",
@@ -1325,8 +1361,8 @@
       "language": "plpgsql"
     },
     "turn_data_private.runtime_supported_v1()": {
-      "source": "0991961f9d6260271550efb88cf1623a7556350a7f86d6b7970af15c52c7a251",
-      "definition": "6fd49e8ed105472e1cbdbed04f776178e325c8a63e5a3d1ee8194371884f833a",
+      "source": "6baff1f888f039da3ce7629896e08926423fe526b64d859b39d6eab8d0db7252",
+      "definition": "7abaff50e2fae3780ac3224d70cd202ce4993fb0a622c394f5c97cdd5d94b0d2",
       "owner": "postgres",
       "secdef": true,
       "acl": "{postgres=X/postgres}",
@@ -3163,8 +3199,8 @@
       "language": "plpgsql"
     },
     "turn_private.trip_privacy_c_api_v1(text,text,bigint)": {
-      "source": "d12eb42bc60364f558d0ef0972a39c7391e3668f973699ea018ca1ad40a5d1e6",
-      "definition": "f753b43a2952121a0a9d3eaa730a768d65274b5fe9b037a5cd4594eabdb1c4e1",
+      "source": "c36c4eba59e39792404f86cbb8b8e7f2775fa9a0ab1689b2c260784454bba50a",
+      "definition": "21e23cc42be1447f125dd97d319c560fa5c2d54ae60c8740de2c34b6135ce3c0",
       "owner": "postgres",
       "secdef": true,
       "acl": "{postgres=X/postgres}",
@@ -3417,6 +3453,18 @@
     "turn_private.trip_privacy_require_erased_v1(uuid,jsonb)": {
       "source": "1ae1a7d08a21760262f9d0d12e3feca991723fa1709b83e52b9e84101b8ca90c",
       "definition": "3779d149454020baa3a1623506cf42f25f3ebf3eb982e956651cc69fa7fe91d0",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_source_fence_v1()": {
+      "source": "618e9654f29c4bf6566a44124a319801c78c07ed6d234b2b1ead6d2f90642a73",
+      "definition": "ebf404c612ee580621320d1d68148c5e0c9c4c359598fad48142d578f0f9fa15",
       "owner": "postgres",
       "secdef": true,
       "acl": "{postgres=X/postgres}",

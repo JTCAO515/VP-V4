@@ -52,7 +52,7 @@
       "original": "public.privacy_conversation_data_v1(text,text,bigint)",
       "before": "d12be4b2514d9cbe49cb978c1e0499138bcf99c99ab495c73e5f50b292bb8e7d",
       "newFunction": "turn_private.trip_privacy_c_api_v1",
-      "after": "d12eb42bc60364f558d0ef0972a39c7391e3668f973699ea018ca1ad40a5d1e6"
+      "after": "c36c4eba59e39792404f86cbb8b8e7f2775fa9a0ab1689b2c260784454bba50a"
     },
     {
       "original": "turn_data_private.zero_counts_v1(text)",

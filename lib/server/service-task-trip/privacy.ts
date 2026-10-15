@@ -15,12 +15,21 @@ function normalizeGraph(v:unknown,tripId?:string):Row|null{
 function normalizeCounts(v:unknown,keys:readonly string[],drop:readonly string[]):Row|null{
  if(!counts(v,keys))return null;const result={...v};for(const key of drop)delete result[key];return result;
 }
-function normalize(v:Row,target:Target,tripId?:string):Row|null{
+function normalize(v:Row,target:Target,tripId?:string,owner?:unknown):Row|null{
+ const expectedOwner=owner??v.ownerId;
  const result=structuredClone(v),erased=target==='turn'?TURN_ERASED:CONV_ERASED,redacted=target==='turn'?TURN_REDACTED:CONV_REDACTED;
  if(result.graph!==null&&Object.hasOwn(result,'graph')){const g=normalizeGraph(result.graph,tripId);if(!g)return null;result.graph=g;}
  for(const key of ['eraseCounts','erasedCounts'])if(result[key]!==null&&Object.hasOwn(result,key)){const c=normalizeCounts(result[key],erased,TRIP_PRIVATE_SOURCE_KEYS);if(!c)return null;result[key]=c;}
  for(const key of ['redactCounts','redactedCounts'])if(result[key]!==null&&Object.hasOwn(result,key)){const c=normalizeCounts(result[key],redacted,['tripObjectives']);if(!c)return null;result[key]=c;}
- if(record(result.decision)){const d=normalize(result.decision,target,tripId);if(!d)return null;result.decision=d;}
+ if(Object.hasOwn(result,'tripSourceIdentityKeys')){
+  if(target!=='conversation'||!Array.isArray(result.tripSourceIdentityKeys)||result.tripSourceIdentityKeys.length>4100)return null;
+  const allowed:Record<string,readonly string[]>={'scoped_edit_private.contexts_v1':['id'],'scoped_edit_private.work_v1':['turn_id'],'scoped_edit_private.requests_v1':['turn_id'],'scoped_edit_private.operations_v1':['owner_id','operation_id'],'scoped_edit_private.lineage_v1':['proposal_id']};
+  const totals:Record<string,number>={};const seen=new Set<string>();
+  for(const key of result.tripSourceIdentityKeys){if(!record(key)||!exact(key,['relation','pk'])||typeof key.relation!=='string'||!allowed[key.relation]||!record(key.pk)||!exact(key.pk,allowed[key.relation])||!Object.values(key.pk).every(uuid)||Object.hasOwn(key.pk,'owner_id')&&key.pk.owner_id!==expectedOwner)return null;const encoded=JSON.stringify([key.relation,...allowed[key.relation].map(k=>(key.pk as Row)[k])]);if(seen.has(encoded))return null;seen.add(encoded);totals[key.relation]=(totals[key.relation]??0)+1;}
+  const rels=['contexts_v1','work_v1','requests_v1','operations_v1','lineage_v1'];if(!record(v.erasedCounts)||!rels.every((rel,i)=>(totals['scoped_edit_private.'+rel]??0)===(v.erasedCounts as Row)[TRIP_PRIVATE_SOURCE_KEYS[i]]))return null;
+  delete result.tripSourceIdentityKeys;
+ }
+ if(record(result.decision)){const d=normalize(result.decision,target,tripId,expectedOwner);if(!d)return null;result.decision=d;}
  if(record(result.boundaries))for(const [field,added] of Object.entries(TRIP_BOUNDARY_ADDITIONS)){
   const values=result.boundaries[field];if(!Array.isArray(values)||values.at(-1)!==added)return null;result.boundaries[field]=values.slice(0,-1);
  }
