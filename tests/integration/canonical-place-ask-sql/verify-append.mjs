@@ -20,7 +20,7 @@ try{
  const prior=new Map(baseline.functions.map(x=>[x.signature,x]));const changed=after.functions.filter(x=>prior.has(x.signature)&&x.definition!==prior.get(x.signature).definition);const added=after.functions.filter(x=>!prior.has(x.signature));
  const pins=JSON.parse(readFileSync(root+'/function-pins.json','utf8'));
  const normalize=s=>s.replaceAll('uuid,uuid','uuid, uuid').replaceAll('text,text','text, text');
- assert.equal(changed.length,pins.length);assert.equal(added.length,21);assert.ok(added.every(x=>x.signature.startsWith('place_actions_private.ask_')));
+ assert.equal(changed.length,pins.length);assert.equal(added.length,22);assert.ok(added.every(x=>x.signature.startsWith('place_actions_private.ask_')));
  for(const row of after.functions)if(prior.has(row.signature))assert.deepEqual(row.metadata,prior.get(row.signature).metadata,row.signature);
  for(const key of ['roles','policies','defaults','memberships'])assert.deepEqual(after[key],baseline[key],key);
  assert.equal(after.tables.length,baseline.tables.length);

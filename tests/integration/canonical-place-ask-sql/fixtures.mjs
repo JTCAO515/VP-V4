@@ -31,7 +31,8 @@ async function sourceFixture(actor,reviewer,subject,variant=false){
 }
 
 async function close(){await admin?.end();}
-async function fixture(contextMode='current_input_v1',existingOwner=null){
+async function fixture(contextMode='current_input_v1',existingOwner=null,endpoint='https://synthetic.invalid/inference'){
+ if(!['https://synthetic.invalid/inference','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'].includes(endpoint))throw Error('Unsupported C0 fixture endpoint');
  const owner=existingOwner??{id:randomUUID(),session:randomUUID()},reviewer={id:randomUUID(),session:randomUUID()};
  for(const a of [owner,reviewer]){
   await query('insert into auth.users(id) values($1) on conflict do nothing',[a.id]);await query('insert into auth.sessions(id,user_id) values($1,$2) on conflict do nothing',[a.session,a.id]);
@@ -50,7 +51,7 @@ async function fixture(contextMode='current_input_v1',existingOwner=null){
  const mapping=await privileged(owner,'submit_trip_support_entity_mapping_v1',{p_input:{operationId:randomUUID(),canonicalPoiId:canonical,statementId:st.id,expectedClaimRevision:st.revision,expectedPayloadHash:st.hash,expectedSourceDigest:sourceDigest,basisMetadata:{city:'shanghai',scene:'attraction',locale:'en',sourceRefs:refs}}});
  assert.equal(mapping.kind,'mapping_candidate');assert.equal((await privileged(reviewer,'review_trip_support_entity_mapping_v1',{p_mapping:mapping.mappingId,p_expected_version:mapping.version,p_expected_digest:mapping.digest,p_decision:'approve'})).kind,'mapping_reviewed');
  const policy=randomUUID(),notice='a'.repeat(64);
- await query("insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values($1,'qwen','controlled-only','https://synthetic.invalid/inference','fixture','fixture','fixture','test-terms','test-notice',$2,'测试告知','Controlled notice','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day',$3)",[policy,notice,contextMode]);
+ await query("insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values($1,'qwen','controlled-only',$4,'fixture','fixture','fixture','test-terms','test-notice',$2,'测试告知','Controlled notice','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day',$3)",[policy,notice,contextMode,endpoint]);
  await actorRpc(owner,'accept_text_policy',{p_policy_id:policy,p_notice_hash:notice});
  const selection={canonicalPoiId:canonical,provider:'amap',providerPoiId};
  // Existing ordinary read stays denied; use its existing owner-only internal body

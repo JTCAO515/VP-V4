@@ -84,8 +84,14 @@
     "acl": "{postgres=X/postgres}"
   },
   {
+    "signature": "place_actions_private.ask_history_root_v1(uuid)",
+    "md5": "7048569262e8fcac7ba731ea20078837",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
     "signature": "place_actions_private.ask_text_projection_v1(uuid,boolean)",
-    "md5": "a394abb3450d2511dad83caa75b0397f",
+    "md5": "72ae1882d440696cb973f1c4ec73effb",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}"
   },

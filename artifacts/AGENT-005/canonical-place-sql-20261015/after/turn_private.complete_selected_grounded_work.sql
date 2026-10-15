@@ -6,6 +6,10 @@ CREATE OR REPLACE FUNCTION turn_private.complete_selected_grounded_work(p_turn_i
 AS $function$
 declare w turn_private.work%rowtype; g turn_private.grounded_turns%rowtype; answer jsonb; outcome text; failure text;
 begin
+ if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and knowledge_review_private.question_definition(p_intent) is not null and p_intent not in('place_address','place_opening_hours','place_address_and_hours') and p_request_scope in('single','additional_needs') and p_subject is null then
+  if not exists(select 1 from turn_private.text_dispatches where turn_id=p_turn_id and lease_token=p_lease_token) then return jsonb_build_object('kind','blocked');end if;
+  p_intent:='unsupported';p_request_scope:='unknown';
+ end if;
  if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and knowledge_review_private.question_definition(p_intent) is not null and (p_intent not in('place_address','place_opening_hours','place_address_and_hours') or p_subject is distinct from (select selected_place_request->'basis'->>'subjectId' from turn_private.grounded_turns where turn_id=p_turn_id)) then return jsonb_build_object('kind','blocked');end if;
  if exists(select 1 from turn_private.grounded_turns where turn_id=p_turn_id and selected_place_request is not null) and place_actions_private.ask_bound_v1(p_turn_id,p_lease_token) is null then return jsonb_build_object('kind','blocked');end if;
  if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and guide_private.bound_v1(p_turn_id,p_lease_token) is null then return jsonb_build_object('kind','blocked');end if;
