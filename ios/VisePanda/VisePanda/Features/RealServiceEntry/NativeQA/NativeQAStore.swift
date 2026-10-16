@@ -124,7 +124,7 @@ final class NativeQAStore {
     private func recover(_ command: NativeQAPending, _ captured: NativeDataScope, _ token: UUID) async throws {
         let value: NativeQAWire.Message = try await call(.recover(sessionID: command.sessionID, requestID: command.requestID), captured, token)
         guard command.matches(captured), value.message.valid(sessionID: command.sessionID),
-              value.message.requestId == command.requestID, value.message.input == command.originalText else { throw NativeQAError.invalidResponse }
+              value.message.requestId == command.requestID, command.matchesOriginalInputBytes(value.message.input) else { throw NativeQAError.invalidResponse }
         // A protected persisted message, including pending, proves admission. Absent history never does.
         try transport.clearPending(command, scope: captured)
         pending = nil
