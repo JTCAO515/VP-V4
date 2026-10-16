@@ -107,7 +107,9 @@ test('401 clears private history and offers existing sign-in',async({page,contex
   let expired=false;
   await fixture(page,context,async(route,{path})=>{if(expired&&path.endsWith(idB)){await route.fulfill({status:401,body:'{}'});return true;}return false;});
   expired=true;await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();
-  await expect(page.getByRole('link',{name:'Sign in',exact:true})).toHaveAttribute('href','/auth/sign-in?returnTo=/qa');
+  const signIn=page.getByRole('link',{name:'Sign in',exact:true});await expect(signIn).toBeVisible();
+  const target=new URL(await signIn.getAttribute('href'),'http://127.0.0.1:3019');
+  expect(target.pathname).toBe('/auth/sign-in');expect(target.searchParams.get('returnTo')).toBe(`/qa?locale=en&session=${idB}`);
   await expect(page.getByRole('log')).toHaveCount(0);
 });
 test('duplicate submit is locked immediately and terminal errors never become answers',async({page,context})=>{
@@ -803,4 +805,50 @@ test('review history401 invalidates a held stop preflight before it can rebuild 
  await expect.poll(()=>h.reads.length).toBeGreaterThan(0);await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>!!release).toBe(true);
  expire=true;await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible({timeout:10000});release();await page.waitForTimeout(100);
  expect(h.stops).toHaveLength(0);expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();await expect(page.getByRole('log')).toHaveCount(0);
+});
+
+for (const width of [1440,390]) {
+ test(`P0 signed-out QA bookmark preserves same Session and locale at ${width}px`,async({page})=>{
+  await page.setViewportSize({width,height:900});const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(`/qa?locale=en&session=${idA}&returnTo=https%3A%2F%2Fexample.invalid&ignored=drop`);
+  const link=page.getByRole('link',{name:'Sign in',exact:true});await expect(link).toBeVisible();
+  const target=new URL(await link.getAttribute('href'),'http://127.0.0.1:3019');
+  expect(target.pathname).toBe('/auth/sign-in');expect(target.searchParams.get('returnTo')).toBe(`/qa?locale=en&session=${idA}`);
+  await link.click();await expect(page).toHaveURL(target.href);await expect(page.getByLabel('邮箱',{exact:true})).toBeVisible();
+  expect(errors).toEqual([]);
+ });
+}
+
+test('P0 signed-out QA login discards an invalid Session and unrelated return parameters',async({page})=>{
+ await page.goto('/qa?locale=en&session=https%3A%2F%2Fexample.invalid&returnTo=https%3A%2F%2Fexample.invalid');
+ const link=page.getByRole('link',{name:'Sign in',exact:true});await expect(link).toBeVisible();
+ expect(new URL(await link.getAttribute('href'),'http://127.0.0.1:3019').searchParams.get('returnTo')).toBe('/qa?locale=en');
+});
+for (const width of [1440,390]) {
+ test(`P0 unavailable503 shows recovery without an answer or automatic POST at ${width}px`,async({page,context})=>{
+  await page.setViewportSize({width,height:900});const seen=[];
+  await fixture(page,context,async(route,{method})=>{seen.push(method);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;},{ready:false,select:false});
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
+  await expect(page.getByRole('log')).not.toContainText('Saved answer');await page.getByRole('button',{name:'Reload',exact:true}).click();
+  await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');expect(seen.every(method=>method==='GET')).toBe(true);
+ });
+}
+
+test('P0 actual sign-in server guard passes the same QA Session and locale to Continue',async({page,context})=>{
+ // Local synthetic identity only; run the real Next sign-in page, server guard,
+ // hydrated Continue link and QA navigation without submitting credentials.
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ const {sent}=await fixture(page,context,()=>false,{ready:false,select:false});
+ const encode=value=>Buffer.from(JSON.stringify(value)).toString('base64url'),expiry=Math.floor(Date.now()/1000)+3600;
+ // getClaims also decodes the signature: use well-formed synthetic base64url.
+ const jwt=`${encode({alg:'HS256'})}.${encode({sub:idA,exp:expiry})}.${encode('synthetic-signature')}`;
+ await context.addCookies([{name:'sb-127-auth-token',value:`base64-${encode({access_token:jwt,refresh_token:'synthetic-refresh',token_type:'bearer',expires_at:expiry,expires_in:3600,user:{id:idA}})}`,url:'http://127.0.0.1:3019'}]);
+ let identityReads=0;
+ await page.route('http://127.0.0.1:54389/auth/v1/user',route=>{identityReads++;return route.fulfill({contentType:'application/json',body:JSON.stringify({id:idA,aud:'authenticated',role:'authenticated',app_metadata:{},user_metadata:{}})});});
+ await page.goto(`/auth/sign-in?returnTo=${encodeURIComponent(`/qa?locale=en&session=${idA}`)}`);
+ const proceed=page.getByRole('link',{name:'进入工作台',exact:true});await expect(proceed).toBeVisible();
+ expect(identityReads).toBeGreaterThan(0);await expect(proceed).toHaveAttribute('href',`/qa?session=${idA}&locale=en`);
+ await proceed.click();await expect(page).toHaveURL(`http://127.0.0.1:3019/qa?session=${idA}&locale=en`);
+ await expect(page.getByRole('button',{name:`Session ${idA}`,exact:true})).toHaveAttribute('aria-current','true');
+ await expect(page.getByRole('main')).toHaveAttribute('lang','en');expect(sent).toHaveLength(0);expect(errors).toEqual([]);
 });

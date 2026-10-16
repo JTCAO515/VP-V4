@@ -1,0 +1,50 @@
+(node:31051) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:31053) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:31163) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31163) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:31163) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:3360:1 › P0 actual sign-in server guard passes the same QA Session and locale to Continue (5.3s)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:3360:1 › P0 actual sign-in server guard passes the same QA Session and locale to Continue
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  getByRole('link', { name: '进入工作台', exact: true })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByRole('link', { name: '进入工作台', exact: true })
+
+
+      842 |  await page.route('http://127.0.0.1:54389/auth/v1/user',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({id:idA,aud:'authenticated',role:'authenticated',app_metadata:{},user_metadata:{}})}));
+      843 |  await page.goto(`/auth/sign-in?returnTo=${encodeURIComponent(`/qa?locale=en&session=${idA}`)}`);
+    > 844 |  const proceed=page.getByRole('link',{name:'进入工作台',exact:true});await expect(proceed).toBeVisible();
+          |                                                                                       ^
+      845 |  await expect(proceed).toHaveAttribute('href',`/qa?session=${idA}&locale=en`);
+      846 |  await proceed.click();await expect(page).toHaveURL(`http://127.0.0.1:3019/qa?session=${idA}&locale=en`);
+      847 |  await expect(page.getByRole('button',{name:`Session ${idA}`,exact:true})).toHaveAttribute('aria-current','true');
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:844:87
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-P0-actual-sign-i-07e9e-sion-and-locale-to-Continue/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-P0-actual-sign-i-07e9e-sion-and-locale-to-Continue/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-P0-actual-sign-i-07e9e-sion-and-locale-to-Continue/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:3360:1 › P0 actual sign-in server guard passes the same QA Session and locale to Continue

@@ -1,0 +1,50 @@
+(node:27057) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:27059) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:27060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27060) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:27060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:340:1 › 401 clears private history and offers existing sign-in (509ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:3280:3 › P0 signed-out QA bookmark preserves same Session and locale at 1440px (259ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:3280:3 › P0 signed-out QA bookmark preserves same Session and locale at 390px (509ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:3306:1 › P0 signed-out QA login discards an invalid Session and unrelated return parameters (111ms)
+  ✘  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px (29.2s)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px
+
+    Test was interrupted.
+
+    Error: locator.click: Test ended.
+    Call log:
+      - waiting for getByRole('button', { name: 'Session 11111111-1111-4111-8111-111111111111', exact: true })
+
+
+      45 |   await page.goto(entry.url ?? '/qa?locale=en');
+      46 |   await expect(page.getByRole('button',{name:'New session'})).toBeEnabled();
+    > 47 |   if(entry.select !== false) await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();
+         |                                                                                                ^
+      48 |   if(entry.ready !== false) await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+      49 |   return {saved,sent};
+      50 | }
+        at fixture (/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:47:96)
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:830:3
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-46413-or-automatic-POST-at-1440px/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-46413-or-automatic-POST-at-1440px/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px
+  1 did not run
+  4 passed (31.5s)
