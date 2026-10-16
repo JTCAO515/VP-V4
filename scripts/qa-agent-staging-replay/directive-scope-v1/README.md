@@ -24,7 +24,7 @@ invalid v1 configuration, new CLI/environment switch, or low-level restore entry
 
 ## Qualified entry
 
-Use `entry.run(core, args, typed_configuration, source_profile)` only after a fixed commit/clean execution checkout, independent fixed-source
+Use `entry.run(core, args, typed_configuration, source_profile, start_budget=budget)` only after a fixed commit/clean execution checkout, independent fixed-source
 safety review, complete relevant local checks and all original execution/record
 gates hold. Repository CI/protected merge governs engineering delivery; it is not
 an extra prerequisite for the newly authorized reversible local offline use. The
@@ -107,3 +107,21 @@ after claim, before restore. Original O_EXCL active/used/grant checks remain fin
 authority and protect races; early reads never replace consumption. Legacy run
 behavior is unchanged. Positive run tests stub the data plane/manifest; they prove
 ordering and Budget handoff, not actual material acceptance.
+
+## START hard monotonic cap
+
+At the real START event, sample monotonic before UTC, set the one-hour UTC end,
+and create the original canonical Budget with `from_window(..., anchor=start_mono)`.
+The driver must do this before record finalization. Pass that same object through
+entry/gate; the directive path never reconstructs a Budget from later wall time.
+Legacy paths retain their original construction.
+
+Execution header v2 and packet carry `windowStartMonotonic`; window binding and
+the permanent authorization record include it, and the Main START receipt must
+match. Entry preflight checks the exact Budget class/clock functions, wall end,
+original reserve/cleanup constants and `mono_end == windowStartMonotonic +3600`.
+The run lease retains the original object and rechecks it before handoff. Missing,
+replaced or enlarged budgets fail closed. Finalization delay or UTC rollback can
+therefore only reduce available time; it cannot create a later monotonic end.
+A second attempt retains the original window anchor, never a fresh one-hour clock.
+No runtime monkeypatch or caller-provided relative duration is used in execution.
