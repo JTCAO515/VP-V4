@@ -828,9 +828,9 @@ for (const width of [1440,390]) {
  test(`P0 unavailable503 shows recovery without an answer or automatic POST at ${width}px`,async({page,context})=>{
   await page.setViewportSize({width,height:900});const seen=[];
   await fixture(page,context,async(route,{method})=>{seen.push(method);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;},{ready:false,select:false});
-  await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('The service is not ready yet. This check did not send a new question.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
   await expect(page.getByRole('log')).not.toContainText('Saved answer');await page.getByRole('button',{name:'Reload',exact:true}).click();
-  await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');expect(seen.every(method=>method==='GET')).toBe(true);
+  await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('main').getByRole('alert')).toContainText('The service is not ready yet. This check did not send a new question.');expect(seen.every(method=>method==='GET')).toBe(true);
  });
 }
 
@@ -851,4 +851,34 @@ test('P0 actual sign-in server guard passes the same QA Session and locale to Co
  await proceed.click();await expect(page).toHaveURL(`http://127.0.0.1:3019/qa?session=${idA}&locale=en`);
  await expect(page.getByRole('button',{name:`Session ${idA}`,exact:true})).toHaveAttribute('aria-current','true');
  await expect(page.getByRole('main')).toHaveAttribute('lang','en');expect(sent).toHaveLength(0);expect(errors).toEqual([]);
+});
+
+test('readiness503 fresh Chinese visit explains no new question was sent',async({page,context})=>{
+ await login(context);const methods=[];
+ await page.route('**/api/qa-agent/**',route=>{methods.push(route.request().method());return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});});
+ await page.goto('/qa?locale=zh');await expect(page.getByRole('main').getByRole('alert')).toContainText('服务暂未就绪，本次仅检查服务，未发送新问题。请稍后重新读取。');
+ await expect(page.getByRole('button',{name:'发送',exact:true})).toBeDisabled();expect(methods.every(method=>method==='GET')).toBe(true);
+});
+test('readiness503 after unknown POST preserves recovery storage byte-for-byte and only checks original ID',async({page,context})=>{
+ let unavailable=false;const recovered=[];
+ const {sent}=await fixture(page,context,async(route,{path,method,sent})=>{
+  if(unavailable&&(path.endsWith('/sessions')||path.endsWith('/policy'))) {await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;}
+  if(method==='POST'&&path.endsWith('/messages')) {sent.push(route.request().postDataJSON());await route.abort();return true;}
+  if(path.includes('/messages/')&&!path.endsWith('/cancellation')) {recovered.push(path.split('/').at(-1));await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Original unknown input 原文');await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('button',{name:'Check original request',exact:true})).toBeVisible();
+ const before=await page.evaluate(keys=>keys.map(key=>sessionStorage.getItem(key)),[recoveryKey,cancellationKey]);expect(before[0]).toBeTruthy();expect(before[1]).toBeNull();
+ unavailable=true;await page.reload();const alert=page.getByRole('main').getByRole('alert');await expect(alert).toContainText('Its recovery ID is retained. This read does not establish whether the original request was submitted.');
+ await expect(alert).not.toContainText('did not send a new question');await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ await page.getByRole('button',{name:'Reload',exact:true}).click();await expect(alert).toContainText('Its recovery ID is retained.');
+ expect(await page.evaluate(keys=>keys.map(key=>sessionStorage.getItem(key)),[recoveryKey,cancellationKey])).toEqual(before);expect(sent).toHaveLength(1);
+ unavailable=false;await page.getByRole('button',{name:'Reload',exact:true}).click();await expect(page.getByRole('button',{name:'Check original request',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Check original request',exact:true}).click();await expect.poll(()=>recovered.length).toBe(1);
+ expect(recovered).toEqual([sent[0].requestId]);expect(sent).toHaveLength(1);expect(await page.evaluate(keys=>keys.map(key=>sessionStorage.getItem(key)),[recoveryKey,cancellationKey])).toEqual(before);
+ await expect(page.getByRole('button',{name:'Resend original request',exact:true})).toHaveCount(0);
+});
+test('readiness copy does not overwrite a legacy Session history503 failure',async({page,context})=>{
+ await fixture(page,context,async(route,{path,method})=>{if(method==='GET'&&path.endsWith(idA)){await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;}return false;},{ready:false});
+ const alert=page.getByRole('main').getByRole('alert');await expect(alert).toContainText('The request could not be completed. Check the original request status.');await expect(alert).not.toContainText('did not send a new question');
 });
