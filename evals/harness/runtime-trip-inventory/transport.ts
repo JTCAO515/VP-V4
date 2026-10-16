@@ -24,14 +24,19 @@ export function createNativeInventoryTransport(options: Readonly<{ allowedOrigin
 }
 /** Shared, finite network accounting for both snapshots AND every original Ask request. */
 export function inventoryBudget(transport: InventoryTransport, bounds: AskRun["bounds"], signal: AbortSignal, deadline: number) {
-  let requests = 0, totalBytes = 0;
+  let requests = 0, totalBytes = 0, totalExhausted = false;
   const observations: InventoryObservation[] = [];
   const check = () => {
+    // A recoverable submit/ACK error in the original Ask driver must not reopen
+    // a shared budget already exceeded by any earlier response.
+    if (totalExhausted) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
     if (performance.now() >= deadline) throw new RuntimeFailure(totalBytes ? "TIMEOUT_AFTER_OUTPUT" : "TIMEOUT_BEFORE_OUTPUT");
     if (signal.aborted) throw new RuntimeFailure("CANCELLED");
   };
   async function call(request: AskRequest | InventoryRequest, innerSignal: AbortSignal = signal): Promise<Response> {
-    check(); if (++requests > bounds.maxRequests) throw new RuntimeFailure("RATE_LIMITED");
+    check();
+    if (totalBytes >= bounds.maxTotalBytes) { totalExhausted = true; check(); }
+    if (++requests > bounds.maxRequests) throw new RuntimeFailure("RATE_LIMITED");
     const combined = AbortSignal.any([signal, innerSignal]);
     let rejectAbort = () => {}, reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     const interrupted = new Promise<never>((_, reject) => { rejectAbort = () => reject(new RuntimeFailure("CANCELLED")); combined.addEventListener("abort", rejectAbort, { once: true }); if (combined.aborted) rejectAbort(); });
@@ -57,7 +62,8 @@ export function inventoryBudget(transport: InventoryTransport, bounds: AskRun["b
         if (!(chunk.value instanceof Uint8Array)) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
         if (!chunk.value.byteLength && ++empty > bounds.maxEmptyReads) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
         bytes += chunk.value.byteLength; totalBytes += chunk.value.byteLength;
-        if (bytes > bounds.maxResponseBytes || totalBytes > bounds.maxTotalBytes) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
+        if (totalBytes > bounds.maxTotalBytes) { totalExhausted = true; throw new RuntimeFailure("MODEL_OUTPUT_INVALID"); }
+        if (bytes > bounds.maxResponseBytes) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
         chunks.push(chunk.value);
       }
       const body = Buffer.concat(chunks); new TextDecoder("utf-8", { fatal: true }).decode(body);
