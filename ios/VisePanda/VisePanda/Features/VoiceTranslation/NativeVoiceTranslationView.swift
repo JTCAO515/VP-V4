@@ -5,11 +5,19 @@ struct NativeVoiceTranslationView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeVoiceTranslationStore()
     @State private var source = "en"
-    @State private var review = ""
     @State private var action: Task<Void, Never>?
     private var session: NativeSession { settings.nativeSession }
     private var activeScope: NativeDataScope? { scenePhase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
+    private func reviewBinding(scope renderedScope: NativeDataScope?) -> Binding<String> {
+        Binding(get: {
+            guard activeScope == renderedScope else { return "" }
+            return store.reviewText(scope: renderedScope)
+        }, set: {
+            guard activeScope == renderedScope else { return }
+            store.updateReview($0, scope: renderedScope)
+        })
+    }
     private func request(_ path: String, _ method: String, _ body: Data?) async throws -> Data {
         try Task.checkCancellation()
         guard let initial = activeScope else { throw NativeDataError.sessionUnavailable }
@@ -20,6 +28,8 @@ struct NativeVoiceTranslationView: View {
     }
 
     var body: some View {
+        let renderedScope = activeScope
+        let review = store.reviewText(scope: renderedScope)
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text(text("Speak, review, translate", "说话、核对、翻译")).font(.largeTitle.bold())
@@ -35,16 +45,20 @@ struct NativeVoiceTranslationView: View {
                     Text(text("Final transcript", "最终字幕")).font(.headline)
                     Text(final).textSelection(.enabled).accessibilityIdentifier("voice.finalTranscript")
                 }
-                TextField(text("Review or type a phrase", "核对字幕或输入短句"), text: $review, axis: .vertical)
+                TextField(text("Review or type a phrase", "核对字幕或输入短句"), text: reviewBinding(scope: renderedScope), axis: .vertical)
                     .lineLimit(3...8).textFieldStyle(.roundedBorder)
-                    .disabled(store.hasSubmission || store.translation.busy)
+                    .disabled(activeScope == nil || store.scope != activeScope || store.hasSubmission || store.translation.busy)
                     .accessibilityIdentifier("voice.review")
                 Text("\(review.utf16.count)/600").font(.caption).foregroundStyle(.secondary)
                 Text(text("If local recognition is unavailable, type here. Translation still needs a connection and the text-processing consent below.", "本机识别不可用时可在此输入。文字翻译仍需网络和文字处理同意。"))
                     .font(.caption).foregroundStyle(.secondary)
                 Button(text(store.hasSubmission ? "Read the original request status" : "Confirm text and translate", store.hasSubmission ? "读取原请求状态" : "确认文字并翻译")) {
+                    guard renderedScope != nil, activeScope == renderedScope, store.scope == renderedScope else { return }
                     if store.hasSubmission { run { await store.refresh(currentScope: { activeScope }, request: request) } }
-                    else { run { await store.submitReviewed(text: review, sourceLocale: source, currentScope: { activeScope }, request: request) } }
+                    else { run {
+                        guard activeScope == renderedScope, store.scope == renderedScope else { return }
+                        await store.submitReviewed(text: store.reviewText(scope: renderedScope), sourceLocale: source, currentScope: { activeScope }, request: request)
+                    } }
                 }.buttonStyle(.borderedProminent)
                     .disabled(activeScope == nil || store.translation.busy || (!store.hasSubmission && (store.translation.policy?.consentState != .accepted || review.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || review.utf16.count > 600)))
                     .accessibilityIdentifier("voice.translate")
@@ -66,7 +80,7 @@ struct NativeVoiceTranslationView: View {
                         .accessibilityIdentifier("voice.translationError")
                 }
                 Button(text("Start a new phrase", "开始新短句")) {
-                    store.resetDraft(); review = ""
+                    store.resetDraft()
                 }.disabled(activeScope == nil || store.translation.busy || store.translation.hasUnresolvedRecovery)
                     .accessibilityIdentifier("voice.newPhrase")
                 if let seconds = store.measuredSeconds, let characters = store.measuredASRCharacters {
@@ -84,24 +98,18 @@ struct NativeVoiceTranslationView: View {
             store.bind(scope: activeScope, recovery: session.translationRecoveryPersistence())
             await store.refresh(currentScope: { activeScope }, request: request)
         }
-        .onChange(of: store.finalTranscript) { _, final in
-            if let final, !store.hasSubmission { review = final }
-        }
-        .onChange(of: store.submittedText) { _, original in
-            if let original, store.scope == activeScope { review = original }
-        }
         .onChange(of: store.sourceLocale) { _, value in source = value }
         .onChange(of: source) { _, _ in
             store.interruptCapture()
-            if !store.hasSubmission { store.resetDraft(); review = "" }
+            if !store.hasSubmission { store.resetDraft() }
         }
         .onChange(of: activeScope) { _, scope in
-            action?.cancel(); store.bind(scope: scope, recovery: session.translationRecoveryPersistence()); review = ""
+            action?.cancel(); store.bind(scope: scope, recovery: session.translationRecoveryPersistence())
         }
         .onChange(of: session.turnDataErasure?.id) { _, _ in
             guard let erased = session.turnDataErasure, erased.scope == activeScope,
                   (try? session.communitySafetyActor()) == erased.actor else { return }
-            action?.cancel(); store.clear(); review = ""
+            action?.cancel(); store.clear()
             store.bind(scope: activeScope, recovery: session.translationRecoveryPersistence())
             run { await store.refresh(currentScope: { activeScope }, request: request) }
         }
@@ -124,7 +132,7 @@ struct NativeVoiceTranslationView: View {
                 Text(text("Recipient: ", "接收方：") + policy.recipient)
                 Text(text("Processing region: ", "处理地区：") + policy.processingRegion)
                 Button(policy.consentState == .accepted ? text("Withdraw consent", "撤回同意") : text("Agree to text processing", "同意文字处理")) {
-                    store.interruptCapture(); review = ""
+                    store.interruptCapture()
                     run { await store.consent(accept: policy.consentState != .accepted, currentScope: { activeScope }, request: request) }
                 }.disabled(store.translation.busy).accessibilityIdentifier("voice.consent")
             }
