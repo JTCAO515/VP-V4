@@ -1,0 +1,80 @@
+Building for debugging...
+[2 / 5] VisePanda
+[11 / 14] VisePanda
+[13 / 16] VisePandaTests-product
+[16 / 18] VisePandaTests-product
+[22 / 23] VisePandaTests-product
+Build complete! (1.62秒)
+Test Suite 'All tests' started at 2026-10-16 14:15:08.131.
+Test Suite 'All tests' passed at 2026-10-16 14:15:08.132.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAPendingJournalTests started.
+◇ Test failedCustodyNeverReturnsSuccess(mode:) started.
+◇ Test deleteRequiresSuccessfulRemoveAndPhysicalAbsence(mode:) started.
+◇ Test staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test cleanupAuthorityRevokedAfterReadOrRemoveFailsClosed() started.
+◇ Test generationNeedsNewSnapshotBeforeClearButReopenCanRecover() started.
+◇ Test differentPendingAndWrongRequestCannotOverwriteOrClear() started.
+◇ Test eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test eraseCorruptCustodyChecksScopeAndFixedKeyAndAbsence() started.
+◇ Test foreignStoredRecordFailsClosed(field:) started.
+◇ Test replacementDuringFirstDeleteReadIsNotRemoved() started.
+◇ Test scopeChangesDuringReadExportAndEraseAreRejected() started.
+◇ Test reentrantWriterCannotInterleave() started.
+◇ Test unknownACKReopenPreservesNoncanonicalOriginalBody() started.
+◇ Test sameCommandReplacementHasPrivateCASIdentity() started.
+◇ Test scopeChangeDuringWriteFailsClosed(field:) started.
+◇ Test corruptRecordAndOldEpochRefuseReplacement() started.
+◇ Test explicitCleanupAfterLogoutNeedsIndependentAuthority() started.
+◇ Test case passing 1 argument mode → "mismatch" to failedCustodyNeverReturnsSuccess(mode:) started.
+◇ Test case passing 1 argument mode → "missing" to failedCustodyNeverReturnsSuccess(mode:) started.
+◇ Test case passing 1 argument field → "endpoint" to staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test case passing 1 argument mode → "readFailure" to failedCustodyNeverReturnsSuccess(mode:) started.
+◇ Test case passing 1 argument field → "epoch" to staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test case passing 1 argument field → "generation" to staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test case passing 1 argument mode → "remove" to deleteRequiresSuccessfulRemoveAndPhysicalAbsence(mode:) started.
+◇ Test case passing 1 argument field → "nil" to staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test scopeChangeDuringClearNeverReturnsSuccess() started.
+◇ Test retainPhysicallyReadsBeforeReturningAndIsIdempotent() started.
+◇ Test case passing 1 argument mode → "remove" to eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test case passing 1 argument mode → "absence" to deleteRequiresSuccessfulRemoveAndPhysicalAbsence(mode:) started.
+◇ Test case passing 1 argument mode → "absence" to eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test case passing 1 argument mode → "scopeOnRemove" to eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test case passing 1 argument field → "endpoint" to foreignStoredRecordFailsClosed(field:) started.
+◇ Test case passing 1 argument field → "owner" to foreignStoredRecordFailsClosed(field:) started.
+◇ Test case passing 1 argument field → "owner" to staleScopeRefusesAllEntryPoints(field:) started.
+◇ Test case passing 1 argument field → "epoch" to scopeChangeDuringWriteFailsClosed(field:) started.
+◇ Test case passing 1 argument field → "generation" to scopeChangeDuringWriteFailsClosed(field:) started.
+◇ Test case passing 1 argument mode → "write" to failedCustodyNeverReturnsSuccess(mode:) started.
+◇ Test case passing 1 argument mode → "absenceError" to deleteRequiresSuccessfulRemoveAndPhysicalAbsence(mode:) started.
+◇ Test metadataIsMinimalAndClearAndAbandonAreExplicit() started.
+◇ Test case passing 1 argument mode → "replacement" to eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test case passing 1 argument field → "nil" to scopeChangeDuringWriteFailsClosed(field:) started.
+◇ Test case passing 1 argument mode → "readFailure" to eraseFailuresNeverReportCompletion(mode:) started.
+◇ Test case passing 1 argument field → "owner" to scopeChangeDuringWriteFailsClosed(field:) started.
+◇ Test case passing 1 argument field → "endpoint" to scopeChangeDuringWriteFailsClosed(field:) started.
+✔ Test cleanupAuthorityRevokedAfterReadOrRemoveFailsClosed() passed after 0.002 seconds.
+✔ Test differentPendingAndWrongRequestCannotOverwriteOrClear() passed after 0.002 seconds.
+✔ Test eraseCorruptCustodyChecksScopeAndFixedKeyAndAbsence() passed after 0.002 seconds.
+✔ Test generationNeedsNewSnapshotBeforeClearButReopenCanRecover() passed after 0.002 seconds.
+✔ Test replacementDuringFirstDeleteReadIsNotRemoved() passed after 0.002 seconds.
+✔ Test foreignStoredRecordFailsClosed(field:) with 2 test cases passed after 0.002 seconds.
+✔ Test staleScopeRefusesAllEntryPoints(field:) with 5 test cases passed after 0.002 seconds.
+✔ Test reentrantWriterCannotInterleave() passed after 0.003 seconds.
+✔ Test explicitCleanupAfterLogoutNeedsIndependentAuthority() passed after 0.003 seconds.
+✔ Test scopeChangeDuringClearNeverReturnsSuccess() passed after 0.003 seconds.
+✔ Test corruptRecordAndOldEpochRefuseReplacement() passed after 0.003 seconds.
+✔ Test deleteRequiresSuccessfulRemoveAndPhysicalAbsence(mode:) with 3 test cases passed after 0.003 seconds.
+✔ Test unknownACKReopenPreservesNoncanonicalOriginalBody() passed after 0.003 seconds.
+✔ Test eraseFailuresNeverReportCompletion(mode:) with 5 test cases passed after 0.003 seconds.
+✔ Test retainPhysicallyReadsBeforeReturningAndIsIdempotent() passed after 0.003 seconds.
+✔ Test sameCommandReplacementHasPrivateCASIdentity() passed after 0.003 seconds.
+✔ Test failedCustodyNeverReturnsSuccess(mode:) with 4 test cases passed after 0.003 seconds.
+✔ Test metadataIsMinimalAndClearAndAbandonAreExplicit() passed after 0.003 seconds.
+✔ Test scopeChangesDuringReadExportAndEraseAreRejected() passed after 0.003 seconds.
+✔ Test scopeChangeDuringWriteFailsClosed(field:) with 5 test cases passed after 0.003 seconds.
+✔ Suite NativeQAPendingJournalTests passed after 0.003 seconds.
+✔ Test run with 20 tests in 1 suite passed after 0.003 seconds.
