@@ -123,9 +123,11 @@ class Budget:
             def run(args):return self.raw_subprocess.run(prefix+args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=self.cleanup_timeout(15))
             def absent(result,identifier):
                 errors=(result.stderr or b'').decode(errors='replace').strip()
-                return result.returncode!=0 and (result.stdout or b'').strip() in (b'',b'[]') and errors in (
+                return result.returncode==1 and (result.stdout or b'').strip() in (b'',b'[]') and errors in (
                     'Error: No such object: '+identifier,'Error: No such container: '+identifier,
-                    'Error response from daemon: No such container: '+identifier)
+                    'Error response from daemon: No such container: '+identifier,
+                    'error: no such object: '+identifier,'error: no such container: '+identifier,
+                    'error response from daemon: no such container: '+identifier)
             info=run(['inspect',db.name])
             confirmed=getattr(db,'_deadline_launch_confirmed',False)
             known_id=getattr(db,'_deadline_container_id',None)

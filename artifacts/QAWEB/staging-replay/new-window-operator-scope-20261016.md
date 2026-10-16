@@ -66,3 +66,8 @@ Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_u
 run-issued与daemon完成返回immutableID分开记录。启动unknown时一次或多次absent都不能推无副本；即使观察到同nonce ID并停止删除、确认消失，未确认的launch仍UNKNOWN，保active/consumed/result，不自动slot2。confirmed launch的按name缺失还需记录ID的缺失确认；foreignlabel/ID冲突不删。结果保name/nonce/ID/launch确认/移除确认等自有资源链，无用户数据。
 
 KeyboardInterrupt/取消不丢已完成阶段。保completedRestoreResult、后续已过验证、诊断、completedIO列表和已ack的migration前缀；第N步在途结果UNKNOWN，不推rollback或自动retry。cleanupFAIL也持久化这些证据并保active。原23focused（含旧18）RED/GREEN见window-launch-interrupt-delivery-20261016.json。真实数据I/O仍STOP，新窗口未批准，无新capture/key/provider/E。
+
+
+### CLI协议及环境事实更新
+Main用独立无数据空sleep fixture证实Docker29.8的not-found可为小写 `error: no such object: <exactid>`。新识别只扩有限前缀，仍要求exit1、stdout空/[]、exact identifier，不能把daemon错误/别的id/其他exitcode当不存在。unknown launch仍UNKNOWN，绝不absent转PASS。25项focused含旧59小写协议RED。
+Main另只读确认desktop-linux daemon29.8/API1.56及原缓存strict镜像3866/linuxarm64可用（替代前述server不可用的单时点事实）；没有pull/tag改动/PG副本/真实数据操作。它不构成managed-ownerACL实际恢复证明或新增窗口授权。当前仍C/E STOP；新runtime-binding追加迁移未合QA，候选暂161/86，不虚填162/87的来源相等布尔。
