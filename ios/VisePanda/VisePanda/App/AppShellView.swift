@@ -18,7 +18,7 @@ struct AppShellView: View {
 #endif
 
     init(assistantShell: Bool = NativeShellRollout.enabled()) {
-        let useFourTabs = assistantShell || NativeFrontendRollout.enabled()
+        let useFourTabs = assistantShell || NativeFrontendRollout.enabled() || ProcessInfo.processInfo.arguments.contains("-V10RealServiceFrontend")
         _assistantShell = State(initialValue: useFourTabs)
         _selectedTab = State(initialValue: useFourTabs ? .defaultSelection : .ask)
     }
