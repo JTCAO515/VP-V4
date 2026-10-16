@@ -1,0 +1,22 @@
+{
+  "base": "8c35bd3afbf8d61987130dbceedac503ac278257",
+  "branch": "codex/p0-qaw-readiness-errors-20261016",
+  "finding": "Bootstrap GET sessions/policy503 previously shared generic history/send failure copy and misleadingly asked first visitors to check an original request",
+  "change": "Carry bootstrap-only PROVIDER_UNAVAILABLE503 context. No local recovery identifiers: explicit service-not-ready, this check sent no new question. Existing admission or cancellation lookup identifiers: conservative recovery copy; GET ACK never proves prior POST unsubmitted. Scope transitions clear readiness context; legacy history/send/Auth/storage behavior retained. zh/en supported.",
+  "boundaries": "UI and exclusive tests/artifacts only. API/journal bytes/Auth/policy/SQL/shared config untouched; actual logged-in Chrome tab untouched.",
+  "checks": {
+    "browser": "PASS5 distinct affected cases: fresh1440/390 en, freshzh, unknown POST->bootstrap503->recovery, legacyhistory503",
+    "browser_r1": "4 passed; unknown fixture incorrectly expected a cancellation journal before any observed admission. Test assertion corrected to require admission journal and absent cancellation journal, then preserve both raw values. Product unchanged.",
+    "browser_r2": "1 passed: admission bytes retained and cancellation absence retained across503/reload/recovery; only original-ID GET, original POST count stays1; no resend affordance",
+    "build": "PASS production Next webpack including TypeScript compile",
+    "lint": "PASS892",
+    "docs": "PASS",
+    "diff": "PASS",
+    "reused": "Earlier cancellation8 browser/18 unit, login6+hook1 retained; no unrelated matrix rerun",
+    "real_target": "UNRUN new copy deployed/runtime; no browser actions on real logged-in Chrome, no target message/model POST or consent"
+  },
+  "source_sha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "e367901773d71c3d26e625e86b5312debda5788f0ab81ec2ac163ddb3813df06",
+    "tests/e2e/qa-agent-ui/workspace.spec.mjs": "d11a44f7f3060753de54239afc4d1747f4703cd1653cff6853a340e80b9c93c2"
+  }
+}
