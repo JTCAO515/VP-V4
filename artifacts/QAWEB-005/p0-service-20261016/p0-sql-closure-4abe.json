@@ -1,0 +1,99 @@
+{
+  "sourceHead": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+  "sourceCount": 162,
+  "appliedMetadata": {
+    "sourceHead": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+    "localCount": 161,
+    "sha256": "c707fc3d947a8dc184b326ec847061cbd8ce90907ecdb34988741dbf2f97e22e",
+    "appliedCount": 75,
+    "status": "original75 metadata reused; no fresh target query"
+  },
+  "missingVersionCountDerived": 87,
+  "targetOnlyCount": 0,
+  "originalMissing86HashesMatchCurrentQA": true,
+  "sourceOrderedGateChainCandidates": [
+    {
+      "version": "20261006060000",
+      "path": "supabase/migrations/20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "QA lifecycle schema gate references ConversationData schema authority; transitive predecessors still UNKNOWN"
+    },
+    {
+      "version": "20261007010000",
+      "path": "supabase/migrations/20261007010000_result_data.sql",
+      "sha256": "3a87c300ecc448238071472b52a2a7d513cc60a8d92dea95a03098b33dddccf9",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "result_data_private.schema_supported_v1 base definition and infrastructure authority"
+    },
+    {
+      "version": "20261007020000",
+      "path": "supabase/migrations/20261007020000_profile_data.sql",
+      "sha256": "aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "profile_data_private.schema_v1 base, original wrappers/renames and result gate extension"
+    },
+    {
+      "version": "20261007040000",
+      "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+      "sha256": "5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "Profile/core export gate replacement on exact predecessor chain"
+    },
+    {
+      "version": "20261007050000",
+      "path": "supabase/migrations/20261007050000_turn_data.sql",
+      "sha256": "33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "TurnData base schema/runtime plus Profile/Result integration"
+    },
+    {
+      "version": "20261010020000",
+      "path": "supabase/migrations/20261010020000_assistant_events.sql",
+      "sha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "claim_turn_work expected preimage, cancel_unclaimable_turn_v1 direct QA claim dependency and lifecycle revisions"
+    },
+    {
+      "version": "20261010030000",
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "sha256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "four lifecycle preimage chain revisions (schema gates) required by old QA atomic transaction"
+    },
+    {
+      "version": "20261010040000",
+      "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+      "sha256": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "turn_data runtime exact predecessor for QA lifecycle source guard"
+    },
+    {
+      "version": "20261013050429",
+      "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "atomic QA RPC/trigger/check/shared-function/lifecycle package; do not split or edit"
+    },
+    {
+      "version": "20261016040522",
+      "path": "supabase/migrations/20261016040522_qa_runtime_binding.sql",
+      "sha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
+      "history": "missing version",
+      "whyIncludedInTheAuthoredGateChainReview": "new tuple-bound v3 discovery/v2 dispatch; consumes unchanged original QA/budget/policy authority"
+    }
+  ],
+  "notASufficientApplyPlan": true,
+  "transitiveClosureStatus": "UNKNOWN: dynamic source pins, trigger/RLS/catalog compatibility and prior wrappers require future exact review; this list is not proven sufficient or minimal",
+  "operationAuthority": "A-D only; no E, target SQL, clone, identities, credentials, provider or enablement actions",
+  "newRuntimePorts": {
+    "qa_ready_groups_v3": "direct table reads; no call to discovery v2",
+    "qa_authorize_dispatch_v2": [
+      "public.qa_read_work_v1(uuid,uuid)",
+      "turn_private.text_policies.notice_hash actual locked row",
+      "public.model_budget_scopes original owner match",
+      "public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text)"
+    ],
+    "aclSource": "only new function EXECUTE to service_role, postgres owner/security definer/empty search_path; actual target old ACL and body UNKNOWN"
+  }
+}
