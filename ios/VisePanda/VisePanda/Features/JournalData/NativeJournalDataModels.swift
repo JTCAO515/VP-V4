@@ -7,7 +7,7 @@ enum NativeJournalDataSourceID: String, CaseIterable, Codable, Identifiable {
     case community, recovery, tripLifecycle, travelerBrief, pdf, communitySafety
     case notificationData, coverageProgress, archive, experience, placeAction, scopedTrip, result
     case notification, guide, ask, tripSupport, deviceDelete, readinessSave, linkedTripDelete, memoryDelete, tripDelete
-    case assistantEventsCursor, translationRecovery, qaSubmission
+    case assistantEventsCursor, translationRecovery, qaSubmission, qaCancellation
     var id: String { rawValue }
 }
 
@@ -26,6 +26,7 @@ struct NativeJournalDataExportRecord: Codable, Equatable {
     let contentBoundary: String
     var objectID: String? = nil
     var assistantEventsCursor: NativeAssistantEventsCursor.Metadata? = nil
+    var qaCancellation: NativeQACancellationJournal.Inventory? = nil
 }
 
 struct NativeJournalDataSnapshot: Equatable {
@@ -42,6 +43,16 @@ struct NativeJournalDataSnapshot: Equatable {
         guard record.contentBoundary.utf8.count <= 128,
               [record.operationID, record.tripID, record.objectID].allSatisfy({ $0 == nil || UUID(uuidString: $0!) != nil }),
               record.action == nil || record.action!.utf8.count <= 64 else { return false }
+        if let inventory = record.qaCancellation {
+            guard record.source == .qaCancellation, record.state == .pending, record.kind == .metadataOnly,
+                  record.originalOperationBytes == nil, record.operationID == nil, record.tripID == nil, record.objectID == nil,
+                  inventory.totalRecords > 0, inventory.totalRecords <= NativeQACancellationRecord.maximumRecordsPerActor,
+                  inventory.records.count <= inventory.totalRecords,
+                  inventory.records.allSatisfy({ $0.mobileEpoch > 0 && $0.mobileEpoch <= 9_007_199_254_740_991
+                      && NativeQAWire.uuid($0.sessionID) && NativeQAWire.uuid($0.requestID)
+                      && ($0.observedState == nil || $0.observedState == .cancelled || $0.observedState == .terminal) }),
+                  Set(inventory.records.map { "\($0.mobileEpoch):\($0.sessionID):\($0.requestID)" }).count == inventory.records.count else { return false }
+        } else if record.source == .qaCancellation, record.state == .pending || record.state == .projection { return false }
         switch record.state {
         case .absent, .unavailable:
             return record.assistantEventsCursor == nil && originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil

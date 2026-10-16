@@ -9,6 +9,8 @@ final class NativeQASessionTransport: NativeQATransport {
     private var observedDeletion: UUID?
     private var presentationGeneration = 0
     private var verifiedAdmission: (pending: NativeQAPending, scope: NativeDataScope)?
+    // One instance retains its generation-bound physical-read snapshots for the stop store.
+    lazy var cancellationJournal = session.makeNativeQACancellationJournal(currentScope: { [weak self] in self?.scope })
 
     init(session: NativeSession, journal: NativeQAPendingJournal) {
         self.session = session

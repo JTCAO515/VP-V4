@@ -24,7 +24,7 @@ struct NativeQAEntryView: View {
         Group {
             if let port, port.matches(session: settings.nativeSession) {
                 NativeQAServiceView(transport: port, chinese: chinese, isActive: isActive,
-                                    onSignIn: { signingIn = true })
+                                    onSignIn: { signingIn = true }, cancellationPersistence: port.cancellationJournal)
                     .id(ObjectIdentifier(port))
             } else { ProgressView() }
         }
