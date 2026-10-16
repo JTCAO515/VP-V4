@@ -1,0 +1,100 @@
+{
+  "task": "683",
+  "base": "edec7a531824a11634851c7a64b2083c1bd27aa4",
+  "status": "SOURCE_COMPLETE_SYNTHETIC_CONTAINER_LOOP_PASS",
+  "paths": [
+    "scripts/qa-agent-staging-replay/container-diagnostic/**",
+    "artifacts/QAWEB/staging-replay/container-session-20261016/**"
+  ],
+  "sourceSha256": {
+    "Dockerfile": "e3d8a6fdab547eb285de0977a94eb8e56f235807b5113bc1c57ff93fbbe9dbf5",
+    "README.md": "fa6e6a598b5671066c1c49c1570b8074e0a23b5c68329ac2b464aff67aebf15d",
+    "adapter.py": "b964e61932fff75bb5ab171a02a81ad8147059e631ad2d58bc904b79391729cb",
+    "build-runtime.py": "d62ad93be2bf7fd95f83815c485a3d176bf4e48b847f0dfda7fd944f8754d944",
+    "packages.lock.json": "47f9b020f5e81f01488e4c8f57f50b01ce9c4dd1137dac6800e520e2e4a8d8ad",
+    "runtime-packages.txt": "33f7e2396de3e24861f07c0aeac87eb050a075c0f8e23c3b03507d6d39ee4957",
+    "runtime-pins.json": "ea526267272f909ad7241ed587f062a791d0721b050797df0f20a79d9b4f82eb",
+    "service.py": "49a40c9fecbba8c9ec88830879b7a9b9aed2e49c44d38796a14fec18eed97d93",
+    "test_adapter.py": "94c0dfda6ba085dd851fbb7f56253ee16b1879225197c5ff062ac85dc5467f5d"
+  },
+  "runtime": {
+    "baseImage": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "imageId": "sha256:486c5548b7f3c58bff04c59d064d88b47b80d1b36f2cbb636031349a0d973f3c",
+    "pythonVersion": "3.12.15",
+    "helperSha256": "0daff6f1b7f0be043b07a7ba804c50127914f518de0ad3a815c142acbc4e0f1f",
+    "helperCommit": "edec7a531824a11634851c7a64b2083c1bd27aa4",
+    "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+    "sourceSha256": {
+      "owned-pg-diagnostic-session.py": "0daff6f1b7f0be043b07a7ba804c50127914f518de0ad3a815c142acbc4e0f1f",
+      "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
+      "diagnostic-window-deadline.py": "0d136538eb4d0c913b892416230bdc583b6b339f99cbaa0aafc838c4c4bd44d7",
+      "container-diagnostic/Dockerfile": "e3d8a6fdab547eb285de0977a94eb8e56f235807b5113bc1c57ff93fbbe9dbf5",
+      "container-diagnostic/service.py": "49a40c9fecbba8c9ec88830879b7a9b9aed2e49c44d38796a14fec18eed97d93"
+    },
+    "packagesSha256": "33f7e2396de3e24861f07c0aeac87eb050a075c0f8e23c3b03507d6d39ee4957",
+    "apkTrustKeyHashes": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub\nd11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub",
+    "officialPackageSource": "https://dl-cdn.alpinelinux.org/alpine/v3.23/main",
+    "packageSignaturePolicy": "apk default trusted keys, no allow-untrusted; exact versions in Dockerfile and packages.lock.json"
+  },
+  "tests": {
+    "log": "container-tests-03.log",
+    "count": 12,
+    "seconds": 13.292,
+    "result": "PASS",
+    "booleanEvidence": "backendStopped/backendCommandStopped must be literal True, not truthy UNKNOWN",
+    "cases": [
+      "typed ErrorResponse.C P0001 vs message42501, original role/application_name",
+      "timeout and read-back backend exit",
+      "relay disconnect leaves backend active then bound cancel",
+      "resistant backend stopped by original factory-owned postmaster",
+      "wrong backend lifetime refuses signal then rightful cancellation",
+      "wrong container ID/nonce/process/image refuses before Docker action",
+      "service nonce mismatch refuses without stopping server",
+      "unknown reply blocks next request; independent verified container removal",
+      "start epoch conflict refuses destructive cleanup",
+      "incompatible startup handshake removes only newly created container",
+      "image preflight rejects before create",
+      "subclass/unregistered owner rejects before create/signal"
+    ]
+  },
+  "cleanup": {
+    "result": "PASS for final synthetic containers",
+    "method": "exact rm response ID plus successful Docker list query confirms absent; normal service cleanup also confirms PG root removed",
+    "remainingOwnedTestContainers": 0,
+    "unknownReply": "backendCleanup remains UNKNOWN even when container removal is confirmed"
+  },
+  "validation": [
+    "Python AST PASS",
+    "complete installed APK lock matches PASS",
+    "all image source hashes match current frozen helper/proxy/deadline/service/Dockerfile PASS",
+    "original PostgreSQL executable sha256 unchanged PASS"
+  ],
+  "history": [
+    "build-01 used d4 before cleanup review; obsolete, never use for actual window",
+    "smoke-01 FAIL initdb relocated share path missing; fixed in image only",
+    "build-03 final image and source pins; smoke-02 PASS",
+    "container-tests-01/02 retained; final03 strict stop assertions plus exact removal readback"
+  ],
+  "corePins": {
+    "fixedQA": "b30803f851a53dbff8c1658f4efe54579f2466fb",
+    "localAndFixedQAShaIdentical": true,
+    "sha256": {
+      "controlled-snapshot-restore.py": "2c041c22575de04977f7a6cd0612ed2e6da0a66ca29a34952a47632a80975855",
+      "diagnostic-window-deadline.py": "0d136538eb4d0c913b892416230bdc583b6b339f99cbaa0aafc838c4c4bd44d7"
+    },
+    "owner": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d",
+    "futureLease": "Original source/refinement owner retains diagnostic-only restore_bundle/private_pipeline and necessary Budget cleanup adjacent hunks; not transferred; no owner-designated successor or other inflight writer. Core not edited this task."
+  },
+  "unrun": [
+    "shared core integration",
+    "managed Auth/Storage/vault role and ACL equivalence",
+    "other managed extension load acceptance",
+    "actual archive restoration"
+  ],
+  "boundary": "Derived image is a new synthetic runtime, not the historical approved image. Actual incident root cause UNKNOWN. No actual data/window/third attempt/key/capture/restore/E/provider/Prod actions. No host global installs or foreign container/process signals. No arbitrary Python sandbox claim.",
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  },
+  "next": "Fixed source review; Main coordinates separate minimal core integration task. STOP/no inflight/planned/successor writes after delivery."
+}

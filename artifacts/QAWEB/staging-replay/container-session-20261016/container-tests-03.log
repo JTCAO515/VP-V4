@@ -1,0 +1,17 @@
+test_disconnect_is_not_stop_then_bound_cancel (__main__.ContainerSession) ... ok
+test_epoch_conflict_never_removes_container (__main__.ContainerSession) ... ok
+test_incompatible_runtime_handshake_cleans_only_created_container (__main__.ContainerSession) ... ok
+test_resistant_backend_requires_owned_postmaster_stop (__main__.ContainerSession) ... ok
+test_server_nonce_mismatch_does_not_terminate_service (__main__.ContainerSession) ... ok
+test_timeout_backend_exit (__main__.ContainerSession) ... ok
+test_typed_error_and_role_preserved (__main__.ContainerSession) ... ok
+test_unknown_reply_blocks_new_request_and_container_fence_removes (__main__.ContainerSession) ... ok
+test_wrong_backend_refuses_then_correct_binding_stops (__main__.ContainerSession) ... ok
+test_wrong_container_nonce_process_or_image_refuses_before_docker (__main__.ContainerSession) ... ok
+test_image_preflight_rejects_before_create (__main__.FactoryNegatives) ... ok
+test_subclass_and_unregistered_cannot_signal_or_create (__main__.FactoryNegatives) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 13.292s
+
+OK
