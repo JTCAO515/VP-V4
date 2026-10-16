@@ -63,7 +63,7 @@ class HookTests(unittest.TestCase):
                 self_outer.assertNotIn('insert into',sql)
                 return '["unknown"]'
         self_outer=self
-        with patch.object(m,'load_plan',return_value=({'baseline75':['expected']},[])):
+        with patch.object(m,'load_plan',return_value=({'baselineVersions':['expected']},[])):
             with self.assertRaisesRegex(ValueError,'REPLAY_BASELINE_UNKNOWN_NEWER_OR_EXTRA'):m.replay_owned(Db(),'not-read')
 
 

@@ -1,0 +1,8 @@
+test_candidate_mutation_and_source_drift_reject (__main__.Candidate) ... ok
+test_exact_current_source_hashes_versions_and_transactions (__main__.Candidate) ... ok
+test_legacy_manifest_remains_155_and_same_baseline (__main__.Candidate) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.045s
+
+OK

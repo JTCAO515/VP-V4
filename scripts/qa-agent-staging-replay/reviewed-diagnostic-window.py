@@ -1,0 +1,295 @@
+"""Unconfigured future diagnostic window; new direct consent required before IO.
+No old authorization/retry/marker mutation, target writes, capture or key creation.
+"""
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import uuid
+from datetime import timedelta
+
+ROOT=Path('/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main')
+ARCHIVES=Path('/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives')
+HUMAN_FILE=ROOT/'diagnostic-window-human-authorization-20261016.json'
+START_FILE=ROOT/'diagnostic-window-main-start-20261016.json'
+TARGET='dzqdzetcctkhbrhlxxgn'
+CAPTURE_ID='f97d05db-c706-4ce9-82d8-579cbb0b9310'
+MANIFEST_SHA='668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085'
+RETAIN='2026-10-20T23:59:59+08:00'
+# Deliberately unset. Only a later genuine JT reply + Main pin/source review can
+# configure these; no proposal, old5637 approval or owner-generated JSON enables.
+HUMAN_SHA256=None
+QUESTION_ITEM_ID=None
+IDENTITY_PATH_SHA256=None
+PRESERVED_PINS=None
+PRESERVED_KEYS={'captureClaim','restoreClaim','retry1Claim','initialFailure','retry1Failure','originalStart','retry1Start'}
+ACTIONS=['reuse-original-four-ciphertexts','restore-one-owned-offline-copy','verify-schema-owner-acl-roles-counts','collect-diagnostic-hints-and-separate-caller-enums','destroy-owned-copy','local-candidate-rehearsal-only-after-full-restore-pass']
+OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
+
+
+def require(ok,reason):
+    if not ok:raise ValueError(reason)
+
+
+def sha(value):return hashlib.sha256(value).hexdigest()
+
+
+def is_hash(value):return isinstance(value,str) and re.fullmatch('[a-f0-9]{64}',value) is not None
+
+
+def canonical_uuid(value):
+    try:v=uuid.UUID(value) if isinstance(value,str) else None
+    except ValueError:v=None
+    require(v is not None and v.int!=0 and str(v)==value,'DIAGNOSTIC_CANONICAL_UUID_REQUIRED')
+    return value
+
+
+def require_configured():
+    require(is_hash(HUMAN_SHA256) and HUMAN_SHA256!=OLD_HUMAN_SHA
+            and isinstance(QUESTION_ITEM_ID,list) and len(QUESTION_ITEM_ID)==3
+            and QUESTION_ITEM_ID[0]=='request_user_input_async' and isinstance(QUESTION_ITEM_ID[1],str)
+            and QUESTION_ITEM_ID[1] and QUESTION_ITEM_ID[1]!='call_xeZ1HzPXM8vRQalSkY7wGJHz'
+            and type(QUESTION_ITEM_ID[2]) is int and QUESTION_ITEM_ID[2]==0 and is_hash(IDENTITY_PATH_SHA256)
+            and isinstance(PRESERVED_PINS,dict) and set(PRESERVED_PINS)==PRESERVED_KEYS,
+            'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED')
+    for pin in PRESERVED_PINS.values():
+        require(isinstance(pin,dict) and set(pin)=={'path','sha256'} and is_hash(pin['sha256']),'DIAGNOSTIC_PRESERVED_PIN_REQUIRED')
+
+
+def read_private(path,expected=None,max_bytes=65536):
+    p=Path(path);st=p.lstat()
+    require(not p.is_symlink() and stat.S_ISREG(st.st_mode) and st.st_uid==os.getuid()
+            and st.st_nlink==1 and stat.S_IMODE(st.st_mode)==0o600,'DIAGNOSTIC_PRIVATE_FILE_REQUIRED')
+    raw=p.read_bytes();require(len(raw)<max_bytes,'DIAGNOSTIC_PRIVATE_FILE_TOO_LARGE')
+    digest=sha(raw)
+    if expected is not None:require(digest==expected,'DIAGNOSTIC_EVIDENCE_SHA_CHANGED')
+    return json.loads(raw),digest
+
+
+def main_evidence(path,digest):
+    require(Path(path).parent==ROOT and Path(path).suffix=='.json','DIAGNOSTIC_MAIN_EVIDENCE_SCOPE_REQUIRED')
+    return read_private(path,digest)[0]
+
+
+def preserved_digest():return sha(json.dumps(PRESERVED_PINS,sort_keys=True,separators=(',',':')).encode())
+
+
+def check_preserved():
+    data={}
+    for key,pin in PRESERVED_PINS.items():
+        p=Path(pin['path'])
+        marker_names={'captureClaim':'approval-'+CAPTURE_ID+'.used.json','restoreClaim':'approval-'+CAPTURE_ID+'.restore-replay.used.json','retry1Claim':'approval-'+CAPTURE_ID+'.restore-replay-retry-1.used.json'}
+        require((key in marker_names and p==ARCHIVES/marker_names[key]) or (key not in marker_names and p.parent==ROOT and p.suffix=='.json'),'DIAGNOSTIC_PRESERVED_PATH_REQUIRED')
+        data[key]=read_private(pin['path'],pin['sha256'])[0]
+    for key in ('initialFailure','retry1Failure'):
+        require(data[key].get('status')=='FAIL_LOCAL_RESTORE' and data[key].get('cleanup')=='PASS','DIAGNOSTIC_ORIGINAL_FAILURE_REQUIRED')
+    original=data['originalStart'];retry_start=data['retry1Start']
+    require(original.get('status')=='MAIN_REVIEWED_EXECUTION_START' and retry_start.get('status')=='MAIN_REVIEWED_EXECUTION_START'
+            and original.get('approvalId')==retry_start.get('approvalId')==CAPTURE_ID
+            and original.get('target')==retry_start.get('target')==TARGET
+            and original.get('humanAuthorizationRecordSha256')==retry_start.get('humanAuthorizationRecordSha256')==OLD_HUMAN_SHA
+            and original.get('validFrom')==retry_start.get('validFrom') and original.get('validUntil')==retry_start.get('validUntil'),
+            'DIAGNOSTIC_ORIGINAL_START_CHAIN_REQUIRED')
+    capture=data['captureClaim']
+    require(capture.get('approvalId')==CAPTURE_ID and capture.get('mode')=='shared-readonly-snapshot/1'
+            and capture.get('codeSha256')==original.get('codeHashes',{}).get('capture') and is_hash(capture.get('codeSha256')),
+            'DIAGNOSTIC_ORIGINAL_CAPTURE_CLAIM_REQUIRED')
+    for label,stage,failure,start_label,start_stage in [('restoreClaim','restore-replay','initialFailure','originalStart','restore-replay'),('retry1Claim','restore-replay-retry-1','retry1Failure','retry1Start','restore-replay-retry')]:
+        c=data[label];f=data[failure]
+        require(c.get('status')=='CONSUMED_BEFORE_ARCHIVE_READ' and c.get('approvalId')==CAPTURE_ID and c.get('stage')==stage
+                and c.get('target')==TARGET and c.get('manifestSha256')==MANIFEST_SHA and is_hash(c.get('codeSha256'))
+                and c['codeSha256']==data[start_label].get('codeHashes',{}).get(start_stage)
+                and f.get('oneTimeRestoreClaim')==c
+                and f.get('directHumanAuthorization',{}).get('mainStartReceiptSha256')==PRESERVED_PINS[start_label]['sha256'],
+                'DIAGNOSTIC_ORIGINAL_CONSUMED_CHAIN_REQUIRED')
+    return data
+
+
+def bindings(packet,code_hash):
+    return {'windowId':packet['windowId'],'windowStart':packet['windowStart'],'windowEnd':packet['windowEnd'],'attempt':packet['attempt'],'parentCaptureId':CAPTURE_ID,
+            'manifestSha256':MANIFEST_SHA,'identityPathSha256':IDENTITY_PATH_SHA256,
+            'codeSha256':code_hash,'reviewedSourceCommit':packet['reviewedSourceCommit'],
+            'parentFailureSha256':packet['parentFailureSha256'],'humanAuthorizationSha256':HUMAN_SHA256,'mainStartReceiptSha256':packet['mainStartReceiptSha256']}
+
+
+def failure_fingerprint(result):
+    r=result['outcome']
+    return sha(json.dumps({k:r.get(k) for k in ('status','failedStage','reason','safeRestoreDiagnostics','prePostDataCaller')},sort_keys=True,separators=(',',':')).encode())
+
+
+def filename(window,attempt,suffix):return 'diagnostic-window-'+window+'.attempt-'+str(attempt)+'.'+suffix+'.json'
+
+
+def validate(packet,code_hash,instant,stamp,locale_module,manifest=None):
+    require_configured()
+    human,_=read_private(HUMAN_FILE,HUMAN_SHA256)
+    require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
+            and human.get('source')=='Direct current Main conversation request_user_input_async reply'
+            and human.get('questionItemId')==QUESTION_ITEM_ID and isinstance(human.get('humanQuestion'),str)
+            and bool(human['humanQuestion']) and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'])
+            and human.get('fileDoesNotSelfAuthorize') is True,'NEW_DIRECT_DIAGNOSTIC_HUMAN_RECORD_REQUIRED')
+    expected_scope={'minutes':60,'maximumCopies':2,'noOtherPlannedDdlChanges':True,'ordinaryDmlContinues':True,
+                    'reuseOriginalCapture':True,'localRehearsalAfterFullRestorePass':True,'newCapture':False,'newIdentity':False,'newLiveGrants':False,'provider':False,'targetE':False}
+    require(human.get('scope')==expected_scope and all(type(human['scope'][k]) is type(v) for k,v in expected_scope.items()) and human.get('target')==TARGET and human.get('parentCaptureId')==CAPTURE_ID
+            and human.get('manifestSha256')==MANIFEST_SHA and human.get('identityPathSha256')==IDENTITY_PATH_SHA256,
+            'NEW_DIAGNOSTIC_HUMAN_SCOPE_REQUIRED')
+    require(packet.get('approvedBy')=='JT' and packet.get('proposalOnly') is False,'DIAGNOSTIC_APPROVED_PACKET_REQUIRED')
+    window=canonical_uuid(packet.get('windowId'))
+    require(window!=CAPTURE_ID and human.get('windowId')==window and packet.get('humanAuthorizationSha256')==HUMAN_SHA256,
+            'NEW_DIAGNOSTIC_WINDOW_BINDING_REQUIRED')
+    require(type(packet.get('attempt')) is int and packet['attempt'] in (1,2) and type(packet.get('maximumCopies')) is int and packet['maximumCopies']==2,
+            'DIAGNOSTIC_COPY_CAP_REQUIRED')
+    require(packet.get('target')==TARGET and packet.get('parentCaptureId')==CAPTURE_ID and packet.get('manifestSha256')==MANIFEST_SHA
+            and packet.get('codeSha256')==code_hash and is_hash(code_hash)
+            and sha(packet.get('identityPath','').encode())==IDENTITY_PATH_SHA256,'DIAGNOSTIC_ORIGINAL_BUNDLE_BINDING_REQUIRED')
+    require(packet.get('retainUntil')==RETAIN and packet.get('noNewCaptureKeyGrantProviderOrE') is True and packet.get('actions')==ACTIONS,'DIAGNOSTIC_EXCLUSIONS_REQUIRED')
+    begin,end=stamp(packet['windowStart']),stamp(packet['windowEnd'])
+    require(end-begin==timedelta(hours=1) and begin<=instant and instant+timedelta(minutes=30)<=end
+            and end<stamp(RETAIN),'DIAGNOSTIC_WINDOW_EXPIRED_OR_UNAPPROVED')
+    start,start_sha=read_private(START_FILE,packet['mainStartReceiptSha256'])
+    require(start.get('status')=='MAIN_REVIEWED_DIAGNOSTIC_WINDOW_START' and start.get('issuedBy')=='Main'
+            and start.get('humanAuthorizationSha256')==HUMAN_SHA256 and start.get('windowId')==window
+            and start.get('attempt')==packet['attempt'] and start.get('target')==TARGET
+            and start.get('codeSha256')==code_hash and start.get('parentCaptureId')==CAPTURE_ID
+            and start.get('manifestSha256')==MANIFEST_SHA and start.get('identityPathSha256')==IDENTITY_PATH_SHA256
+            and start.get('maximumCopies')==2 and start.get('actions')==ACTIONS and start.get('noActualAttemptInFlight') is True
+            and start.get('preservedEvidenceDigest')==preserved_digest()
+            and start.get('windowStart')==packet['windowStart'] and start.get('windowEnd')==packet['windowEnd']
+            and start.get('reviewedSourceCommit')==packet.get('reviewedSourceCommit')
+            and re.fullmatch('[a-f0-9]{40}',packet.get('reviewedSourceCommit','')),'DIAGNOSTIC_MAIN_START_REQUIRED')
+    preserved=check_preserved()
+    require(begin>=stamp(preserved['originalStart']['validUntil']),'DIAGNOSTIC_MUST_BE_NEW_WINDOW')
+    if packet['attempt']==1:
+        require(packet.get('parentFailureSha256')==PRESERVED_PINS['retry1Failure']['sha256'],'DIAGNOSTIC_PARENT_FAILURE_REQUIRED')
+    else:
+        prior,prior_sha=read_private(ARCHIVES/filename(window,1,'result'),packet['parentFailureSha256'])
+        require(prior.get('status')=='ATTEMPT_FINISHED' and prior.get('windowId')==window and prior.get('attempt')==1
+                and prior.get('parentCaptureId')==CAPTURE_ID and prior.get('manifestSha256')==MANIFEST_SHA
+                and prior.get('identityPathSha256')==IDENTITY_PATH_SHA256
+                and prior.get('windowStart')==packet['windowStart'] and prior.get('windowEnd')==packet['windowEnd']
+                and prior.get('outcome',{}).get('cleanup')=='PASS'
+                and prior['outcome'].get('status','').startswith('FAIL_'),'DIAGNOSTIC_SECOND_REQUIRES_REAL_FAILED_CLEANUP')
+        prior_claim,_=read_private(ARCHIVES/filename(window,1,'used'))
+        require(prior_claim=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**{key:prior.get(key) for key in bindings(packet,code_hash)}},
+                'DIAGNOSTIC_PRIOR_CONSUMPTION_CHAIN_REQUIRED')
+        require(prior.get('codeSha256')!=code_hash and prior.get('reviewedSourceCommit')!=packet['reviewedSourceCommit'],
+                'DIAGNOSTIC_SAME_SOURCE_REPEAT_FORBIDDEN')
+        repair=start.get('repair',{})
+        require(repair.get('status')=='MAIN_DIAGNOSED_FIXED_REVIEWED_PRIOR_FAILURE'
+                and repair.get('priorResultSha256')==prior_sha and repair.get('priorFailureFingerprint')==failure_fingerprint(prior)
+                and repair.get('reviewedRepairCommit')==packet['reviewedSourceCommit']
+                and repair.get('newEvidenceDiagnosesPriorFailure') is True and repair.get('independentSourceReviewPassed') is True,
+                'DIAGNOSTIC_FIXED_FAILURE_REVIEW_REQUIRED')
+        evidence=main_evidence(repair['diagnosisEvidencePath'],repair['diagnosisEvidenceSha256'])
+        tests=main_evidence(repair['testsEvidencePath'],repair['testsEvidenceSha256'])
+        require(evidence.get('status')=='MAIN_PRIOR_FAILURE_DIAGNOSED' and evidence.get('priorResultSha256')==prior_sha
+                and evidence.get('priorFailureFingerprint')==failure_fingerprint(prior) and is_hash(evidence.get('newEvidenceSha256'))
+                and evidence['newEvidenceSha256']!=prior_sha and evidence.get('causeIdentified') is True,
+                'DIAGNOSTIC_NEW_CAUSAL_EVIDENCE_REQUIRED')
+        require(tests.get('status')=='PASS_REQUIRED_REPAIR_TESTS' and tests.get('codeSha256')==code_hash
+                and tests.get('reviewedSourceCommit')==packet['reviewedSourceCommit']
+                and tests.get('diagnosisEvidenceSha256')==repair['diagnosisEvidenceSha256'],'DIAGNOSTIC_REPAIR_TESTS_REQUIRED')
+    supplement=main_evidence(packet['localeSupplementPath'],packet['localeSupplementSha256'])
+    require(start.get('localeSupplementSha256')==packet['localeSupplementSha256']
+            and start.get('sameCapturePointLocaleUnchanged') is True
+            and timedelta(0)<=instant-stamp(supplement['observedAt'])<=timedelta(minutes=5)
+            and supplement.get('sourceProject')==TARGET and supplement.get('database')=='postgres' and supplement.get('owner')=='postgres'
+            and supplement.get('serverVersion')=='17.6' and supplement.get('captureManifestSha256')==MANIFEST_SHA
+            and supplement.get('captureApprovalId')==CAPTURE_ID and supplement.get('targetWritten') is False
+            and supplement.get('userRowsRead') is False,'DIAGNOSTIC_FRESH_READONLY_LOCALE_REQUIRED')
+    facts={k:supplement.get(k) for k in ('encoding','collate','ctype','localeProvider')}
+    if manifest is not None:require(facts==manifest['verification']['databaseFacts'],'DIAGNOSTIC_CAPTURE_LOCALE_CHANGED')
+    profile={'databaseFacts':facts,'icuLocale':supplement.get('locale'),'icuRules':supplement.get('icuRules'),
+             'collationVersion':supplement.get('collationVersion'),'actualCollationVersion':supplement.get('actualCollationVersion')}
+    locale_module.validate(profile,facts)
+    return profile
+
+
+def open_root():
+    require(ARCHIVES.resolve()==ARCHIVES,'DIAGNOSTIC_CLAIM_ROOT_UNSAFE')
+    fd=os.open(ARCHIVES,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW);st=os.fstat(fd)
+    if not(stat.S_ISDIR(st.st_mode) and st.st_uid==os.getuid() and stat.S_IMODE(st.st_mode)==0o700):
+        os.close(fd);raise ValueError('DIAGNOSTIC_CLAIM_ROOT_UNSAFE')
+    return fd
+
+
+def exclusive(fd,name,record):
+    try:handle=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=fd)
+    except FileExistsError:raise ValueError('DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED') from None
+    with os.fdopen(handle,'w') as f:
+        json.dump(record,f,sort_keys=True);f.write('\n');f.flush();os.fsync(f.fileno())
+    os.fsync(fd)
+
+
+def active_name():return 'diagnostic-parent-'+CAPTURE_ID+'.active.json'
+
+
+def claim(packet,code_hash):
+    require_configured();fd=open_root()
+    try:
+        window=canonical_uuid(packet['windowId']);attempt=packet['attempt']
+        require(type(attempt) is int and attempt in (1,2),'DIAGNOSTIC_COPY_CAP_REQUIRED')
+        require(not os.path.lexists(ARCHIVES/filename(window,attempt,'used')),'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
+        record={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash)}
+        # One active copy across this original capture, including different
+        # window IDs. Crash/write failure retains lock and claim; no stale reset.
+        exclusive(fd,active_name(),record)
+        exclusive(fd,filename(window,attempt,'used'),record)
+        return record
+    finally:os.close(fd)
+
+
+def finish(packet,code_hash,outcome):
+    fd=open_root()
+    try:
+        active,_=read_private(ARCHIVES/active_name())
+        require(active=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash)},'DIAGNOSTIC_ACTIVE_BINDING_CHANGED')
+        record={'status':'ATTEMPT_FINISHED',**bindings(packet,code_hash),'outcome':outcome}
+        exclusive(fd,filename(packet['windowId'],packet['attempt'],'result'),record)
+        # Never delete a consumption marker. Only the current active-copy guard
+        # may be released after a recorded, completed PASS cleanup.
+        if outcome.get('cleanup')=='PASS' and (outcome.get('status','').startswith('FAIL_') or outcome.get('status')=='PASS_LOCAL_BUNDLE_RESTORE_ONLY'):
+            os.unlink(active_name(),dir_fd=fd);os.fsync(fd)
+        return record
+    finally:os.close(fd)
+
+
+def caller_snapshot(db):
+    # Separate metadata-only connection. This does NOT observe pg_restore's
+    # mid-command/SecurityDefiner caller or read any role config/object/user rows.
+    value=json.loads(db.sql("select pg_catalog.jsonb_build_object('roleClass',case when current_user='supabase_admin' then 'bootstrap' when current_user='postgres' then 'postgres' else 'unknown' end,'effectiveSuperuser',(select rolsuper from pg_catalog.pg_roles where rolname=current_user),'sessionUserIsBootstrap',session_user='supabase_admin');"))
+    require(set(value)=={'roleClass','effectiveSuperuser','sessionUserIsBootstrap'} and value['roleClass'] in ('bootstrap','postgres','unknown')
+            and type(value['effectiveSuperuser']) is bool and type(value['sessionUserIsBootstrap']) is bool,'DIAGNOSTIC_CALLER_ENUM_REQUIRED')
+    return {'scope':'SEPARATE_PRE_POSTDATA_CONNECTION_NOT_PG_RESTORE_RUNTIME_CALLER',**value}
+
+
+def run(core,args):
+    require_configured() # before packet, manifest, identity metadata or any IO
+    ap,mp,ip,plan=map(Path,args)
+    require(ap.parent==ROOT and ap.suffix=='.json','DIAGNOSTIC_PACKET_METADATA_PATH_REQUIRED')
+    require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
+    read_private(HUMAN_FILE,HUMAN_SHA256)
+    packet,packet_sha=read_private(ap)
+    validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile)
+    manifest,digest=read_private(mp,MANIFEST_SHA,max_bytes=4*1024*1024)
+    require(packet.get('manifestPath')==str(mp.resolve()) and packet.get('identityPath')==str(ip.resolve()),'DIAGNOSTIC_PATH_BINDING_REQUIRED')
+    core.verify_manifest(manifest);candidate,_=core.replay.load_plan(plan)
+    require(candidate['mode']==core.replay.CANDIDATE_MODE,'DIAGNOSTIC_CURRENT_CANDIDATE_REQUIRED')
+    require(packet.get('replayMode')==core.replay.CANDIDATE_MODE and packet.get('replayManifestSha256')==core.replay.CANDIDATE_MANIFEST_HASH,
+            'DIAGNOSTIC_REPLAY_PIN_REQUIRED')
+    # All original restore contract/hash/window/input/sequence guards preserved.
+    proxy={**packet,'codeSha256':core.base.code_hash(),'actions':['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy','restore-realtime-schema-migrations-ledger']}
+    core.base.validate_approval(proxy,mp,ip)
+    require('FileVault is On.' in core.base.run(['fdesetup','status']).decode(),'FILEVAULT_REQUIRED')
+    profile=validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile,manifest)
+    read_private(ap,packet_sha)
+    core.base.validate_approval(proxy,mp,ip)
+    record=claim(packet,core.code_hash())
+    # Failure, including a Python exception, consumes this attempt. Unknown
+    # cleanup leaves active guard in place; never auto-start another copy.
+    try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True)
+    except Exception:outcome={'status':'FAIL_DIAGNOSTIC_EXCEPTION','cleanup':'UNKNOWN','reason':'DETAILS_SUPPRESSED'}
+    finish(packet,core.code_hash(),outcome)
+    return {**outcome,'diagnosticWindowClaim':record,'targetEAuthority':'NONE','newCaptureOrIdentityCreated':False}

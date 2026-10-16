@@ -21,6 +21,7 @@ authority=load('direct_authority',HERE/'direct-human-authority.py')
 locale_profile=load('owned_locale',HERE/'owned-locale-profile.py')
 retry_contract=load('reviewed_retry',HERE/'reviewed-restore-retry.py')
 safe_diagnostics=load('safe_diagnostics',HERE/'safe-restore-diagnostics.py')
+diagnostic_window=load('diagnostic_window',HERE/'reviewed-diagnostic-window.py')
 MODE='shared-readonly-snapshot/1'
 RESTORE_CONTRACT='qaw-shared-snapshot-restoration/1'
 
@@ -41,15 +42,15 @@ def verify_manifest(manifest):
     return adapted,snapshot
 
 
-def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None):
+def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None,observe_caller=False):
     adapted,snapshot=verify_manifest(manifest)
     if replay_manifest is not None:
         plan,_=replay.load_plan(replay_manifest)
-        if adapted['verification']['metadata'].get('versions')!=plan['baseline75']:
+        if adapted['verification']['metadata'].get('versions')!=plan['baselineVersions']:
             raise ValueError('REPLAY_CAPTURE_BASELINE_NOT_EXACT_75')
     if icu_profile is not None:
         locale_profile.validate(icu_profile,adapted['verification']['databaseFacts'])
-    original_class=base.OwnCluster;original_normalize=base.verify.normalize_schema;original_pipeline=base.pipeline;copies=[];diagnostics=[]
+    original_class=base.OwnCluster;original_normalize=base.verify.normalize_schema;original_pipeline=base.pipeline;copies=[];diagnostics=[];callers=[]
     class VerifiedOwnedCopy(original_class):
         def __init__(self,*args,**kwargs):
             if icu_profile is None:super().__init__(*args,**kwargs)
@@ -70,7 +71,12 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             pass
     result={'status':'FAIL_LOCAL_RESTORE','cleanup':'PENDING_OWNED_COPY'}
     base.OwnCluster=VerifiedOwnedCopy
-    base.pipeline=lambda producer,consumer,collect=False:safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
+    def private_pipeline(producer,consumer,collect=False):
+        if observe_caller and '--section=post-data' in consumer:
+            if len(copies)!=1 or not copies[0].created:raise ValueError('OWNED_POSTDATA_CALLER_COPY_REQUIRED')
+            callers.append(diagnostic_window.caller_snapshot(copies[0]))
+        return safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
+    base.pipeline=private_pipeline
     if replay_manifest is not None:
         base.verify.normalize_schema=lambda sql:compat.normalized(original_normalize(sql))
     try:
@@ -99,15 +105,20 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             result['cleanup']='PASS'
         except Exception:result.update(status='FAIL_LOCAL_RESTORE',cleanup='FAIL')
     if diagnostics:result['safeRestoreDiagnostics']=diagnostics
+    if callers:result['prePostDataCaller']=callers
     return result
 
 
 def code_hash():
-    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+(HERE/'safe-restore-diagnostics.py').read_bytes()+replay.MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
+    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+(HERE/'safe-restore-diagnostics.py').read_bytes()+(HERE/'reviewed-diagnostic-window.py').read_bytes()+replay.MANIFEST_HASH.encode()+replay.CANDIDATE_MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
 
 
 def main(args):
     if args in ([],['--dry-run']):return {'status':'DRY_RUN_NO_ARCHIVE_OR_DOCKER_IO','mode':MODE,'codeSha256':code_hash(),'sequenceSafety':'MONOTONE_NO_COLLISION_ONLY','realArchiveRead':False,'actualRestore':'UNRUN','optionalReplayMode':replay.MODE,'replayManifestSha256':replay.MANIFEST_HASH}
+    if len(args)==5 and args[0]=='--restore-diagnostic-window-from-direct-record':
+        # New direct consent pins are mandatory before any input/secret IO.
+        from types import SimpleNamespace
+        return diagnostic_window.run(SimpleNamespace(code_hash=code_hash,base=base,locale_profile=locale_profile,verify_manifest=verify_manifest,replay=replay,restore_bundle=restore_bundle),args[1:])
     retry_mode=len(args)==5 and args[0]=='--restore-replay-retry-from-direct-record'
     record_mode=retry_mode or (len(args)==5 and args[0]=='--restore-replay-from-direct-record')
     stage='restore-replay-retry' if retry_mode else 'restore-replay'
@@ -120,7 +131,8 @@ def main(args):
         expected=['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy','restore-realtime-schema-migrations-ledger','verify-monotone-sequence-no-collision']
         if with_replay:
             authority.canonical_approval_id(approval.get('approvalId'))
-            replay.load_plan(plan_path)
+            legacy_plan,_=replay.load_plan(plan_path)
+            base.plan.require(legacy_plan.get('mode')==replay.MODE and legacy_plan.get('manifestSha256')==replay.MANIFEST_HASH,'LEGACY_REPLAY_PLAN_SCOPE_REQUIRED')
             base.plan.require(approval.get('replayMode')==replay.MODE and approval.get('replayManifestSha256')==replay.MANIFEST_HASH,'REPLAY_EXPLICIT_PLAN_APPROVAL_REQUIRED')
             base.plan.require(approval.get('actions')==expected+['replay-reviewed-missing80-owned-copy'],'SNAPSHOT_RESTORE_REPLAY_SCOPE_REQUIRED')
         else:base.plan.require(approval.get('actions')==expected,'SNAPSHOT_RESTORE_SCOPE_REQUIRED')
