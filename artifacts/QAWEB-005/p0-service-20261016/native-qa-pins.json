@@ -1,0 +1,69 @@
+{
+  "before": "ccaa2dd3d461df79e2eed69e79685e41ce96e790",
+  "after": "53fd6c4c035dbfa858327aee462d373311712cee",
+  "productionSourceCommit": "f22150e6dba9818ba554d4bb09f2689aa289261d",
+  "patchSha256": "38a3a5c3530ea5f30629fefcf03b280dabfda7070e95ada29628223a82956419",
+  "paths": [
+    {
+      "path": "app/api/qa-agent/native/v1/consent/route.ts",
+      "beforeSha256": null,
+      "afterSha256": "cc4a3c65fbbcb2824ddc2486429b9dfcd147a77ad87190808d08ca9306743e7f"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/policy/route.ts",
+      "beforeSha256": null,
+      "afterSha256": "bba889d07483ad61297f175906a2b6f1a77a96f19ccc2267ec8f724ef6bce5ef"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts",
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterSha256": "bc9673f21c43388d681c37273d1c2c67f63f476bd30c25039d0508c14e71cc1c"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/sessions/[sessionId]/messages/[requestId]/route.ts",
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterSha256": "a78e0742ff625fcf799869c7fb2ac59b975ee7984c73db15d0d1403f44ea8155"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/sessions/[sessionId]/messages/route.ts",
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterSha256": "148956106515f6ff8a9e92242aa8e42e039a2009786bd046a2606f857e30c314"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/sessions/[sessionId]/route.ts",
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterSha256": "de698258b8e32db79246d8ffc7cda2e11f0b4ffec713d32af3a5a125ee1daa48"
+    },
+    {
+      "path": "app/api/qa-agent/native/v1/sessions/route.ts",
+      "beforeSha256": null,
+      "afterSha256": "31b192d19ecd218d4d7e6836f3ad4cd17a7b4c16bed6ff9ae0aab36ddd88b991"
+    },
+    {
+      "path": "lib/server/qa-agent/native-http.ts",
+      "beforeSha256": null,
+      "afterSha256": "590bb6fcc14ef73749d868b26576f23622c1008db09d65ee250734c974ac4ef3"
+    },
+    {
+      "path": "lib/server/qa-agent/native-store.ts",
+      "beforeSha256": null,
+      "afterSha256": "b2b49c1bfcd5c37d2ca7ae7fffdc5ae9926d3a92dfe84e43289ae6e13297d9c9"
+    },
+    {
+      "path": "supabase/migrations/20261016060000_qa_native_session.sql",
+      "beforeSha256": null,
+      "afterSha256": "a70fbf6581668df6e1515e02267891fb2183dda13a543e7dc420a7affc0c4033"
+    },
+    {
+      "path": "tests/integration/qa-agent-native/postgres.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "03cb3e9f17c1409b7817bed1d666d05e487511614bab9993dd76778713eddd2a"
+    },
+    {
+      "path": "tests/security/qa-agent-native/http.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "17f547f4f6da0521d5612047685c2150ad82c5c53881fd267597847e89db8bf1"
+    }
+  ],
+  "oldReadOnlyPathsChanged": []
+}
