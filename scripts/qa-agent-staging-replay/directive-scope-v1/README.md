@@ -138,3 +138,13 @@ There is no resume/import API and no backfill of old START records. In
 particular, this change cannot resume the exited operator of window bda80610.
 Future cross-process support requires a separately reviewed prospective clock
 contract; changing Python versions cannot make an old scalar comparable.
+
+
+START construction now uses `diagnostic_deadline.new_start_budget()` with no
+imported clock values. It samples monotonic then UTC, binds weak object identity
+and creator PID before returning, and retains the original deadline/clocks.
+Entry and direct preflight verify this provenance before qualification metadata
+reads. Fork before first preflight, reconstructed attempt 1, and a fresh factory
+object paired with an old header are rejected. The older `from_window` remains
+available only for unchanged legacy paths; it does not qualify a directive START.
+This corrects the fc45 preflight-only registration gap; fc45 is not review-cleared.

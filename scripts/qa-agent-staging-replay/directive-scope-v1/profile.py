@@ -229,6 +229,8 @@ def start_budget(core,header,expected_object=None):
     require(type(anchor) in (int,float) and math.isfinite(anchor) and anchor<=d.monotonic(),'DIRECTIVE_START_MONOTONIC_CONFLICT')
     require(b.clock is d.monotonic and b.wall_clock is d.utc_now,'DIRECTIVE_START_CLOCK_CONFLICT')
     require(b.window_end==anchor+3600 and b.data_end==b.window_end-d.DATA_CLEANUP_RESERVE_SECONDS and b.reserve==d.DATA_CLEANUP_RESERVE_SECONDS and b.cleanup_seconds==d.CLEANUP_BUDGET_SECONDS and b.wall_end==core.base.capture.stamp(header['windowEnd']),'DIRECTIVE_START_DEADLINE_CONFLICT')
+    original_anchor,original_instant=d.verify_start_provenance(b)
+    require(anchor==original_anchor and header.get('windowStart')==original_instant.isoformat(),'DIRECTIVE_START_ORIGIN_BINDING_CONFLICT')
     window=header.get('windowId');attempt=header.get('attempt')
     require(type(window) is str and attempt in (1,2),'DIRECTIVE_CLOCK_WINDOW_REQUIRED')
     with _START_OWNER_LOCK:
@@ -266,6 +268,8 @@ def run_preflight(gate,core,args,profile):
     # All public execution entry points delegate here. The facade's hashes do
     # not assert source verification: real pinned source validation is mandatory.
     require('DOCKER_HOST' not in os.environ and 'DOCKER_CONTEXT' not in os.environ,'DOCKER_OVERRIDE_REJECTED')
+    require(getattr(core,'diagnostic_deadline',None) is not None,'DIRECTIVE_START_PROVENANCE_REQUIRED')
+    core.diagnostic_deadline.verify_start_provenance(getattr(core,'directiveStartBudget',None))
     require_configured(profile,gate.ROOT,gate.PRESERVED_KEYS)
     require(getattr(core,'directiveSourceFingerprint',None)==fingerprint(profile),'DIRECTIVE_QUALIFIED_ENTRY_REQUIRED')
     expected=qualified_code_hash(getattr(core,'directiveBaseCodeHash',None),getattr(core,'directiveTypedConfiguration',None),profile)
