@@ -1,0 +1,39 @@
+{
+  "status": "PASS_NEW_DIAGNOSTIC_PATH_ABSOLUTE_DEADLINE_CANDIDATE_ONLY",
+  "base": "3a59608b4810d1a1588c7a055d8e6bd7dd056b70",
+  "restoreCodeSha256": "5dc6cd8449f7bfec8f71f1141a4e14a20bc0ad4eb4e522d699ab6cfd00fbb44f",
+  "red": "window-deadline-old-red.log: prior path launches postdata and replay after synthetic clock crosses window",
+  "green": "window-deadline-guards-green.log:10 focused tests PASS",
+  "sourceBeforeAfter": [
+    {
+      "path": "scripts/qa-agent-staging-replay/controlled-snapshot-restore.py",
+      "beforeSha256": "3cc50dd9ab6cd976da25deb028e15c136d343c127632d305fbc51aaf39854b53",
+      "afterSha256": "621ea16e4f38f2a7c909140eae288d1c9cc9b1b82e3747f9cead8138787de060"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py",
+      "beforeSha256": "ed176cfc48df04c57b281af8a09606eeaaccbdb884994c9c6ed526a3bca5195d",
+      "afterSha256": "328b4e8dc1221cda0b80cd22e65c93ff8005e8130885c43550504e0c291e7544"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/diagnostic-window-deadline.py",
+      "beforeSha256": null,
+      "afterSha256": "653c66670910cd03a788f10438156537b274631b392485d9a766a57614b27a6c"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py",
+      "beforeSha256": null,
+      "afterSha256": "ccfa34e9659f7ada35d9a6162946d6fd2c8b0099f496f6cf52a9ed0a47a2420d"
+    }
+  ],
+  "mechanism": "single monotonic windowEnd anchored after first approval validation; all new-path secret/data subprocess communicate/wait/run, SQL/replay and cancellable archive hash bounded by min(original cap, shared remaining); data cutoff reserves120sec cleanup",
+  "containerFence": "kill/reap only tracked host children; inspect own generated name and nonce label, rm by inspected immutable containerID, confirm absence; unresolved/foreignlabel=>cleanupFAIL+active guard retained",
+  "cleanupBudgetSeconds": 60,
+  "cleanupAfterWindow": "necessary owned cleanup only; never reopens data budget",
+  "legacyAndStrictBytes": "original strict/capture/authority/retry1/parser unchanged; default old path passes no budget",
+  "old47Tests": "reused same scopes; not rerun",
+  "physicalDockerAndActualCipher": "UNRUN/STOP; no daemon start or real data/key/clone read",
+  "candidateManifest": "161/86 unchanged; future qa-runtime-binding append-only dependency unmerged, not guessed or included",
+  "newWindowApproved": false,
+  "newAuthorizationPins": "remain unconfigured"
+}
