@@ -52,3 +52,22 @@ test("oversize/redirect/invalid UTF8 and byte budget are unknown with zero submi
     assert.equal(r.tripCollectionUnchanged, "unknown"); assert.equal(r.submitDispatches, 0);
   }
 });
+test("total-byte exhaustion during streamed submit permanently blocks recovery dispatch", async () => {
+  const f = boundary(); Object.assign(f.run, { bounds: { ...f.run.bounds, maxTotalBytes: 8192, maxResponseBytes: 8192 } });
+  const actual: string[] = []; let pulls = 0, cancelled = 0;
+  const report = await acquireH04TripInventory(f.run, async (q, s) => {
+    actual.push(q.port);
+    if (q.port !== "submit") return f.transport(q, s);
+    // Legal single-response cap, no Content-Length; prior successful before/session/policy reads
+    // leave less than 8192 in the shared total. The second chunk exhausts that total.
+    return new Response(new ReadableStream<Uint8Array>({
+      pull(controller) { pulls++; if (pulls <= 2) controller.enqueue(new Uint8Array(4096).fill(120)); else controller.close(); },
+      cancel() { cancelled++; },
+    }, { highWaterMark: 0 }), { status: 201, headers: { "Content-Type": "application/json" } });
+  });
+  const submit = actual.indexOf("submit"); assert.ok(submit > 3, "complete before and original pre-submit reads succeeded");
+  assert.deepEqual(actual.slice(submit + 1), [], "no actual transport call after total-byte exhaustion, including original driver recovery");
+  assert.equal(actual.filter(p => p === "submit").length, 1); assert.equal(pulls, 2); assert.equal(cancelled, 1);
+  assert.equal(report.ask?.acknowledgement, "unknown"); assert.equal(report.submitDispatches, 1);
+  assert.equal(report.tripCollectionUnchanged, "unknown"); assert.equal(report.after, null);
+});
