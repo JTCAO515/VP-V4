@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-16T03:43:02.130682+00:00",
+  "observedHostUtc": "2026-10-16T03:41:52.674605+00:00",
+  "source": "original official Aliyun Workbench visible terminal",
+  "connection": {
+    "instanceId": "i-j6c7q3kftufyroypiqvu",
+    "region": "cn-hongkong",
+    "approvedIp": "47.239.12.244",
+    "browserTabId": "1443631079",
+    "instanceMetadataIdMatch": true,
+    "uid": 0,
+    "identityChanged": false,
+    "newCredentialUsed": false
+  },
+  "boot": {
+    "observedUtc": "2026-10-16T03:41:30Z",
+    "arch": "x86_64",
+    "bootId": "7ef6364a-f3a0-4fe7-8b7f-4431db4a7600",
+    "uptimeSeconds": 1852884.22
+  },
+  "docker": {
+    "serverVersion": "29.1.3",
+    "psAllExitCode": 0,
+    "containers": [],
+    "expectedWorkerContainerExists": false,
+    "workerContainerImageDigest": "NOT_APPLICABLE_NO_CONTAINER",
+    "localWorkerImages": [
+      {
+        "tag": "vp-hosted-text-worker:54c8da9a1996",
+        "imageId": "sha256:9c9c51a07c8431da58ebfb8cc439bdbf9eec83d65175bb02bed4c76892925310",
+        "reportedDigest": "sha256:9c9c51a07c8431da58ebfb8cc439bdbf9eec83d65175bb02bed4c76892925310"
+      }
+    ],
+    "imageIsNotDeployedQaSource": true
+  },
+  "checkout": {
+    "path": "/opt/vp-v4",
+    "sha": "54c8da9a1996698115ae1b1696aae7f15f3f9df5",
+    "branch": "main",
+    "dirty": "UNRUN"
+  },
+  "processObservation": {
+    "method": "/proc numeric pid comm only; no cmdline/environ",
+    "nodeOrNodejsCommsFound": false,
+    "dockerDaemons": [
+      {
+        "pid": 3250,
+        "comm": "containerd"
+      },
+      {
+        "pid": 3535,
+        "comm": "dockerd"
+      }
+    ],
+    "kernelKworkersExcludedFromApplicationWorkerEvidence": true,
+    "arbitraryRenamedProcessIdentity": "UNKNOWN"
+  },
+  "fileMetadata": [
+    {
+      "path": "/run/vp-worker-secrets",
+      "exists": true,
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0700",
+      "symlink": false,
+      "regular": false,
+      "links": 2
+    },
+    {
+      "path": "/run/vp-worker-secrets/db.key",
+      "exists": true,
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0400",
+      "symlink": false,
+      "regular": true,
+      "size": 219,
+      "links": 1,
+      "filesystem": "tmpfs"
+    },
+    {
+      "path": "/run/vp-worker-secrets/qwen.key",
+      "exists": true,
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0400",
+      "symlink": false,
+      "regular": true,
+      "size": 115,
+      "links": 1,
+      "filesystem": "tmpfs"
+    },
+    {
+      "path": "/etc/visepanda/hosted-profile.json",
+      "exists": false
+    },
+    {
+      "path": "/etc/visepanda/qa/qa-target.json",
+      "exists": false
+    },
+    {
+      "path": "/etc/visepanda/hosted-text-worker.env",
+      "exists": false
+    },
+    {
+      "path": "/var/lib/vp-worker/journal",
+      "exists": true,
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0700",
+      "symlink": false,
+      "regular": false,
+      "links": 2
+    }
+  ],
+  "storage": {
+    "runFilesystem": "tmpfs",
+    "activeSwapCount": 0
+  },
+  "profileContentRead": false,
+  "profileSchemaReadDecision": "Expected profile and target files absent: no content/schema/public-binding fields read",
+  "currentHostProfileTargetPolicyBudgetFlags": "UNKNOWN_FILES_ABSENT",
+  "secretBytesRead": false,
+  "secretHashComputed": false,
+  "fullEnvironmentOrProcessArgumentsRead": false,
+  "keyAuthenticationValidity": "UNRUN",
+  "providerRequests": 0,
+  "resourceMutations": 0,
+  "workerReadiness": "FAIL_NOT_RUNNING_MISSING_PROFILE_TARGET",
+  "sharedRestoreAndDatabaseE": "UNRUN_BY_THIS_TASK",
+  "supersedesCurrentAccessUnknownOnly": "ecs-metadata-20261016-login-required.json; earlier observed login blocker retained as history"
+}
