@@ -1,3 +1,4 @@
+import {requireQaRuntimeBinding} from '../../../lib/server/qa-agent/runtime-binding.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -24,7 +25,7 @@ test('foreground operator ref is mandatory and exact; approved shared ref works;
 test('profile, composition root and job independently agree before credentials or network',()=>{
  const profile=parseHostedWorkerProfile(raw()),target=readIndependentQaTarget(ref);assert.equal(getHostedWorkerDatabaseTarget(profile),target.databaseUrl);
  const job=qaJobConfig(profile,policy,policy,policy,endpoint);assert.equal(job.projectRef,ref);assert.equal(job.schemaVersion,'qa-agent-worker/2');
- let reads=0;const deps={workerCredential:()=>{reads++;return 'synthetic';},providerCredential:()=>{reads++;return 'synthetic';},recordDestination:async()=>{},recordUsage:async()=>{},invokeContext:async()=>{throw Error('not invoked');},qwenEndpoint:endpoint};
+ let reads=0;const deps={qaBinding:{schemaVersion:'qa-runtime-binding/1',projectRef:ref,ownerId:policy,policyId:policy,scopeId:policy,noticeHash:'a'.repeat(64)},workerCredential:()=>{reads++;return 'synthetic';},providerCredential:()=>{reads++;return 'synthetic';},recordDestination:async()=>{},recordUsage:async()=>{},invokeContext:async()=>{throw Error('not invoked');},qwenEndpoint:endpoint};
  assert.doesNotThrow(()=>createQaWorker(job,deps,target));
  for(const invalid of [{...job,projectRef:other,databaseUrl:`https://${other}.supabase.co`},{...job,databaseUrl:`https://${other}.supabase.co`},{...job,projectRef:'abcdefghijklmnopqrst',databaseUrl:'https://abcdefghijklmnopqrst.supabase.co'},{...job,schemaVersion:'qa-agent-worker/1'}])assert.throws(()=>createQaWorker(invalid,deps,target));
  assert.throws(()=>createQaWorker(job,deps));assert.equal(reads,0);
@@ -33,12 +34,12 @@ test('profile, composition root and job independently agree before credentials o
 });
 const cli=readFileSync('lib/server/jobs/run-hosted-text-worker.mjs','utf8').replace(/^import[^\n]*\n/gm,'');
 async function cliProbe(profile,extra={}){
- let secretReads=0;const errors=[];const runtime={env:{VISEPANDA_HOSTED_TEXT_WORKER:'true',VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile),VISEPANDA_QA_SUPABASE_PROJECT_REF:ref,VISEPANDA_HOSTED_WORKER_SECRET_MODE:'files',...extra},argv:['node','entry'],exitCode:0,removeListener:()=>{}};
- await vm.runInNewContext('(async()=>{'+cli+'})()',{process:runtime,AbortController,AbortSignal,Buffer,console:{error:s=>errors.push(s)},parseHostedWorkerProfile,getHostedWorkerDatabaseTarget,requireQaProfileTarget,parseScopedHostedProfile:()=>{throw Error('unexpected scoped');},readHostedWorkerSecrets:async()=>{secretReads++;throw Error('Synthetic no credentials');}});
+ let secretReads=0;const errors=[];const runtime={env:{VISEPANDA_HOSTED_TEXT_WORKER:'true',VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile),VISEPANDA_QA_SUPABASE_PROJECT_REF:ref,VISEPANDA_QA_RUNTIME_BINDING:JSON.stringify({schemaVersion:'qa-runtime-binding/1',projectRef:ref,ownerId:policy,policyId:policy,scopeId:policy,noticeHash:'a'.repeat(64)}),VISEPANDA_HOSTED_WORKER_SECRET_MODE:'files',...extra},argv:['node','entry'],exitCode:0,removeListener:()=>{}};
+ await vm.runInNewContext('(async()=>{'+cli+'})()',{process:runtime,AbortController,AbortSignal,Buffer,console:{error:s=>errors.push(s)},parseHostedWorkerProfile,getHostedWorkerDatabaseTarget,requireQaProfileTarget,requireQaRuntimeBinding,parseScopedHostedProfile:()=>{throw Error('unexpected scoped');},readHostedWorkerSecrets:async()=>{secretReads++;throw Error('Synthetic no credentials');}});
  return {secretReads,exitCode:runtime.exitCode,errors};
 }
 test('actual CLI binds /4 before reading fixed files and refuses env-key fallback without secret access',async()=>{
- for(const extra of [{VISEPANDA_QA_SUPABASE_PROJECT_REF:undefined},{VISEPANDA_QA_SUPABASE_PROJECT_REF:other},{VISEPANDA_HOSTED_WORKER_SECRET_MODE:undefined},{VISEPANDA_HOSTED_WORKER_DB_KEY:'synthetic-canary'}]){
+ for(const extra of [{VISEPANDA_QA_RUNTIME_BINDING:undefined},{VISEPANDA_QA_RUNTIME_BINDING:'{}'},{VISEPANDA_QA_RUNTIME_BINDING:'invalid-json'},{VISEPANDA_QA_SUPABASE_PROJECT_REF:undefined},{VISEPANDA_QA_SUPABASE_PROJECT_REF:other},{VISEPANDA_HOSTED_WORKER_SECRET_MODE:undefined},{VISEPANDA_HOSTED_WORKER_DB_KEY:'synthetic-canary'}]){
   const result=await cliProbe(raw(),extra);assert.equal(result.secretReads,0);assert.equal(result.exitCode,1);assert.equal(result.errors.some(e=>e.includes('synthetic-canary')),false);
  }
  const allowed=await cliProbe(raw());assert.equal(allowed.secretReads,1,'valid /4 reaches only original container fixed-file reader');

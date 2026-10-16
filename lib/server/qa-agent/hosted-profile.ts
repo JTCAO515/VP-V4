@@ -4,6 +4,7 @@ import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts"
 import type { HostedTariff } from "../jobs/hosted-text-worker.ts";
 import type { QaWorkerConfiguration, LegacyQaWorkerConfiguration, IndependentQaWorkerConfiguration } from "./worker.ts";
 import { exact, record, uuid } from "./service.ts";
+import { requireQaRuntimeBinding, type QaRuntimeBinding } from "./runtime-binding.ts";
 
 export type LegacyQaHostedProfile = Readonly<{
   schemaVersion: "vpj07-hosted-text-worker/3";
@@ -57,9 +58,13 @@ export function qaJobConfig(profile: QaHostedProfile, ownerId: string, policyId:
     provider: { provider: "qwen", endpoint, configurationId: tariff.configurationId, configurationVersion: tariff.configurationVersion, timeoutMs: tariff.timeoutMs },
     pricing: { ...tariff.pricing } };
 }
-export function planQaGroup(profile: QaHostedProfile, raw: unknown, qwenEndpoint: string): QaWorkerConfiguration | null {
+export function planQaGroup(profile: QaHostedProfile, raw: unknown, qwenEndpoint: string, trustedBinding?: QaRuntimeBinding): QaWorkerConfiguration | null {
+  if (profile.schemaVersion !== "vpj07-hosted-text-worker/4") return null;
+  let binding: QaRuntimeBinding;
+  try { binding = requireQaRuntimeBinding(trustedBinding, profile.projectRef); } catch { return null; }
   if (profile.schemaVersion !== "vpj07-hosted-text-worker/4" || !record(raw) || !uuid(raw.ownerId) || !uuid(raw.policyId) || raw.contextMode !== "qa_session_history_v1"
+    || raw.ownerId !== binding.ownerId || raw.policyId !== binding.policyId || raw.noticeHash !== binding.noticeHash
     || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint || !Array.isArray(raw.scopes)) return null;
   const matching = raw.scopes.filter(v => record(v) && uuid(v.scopeId) && v.model === PROTOCOL_MODELS.qwen && v.priceVersion === profile.qwen.priceVersion);
-  return matching.length === 1 ? qaJobConfig(profile, raw.ownerId.toLowerCase(), raw.policyId.toLowerCase(), String(matching[0].scopeId).toLowerCase(), qwenEndpoint) : null;
+  return matching.length === 1 && matching[0].scopeId === binding.scopeId ? qaJobConfig(profile, binding.ownerId, binding.policyId, binding.scopeId, qwenEndpoint) : null;
 }
