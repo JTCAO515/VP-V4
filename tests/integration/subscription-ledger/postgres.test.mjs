@@ -4,3 +4,7 @@ test('subscription private PG17 persistence and denial vectors',{skip:!enabled},
  const {run}=await import('./selected-cases.mjs');await run(t);
 });
 if(!enabled) console.log('INCOMPLETE: private subscription PG gated; no resource started');
+
+test('cross-ledger pinned candidate and actual writer concurrency',{skip:!enabled},async t=>{
+ const {runCrossLedger}=await import('./cross-ledger-cases.mjs');await runCrossLedger(t);
+});

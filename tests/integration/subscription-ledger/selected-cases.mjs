@@ -7,6 +7,7 @@ import {createRequire} from 'node:module';
 import {createOwnedPg} from '../ios004-user-address/owned-pg.mjs';
 import {developmentLedger} from '../../../lib/server/entitlements/subscription-ledger/persistence.ts';
 import {createDevelopmentVerifier} from '../../../lib/server/entitlements/subscription-ledger/verification.ts';
+import {assertLegacyPin,pins} from './legacy-pin.mjs';
 import {snapshotConcurrency} from './snapshot-concurrency.mjs';
 import {parseSnapshot} from '../../../lib/server/entitlements/subscription-ledger/contract.ts';
 import {owner,other,jws,payload,options} from '../../contract/subscription-ledger/fixtures.mjs';
@@ -29,15 +30,16 @@ export async function run(t){
  const query=(sql,values)=>db.query(sql,values);
  const apply=async(p,epoch)=>(await db.query('select subscription_development.apply_period_v1($1,$2) as r',[p,epoch])).rows[0].r;
  const read=async who=>(await db.query('select subscription_development.read_owner_v1($1) as r',[who])).rows[0].r;
- const fingerprint=async()=>digest((await db.query(`select jsonb_build_object('functions',(select jsonb_agg(pg_get_functiondef(oid) order by oid::regprocedure::text) from pg_proc where proname like 'storekit_%'), 'relations',(select jsonb_agg(row_to_json(c)) from (select relname,relacl,relrowsecurity,relforcerowsecurity from pg_class where oid='public.storekit_grants'::regclass)c),'constraints',(select jsonb_agg(pg_get_constraintdef(oid) order by conname) from pg_constraint where conrelid='public.storekit_grants'::regclass),'columns',(select jsonb_agg(row_to_json(a)) from (select attname,atttypid,attnotnull from pg_attribute where attrelid='public.storekit_grants'::regclass and attnum>0 order by attnum)a),'policies',(select jsonb_agg(row_to_json(p)) from (select * from pg_policies where tablename='storekit_grants')p),'rows',(select coalesce(jsonb_agg(to_jsonb(s)),'[]'::jsonb) from public.storekit_grants s)) as value`)).rows[0].value);
+ let fenced=false;
+ const fingerprint=async()=>{if(fenced)await assertLegacyPin(db,'after');return digest((await db.query(`select jsonb_build_object('functions',(select jsonb_agg(jsonb_build_object('definition',case when $1::boolean and p.oid='public.storekit_apply_verified_v1(jsonb)'::regprocedure then $2::text else pg_get_functiondef(p.oid) end,'metadata',to_jsonb(p)-'prosrc') order by p.oid::regprocedure::text) from pg_proc p where p.proname like 'storekit_%'), 'relations',(select jsonb_agg(row_to_json(c)) from (select relname,relacl,relrowsecurity,relforcerowsecurity from pg_class where oid='public.storekit_grants'::regclass)c),'constraints',(select jsonb_agg(pg_get_constraintdef(oid) order by conname) from pg_constraint where conrelid='public.storekit_grants'::regclass),'columns',(select jsonb_agg(row_to_json(a)) from (select attname,atttypid,attnotnull from pg_attribute where attrelid='public.storekit_grants'::regclass and attnum>0 order by attnum)a),'policies',(select jsonb_agg(row_to_json(p)) from (select * from pg_policies where tablename='storekit_grants')p),'rows',(select coalesce(jsonb_agg(to_jsonb(s)),'[]'::jsonb) from public.storekit_grants s)) as value`,[fenced,pins.before.definition])).rows[0].value);};
  try{
   resource.start();db=await resource.connect();
   await db.query("create role anon; create role authenticated; create role service_role bypassrls; create schema auth; create function auth.uid() returns uuid language sql as 'select null::uuid'; create function auth.role() returns text language sql as 'select current_setting(''request.jwt.claim.role'',true)';");
-  await db.query(legacy);const before=await fingerprint();
+  await db.query(legacy);await assertLegacyPin(db,'before');const before=await fingerprint();
   await t.test('development candidate apply rollback leaves no schema, old table/functions/policy/data unchanged',async()=>{
    await db.query('begin');await db.query(sql);await db.query('rollback');
    assert.equal((await db.query("select to_regnamespace('subscription_development') as n")).rows[0].n,null);assert.equal(await fingerprint(),before);
-   await db.query(sql);assert.equal(await fingerprint(),before);
+   await db.query(sql);fenced=process.env.SUBSCRIPTION_SNAPSHOT_BASELINE!=='1';await assertLegacyPin(db,fenced?'after':'before');assert.equal(await fingerprint(),before);
   });
   const original=raw('2001');
   await t.test('durable original period, exact replay, restart adapter and owner projection',async()=>{
@@ -117,7 +119,7 @@ export async function run(t){
   });
   await t.test('read-only legacy collision check denies an existing synthetic old identity',async()=>{
    await db.query("insert into public.storekit_grants values('Sandbox','9001',$1,$1,'synthetic.legacy',now(),now(),now()+interval '720 hours',2,'old', '{}'::jsonb,'active',now(),null)",[owner]);
-   await assert.rejects(apply(raw('9001'),0),/LEGACY_TRANSACTION_CONFLICT/);
+   await assert.rejects(apply(raw('9001'),0),/ENTITLEMENT_TRANSACTION_CONFLICT/);
    await db.query("delete from public.storekit_grants where transaction_id='9001'"); // synthetic fixture cleanup only
   });
   await t.test('anon/authenticated/service_role actual table/function access all default denied',async()=>{
@@ -179,6 +181,6 @@ export async function run(t){
    assert.equal((await db.query("select count(*)::int as n from subscription_development.receipts where transaction_id='7001'")).rows[0].n,1);
    const tombstone=(await db.query("select erased from subscription_development.families where original_transaction_id='3001'")).rows[0];assert.equal(tombstone.erased,true);
   });
-  await t.test('legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent',async()=>assert.equal(await fingerprint(),before));
+  await t.test('legacy fingerprint permits only pinned authored fence body; all other metadata/ACL/table/data unchanged',async()=>assert.equal(await fingerprint(),before));
  }finally{await fixture.cleanup();}
 }

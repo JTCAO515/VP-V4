@@ -1,0 +1,58 @@
+{
+  "before": {
+    "definition": "CREATE OR REPLACE FUNCTION public.storekit_apply_verified_v1(p_input jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_owner uuid;\n  v_token uuid;\n  v_tx text;\n  v_env text;\n  v_product text;\n  v_purchase timestamptz;\n  v_snapshot jsonb;\n  v_existing public.storekit_grants%rowtype;\n  v_start timestamptz;\nbegin\n  -- Grant is service-role only; an authenticated client may never submit decoded claims.\n  if (select auth.role()) is distinct from 'service_role' then raise exception 'FORBIDDEN'; end if;\n  if p_input is null or jsonb_typeof(p_input) <> 'object' then raise exception 'INVALID_INPUT'; end if;\n  begin\n    v_owner := (p_input->>'ownerId')::uuid;\n    v_token := (p_input->>'appAccountToken')::uuid;\n    v_purchase := (p_input->>'purchaseAt')::timestamptz;\n  exception when others then raise exception 'INVALID_INPUT'; end;\n  v_tx := p_input->>'transactionId';\n  v_env := p_input->>'environment';\n  v_product := p_input->>'productId';\n  v_snapshot := p_input->'capacitySnapshot';\n  if v_owner is null or v_token is distinct from v_owner or v_env <> 'Sandbox'\n    or v_tx is null or length(v_tx) not between 1 and 128\n    or v_product is null or length(v_product) not between 1 and 200\n    or v_purchase is null or v_purchase > clock_timestamp() + interval '5 minutes'\n    or jsonb_typeof(v_snapshot) <> 'object'\n    or (p_input->>'catalogVersion')::integer < 1\n    or nullif(p_input->>'policyVersion','') is null then raise exception 'INVALID_INPUT'; end if;\n\n  -- The same owner's purchases serialize; later grants never move earlier intervals.\n  perform pg_advisory_xact_lock(hashtextextended(v_owner::text, 34));\n  select * into v_existing from public.storekit_grants\n    where environment = v_env and transaction_id = v_tx for update;\n  if found then\n    -- Preserve the original policy snapshot if code/catalog has since advanced.\n    if v_existing.owner_id is distinct from v_owner or v_existing.app_account_token is distinct from v_token\n      or v_existing.product_id is distinct from v_product or v_existing.purchase_at is distinct from v_purchase\n      then raise exception 'TRANSACTION_CONFLICT'; end if;\n    if p_input->>'revokedAt' is not null and v_existing.state = 'active' then\n      update public.storekit_grants set state='revoked', revoked_at=(p_input->>'revokedAt')::timestamptz\n      where environment=v_env and transaction_id=v_tx;\n      v_existing.state := 'revoked';\n    end if;\n    return jsonb_build_object('transactionId',v_tx,'state',v_existing.state,'replayed',true,\n      'startsAt',v_existing.starts_at,'endsAt',v_existing.ends_at);\n  end if;\n  if p_input->>'revokedAt' is not null then return jsonb_build_object('transactionId',v_tx,'state','revoked','replayed',false); end if;\n  select greatest(v_purchase, coalesce(max(ends_at),v_purchase)) into v_start\n    from public.storekit_grants where owner_id=v_owner;\n  insert into public.storekit_grants(environment,transaction_id,owner_id,app_account_token,product_id,\n    purchase_at,starts_at,ends_at,catalog_version,policy_version,capacity_snapshot)\n  values(v_env,v_tx,v_owner,v_token,v_product,v_purchase,v_start,v_start+interval '720 hours',\n    (p_input->>'catalogVersion')::integer,p_input->>'policyVersion',v_snapshot);\n  return jsonb_build_object('transactionId',v_tx,'state','active','replayed',false,\n    'startsAt',v_start,'endsAt',v_start+interval '720 hours');\nend $function$\n",
+    "source_sha256": "69086826dd72e28c1d8cb32dfe06bad399042ffb4d209e52fdd45548b344824e",
+    "definition_sha256": "398e3c89c7f7563ffc05c39eed72f0030b83df79759f8c8079a3aa1a76cb54dc",
+    "metadata": {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "cost": 100,
+      "kind": "f",
+      "rows": 0,
+      "owner": "postgres",
+      "binary": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "result": "jsonb",
+      "strict": false,
+      "sqlBody": null,
+      "support": "-",
+      "identity": "p_input jsonb",
+      "language": "plpgsql",
+      "parallel": "u",
+      "arguments": "p_input jsonb",
+      "leakproof": false,
+      "returnsSet": false,
+      "volatility": "v",
+      "securityDefiner": true
+    }
+  },
+  "after": {
+    "definition": "CREATE OR REPLACE FUNCTION public.storekit_apply_verified_v1(p_input jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_owner uuid;\n  v_token uuid;\n  v_tx text;\n  v_env text;\n  v_product text;\n  v_purchase timestamptz;\n  v_snapshot jsonb;\n  v_existing public.storekit_grants%rowtype;\n  v_start timestamptz;\nbegin\n  -- An empty FORCE-RLS scan is not proof of absence. Fail closed on visibility drift.\n  if current_user<>'postgres' or not exists(select 1 from pg_roles where rolname=current_user and (rolsuper or rolbypassrls))\n  then raise exception 'ENTITLEMENT_VISIBILITY_UNAVAILABLE'; end if;\n  -- Grant is service-role only; an authenticated client may never submit decoded claims.\n  if (select auth.role()) is distinct from 'service_role' then raise exception 'FORBIDDEN'; end if;\n  if p_input is null or jsonb_typeof(p_input) <> 'object' then raise exception 'INVALID_INPUT'; end if;\n  begin\n    v_owner := (p_input->>'ownerId')::uuid;\n    v_token := (p_input->>'appAccountToken')::uuid;\n    v_purchase := (p_input->>'purchaseAt')::timestamptz;\n  exception when others then raise exception 'INVALID_INPUT'; end;\n  v_tx := p_input->>'transactionId';\n  v_env := p_input->>'environment';\n  v_product := p_input->>'productId';\n  v_snapshot := p_input->'capacitySnapshot';\n  if v_owner is null or v_token is distinct from v_owner or v_env <> 'Sandbox'\n    or v_tx is null or length(v_tx) not between 1 and 128\n    or v_product is null or length(v_product) not between 1 and 200\n    or v_purchase is null or v_purchase > clock_timestamp() + interval '5 minutes'\n    or jsonb_typeof(v_snapshot) <> 'object'\n    or (p_input->>'catalogVersion')::integer < 1\n    or nullif(p_input->>'policyVersion','') is null then raise exception 'INVALID_INPUT'; end if;\n\n  -- Candidate cross-domain fence: identity mutex precedes every owner/row lock.\n  perform pg_advisory_xact_lock(hashtextextended('entitlement-transaction:'||v_env||':'||v_tx,226));\n  if exists(select 1 from subscription_development.periods where environment=v_env and transaction_id=v_tx)\n  then raise exception 'ENTITLEMENT_TRANSACTION_CONFLICT'; end if;\n\n  -- The same owner's purchases serialize; later grants never move earlier intervals.\n  perform pg_advisory_xact_lock(hashtextextended(v_owner::text, 34));\n  select * into v_existing from public.storekit_grants\n    where environment = v_env and transaction_id = v_tx for update;\n  if found then\n    -- Preserve the original policy snapshot if code/catalog has since advanced.\n    if v_existing.owner_id is distinct from v_owner or v_existing.app_account_token is distinct from v_token\n      or v_existing.product_id is distinct from v_product or v_existing.purchase_at is distinct from v_purchase\n      then raise exception 'TRANSACTION_CONFLICT'; end if;\n    if p_input->>'revokedAt' is not null and v_existing.state = 'active' then\n      update public.storekit_grants set state='revoked', revoked_at=(p_input->>'revokedAt')::timestamptz\n      where environment=v_env and transaction_id=v_tx;\n      v_existing.state := 'revoked';\n    end if;\n    return jsonb_build_object('transactionId',v_tx,'state',v_existing.state,'replayed',true,\n      'startsAt',v_existing.starts_at,'endsAt',v_existing.ends_at);\n  end if;\n  if p_input->>'revokedAt' is not null then return jsonb_build_object('transactionId',v_tx,'state','revoked','replayed',false); end if;\n  select greatest(v_purchase, coalesce(max(ends_at),v_purchase)) into v_start\n    from public.storekit_grants where owner_id=v_owner;\n  insert into public.storekit_grants(environment,transaction_id,owner_id,app_account_token,product_id,\n    purchase_at,starts_at,ends_at,catalog_version,policy_version,capacity_snapshot)\n  values(v_env,v_tx,v_owner,v_token,v_product,v_purchase,v_start,v_start+interval '720 hours',\n    (p_input->>'catalogVersion')::integer,p_input->>'policyVersion',v_snapshot);\n  return jsonb_build_object('transactionId',v_tx,'state','active','replayed',false,\n    'startsAt',v_start,'endsAt',v_start+interval '720 hours');\nend $function$\n",
+    "source_sha256": "958209af4650641aeb864bce01fb2cca783c7089fc0fccc477ef478691bcc95d",
+    "definition_sha256": "b03152ef41247b0d22955651cfdbc7794c22d09fc33c79e8feca9e8b2d0d40e2",
+    "metadata": {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "cost": 100,
+      "kind": "f",
+      "rows": 0,
+      "owner": "postgres",
+      "binary": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "result": "jsonb",
+      "strict": false,
+      "sqlBody": null,
+      "support": "-",
+      "identity": "p_input jsonb",
+      "language": "plpgsql",
+      "parallel": "u",
+      "arguments": "p_input jsonb",
+      "leakproof": false,
+      "returnsSet": false,
+      "volatility": "v",
+      "securityDefiner": true
+    }
+  }
+}
