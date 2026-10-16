@@ -20,10 +20,11 @@ export function createTripInventoryReader(client: SupabaseClient, authenticated:
       if ("error" in actor) return actor;
       if (!uuid(actor.data)) throw Error("Unavailable");
       const headers = async (): Promise<readonly InventoryHeader[]> => {
-        const result = await checked(() => client.from("trips").select("id,title,head_version,updated_at", { count: "exact" })
+        const result = await checked(() => client.from("trips").select("id,owner_id,title,head_version,updated_at", { count: "exact" }).eq("owner_id", actor.data)
           .order("id", { ascending: true }).limit(INVENTORY_CAP + 1).abortSignal(controller.signal));
         if (result.error || !Number.isSafeInteger(result.count) || result.count === null || result.count < 0 || result.count > INVENTORY_CAP
           || !Array.isArray(result.data) || result.data.length !== result.count) throw Error("Unavailable");
+        if (result.data.some(r => r.owner_id !== actor.data)) throw Error("Unavailable");
         const rows = result.data.map(r => ({ id: r.id, title: r.title, headVersion: r.head_version, updatedAt: r.updated_at }));
         if (!rows.every(validHeader) || rows.some((r, i) => i > 0 && rows[i - 1].id >= r.id)) throw Error("Unavailable");
         return rows;
