@@ -1,0 +1,100 @@
+{
+  "before": "c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+  "after": "5b82f71665f3ef59b976e1f2a1d0f15740ed7aec",
+  "patchSha256": "319df3bd0be362f5e18cdb57b073f117e993023369f237fb39afaaaf2fca1d67",
+  "paths": [
+    {
+      "path": "deploy/hosted-worker/ecs-worker-files.sh",
+      "beforeSha256": "8cfa236a42bdcde9132b3da5a812a962597672da3c78f66cdd15039f44a2dfa3",
+      "afterSha256": "09628611aebe186e95551b2c38aa87c7e3377fb82c95e4db1fd25b61d8db0222"
+    },
+    {
+      "path": "deploy/hosted-worker/validate-qa-target.mjs",
+      "beforeSha256": "e4e45e84022ca735f99cf573f2642940f62c6bf86582c600dcb32d141a01b1a0",
+      "afterSha256": "04472865012e37c20e979132e655549035af4b92e330a7bf20a82d5c13752f24"
+    },
+    {
+      "path": "lib/server/jobs/hosted-text-worker.ts",
+      "beforeSha256": "eec95793a5591563f225f0f9af815515aac9a9c27ddc30668611193697ac1a31",
+      "afterSha256": "e72b88ec97018be49ee253434afcd63653ba22acb7bc4d1128296871284e2f31"
+    },
+    {
+      "path": "lib/server/jobs/run-hosted-text-worker.mjs",
+      "beforeSha256": "1ecff7560372319f32658b55da996d61e653e5e5aac5ffddcc1fbf14e952add9",
+      "afterSha256": "949e782608dc3baac6bcd0a8af78b8aac4ccbfbbca938964a03802dabe0ca8a9"
+    },
+    {
+      "path": "lib/server/qa-agent/hosted-profile.ts",
+      "beforeSha256": "70958ae30f8dc17fa8bf21a20fdda45e7167e6d8e83e909732ec41667b1903f5",
+      "afterSha256": "b477ffe6fb23283d3e1a33cb55485f28949476ddcc2553b0bb82872449fc60a4"
+    },
+    {
+      "path": "lib/server/qa-agent/runtime-binding.ts",
+      "beforeSha256": null,
+      "afterSha256": "2e1bdacffe01dc88a53cf7e2194d730bbc2536bee0ae6b2d41e56173f2a9a8a3"
+    },
+    {
+      "path": "lib/server/qa-agent/usage-audit.ts",
+      "beforeSha256": "5fd2cf43e94f370035e50f7e3b6acc74f7ef698ef7350e1aa1ed9411ec301bc5",
+      "afterSha256": "1e3d73b1f403475c79158968390e93d40371332fd576c46dcb2948c60d123e58"
+    },
+    {
+      "path": "lib/server/qa-agent/worker.ts",
+      "beforeSha256": "c34785aa897de3a36d315644b969c159ee447dbb8cdbdc43b7cbd0cd33287a4e",
+      "afterSha256": "0d2aaf8a237301fc9ff17d23978fafe5eef3921ed8009951d06f217aaffcdec9"
+    },
+    {
+      "path": "supabase/migrations/20261016040522_qa_runtime_binding.sql",
+      "beforeSha256": null,
+      "afterSha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c"
+    },
+    {
+      "path": "tests/integration/qa-runtime-binding/postgres.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "f94c72e5cea86465e54b0ca747c8b81e4aadac376d41dc21fe3b6ba4ef5fa1da"
+    },
+    {
+      "path": "tests/security/qa-agent-service/hosted-candidate.test.mjs",
+      "beforeSha256": "8a13891c7d69b5c7e672d9e8be2a8db841e43ff151f86278e5424a314f84e8a7",
+      "afterSha256": "263cae0ea430dee6f6dbb753f588819c08f4cf92046f55129341b4b3e6da0188"
+    },
+    {
+      "path": "tests/security/qa-agent-service/hosted-profile.test.mjs",
+      "beforeSha256": "1113f0404b0a12ab4e858f21210b3493bd768825e718183af66aca8212d3342c",
+      "afterSha256": "a1e3c7ef9bcef9a5fb31203910891bd29e3c287fd06904cac487f4df0faa2ab5"
+    },
+    {
+      "path": "tests/security/qa-agent-service/independent-target.test.mjs",
+      "beforeSha256": "bc6009e224385e8393c051a6c0ca52a8c125f04f304d8ff292a39ad5d975f014",
+      "afterSha256": "cb33f55ed215d6768e91d9ca783aafe0e6d44e24fcb7e972750199fa50e5fabc"
+    },
+    {
+      "path": "tests/security/qa-agent-service/runtime-binding.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "a56d3f37952e5f78debce976f83f2521366d46e686231c2b83a015a19ea4d10a"
+    },
+    {
+      "path": "tests/security/qa-agent-service/worker.test.mjs",
+      "beforeSha256": "77f20ceb0a2e1667f54a2700a10bed53e98bd95e8d14c1d56e84459a0c9fe757",
+      "afterSha256": "ab74c3aa93e60337b1173ad1a58a1e54ca1a939465df4dad729855a66fc56138"
+    },
+    {
+      "path": "tests/security/qa-hosted-installer/discovery.test.mjs",
+      "beforeSha256": "23c64f65f7cb5847aa7e2eb1adeaa090efdc342de168092e5641e72cc1a15149",
+      "afterSha256": "c9a468b5d921b1cd3c56256615a6d69853d63b674154d4ea1c42823db9ee08ca"
+    },
+    {
+      "path": "tests/security/qa-hosted-installer/target.test.mjs",
+      "beforeSha256": "4486d9aaeb6beacb02e3d112048f8aef9b3e4fc0e5c07eac1dac0205aced8328",
+      "afterSha256": "30f516bcc78615e1a8f7b48bd0d1b3104c145481b7bdd7a6cddb14e92be60a9d"
+    }
+  ],
+  "nativePgGateFollowUp": {
+    "before": "5b82f71665f3ef59b976e1f2a1d0f15740ed7aec",
+    "after": "27873cf61c9597581c776f41afbfc5b82b039c8f",
+    "path": "tests/integration/qa-runtime-binding/postgres.test.mjs",
+    "patchSha256": "07d9ad19363c558c8427fe52d115ad3147d7bee7613d432be473b06d0df281c8",
+    "afterSha256": "24817cc0b9d7964b797d2dde387e69f82ffa53ffb575c288d5d1550fbe6aa249",
+    "verified": "QA_RUNTIME_BINDING_PG=1: 1/1 PASS, zero skip; default: expected single skip; no case changes"
+  }
+}

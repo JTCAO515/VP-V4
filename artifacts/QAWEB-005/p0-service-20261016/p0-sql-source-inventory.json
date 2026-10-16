@@ -1,0 +1,4149 @@
+{
+  "sourceHead": "c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+  "mainInventorySourceHead": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+  "mainInventorySha256": "c707fc3d947a8dc184b326ec847061cbd8ce90907ecdb34988741dbf2f97e22e",
+  "appliedHistoryVersions": [
+    "20260824101500",
+    "20260824104424",
+    "20260824104547",
+    "20260824105759",
+    "20260825052328",
+    "20260825153534",
+    "20260825153613",
+    "20260825160314",
+    "20260825160458",
+    "20260825161535",
+    "20260827030717",
+    "20260828153000",
+    "20260828160000",
+    "20260828170000",
+    "20260828180000",
+    "20260828190000",
+    "20260828193000",
+    "20260828194000",
+    "20260828200000",
+    "20260828210000",
+    "20260829191000",
+    "20260830100000",
+    "20260830210000",
+    "20260830211000",
+    "20260909033302",
+    "20260909184816",
+    "20260909223841",
+    "20260910002858",
+    "20260910163426",
+    "20260910171836",
+    "20260910174748",
+    "20260910190526",
+    "20260910190658",
+    "20260910200522",
+    "20260910213151",
+    "20260911072414",
+    "20260911200339",
+    "20260911205200",
+    "20260912042452",
+    "20260912183000",
+    "20260912190000",
+    "20260913080000",
+    "20260913090000",
+    "20260913100000",
+    "20260913145239",
+    "20260914001000",
+    "20260914040000",
+    "20260914041000",
+    "20260914080000",
+    "20260914090000",
+    "20260914100000",
+    "20260914110000",
+    "20260914120000",
+    "20260914130000",
+    "20260914140000",
+    "20260914150000",
+    "20260915180000",
+    "20260915190000",
+    "20260915200000",
+    "20260916120000",
+    "20260917062305",
+    "20260917064821",
+    "20260917100000",
+    "20260917110000",
+    "20260917131633",
+    "20260917140000",
+    "20260918032847",
+    "20260921205157",
+    "20260922002626",
+    "20260922004906",
+    "20260922005110",
+    "20260922014000",
+    "20260923090000",
+    "20260923120000",
+    "20260923140000"
+  ],
+  "missingSnapshotCount": 86,
+  "targetOnlyVersions": [],
+  "scope": "original161 vs75 source-only diagnosis; new runtime-binding migration is additional and separately reviewed",
+  "qualifiedQaReferences": [
+    {
+      "object": "conversation_data_private.actor_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 130
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.authorities_current_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 480
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.authorities_shape_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 457
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.authorities_union_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 471
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.binding_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 884
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.boundaries_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 714
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.clear_proof_required_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 306
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.closure_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 352
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.conflicts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 279
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.deadline_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 59
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.digest_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 55
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.documents_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 716
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.empty_graph_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 278
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.entity_kind_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 216
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.erase_order_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 845
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.erase_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 847
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 714
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2660
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.fenced_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 263
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.graph_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 72
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.guard_core_copy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 1057
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.guard_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 767
+        },
+        {
+          "path": "supabase/migrations/20261007030000_conversation_guide_invalidation_compat.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.ids_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 62
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.immutable_operation_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 314
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.impact_inventory_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 543
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.impact_sets_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 525
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.input_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 91
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.json_references_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 225
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.lock_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 817
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 678
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2625
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.operation_row_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 149
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.operations_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 11
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.parents_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 725
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1920
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.preview_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 890
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.progress_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 897
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.proof_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 268
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.receipt_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 894
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.reference_kind_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 205
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.related_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 510
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.row_key_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 256
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.schema_supported_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 280
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1862
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3597
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 754
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.selection_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 81
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 563
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 518
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2463
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 789
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.sources_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 162
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.union_ids_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 345
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "conversation_data_private.zero_counts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 273
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.core_artifacts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 25
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.core_jobs_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 13
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.core_policies_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 4
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.core_tickets_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 34
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.core_turn_page_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 895
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 955
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.directions_source_current_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3301
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.entitlement_page_progress_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003220000_vpj36_entitlement_export_source_fence.sql",
+          "line": 7
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.immutable_artifact_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 316
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.lock_job_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 75
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 380
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1029
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3317
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.memory_section_progress_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003210000_vpj36_memory_export_source_fence.sql",
+          "line": 10
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.profile_hooks_valid_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 340
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1608
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3552
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.profile_provenance_immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 29
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.profile_snapshot_provenance_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.protect_policy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 308
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.record_turn_provenance_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 960
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.turn_commit_qualifies_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 910
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.turn_managed_copy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 921
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.turn_source_current_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 947
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "export_private.valid_modules_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 99
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "guide_private.bindings_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 35
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "guide_private.clear_position_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 326
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "identity_private.guard_mobile_rpc_v2",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 132
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "identity_private.guard_mobile_write_v2",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 113
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "identity_private.mobile_access_v2",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 102
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "knowledge_review_private.source_impact_text_lifecycle",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 226
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "memory_private.invalidate_legacy_pace",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260922033000_vpj_11_travel_pace_control.sql",
+          "line": 18
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "notification_private.canonical",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+          "line": 83
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "notification_private.exact",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+          "line": 79
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "notification_private.hash",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+          "line": 87
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "notification_private.uuid",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+          "line": 80
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "pdf_intake_private.export_progress_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005070000_pdf_intake.sql",
+          "line": 418
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.guard_linked_delete_budget_insert_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 150
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.guard_linked_delete_entity_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 98
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.guard_linked_delete_export_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 139
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.guard_memory_delete_derived_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003230000_vpj36_memory_bulk_delete_d4.sql",
+          "line": 79
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.guard_trip_write",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260922005110_vpj_36_trip_deletion.sql",
+          "line": 79
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.linked_delete_array_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 37
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "privacy_private.linked_delete_graph_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 40
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1263
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2896
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.digest_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 35
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.guard_profile_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 49
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.native_original_v1",
+      "declaredHistory": [],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.record_watermark_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 88
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.schema_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 269
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1013
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1545
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1924
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3568
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 526
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1102
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "profile_data_private.sources_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 237
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 816
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1475
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.accept_text_policy",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 117
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.chat_threads",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.chat_turn_events",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+          "line": 32
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.chat_turn_idempotency",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+          "line": 54
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.claim_turn_work",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+          "line": 78
+        },
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 122
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 340
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 248
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1667
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 395
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 624
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.dispatch_model_budget",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+          "line": 99
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.memory_consumer_receipts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828194000_v4_15_memory_consumer_receipts.sql",
+          "line": 6
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.model_budget_attempts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+          "line": 25
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.model_budget_provider_limits",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+          "line": 15
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.model_budget_scopes",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.native_task_travel_pace_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260922033000_vpj_11_travel_pace_control.sql",
+          "line": 104
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.native_travel_directions_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1691
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.privacy_core_export_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 133
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 590
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1245
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3345
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.privacy_receipts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828210000_v4_17_privacy_lifecycle.sql",
+          "line": 20
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.privacy_requests",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828210000_v4_17_privacy_lifecycle.sql",
+          "line": 4
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.privacy_turn_data_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 618
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_accept_policy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 198
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_authorize_dispatch_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 87
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_claim_work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 337
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 601
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_complete_work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 114
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_list_sessions_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 147
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_read_message_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 305
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_read_policy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 187
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_read_reconciliation_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 322
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_read_session_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 128
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 746
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_read_work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 74
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_ready_groups_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 456
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 666
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_ready_groups_v2",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 703
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_submit_message_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 285
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.qa_submit_turn_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 204
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.read_assistant_events_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 264
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.read_text_policy",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.read_text_turn",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 229
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 450
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1248
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.read_trip_directions_reference_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 625
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.start_text_turn",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 136
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.trip_proposals",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260825160314_ai10_durable_trip_proposals.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.trips",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.turn_feedback",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828160000_v4_09_chat_feedback.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.turns",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+          "line": 30
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "public.user_profiles",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260828200000_v4_16_user_profiles.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "readiness_private.cleanup_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004000000_readiness_declarations.sql",
+          "line": 127
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "readiness_private.scopes_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004000000_readiness_declarations.sql",
+          "line": 17
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.contexts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 45
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 81
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.lineage_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 59
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.operations_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 53
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.profile_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 100
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "recovery_private.transport_proofs_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+          "line": 66
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "result_data_private.digest_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 55
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "result_data_private.guard_core_copy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 1193
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "result_data_private.guard_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 950
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "result_data_private.infrastructure_supported_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 321
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "result_data_private.schema_supported_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 365
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 524
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1053
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1584
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1820
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3630
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 559
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1291
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.contexts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 7
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 57
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.lineage_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 24
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.operations_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 16
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.proofs_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 39
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.requests_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 426
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.service_current_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 457
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.settings_immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 756
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 415
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.worker_policy_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 438
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.worker_settings_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 407
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "scoped_edit_private.worker_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 471
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.affected",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 285
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.audit",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 32
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.briefs",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 10
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.case_changed",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 330
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.erase",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 143
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.export_leases",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 53
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.invalidate",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 151
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.operation_guard",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 439
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.operations",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 41
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.previews",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 22
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.profile_field",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 187
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_brief_private.source_changed",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 307
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_cases_private.audit",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260922004906_vpj_57_service_case_grants.sql",
+          "line": 23
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_cases_private.cases",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260922004906_vpj_57_service_case_grants.sql",
+          "line": 10
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_operations_private.export_progress",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005050000_service_operations.sql",
+          "line": 387
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_operations_private.grant_changed",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005050000_service_operations.sql",
+          "line": 121
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_operations_private.services",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005050000_service_operations.sql",
+          "line": 19
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "service_operations_private.slots",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005050000_service_operations.sql",
+          "line": 33
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "trip_lifecycle_private.export_progress_v2",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+          "line": 420
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.actor_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 79
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.authorities_current_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 172
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.authorities_shape_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 155
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.authorities_union_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 167
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.binding_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 520
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.boundaries_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 516
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.clear_proof_required_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 454
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.conflicts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 265
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.deadline_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 65
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.digest_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 59
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.empty_graph_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 149
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.empty_references_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 247
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.erase_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 590
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1586
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2857
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.export_predicate_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 815
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.export_provenance_immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 804
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.export_provenance_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 789
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.export_row_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 808
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1459
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.export_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 830
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3662
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 9
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1472
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.fenced_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 103
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.graph_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 269
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.guard_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 774
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1600
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.hooks_valid_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 978
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.ids_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 69
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.immutable_operation_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 461
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.input_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 537
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.json_references_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 203
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.lock_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 561
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1553
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2825
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.operation_row_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 490
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.operations_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 11
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.preview_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 525
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.progress_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 499
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.receipt_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 530
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.reference_kind_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 235
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.related_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 325
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.row_key_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 99
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.runtime_supported_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1622
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2019
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3761
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 129
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 567
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1623
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.schema_supported_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 249
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1975
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3639
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 503
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1651
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.source_key_fenced_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 771
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.source_key_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 767
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3087
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 345
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1436
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2704
+        },
+        {
+          "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+          "line": 1677
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.sources_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 109
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.union_ids_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 151
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.write_hooks_valid_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 586
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1623
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3753
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.writer_references_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 759
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_data_private.zero_counts_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 147
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.act_directions_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1594
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.append_assistant_event_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 99
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_conversations",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+          "line": 4
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_delivery_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 471
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_directions_intakes_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 289
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_eligible_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 209
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_erase_authorized_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 350
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_erase_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 413
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_immutable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 401
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_link_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 82
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_new_conversation_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 341
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_event_source_hook_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 149
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_events_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 51
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_goals",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+          "line": 13
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_message_source_receipts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003090000_vpj78_selected_message_sources.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_messages",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+          "line": 23
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.assistant_travel_intakes",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261002200000_vpj78_explicit_travel_intake.sql",
+          "line": 47
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.cancel_unclaimable_turn_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1636
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.claim_directions_inline_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 595
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.collect_assistant_turn_events_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 140
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.complete_directions_work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 660
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_append_patch_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1572
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_current_basis_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 439
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_domain_state_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 486
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_erase_authorized_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1737
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_exact_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 18
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_export_page_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3129
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_export_source_digest_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3270
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_history_readable_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 395
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_initial_projection_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 266
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_input_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 148
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_integer_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 144
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_operations_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 335
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_options_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 210
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_parents_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1716
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_read_intake_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 561
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_relative_projection_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 224
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_result_sources_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 315
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_schema_members_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3540
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_source_witness_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1796
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_strings_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 35
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_task_output_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 612
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_text_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 22
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_uuid_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 140
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.directions_write_basis_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 530
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.erase_directions_witness_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1843
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.grounded_ai_assist_jobs",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260915200000_vpj_76_360_grounded_ai_assist_jobs.sql",
+          "line": 29
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.grounded_turns",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 6
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.guard_directions_export_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3288
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.guard_directions_linked_parent_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3099
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.guard_directions_operation_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1766
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.guard_directions_source_delete_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1781
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.guard_metered_task_type",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260926180000_vpj35_u2_text_capacity_boundary.sql",
+          "line": 29
+        },
+        {
+          "path": "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql",
+          "line": 143
+        },
+        {
+          "path": "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql",
+          "line": 518
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.hide_text_content",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 239
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.hosted_worker_control",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+          "line": 6
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.immutable_directions_source_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 369
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.lock_assistant_delivery_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 487
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.lock_directions_witness_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1827
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.lock_text_work",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 160
+        },
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 195
+        },
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 52
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 286
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 425
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.lock_turn",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+          "line": 23
+        },
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 76
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_action_receipts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927040000_vpj80_planning_action_receipts.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_comparisons",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 29
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_intake_bindings",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 9
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_model_dispatches",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 45
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_observations",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 562
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_policies",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 7
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_policy_current",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 88
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_collector_origins",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 46
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_collector_outputs",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 56
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_completed_receipts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 433
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_completion_proofs",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 424
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_execution_profiles",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 17
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_execution_runs",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 33
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_external_call_windows",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 42
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_model_attempt_bindings",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003050000_vpj78_v2_model_attempt_binding.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_model_local_journal",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003060000_vpj78_v2_model_local_journal.sql",
+          "line": 81
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_place_checkpoints",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003040000_vpj78_v2_durable_checkpoints.sql",
+          "line": 2
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.planning_v2_result_claims",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 62
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.qa_consumer_window_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 163
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.qa_history_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 30
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.qa_link_mode_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 18
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.qa_lock_work_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 63
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.require_text_task",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 222
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 369
+        },
+        {
+          "path": "supabase/migrations/20261013050429_qa_agent_web.sql",
+          "line": 590
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.result_artifacts",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.result_events",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+          "line": 34
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.result_revisions",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+          "line": 16
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.retire_assistant_delivery_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 503
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.retire_assistant_event_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 381
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.service_task_capacity",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+          "line": 10
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.service_task_turns",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 17
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.service_tasks",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.submit_directions_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1474
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.task_history",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 7
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 310
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.terminal",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+          "line": 59
+        },
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 196
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_consents",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 23
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_content",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 33
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_dispatches",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 50
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_owner",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 94
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_policies",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 3
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.text_policy_current",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 108
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.valid_directions_intake_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 46
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.valid_directions_relative_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 76
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.valid_text",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 68
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.valid_travel_directions_v1",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 108
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    },
+    {
+      "object": "turn_private.work",
+      "declaredHistory": [
+        {
+          "path": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+          "line": 4
+        }
+      ],
+      "note": "lexical reference including lifecycle manifests, not proof of target object state or complete semantic dependency"
+    }
+  ],
+  "missingClassification": [
+    {
+      "version": "20260922033000",
+      "file": "20260922033000_vpj_11_travel_pace_control.sql",
+      "sha256": "a13cc3d1b950f40b25b84219f5d53dff894fe9bca1bdd397665489a31e3364ab",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260926113804",
+      "file": "20260926113804_vpj34_storekit_grants.sql",
+      "sha256": "9c283d9228200138918b792c22d25e8c3da62cd67d48a4b3a422d6124ecdef90",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260926132008",
+      "file": "20260926132008_vpj35_u1_text_capacity.sql",
+      "sha256": "c8465ff6aee2903f3e9038078d235e68c25b242788dc0b4a61125c0256b779ee",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260926150000",
+      "file": "20260926150000_vpj36_trip_deletion_queue_reader.sql",
+      "sha256": "cd3a626eae0ebad3d58c46ae4e0aa3fc37b09745ea334d2e61c2ca220b8e8887",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260926170000",
+      "file": "20260926170000_vpj35_u2_trip_confirmation_receipt.sql",
+      "sha256": "cf14d2ca56174a3090aaf974ec7e5bd630bd0e84e1515658fb23fd5c9d0a9552",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260926180000",
+      "file": "20260926180000_vpj35_u2_text_capacity_boundary.sql",
+      "sha256": "bd351027e6f635baccfa0147db599ca6349b451832b501aa0e4c1ccee4b15b23",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260927010000",
+      "file": "20260927010000_vpj11_explicit_memory_create_undo.sql",
+      "sha256": "db18aeab79085741379b79582caa09695df32a61ccea56915a09666873c5e55f",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260927021000",
+      "file": "20260927021000_vpj78_conversation_membership.sql",
+      "sha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260927030000",
+      "file": "20260927030000_vpj79_comparison_results.sql",
+      "sha256": "d998622c2611dd1f1c8d9cd1c487d43f4900810f59ab274ce1e282fd8d789b73",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260927040000",
+      "file": "20260927040000_vpj80_planning_action_receipts.sql",
+      "sha256": "b473dff39b063c7889ed5498d38931d2de335eb47c72d7e850339019d1dca5d9",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260927050000",
+      "file": "20260927050000_vpj78_goal_trip_link.sql",
+      "sha256": "7ef73b962ebe4a9dcaa04fc2825bba7a29d8eed5631df059216b1ad855be2f9f",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260927055000",
+      "file": "20260927055000_vpj79_exact_trip_results.sql",
+      "sha256": "c28813d89fade5d3a3377193b8c672077188c55a817d9342996f912ed2f334aa",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260927060000",
+      "file": "20260927060000_vpj80_planning_comparison.sql",
+      "sha256": "1d0bf3dcc94d2fbf6477a45ea3f3f6040f2fd80a0e291733e182d02a3a6555f6",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20260930010000",
+      "file": "20260930010000_vpj82_result_search.sql",
+      "sha256": "78067b6d01a7f15b47a18fb7fd62eee364dd1d80024e0dee50f765bf8b31e2c7",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20260930020000",
+      "file": "20260930020000_vpj80_hosted_planning_target.sql",
+      "sha256": "273bd319b4a8a4b32729e12f17ccf69a04ae14929a403da5dcd2eacc4003a26d",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261001010000",
+      "file": "20261001010000_vpj79_task_result_reference.sql",
+      "sha256": "d8d16342d2d9ec046b8b8a7b4b91efa9b624ee5e9b89d0913db16c912bf1b7a2",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002010000",
+      "file": "20261002010000_vpj78_conversation_export.sql",
+      "sha256": "81f3d4cbf80fba50bd3ee516dbc44f76db3e039520dd1397dd48ed5e541d02d9",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002020000",
+      "file": "20261002020000_vpj81_conversation_selection.sql",
+      "sha256": "f8d955a662f20de923f7cfd7505f3fd9c717c9775bfedfaa5f952447bc4bd514",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002030000",
+      "file": "20261002030000_vpj79_result_export.sql",
+      "sha256": "8f7d604820435e9637accf405e7638ab1b885ceaed006e0aea207dc0532d2678",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002040000",
+      "file": "20261002040000_vpj83_journeys_pages.sql",
+      "sha256": "384638001e4feaf9f8d78bd9084c5ebabfff1b8442437461c88961d04e70c0ec",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002050000",
+      "file": "20261002050000_vpj82_translation_history.sql",
+      "sha256": "91e98d022c219ce5422918f9ac0e4e5cf5c53e5ed0502c7045a52434931e8a72",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002060000",
+      "file": "20261002060000_vpj81_conversation_task_history.sql",
+      "sha256": "47f8a7eeff1c8ee290834944bc66c913f23bd667a86cc7f7b7d2d95969c4d2bc",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002080000",
+      "file": "20261002080000_vpj80_owner_task_activity.sql",
+      "sha256": "34b2fd61a6756207353c8f48ce5cb5418ae36b5e613fdce8a94296ebcafa5f78",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002110000",
+      "file": "20261002110000_vpj79_change_proposal_reference.sql",
+      "sha256": "54b5f54f50c9bce7008289eea806028a2fc3d70beba052df901d5fc14f7878d8",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002120000",
+      "file": "20261002120000_journeys_goal_index.sql",
+      "sha256": "038ea8aa30566afead70dc8d6d3f3ab9a731a68031254bc2e311ad3a9c64e92f",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002130000",
+      "file": "20261002130000_vpj79_trip_proposal_reference_discovery.sql",
+      "sha256": "1d58dc6a50d2a87780f992441426a8ecfd7653b6a3b58ed0e8148a34abbd3cdc",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261002200000",
+      "file": "20261002200000_vpj78_explicit_travel_intake.sql",
+      "sha256": "9253e8375e61a72a3e6a8c98b2c990655d10d79b611c9eeb7af7193ead697f78",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003020000",
+      "file": "20261003020000_vpj80_intake_admission_binding.sql",
+      "sha256": "12add9b54fa7739541c50d0f53d34b043c3a3185d27cb63153e7defc2e779cfa",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003030000",
+      "file": "20261003030000_vpj79_private_qualified_comparison.sql",
+      "sha256": "2086d93f6378bf933e674bda3d14b86f5cc8b8ccf73250d22adaeca676465c9b",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003040000",
+      "file": "20261003040000_vpj78_v2_durable_checkpoints.sql",
+      "sha256": "3a8ff1dc288549ae7bb9a6ce72bd3d32771bfb8f8ba1ef28b7c7ded3e3622e01",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003050000",
+      "file": "20261003050000_vpj78_v2_model_attempt_binding.sql",
+      "sha256": "124c1b37b33f8c89edcb3a0f65c8896add98fe9a47d69ff4dacd368d673f257c",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003060000",
+      "file": "20261003060000_vpj78_v2_model_local_journal.sql",
+      "sha256": "6120eafe95fc529cfbc95050038e727d1bde82145f64dbbdec2923d07fd80563",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003090000",
+      "file": "20261003090000_vpj78_selected_message_sources.sql",
+      "sha256": "4e7d2cd56be437c0325dc8087938cc6ae4778416e3946b4aca87c7ec1b4c256e",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003110000",
+      "file": "20261003110000_vpj79_five_result_lifecycle.sql",
+      "sha256": "4332903ba58da8ba7ca98f2eb8b6cec5c2e102415d3553612739b7e0510ff77e",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003120000",
+      "file": "20261003120000_vpj78_result_v2_context_compat.sql",
+      "sha256": "271a770010e66a38d6b33d3670d9565694cf56b39a02c58441edbe5be8f66ee6",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003130000",
+      "file": "20261003130000_vpj81_native_memory_commands.sql",
+      "sha256": "40a65cb611dcc29425bb3dc317a5a560940fd16eaabe0ef16b21fdd37099cc27",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003150000",
+      "file": "20261003150000_vpj80_complete_worker_authority.sql",
+      "sha256": "91f9da2d2399bbfacf3ea400b226f209397bb8bd449cdf6a3639aa30da493ab7",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003160000",
+      "file": "20261003160000_vpj25_controlled_offline_text_provenance.sql",
+      "sha256": "4346364671e6e628a82f51a1e935137e262d5564d5cddb5bf3a68be50e14f48b",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003170000",
+      "file": "20261003170000_vpj36_core_export_d2.sql",
+      "sha256": "5a4fc34e436dc17ae822dc3a213e953b1226efc301cab84a2d6663c2f9fe11b2",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003180000",
+      "file": "20261003180000_vpj17_source_impact_outbox.sql",
+      "sha256": "c80ca1ecc0106bba26e942231ce3ed96ce02812363f26defec445d9dccc0ed0d",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003190000",
+      "file": "20261003190000_vpj36_linked_trip_delete_d3.sql",
+      "sha256": "9fe92a25d8d0524e8099f2f63e406d4edc21bc92c9967cfd60fec452292c448c",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003200000",
+      "file": "20261003200000_vpj65_trip_item_support.sql",
+      "sha256": "1d19fabf88f118c9857b51e05e89e9afbe9ea4b888e597d724a546644ef4c18c",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261003210000",
+      "file": "20261003210000_vpj36_memory_export_source_fence.sql",
+      "sha256": "204200258c4bbc1cef67cbfebe09adbf2a508ba82d39bbedea1cec28308bbdf2",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003220000",
+      "file": "20261003220000_vpj36_entitlement_export_source_fence.sql",
+      "sha256": "2c8ddf4420d25a4956e82f283606b64039a9dce9b0c2260ce271b148c40b3420",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261003230000",
+      "file": "20261003230000_vpj36_memory_bulk_delete_d4.sql",
+      "sha256": "6da3b6b6b631c5a585e653522cb0e4cceac24ede20b5a270ee3a11f288adb50a",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261004000000",
+      "file": "20261004000000_readiness_declarations.sql",
+      "sha256": "a9e8db8cd4581f32b79c1c110463bd3b8f4bf78ced0bd086ed0b05da0d933089",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261004010000",
+      "file": "20261004010000_vpj23_reviewed_lodging_classification.sql",
+      "sha256": "82aff2d0aa0c5a25e5aa134b17f451a8f3ad29a1b80bcd744203227e4b92bee8",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261004020000",
+      "file": "20261004020000_reservation_ledger.sql",
+      "sha256": "ac0e2b1ad8371f03bdd3da1f19cfcc3b945cf63dc70ffea101d5bd9ec3525fe2",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261004030000",
+      "file": "20261004030000_local_recovery_guard.sql",
+      "sha256": "f4cd8db5f1682a3908494715c601b164db9ab1a9f2a313780fb9bf9d05d8b088",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261004040000",
+      "file": "20261004040000_foreground_traffic_authority.sql",
+      "sha256": "97844fca279fd5cf8a9db6509848ccf0fff3483025a23294e0b9337f00bcb728",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261005010000",
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "sha256": "fbfc81129bef773411bc873d62c0d2f15c60673df7edc9660d04116af9554a4c",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261005020000",
+      "file": "20261005020000_scoped_edit.sql",
+      "sha256": "999d376403fe8d6c159a4dcf7438debacae80a61d6b5a9abd2cc526b91391a65",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005030000",
+      "file": "20261005030000_reminder_delivery.sql",
+      "sha256": "deb196b483d196451b3bd28f6b5e905d347c012bb6cb8c189d889c8f539b6e10",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005040000",
+      "file": "20261005040000_vpj61_trip_lifecycle.sql",
+      "sha256": "9c79f65484366aa5c69c8d01094afe76ea2edae412c1db8a69e149e743c75630",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005050000",
+      "file": "20261005050000_service_operations.sql",
+      "sha256": "6a58e78a892699d14d43bf21e80cca7ccb0a7c0ba41ae03c2768f3f2084622b7",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005060000",
+      "file": "20261005060000_traveler_brief.sql",
+      "sha256": "bb39317153e96e55592e4e016c2056dd4926285d851417df9dd674a44ea40767",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005070000",
+      "file": "20261005070000_pdf_intake.sql",
+      "sha256": "cc672c2d0afbc9651b97f3f054a72c673a1cbc9e61d1af2e41ed3d06182274e7",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005080000",
+      "file": "20261005080000_place_guide.sql",
+      "sha256": "087d6b254d035106ee6b5ace7390e70d501067deb4852f790f285cb0022c9147",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261005081000",
+      "file": "20261005081000_traveler_brief_export_clock.sql",
+      "sha256": "a210990a81f47ff57e6313eae73b2e0d356cab37da9cca43812c03887a17883b",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261005090000",
+      "file": "20261005090000_community_submission_j1.sql",
+      "sha256": "7a27a768dc48e99770f9f82ef4bbd09579cba2004a34a321f0aecfe526326468",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261005091000",
+      "file": "20261005091000_community_safety_j2.sql",
+      "sha256": "600cda44514ef046b77cf0ce14a9a412da25ec3c80d2119dbc6128ef455ffc7f",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261005092000",
+      "file": "20261005092000_community_publication_j3j4.sql",
+      "sha256": "ad91f81a102353d8b0cd0a10d4a7cbb769e15c9266bdb1abda0680815302db8c",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006010000",
+      "file": "20261006010000_owner_module_export.sql",
+      "sha256": "ae1d79b5bbe804e8039809cf58bf199bc8ac2bb6af2cf97f5931fe4326d7a8fd",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006011000",
+      "file": "20261006011000_community_safety_frontier_lock.sql",
+      "sha256": "e9ec10defe315db9038eb1dafdf411dc763a3f1de2282b78ae6374330b018809",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006020000",
+      "file": "20261006020000_material_reference_data.sql",
+      "sha256": "facf7657da20198bb0dc10481446f6b0b072f15ce5efc2420ede72009a14d8e9",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006030000",
+      "file": "20261006030000_notification_data_exit.sql",
+      "sha256": "58797f9ceaf09c43f007a523238cf554dc30b302ac1ae4f5d8a52f178000787a",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006040000",
+      "file": "20261006040000_coverage_progress_data.sql",
+      "sha256": "bb1c89c79826e16b2e69a6a353835d1d52a506880e0cd11f707e58fae117fa1c",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006050000",
+      "file": "20261006050000_archive_data.sql",
+      "sha256": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261006060000",
+      "file": "20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261007010000",
+      "file": "20261007010000_result_data.sql",
+      "sha256": "3a87c300ecc448238071472b52a2a7d513cc60a8d92dea95a03098b33dddccf9",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261007020000",
+      "file": "20261007020000_profile_data.sql",
+      "sha256": "aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261007030000",
+      "file": "20261007030000_conversation_guide_invalidation_compat.sql",
+      "sha256": "708d01f0f57c8347b122139ec214691712dff2345d7df2dc9ceb0c48405dfc25",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261007040000",
+      "file": "20261007040000_profile_core_export.sql",
+      "sha256": "5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261007050000",
+      "file": "20261007050000_turn_data.sql",
+      "sha256": "33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261008000000",
+      "file": "20261008000000_result_reference_parser_cost.sql",
+      "sha256": "6a94c0613895e7126108e2f44d0dd2fa5762c63a71ae04ef3858fc6c03d5c3a4",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261010010000",
+      "file": "20261010010000_profile_web_lock_error.sql",
+      "sha256": "ea6c9128f3576e03e5b3940ebd0cb5a89926e54da732091cc092a8845c1b7413",
+      "classification": "not a direct QA object declaration; indirect schema/pin/predecessor status unproven"
+    },
+    {
+      "version": "20261010020000",
+      "file": "20261010020000_assistant_events.sql",
+      "sha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261010030000",
+      "file": "20261010030000_vpj09_travel_directions.sql",
+      "sha256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261010040000",
+      "file": "20261010040000_vpj09_retained_turn_export.sql",
+      "sha256": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0",
+      "classification": "QA lexical/schema/source-pin candidate: must review transitive predecessor/guards"
+    },
+    {
+      "version": "20261013050429",
+      "file": "20261013050429_qa_agent_web.sql",
+      "sha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "classification": "direct QA producer"
+    },
+    {
+      "version": "20261015024450",
+      "file": "20261015024450_ios001_goal_return_current.sql",
+      "sha256": "f4bcc8d953e4b6e27c3a582d84dc4d741c0acdcb8e5689598556c5b2ffb18c0f",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    },
+    {
+      "version": "20261015040456",
+      "file": "20261015040456_agent005_resolved_subject_context.sql",
+      "sha256": "3fbe4111507a53e947e71f5dad20cd979a4bda49e4716be1a45733797d66f077",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    },
+    {
+      "version": "20261015043710",
+      "file": "20261015043710_agent001_qa_cancellation.sql",
+      "sha256": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    },
+    {
+      "version": "20261015055708",
+      "file": "20261015055708_agent008_trip_service_task_settlement_current.sql",
+      "sha256": "cdbe97c1931cac1a077ae3f898377cb6ee552dada66a23a2490a9565e9134021",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    },
+    {
+      "version": "20261015083120",
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "sha256": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    },
+    {
+      "version": "20261015161024",
+      "file": "20261015161024_ios004_online_user_address.sql",
+      "sha256": "62074a2fb1b56b35620f835b9a09f667e87d2a826ffc64cd3734e196ef997f4a",
+      "classification": "later non-predecessor feature, excluded from original first-answer dependency"
+    }
+  ],
+  "unresolvedReferences": [
+    "profile_data_private.native_original_v1"
+  ]
+}
