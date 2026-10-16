@@ -396,19 +396,29 @@ def caller_snapshot(db):
 
 
 def run(core,args,source_profile=None):
-    if source_profile is not None:require('DOCKER_HOST' not in os.environ and 'DOCKER_CONTEXT' not in os.environ,'DOCKER_OVERRIDE_REJECTED')
+    if source_profile is None:return _run_after_preflight(core,args)
+    environment=SimpleNamespace(ROOT=ROOT,ARCHIVES=ARCHIVES,RETAIN=RETAIN,ACTIONS=ACTIONS,PRESERVED_KEYS=PRESERVED_KEYS,read_private=read_private,open_root=open_root,active_name=active_name,filename=filename,canonical_uuid=canonical_uuid,binding_keys=bindings)
+    with _directive_profile().run_preflight(environment,core,args,source_profile) as lease:
+        return _run_after_preflight(core,args,source_profile,lease)
+
+
+def _run_after_preflight(core,args,source_profile=None,lease=None):
     require_configured(source_profile)
-    if source_profile is not None:
-        require(getattr(core,'directiveSourceFingerprint',None)==_directive_profile().fingerprint(source_profile),'DIRECTIVE_QUALIFIED_ENTRY_REQUIRED')
-        expected=_directive_profile().qualified_code_hash(getattr(core,'directiveBaseCodeHash',None),getattr(core,'directiveTypedConfiguration',None),source_profile)
-        require(core.code_hash()==expected,'DIRECTIVE_QUALIFIED_CODE_HASH_CONFLICT')
+    header=None
+    if source_profile is not None:header=_directive_profile().lease_header(lease,core,args,source_profile)
     HUMAN_FILE=_source_binding(source_profile,'HUMAN_FILE');HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
     # All private input reads remain after profile qualification.
     ap,mp,ip,plan=map(Path,args)
     require(ap.parent==ROOT and ap.suffix=='.json','DIAGNOSTIC_PACKET_METADATA_PATH_REQUIRED')
-    require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
-    read_private(HUMAN_FILE,HUMAN_SHA256)
-    packet,packet_sha=read_private(ap)
+    if source_profile is None:
+        require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
+        read_private(HUMAN_FILE,HUMAN_SHA256)
+        packet,packet_sha=read_private(ap)
+    else:
+        packet,packet_sha=read_private(ap,header['packetSha256'])
+        _directive_profile().bind_header(header,packet,packet_sha,sha(packet.get('identityPath','').encode()),args)
+        require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
+        read_private(HUMAN_FILE,HUMAN_SHA256)
     anchor=core.diagnostic_deadline.monotonic()
     instant=core.base.capture.now()
     if source_profile is None:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
@@ -430,6 +440,7 @@ def run(core,args,source_profile=None):
     core.base.validate_approval(proxy,mp,ip)
     budget.check()
     record=claim(packet,core.code_hash(),source_profile)
+    if source_profile is not None:_directive_profile().release_preflight(lease)
     # Failure, including a Python exception, consumes this attempt. Unknown
     # cleanup leaves active guard in place; never auto-start another copy.
     try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True,window_budget=budget)

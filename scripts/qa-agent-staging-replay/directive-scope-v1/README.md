@@ -79,3 +79,31 @@ until a clean fixed candidate is independently safety-reviewed and locally
 validated, with qualified operator configuration, actual START and every original
 preflight condition. If used before merge, label it a local candidate, not delivered
 or deployed code. No actual START is derived from human-message/model/old795 time.
+
+## Mandatory run preflight
+
+The public gate itself performs the single v1 preflight; an entry/facade cannot
+assert that raw verification has already happened. It checks the real pinned
+source chain before reading any operator record. Next it reads only the bounded,
+non-secret `<packet-stem>.execution-header.json` next to a new
+`directive-v1-packet-*.json` packet. `execution_header(packet, packet_sha,
+identity_reference_sha)` defines the exact fields. It is metadata, not START or
+consumption. No manifest/identity locator or secret content belongs in the header.
+
+Before packet/human/START/history/material reads, the gate checks that header's
+source/window/expiry/binding, capture-wide active state, permanent authorization,
+used slot, and (for attempt2) the first failure/cleanup/consumption guard records.
+Successful closed windows, replayed slots and another UUID for the same grant are
+rejected here. The original full causal-repair checks still follow for an eligible
+attempt2. The actual packet must immediately match the header's exact byte hash
+and complete field projection before further operator reads.
+
+A nonblocking capture-wide file lock serializes v1 run preflight through the
+original atomic claim. Its empty inode persists; it is never START/used authority,
+never deletes a marker, and failure merely releases the OS lock. An opaque
+registered lease binds the checked args/profile/code/header; a fabricated verified
+flag is not accepted by the internal continuation. The lock is released just
+after claim, before restore. Original O_EXCL active/used/grant checks remain final
+authority and protect races; early reads never replace consumption. Legacy run
+behavior is unchanged. Positive run tests stub the data plane/manifest; they prove
+ordering and Budget handoff, not actual material acceptance.

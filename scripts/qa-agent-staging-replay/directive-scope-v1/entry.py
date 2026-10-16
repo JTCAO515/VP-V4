@@ -18,9 +18,7 @@ def run(core,args,configuration,source_profile):
     if 'DOCKER_HOST' in os.environ or 'DOCKER_CONTEXT' in os.environ:raise ValueError('DOCKER_OVERRIDE_REJECTED')
     config=json.loads(json.dumps(configuration));binding=json.loads(json.dumps(source_profile))
     fixed=qualified_hash(core,config,binding)
-    # Validate the supplied non-secret actual source chain before the original
-    # gate can read operator records, consume a claim or access any material.
-    profile.verify_sources()
+    # The gate itself owns the single mandatory run preflight.
     def code_hash():
         if qualified_hash(core,config,binding)!=fixed:raise ValueError('DIRECTIVE_QUALIFIED_SOURCE_CHANGED')
         return fixed

@@ -95,6 +95,120 @@ class SyntheticGate(ActualSources):
         path.write_bytes(p.canonical(value));path.chmod(0o600);return p.sha(path.read_bytes())
     def bind_start(self):self.packet['mainStartReceiptSha256']=self.write(Path(self.cfg['startFile']),self.start)
     def valid(self,packet=None,when=None):return self.g.validate(packet or self.packet,self.code,when or self.fx.t,datetime.fromisoformat,legacy.locale,source_profile=self.cfg)
+    def run_inputs(self):
+        config={'mode':'same-copy-typed-postdata/1','sourceLockSha256':self.cfg['sourceLockSha256'],'windowBindingSha256':self.cfg['windowBindingSha256']}
+        digest=p.qualified_code_hash(self.code,config,self.cfg)
+        self.packet.update(codeSha256=digest,manifestPath=str(self.fx.archives/'never-manifest.json'))
+        self.start.update(codeSha256=digest,attempt=self.packet['attempt'],reviewedSourceCommit=self.packet['reviewedSourceCommit'],windowId=self.packet['windowId'],windowStart=self.packet['windowStart'],windowEnd=self.packet['windowEnd'])
+        self.bind_start()
+        ap=self.fx.root/('directive-v1-packet-'+self.packet['windowId']+'.json')
+        packet_sha=self.write(ap,self.packet)
+        # Explicit minimal non-secret header for new run preflight. It does not
+        # constitute START or a claim, and is bound to the actual packet bytes.
+        keys=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
+        header={k:self.packet[k] for k in keys}
+        header.update(version='directive-execution-header/v1',authorizationDigest=p.AUTHORIZATION,packetSha256=packet_sha,identityPathSha256=p.IDENTITY)
+        self.write(ap.with_suffix('.execution-header.json'),header)
+        deadline=load('run_deadline',ROOT/'diagnostic-window-deadline.py').shared_runtime()
+        facade=SimpleNamespace(code_hash=lambda:digest,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg),diagnostic_deadline=deadline,base=SimpleNamespace(capture=SimpleNamespace(now=lambda:self.fx.t,stamp=datetime.fromisoformat)),locale_profile=legacy.locale)
+        return facade,[str(ap),self.packet['manifestPath'],self.fx.identity,'never-plan']
+    def refuse_operator_reads(self,path,*args,**kwargs):
+        path=Path(path)
+        allowed={self.fx.archives/p.authority_name(),self.fx.archives/self.g.filename(self.fx.window,1,'used'),self.fx.archives/self.g.filename(self.fx.window,1,'result')}
+        if path not in allowed:
+            self.protected_reads.append(str(path));raise ValueError('PROTECTED_OPERATOR_READ_BEFORE_PREFLIGHT')
+        return self.original_reader(path,*args,**kwargs)
+    def run_refusal(self,expected):
+        facade,args=self.run_inputs();self.protected_reads=[];self.original_reader=self.g.read_private
+        with patch.object(self.g,'read_private',side_effect=self.refuse_operator_reads),patch.object(self.g,'claim') as claim:
+            with self.assertRaisesRegex(ValueError,expected):self.g.run(facade,args,source_profile=self.cfg)
+            claim.assert_not_called();self.assertEqual(self.protected_reads,[])
+    def test_run_correct_hash_bad_source_has_zero_operator_reads(self):
+        facade,args=self.run_inputs();bad=dict(self.raw);bad['context.parentProvidedApiRaw']=b'changed'
+        with patch.object(self.g._directive_profile(),'verify_sources',side_effect=lambda:p.verify_sources(bad)),patch.object(self.g,'read_private',wraps=self.g.read_private) as read,patch.object(self.g,'claim') as claim:
+            with self.assertRaisesRegex(ValueError,'DIRECTIVE_RAW_PIN_CONFLICT'):self.g.run(facade,args,source_profile=self.cfg)
+            read.assert_not_called();claim.assert_not_called()
+    def test_run_same_grant_new_uuid_refused_before_operator_reads(self):
+        self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS'},self.cfg)
+        self.packet['windowId']=str(uuid.uuid4());self.cfg['windowBindingSha256']=p.window_binding(self.packet)
+        self.run_refusal('DIRECTIVE_AUTHORIZATION_ALREADY_BOUND')
+    def test_run_active_duplicate_refused_before_operator_reads(self):
+        self.write(self.fx.archives/self.g.active_name(),{'active':'synthetic'})
+        self.run_refusal('DIRECTIVE_CAPTURE_ALREADY_ACTIVE')
+    def test_run_expired_window_refused_before_operator_reads(self):
+        self.packet['windowStart']=(self.fx.t-timedelta(hours=2)).isoformat();self.packet['windowEnd']=(self.fx.t-timedelta(hours=1)).isoformat()
+        self.cfg['windowBindingSha256']=p.window_binding(self.packet)
+        self.run_refusal('DIRECTIVE_WINDOW_EXPIRED')
+    def test_run_successful_closed_window_refuses_second_before_operator_reads(self):
+        self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS'},self.cfg)
+        result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
+        self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
+        self.run_refusal('DIRECTIVE_SECOND_WINDOW_NOT_ELIGIBLE')
+    def test_run_header_tamper_rejected_before_human_or_material_reads(self):
+        facade,args=self.run_inputs();ap=Path(args[0]);header_path=p.header_path(ap)
+        header=json.loads(header_path.read_text());header['packetSha256']='0'*64;self.write(header_path,header)
+        original=self.g.read_private;seen=[]
+        def read(path,*a,**kw):
+            seen.append(Path(path));return original(path,*a,**kw)
+        with patch.object(self.g,'read_private',side_effect=read),patch.object(self.g,'claim') as claim:
+            with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_EVIDENCE_SHA_CHANGED'):self.g.run(facade,args,source_profile=self.cfg)
+            self.assertEqual(seen,[ap]);claim.assert_not_called()
+    def test_run_existing_used_slot_rejected_without_packet_read(self):
+        self.write(self.fx.archives/self.g.filename(self.fx.window,1,'used'),{'historical':'795-or-consumed'})
+        self.run_refusal('DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
+    def test_valid_attempt2_reaches_original_causal_guard_not_material(self):
+        self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS'},self.cfg)
+        result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
+        self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
+        self.cfg['startFile']=str(self.fx.root/('directive-v1-start-'+self.fx.window+'-2.json'))
+        facade,args=self.run_inputs();original=self.g.read_private;seen=[]
+        def read(path,*a,**kw):
+            seen.append(Path(path));return original(path,*a,**kw)
+        with patch.object(self.g,'read_private',side_effect=read),patch.object(self.g,'claim') as claim:
+            with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_FIXED_FAILURE_REVIEW_REQUIRED'):self.g.run(facade,args,source_profile=self.cfg)
+            self.assertNotIn(Path(args[1]),seen);self.assertNotIn(Path(args[2]),seen);claim.assert_not_called()
+    def test_preflight_serializes_duplicate_runs_without_consumption(self):
+        facade,args=self.run_inputs();environment=SimpleNamespace(ROOT=self.g.ROOT,ARCHIVES=self.g.ARCHIVES,RETAIN=self.g.RETAIN,ACTIONS=self.g.ACTIONS,PRESERVED_KEYS=self.g.PRESERVED_KEYS,read_private=self.g.read_private,open_root=self.g.open_root,active_name=self.g.active_name,filename=self.g.filename,canonical_uuid=self.g.canonical_uuid,binding_keys=self.g.bindings)
+        module=self.g._directive_profile()
+        with module.run_preflight(environment,facade,args,self.cfg) as lease:
+            self.assertEqual(module.lease_header(lease,facade,args,self.cfg)['windowId'],self.fx.window)
+            self.run_refusal('DIRECTIVE_PREFLIGHT_BUSY')
+            self.assertFalse((self.fx.archives/p.authority_name()).exists())
+            self.assertFalse((self.fx.archives/self.g.active_name()).exists())
+        with module.run_preflight(environment,facade,args,self.cfg):pass
+    def test_valid_run_binds_packet_and_releases_short_lock_after_atomic_claim(self):
+        self.packet.update(replayMode='synthetic-candidate',replayManifestSha256='7'*64)
+        facade,args=self.run_inputs();reader=self.g.read_private;calls=[]
+        manifest={'verification':{'databaseFacts':{'encoding':'UTF8','collate':'en_US.UTF-8','ctype':'en_US.UTF-8','localeProvider':'i'}}}
+        def read(path,*a,**kw):
+            if Path(path)==Path(args[1]):
+                self.assertEqual(a[0],self.g.MANIFEST_SHA);return manifest,self.g.MANIFEST_SHA
+            return reader(path,*a,**kw)
+        facade.verify_manifest=lambda value:self.assertIs(value,manifest)
+        facade.replay=SimpleNamespace(CANDIDATE_MODE='synthetic-candidate',CANDIDATE_MANIFEST_HASH='7'*64,load_plan=lambda path:({'mode':'synthetic-candidate'},[]))
+        facade.base.code_hash=lambda:'8'*64
+        facade.base.validate_approval=lambda *a:calls.append('base-preflight')
+        facade.base.run=lambda *a:b'FileVault is On.'
+        def restore(*a,**kw):
+            import os,fcntl
+            self.assertTrue((self.fx.archives/p.authority_name()).exists())
+            self.assertTrue((self.fx.archives/self.g.filename(self.fx.window,1,'used')).exists())
+            fd=os.open(self.fx.archives/('diagnostic-parent-'+p.CAPTURE+'.preflight.lock'),os.O_RDWR)
+            try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            finally:os.close(fd)
+            self.assertIs(type(kw['window_budget']),facade.diagnostic_deadline.Budget)
+            calls.append('restore-stub');return {'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS'}
+        facade.restore_bundle=restore
+        with patch.object(self.g,'read_private',side_effect=read):result=self.g.run(facade,args,source_profile=self.cfg)
+        self.assertEqual(result['status'],'PASS_LOCAL_BUNDLE_RESTORE_ONLY')
+        self.assertEqual(calls,['base-preflight','base-preflight','restore-stub'])
+        self.assertFalse((self.fx.archives/self.g.active_name()).exists())
+        self.assertTrue((self.fx.archives/p.authority_name()).exists())
+    def test_forged_internal_preflight_token_cannot_read_operator(self):
+        facade,args=self.run_inputs()
+        with patch.object(self.g,'read_private') as read:
+            with self.assertRaises(ValueError):self.g._run_after_preflight(facade,args,self.cfg,SimpleNamespace(verified=True))
+            read.assert_not_called()
     def test_valid_profile_uses_unchanged_window_contract(self):
         self.assertEqual(self.valid()['icuLocale'],'en-US')
         self.assertEqual(self.g.BESTJ_QUESTION_MESSAGE_ID,'Sentinel_90d9e98b22488191ac8a1eb87cff898e')

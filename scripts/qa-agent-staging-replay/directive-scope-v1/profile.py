@@ -2,6 +2,10 @@
 Original raw records remain private. No original human ID/author is fabricated.
 """
 import hashlib
+import copy
+from contextlib import contextmanager
+import fcntl
+import weakref
 from datetime import datetime,timezone
 import json
 import os
@@ -172,3 +176,97 @@ def check_authority_claim(gate,profile,packet):
 def bind_authority_claim(gate,profile,packet,fd):
     if packet['attempt']==1:gate.exclusive(fd,authority_name(),authority_record(profile,packet))
     else:check_authority_claim(gate,profile,packet)
+
+# Only this fixed schema may be read before operator/material qualification.
+HEADER_VERSION='directive-execution-header/v1'
+HEADER_PACKET_FIELDS=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
+
+def execution_header(packet,packet_sha,identity_digest):
+    require(is_hash(packet_sha) and is_hash(identity_digest),'DIRECTIVE_HEADER_HASH_REQUIRED')
+    return {**{k:packet[k] for k in HEADER_PACKET_FIELDS},'version':HEADER_VERSION,'authorizationDigest':AUTHORIZATION,'packetSha256':packet_sha,'identityPathSha256':identity_digest}
+
+def header_path(packet_path):return Path(packet_path).with_suffix('.execution-header.json')
+
+def _read_header(path):
+    try:
+        fd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW)
+        with os.fdopen(fd,'rb') as f:
+            st=os.fstat(f.fileno())
+            require(stat.S_ISREG(st.st_mode) and st.st_uid==os.getuid() and st.st_nlink==1 and stat.S_IMODE(st.st_mode)==0o600 and 0<st.st_size<8192,'DIRECTIVE_HEADER_FILE_UNSAFE')
+            value=json.loads(f.read(8192))
+    except (OSError,json.JSONDecodeError):raise ValueError('DIRECTIVE_HEADER_UNAVAILABLE') from None
+    require(type(value) is dict and set(value)==set(HEADER_PACKET_FIELDS)|{'version','authorizationDigest','packetSha256','identityPathSha256'},'DIRECTIVE_HEADER_FIELDS_REQUIRED')
+    return value
+
+def _early_ledger(gate,profile,header):
+    require(not os.path.lexists(gate.ARCHIVES/gate.active_name()),'DIRECTIVE_CAPTURE_ALREADY_ACTIVE')
+    check_authority_claim(gate,profile,header)
+    require(not os.path.lexists(gate.ARCHIVES/gate.filename(header['windowId'],header['attempt'],'used')),'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
+    if header['attempt']==2:
+        prior,_=gate.read_private(gate.ARCHIVES/gate.filename(header['windowId'],1,'result'),header['parentFailureSha256'])
+        require(prior.get('status')=='ATTEMPT_FINISHED' and prior.get('attempt')==1 and prior.get('windowId')==header['windowId'] and prior.get('windowStart')==header['windowStart'] and prior.get('windowEnd')==header['windowEnd'] and prior.get('parentCaptureId')==CAPTURE and prior.get('manifestSha256')==MANIFEST and prior.get('identityPathSha256')==IDENTITY and prior.get('humanAuthorizationSha256')==profile['humanRecord']['sha256'] and prior.get('outcome',{}).get('cleanup')=='PASS' and prior.get('outcome',{}).get('status','').startswith('FAIL_'),'DIRECTIVE_SECOND_WINDOW_NOT_ELIGIBLE')
+        used,_=gate.read_private(gate.ARCHIVES/gate.filename(header['windowId'],1,'used'))
+        require(used=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**{k:prior.get(k) for k in gate.binding_keys(header,header['codeSha256'],profile)}},'DIAGNOSTIC_PRIOR_CONSUMPTION_CHAIN_REQUIRED')
+        require(prior.get('codeSha256')!=header['codeSha256'] and prior.get('reviewedSourceCommit')!=header['reviewedSourceCommit'],'DIAGNOSTIC_SAME_SOURCE_REPEAT_FORBIDDEN')
+
+_LEASES=weakref.WeakKeyDictionary()
+class _RunLease:
+    __slots__=('__weakref__',)
+
+def lease_header(lease,core,args,profile):
+    require(type(lease) is _RunLease,'DIRECTIVE_PREFLIGHT_LEASE_REQUIRED')
+    state=_LEASES.get(lease)
+    require(state is not None and state['fd'] is not None and state['args']==tuple(map(str,args)) and state['profile']==fingerprint(profile) and state['code']==core.code_hash(),'DIRECTIVE_PREFLIGHT_LEASE_CONFLICT')
+    return copy.deepcopy(state['header'])
+
+def release_preflight(lease):
+    require(type(lease) is _RunLease and lease in _LEASES,'DIRECTIVE_PREFLIGHT_LEASE_REQUIRED')
+    state=_LEASES[lease];fd=state['fd']
+    if fd is not None:
+        state['fd']=None
+        try:fcntl.flock(fd,fcntl.LOCK_UN)
+        finally:os.close(fd)
+
+@contextmanager
+def run_preflight(gate,core,args,profile):
+    # All public execution entry points delegate here. The facade's hashes do
+    # not assert source verification: real pinned source validation is mandatory.
+    require('DOCKER_HOST' not in os.environ and 'DOCKER_CONTEXT' not in os.environ,'DOCKER_OVERRIDE_REJECTED')
+    require_configured(profile,gate.ROOT,gate.PRESERVED_KEYS)
+    require(getattr(core,'directiveSourceFingerprint',None)==fingerprint(profile),'DIRECTIVE_QUALIFIED_ENTRY_REQUIRED')
+    expected=qualified_code_hash(getattr(core,'directiveBaseCodeHash',None),getattr(core,'directiveTypedConfiguration',None),profile)
+    require(core.code_hash()==expected,'DIRECTIVE_QUALIFIED_CODE_HASH_CONFLICT')
+    verify_sources()
+    require(len(args)==4,'DIRECTIVE_EXECUTION_ARGUMENTS_REQUIRED')
+    ap,mp,ip,plan=map(Path,args)
+    require(ap.parent==gate.ROOT and ap.name.startswith('directive-v1-packet-') and ap.suffix=='.json','DIRECTIVE_PACKET_METADATA_PATH_REQUIRED')
+    header=_read_header(header_path(ap))
+    require(header['version']==HEADER_VERSION and header['authorizationDigest']==AUTHORIZATION and is_hash(header['packetSha256']),'DIRECTIVE_HEADER_BINDING_CONFLICT')
+    require(header['approvedBy']=='JT' and header['proposalOnly'] is False and header['humanAuthorizationSha256']==profile['humanRecord']['sha256'] and header['actions']==gate.ACTIONS and header['retainUntil']==gate.RETAIN and header['noNewCaptureKeyGrantProviderOrE'] is True,'DIRECTIVE_HEADER_SCOPE_CONFLICT')
+    for key in ('parentFailureSha256','mainStartReceiptSha256'):require(is_hash(header[key]),'DIRECTIVE_HEADER_HASH_REQUIRED')
+    require(type(header['reviewedSourceCommit']) is str and re.fullmatch('[a-f0-9]{40}',header['reviewedSourceCommit']),'DIRECTIVE_HEADER_SOURCE_REQUIRED')
+    gate.canonical_uuid(header['windowId'])
+    instant=core.base.capture.now();stamp=core.base.capture.stamp
+    check_packet(profile,header,expected,instant,stamp,header['identityPathSha256'])
+    require(stamp(header['windowEnd'])<stamp(gate.RETAIN),'DIRECTIVE_WINDOW_EXPIRED')
+    root_fd=gate.open_root();lock_fd=None;lease=None
+    try:
+        # Coordination only: empty persistent lock inode, no START/window/claim
+        # record. No consumed marker is created or rolled back by this lock.
+        name='diagnostic-parent-'+CAPTURE+'.preflight.lock'
+        lock_fd=os.open(name,os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600,dir_fd=root_fd)
+        st=os.fstat(lock_fd)
+        require(stat.S_ISREG(st.st_mode) and st.st_uid==os.getuid() and st.st_nlink==1 and stat.S_IMODE(st.st_mode)==0o600 and st.st_size==0,'DIRECTIVE_PREFLIGHT_LOCK_UNSAFE')
+        try:fcntl.flock(lock_fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError:raise ValueError('DIRECTIVE_PREFLIGHT_BUSY') from None
+        _early_ledger(gate,profile,header)
+        lease=_RunLease();_LEASES[lease]={'fd':lock_fd,'header':header,'args':tuple(map(str,args)),'profile':fingerprint(profile),'code':expected};lock_fd=None
+        yield lease
+    finally:
+        if lease is not None:release_preflight(lease)
+        if lock_fd is not None:os.close(lock_fd)
+        os.close(root_fd)
+
+def bind_header(header,packet,packet_sha,identity_digest,args):
+    require(canonical(execution_header(packet,packet_sha,identity_digest))==canonical(header),'DIRECTIVE_HEADER_PACKET_CONFLICT')
+    require(packet.get('manifestPath')==str(Path(args[1])) and packet.get('identityPath')==str(Path(args[2])),'DIRECTIVE_HEADER_ARGUMENT_CONFLICT')
