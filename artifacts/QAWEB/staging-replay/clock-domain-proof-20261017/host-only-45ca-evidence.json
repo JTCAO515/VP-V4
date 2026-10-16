@@ -1,0 +1,176 @@
+{
+  "task": 683,
+  "sourceHead": "45ca9377d4e6d5bc9653eabc8cbf72fc7bc6e879",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_ADDITION; proof-only, not execution pin",
+  "review": {
+    "sourceAndDriver": "Standards0 Spec0",
+    "provenance": "Main official delivery reports independent fixed review; no independent reviewer raw transcript in this package",
+    "closedFindings": [
+      "creator provenance before first preflight",
+      "runtime dependency qualification mismatch"
+    ]
+  },
+  "currentRuns": {
+    "sourceHead": "45ca9377d4e6d5bc9653eabc8cbf72fc7bc6e879",
+    "passCounts": [
+      36,
+      4
+    ],
+    "total": 40,
+    "association": "Executed before final source commit; checked-in tested bytes retained. Persistent private log files verified by SHA; logs do not embed git head.",
+    "logs": [
+      {
+        "locator": {
+          "privateBasename": "host-profile-final.log"
+        },
+        "sha256": "6e4c99dfaaf39b1c9e203ba7634d57e514821459c04b778d9b84c75337f71155",
+        "summary": [
+          "Ran 36 tests in 0.321s",
+          "OK"
+        ],
+        "rawPublished": false
+      },
+      {
+        "locator": {
+          "privateBasename": "host-plan-final.log"
+        },
+        "sha256": "ed51c61f4629b5777642392c0f874b953c0674ecb0881e9c76ed003458bedf61",
+        "summary": [
+          "Ran 4 tests in 0.009s",
+          "OK"
+        ],
+        "rawPublished": false
+      },
+      {
+        "locator": {
+          "privateBasename": "host-final40.log"
+        },
+        "sha256": "74dba07f982d53e2667404057e126e3969a4fee818755d324322048b30014d2c",
+        "summary": [
+          "Ran 42 tests in 0.335s",
+          "FAILED (errors=4)"
+        ],
+        "rawPublished": false
+      }
+    ],
+    "qualificationScope": "Real Plan repository lock/runtime-pin loops; synthetic Docker responses; no PG/container launched.",
+    "excludedFailure": "host-final40.log broad discovery: 42 tests, four errors from legacy driver runner requiring explicit path. Not a 42-PASS result."
+  },
+  "sameBlobReuse": {
+    "legacy51": {
+      "counts": [
+        26,
+        25
+      ],
+      "sourceBasis": "9943efb7",
+      "verifiedEqualFiles": [
+        "diagnostic-window-deadline.py",
+        "reviewed-diagnostic-window.py",
+        "test-diagnostic-window-deadline.py",
+        "test-reviewed-diagnostic-window.py"
+      ],
+      "logs": [
+        {
+          "locator": {
+            "repositoryRelative": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-reviewed-diagnostic-window.log"
+          },
+          "sha256": "3e65fd78f51b21c6ddd19c6178e2acbf9b9c1e10fe9734a59fd14e16126dad1a",
+          "summary": [
+            "Ran 26 tests in 0.189s",
+            "OK"
+          ],
+          "rawPublished": false
+        },
+        {
+          "locator": {
+            "repositoryRelative": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-diagnostic-window-deadline.log"
+          },
+          "sha256": "21fd3914c0a6f927f7b2c1cd1a4b72b069c5125e0a39833a3df8cbcdbbfef799",
+          "summary": [
+            "Ran 25 tests in 0.190s",
+            "OK"
+          ],
+          "rawPublished": false
+        }
+      ],
+      "newRuns": false
+    },
+    "prior5plus13": {
+      "sourceHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+      "priorDeliverySha256": "8b8b2ae33024de05f069a86b1d84205c1623bea87c173d6feb3bede1f5abf3a7",
+      "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+      "logs": [
+        {
+          "locator": {
+            "repositoryRelative": "artifacts/QAWEB/staging-replay/typed-core-20261016/final-image-core.log"
+          },
+          "sha256": "6214d5bf8cca08f58f8e55cfd5a3414114e4e92e5538558feffe9771b53a4717",
+          "summary": [
+            "Ran 5 tests in 32.984s",
+            "OK"
+          ],
+          "rawPublished": false
+        },
+        {
+          "locator": {
+            "repositoryRelative": "artifacts/QAWEB/staging-replay/typed-core-20261016/final-image-contracts.log"
+          },
+          "sha256": "a2503614bec24e328ed28471dcc9a05f49649355cb0013408a413349b94dab55",
+          "summary": [
+            "Ran 13 tests in 12.271s",
+            "OK"
+          ],
+          "rawPublished": false
+        }
+      ],
+      "runtimeInputsAll7Exact": true,
+      "priorSourcePinsStillIdentical": [
+        "container-diagnostic/restore/Dockerfile",
+        "container-diagnostic/restore/bridge.py",
+        "container-diagnostic/restore/client.py",
+        "container-diagnostic/restore/locale-launcher.sh",
+        "container-diagnostic/restore/runtime-pins.json",
+        "container-diagnostic/restore/runtime.py",
+        "controlled-snapshot-restore.py",
+        "diagnostic-window-deadline.py",
+        "owned-locale-profile.py",
+        "owned-pg-diagnostic-session.py",
+        "typed-pg-diagnostic-proxy.py"
+      ],
+      "priorSourcePinsDifferent": [
+        "container-diagnostic/restore/reviewed_entry.py",
+        "reviewed-diagnostic-window.py"
+      ],
+      "reuseLimit": "Reuse frozen runtime/core synthetic evidence only; does NOT requalify changed host entry/gate as original physical test, prove actual archive restore, or turn prior full-source record into current full-source PASS. Current host boundary uses new40 and independent fixed review.",
+      "rerun": false
+    }
+  },
+  "history": {
+    "d0": "Creator repair checked, but runtime Plan qualification FAILED because deadline bytes differed from image source pins. 122 proof does not establish whole runtime eligibility. Retained unchanged.",
+    "fc45": "Earlier first-registration P2 retained; 85 passes are not independent review approval.",
+    "fixtures": "Earlier RED/errors and missing-log limitations remain in evidence.json and creator-provenance-evidence.json.",
+    "intermediate0607": "Whitespace diff check reported blank EOF; corrected in45ca and source lock regenerated.",
+    "matrixForPackaging": false
+  },
+  "driver": {
+    "candidateBasename": "operator-first-attempt-v4.py",
+    "sha256": "0e5eced80951e36c7779e7b512299c14d66619b5d436f4c1c3f687ac35e3820e",
+    "configured": false,
+    "executed": false,
+    "oldC8afUnchanged": true
+  },
+  "actual": {
+    "sourceHead": "9943efb7db6fd6856c56d2328b41cf749a84c3d2",
+    "window": "bda80610-291e-4422-9aad-4ab1d8f66b86",
+    "stage": "SCHEMA_POST_DATA",
+    "sqlstate": "42501",
+    "cause": "UNKNOWN",
+    "cleanup": "PASS",
+    "usedGrantPreserved": true,
+    "second": "UNRUN_INELIGIBLE",
+    "sourceQualificationDefectIsIncidentRootCause": false,
+    "originalRecordsChanged": false
+  },
+  "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+  "newPhysicalAction": false
+}

@@ -26,11 +26,13 @@ class RuntimeQualification(unittest.TestCase):
         pins=json.loads((bridge.HERE/'runtime-pins.json').read_text())
         budget,_,_=entry.new_start_budget()
         replies=[b'fixture',json.dumps([{'Endpoints':{'docker':{'Host':'unix:///fixture-only'}}}]).encode(),json.dumps([{'Id':pins['imageId'],'Architecture':'arm64','Config':{}}]).encode()]
-        with patch.object(bridge,'_run',side_effect=replies) as run:
-            plan=bridge.Plan(self.config(),budget)
-        self.assertEqual(run.call_count,3)
-        self.assertFalse(bridge._plan(plan)['created'])
-        self.assertIs(bridge._plan(plan)['budget'],budget)
+        for mode in (bridge.MODE,bridge.HINT_MODE):
+            with self.subTest(mode=mode),patch.object(bridge,'_run',side_effect=replies) as run:
+                plan=bridge.Plan({**self.config(),'mode':mode},budget)
+            self.assertEqual(run.call_count,3)
+            self.assertFalse(bridge._plan(plan)['created'])
+            self.assertIs(bridge._plan(plan)['budget'],budget)
+            self.assertEqual(bridge._plan(plan)['clientHints'],mode==bridge.HINT_MODE)
 
     def test_source_lock_refresh_cannot_hide_runtime_input_drift(self):
         with tempfile.TemporaryDirectory() as directory:

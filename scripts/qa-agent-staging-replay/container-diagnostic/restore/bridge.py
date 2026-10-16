@@ -14,7 +14,9 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent.parent
 spec=importlib.util.spec_from_file_location('absolute_deadline',ROOT/'diagnostic-window-deadline.py');deadline=importlib.util.module_from_spec(spec);spec.loader.exec_module(deadline);deadline=deadline.shared_runtime()
 MODE='same-copy-typed-postdata/1'
-SOURCE_FILES=('controlled-snapshot-restore.py','diagnostic-window-deadline.py','owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','owned-locale-profile.py','reviewed-diagnostic-window.py','container-diagnostic/restore/bridge.py','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime-pins.json','container-diagnostic/restore/reviewed_entry.py','container-diagnostic/restore/locale-launcher.sh')
+HINT_MODE='same-copy-typed-postdata/2'
+spec=importlib.util.spec_from_file_location('host_permission_hints',ROOT/'host-permission-diagnostics.py');host_hints=importlib.util.module_from_spec(spec);spec.loader.exec_module(host_hints)
+SOURCE_FILES=('host-permission-diagnostics.py','safe-restore-diagnostics.py','controlled-snapshot-restore.py','diagnostic-window-deadline.py','owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','owned-locale-profile.py','reviewed-diagnostic-window.py','container-diagnostic/restore/bridge.py','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime-pins.json','container-diagnostic/restore/reviewed_entry.py','container-diagnostic/restore/locale-launcher.sh')
 _PLANS=weakref.WeakKeyDictionary()
 _COPIES=weakref.WeakKeyDictionary()
 
@@ -105,7 +107,7 @@ class _Cleanup:
 class Plan:
     def __init__(self,configuration,budget):
         require(type(self) is Plan,'TYPED_PLAN_EXACT_TYPE_REQUIRED')
-        require(type(configuration) is dict and set(configuration)=={'mode','sourceLockSha256','windowBindingSha256'} and configuration['mode']==MODE,'TYPED_EXPLICIT_CONFIGURATION_REQUIRED')
+        require(type(configuration) is dict and set(configuration)=={'mode','sourceLockSha256','windowBindingSha256'} and configuration['mode'] in (MODE,HINT_MODE),'TYPED_EXPLICIT_CONFIGURATION_REQUIRED')
         require(isinstance(configuration['windowBindingSha256'],str) and re.fullmatch('[a-f0-9]{64}',configuration['windowBindingSha256']),'TYPED_WINDOW_BINDING_REQUIRED')
         lock_bytes=(HERE/'source-lock.json').read_bytes()
         require(hashlib.sha256(lock_bytes).hexdigest()==configuration['sourceLockSha256'],'TYPED_SOURCE_LOCK_CONFLICT')
@@ -122,7 +124,7 @@ class Plan:
         require(endpoint.startswith('unix://'),'TYPED_LOCAL_DOCKER_REQUIRED')
         image=json.loads(_run(probe,['docker','--context',context,'image','inspect',pins['imageId']]))[0]
         require(image['Id']==pins['imageId'] and image['Architecture']=='arm64' and not image['Config'].get('Volumes'),'TYPED_IMAGE_PREFLIGHT_FAILED')
-        _PLANS[self]={'context':context,'endpoint':endpoint,'pins':pins,'budget':budget,'copyClass':None,'created':False,'windowBinding':configuration['windowBindingSha256'],'budgetId':secrets.token_hex(32),'budgetFields':(budget.window_end,budget.data_end,budget.wall_end,budget.reserve,budget.cleanup_seconds,budget.clock,budget.wall_clock)}
+        _PLANS[self]={'clientHints':configuration['mode']==HINT_MODE,'context':context,'endpoint':endpoint,'pins':pins,'budget':budget,'copyClass':None,'created':False,'windowBinding':configuration['windowBindingSha256'],'budgetId':secrets.token_hex(32),'budgetFields':(budget.window_end,budget.data_end,budget.wall_end,budget.reserve,budget.cleanup_seconds,budget.clock,budget.wall_clock)}
     def bind_class(self,copy_class):
         p=_plan(self);require(p['copyClass'] is None,'TYPED_FACTORY_ALREADY_BOUND');p['copyClass']=copy_class
     def new_copy(self,db):
@@ -206,11 +208,16 @@ class Plan:
             r['unknown']=True;raise ValueError('TYPED_SESSION_OPEN_UNKNOWN') from None
         require(set(opened)=={'session','socket'} and re.fullmatch('[0-9a-f]{32}',opened['session']) and re.fullmatch('/private/tmp/qaw-session-[a-zA-Z0-9_-]+/session-[a-zA-Z0-9_-]+',opened['socket']),'TYPED_SESSION_REPLY_CONFLICT')
         r['session']=opened['session'];routed=_command(r,'pg_restore')+['--exit-on-error','--section=post-data'];routed[routed.index('-h')+1]=opened['socket']
-        a=c=None;failed=False
+        a=c=None;failed=False;reader=None;with_hints=_plan(self)['clientHints']
         try:
             processes=deadline.Subprocess(subprocess,b)
             a=processes.Popen(producer,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL)
-            c=processes.Popen(routed,stdin=a.stdout,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);a.stdout.close()
+            c=processes.Popen(routed,stdin=a.stdout,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE if with_hints else subprocess.DEVNULL);a.stdout.close()
+            if with_hints:
+                reader=host_hints.BoundedStderr(c.stderr)
+                # Dedicated bounded reader owns stderr; communicate must not
+                # concurrently read it or accumulate raw diagnostics.
+                c.raw.stderr=None
             c.communicate(timeout=b.timeout(None))
             if c.returncode:failed=True
             if a.wait(timeout=b.timeout(15)) not in (0,-13):failed=True
@@ -221,9 +228,13 @@ class Plan:
                 b.cleanup_timeout(b.cleanup_seconds)
                 result=_rpc(r,'finish',cleanup=True,session=r['session'],cleanupEnd=b.export_cleanup_for_remote(r['remote'],r['received']))
                 r['stopped']=result.get('backendCommandStopped')
+                if reader is not None:
+                    result['hostPermissionHints']=reader.finish(result.get('firstError'),client_failed=c is not None and c.returncode not in (None,0));reader=None
                 records.append({'stage':'SCHEMA_POST_DATA',**result})
                 require(r['stopped'] is True,'TYPED_BACKEND_STOP_UNKNOWN')
             except Exception:
                 r['unknown']=True;raise ValueError('TYPED_BACKEND_FENCE_UNKNOWN') from None
+            finally:
+                if reader is not None:reader.finish(None)
         if failed:raise ValueError('TYPED_POSTDATA_FAILED')
         return None

@@ -123,7 +123,7 @@ def fingerprint(profile):
 
 def qualified_code_hash(base_code_hash,configuration,source_profile):
     require(is_hash(base_code_hash),'DIRECTIVE_BASE_CODE_HASH_REQUIRED')
-    require(type(configuration) is dict and set(configuration)=={'mode','sourceLockSha256','windowBindingSha256'} and configuration['mode']=='same-copy-typed-postdata/1','DIRECTIVE_TYPED_CONFIGURATION_REQUIRED')
+    require(type(configuration) is dict and set(configuration)=={'mode','sourceLockSha256','windowBindingSha256'} and configuration['mode'] in ('same-copy-typed-postdata/1','same-copy-typed-postdata/2'),'DIRECTIVE_TYPED_CONFIGURATION_REQUIRED')
     require(configuration['sourceLockSha256']==source_profile['sourceLockSha256'] and configuration['windowBindingSha256']==source_profile['windowBindingSha256'],'DIRECTIVE_CONFIGURATION_BINDING_CONFLICT')
     return sha(base_code_hash.encode()+(HERE/'entry.py').read_bytes()+fingerprint(source_profile).encode()+canonical(configuration))
 
