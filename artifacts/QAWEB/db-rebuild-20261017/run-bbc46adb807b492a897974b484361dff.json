@@ -1,0 +1,115 @@
+{
+  "kind": "SYNTHETIC_EMPTY_POSTGRES_ONLY",
+  "status": "PASS_M1_SESSION_DATABASE_CONTRACT",
+  "realAuth": "UNRUN",
+  "provider": "UNRUN",
+  "target": "UNRUN",
+  "cleanup": "PASS",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "checks": [
+    {
+      "database": "baseline_1",
+      "check": "native login epoch and idempotent login; synthetic Auth seam",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "create/list/read/reopen through original native RPC",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "anon/anonymous/stale epoch/cross-actor refusal and RLS",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "no direct private-content or Trip writer privilege",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "original policy notice and explicit consent port",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "synthetic retained message persists across separate connections",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "unknown ACK stays unresolved; original text preserved",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "withdrawn consent hides retained session without deletion",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "budget defaults empty/disabled; client cannot grant funds",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "revoked session cannot reopen",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "native login epoch and idempotent login; synthetic Auth seam",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "create/list/read/reopen through original native RPC",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "anon/anonymous/stale epoch/cross-actor refusal and RLS",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "no direct private-content or Trip writer privilege",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "original policy notice and explicit consent port",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "synthetic retained message persists across separate connections",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "unknown ACK stays unresolved; original text preserved",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "withdrawn consent hides retained session without deletion",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "budget defaults empty/disabled; client cannot grant funds",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "revoked session cannot reopen",
+      "status": "PASS"
+    }
+  ],
+  "nonce": "bbc46adb807b492a897974b484361dff",
+  "containerId": "d9b634ca5121c7387ed14ef51f6fdf23617629b3424c0535e92f98e5c9590dbb",
+  "functionCatalogRepeatable": true,
+  "baselineSha256": "f723871f91529e8c30f4aa2293c668d788236a289b88eb21c4871daaff60f327"
+}
