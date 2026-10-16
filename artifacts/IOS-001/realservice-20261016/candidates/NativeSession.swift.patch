@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -353 +353 @@
+-                  (host == "staging.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
++                  (host == "staging.go2china.space" || host == "qatesting.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)

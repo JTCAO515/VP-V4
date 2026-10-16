@@ -1,0 +1,17 @@
+{
+  "base": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+  "candidates": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/AppShellView.swift",
+      "before_sha256": "b65bd9e04ab3c4da0baad7b97cc0a105701b13c1c11e59fd6949918c116ebc42",
+      "after_sha256": "e8dd3231dc2f35c556d627fd1a417a941da8d431013539aedff02055862b7c82",
+      "status": "CANDIDATE_NOT_APPLIED"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "before_sha256": "6b7371e6f3ebd42220a532bad9f1981f4f0f5bb898e9e971d04b9662d5f88162",
+      "after_sha256": "f8ed02995af76ee3436b620ebf07a3b18fae92017eb8e509bf60f0b3d25e5e00",
+      "status": "CANDIDATE_NOT_APPLIED"
+    }
+  ]
+}
