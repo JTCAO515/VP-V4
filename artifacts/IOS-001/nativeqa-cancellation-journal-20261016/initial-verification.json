@@ -1,0 +1,19 @@
+{
+  "synthetic": true,
+  "fixedContractHead": "4e9e58b352d51445c4b98eec3f1dece2750bf9d6",
+  "ios17Swift6TypecheckExitCode": 0,
+  "swiftTestExitCode": 1,
+  "sourceHashes": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "76650dae6fdabdffdfdff4b8b2e6088316f7485b1587ef4514841384a99fd941",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationContract.swift": "bf8fd073f8054f35126726e5a8a8695cc38eec572e14298ec689d0759319b70a",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationJournal.swift": "6d185b1ac4821c43294284ae19fc32df92fb956fa7bdb502a7fb26f05bf3680a",
+    "ios/VisePanda/VisePandaTests/NativeQACancellationJournalTests.swift": "6d6171899d5d628464e1956514e0b4bb7f5b5231a258b49ee58bb784aeae2373"
+  },
+  "extractedPrimitivesSHA256": "d9e7c425ef2574e51e87fb21e1d7270938110ab25af86380ca2b7daad509ab98",
+  "unrun": [
+    "real Keychain IO",
+    "iOS app/PBX integration",
+    "target/provider/auth",
+    "device"
+  ]
+}
