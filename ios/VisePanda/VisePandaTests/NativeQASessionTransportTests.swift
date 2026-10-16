@@ -43,8 +43,7 @@ struct NativeQASessionTransportTests {
         #expect(sent.url?.path == "/api/qa-agent/native/v1/sessions/\(thread)/messages/\(generated.requestID)/cancellation")
         #expect(sent.httpMethod == "POST")
         #expect(!sent.httpShouldHandleCookies && sent.value(forHTTPHeaderField: "Cookie") == nil)
-        // URLSession may stream the body, so verify exact request-body construction directly.
-        #expect(try NativeQARequest.requestCancellation(stop).body == Data("{}".utf8))
+        #expect(NativeQAIntegrationProtocol.state.lastQABody() == Data("{}".utf8))
         #expect(try NativeQACancellationReceipt.decode(response, command: stop).state == .cancelled)
         #expect(throws: NativeQAError.self) { try port.clearPending(generated, scope: scope) }
         #expect(try port.loadPending(scope: scope)?.body == generated.body)
@@ -236,7 +235,8 @@ nonisolated private final class NativeQAIntegrationState: @unchecked Sendable {
     private let lock = NSLock()
     private var owner = "", requests: [URLRequest] = []
     private var qaReply: (Int, String, Data) = (503, "application/json", Data())
-    func reset(owner: String) { lock.lock(); defer { lock.unlock() }; self.owner = owner; requests = [] }
+    private var qaBody: Data?
+    func reset(owner: String) { lock.lock(); defer { lock.unlock() }; self.owner = owner; requests = []; qaBody = nil }
     func qa(status: Int, type: String, body: [String: Any]) {
         lock.lock(); defer { lock.unlock() }
         qaReply = (status, type, try! JSONSerialization.data(withJSONObject: body))
@@ -245,9 +245,23 @@ nonisolated private final class NativeQAIntegrationState: @unchecked Sendable {
         lock.lock(); defer { lock.unlock() }
         return requests.last { $0.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true }
     }
+    func lastQABody() -> Data? { lock.lock(); defer { lock.unlock() }; return qaBody }
+    private func body(_ request: URLRequest) -> Data? {
+        if let bytes = request.httpBody { return bytes }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open(); defer { stream.close() }
+        var bytes = Data(), buffer = [UInt8](repeating: 0, count: 4096)
+        while bytes.count <= 65_536 {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            if count == 0 { return bytes }
+            guard count > 0 else { return nil }
+            bytes.append(contentsOf: buffer.prefix(count))
+        }
+        return nil
+    }
     func response(_ request: URLRequest) -> (Int, String, Data) {
         lock.lock(); defer { lock.unlock() }; requests.append(request)
-        if request.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true { return qaReply }
+        if request.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true { qaBody = body(request); return qaReply }
         let sessionID = "44444444-4444-4444-8444-444444444444"
         let claims = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": sessionID]).base64EncodedString()
             .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
