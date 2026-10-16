@@ -2,6 +2,7 @@
 Private-module subprocess adapters; nonce-fenced owned cleanup survives expiry.
 """
 from contextlib import contextmanager
+from datetime import datetime,timezone
 import json
 import re
 import subprocess
@@ -10,14 +11,21 @@ from time import monotonic
 
 DATA_CLEANUP_RESERVE_SECONDS=120
 CLEANUP_BUDGET_SECONDS=60
+INFLIGHT_CLOCK_CHECK_SECONDS=0.25
+
+
+def utc_now():return datetime.now(timezone.utc)
 
 
 class WindowExpired(ValueError):
     def __init__(self):super().__init__('WINDOW_DATA_DEADLINE_EXPIRED')
 
 
-def from_window(end,instant,stamp):
-    return Budget(monotonic()+(stamp(end)-instant).total_seconds(),clock=monotonic)
+def from_window(end,instant,stamp,anchor=None):
+    # Anchor must precede the wall sample/validation; their latency never adds
+    # time to the already approved absolute window.
+    origin=monotonic() if anchor is None else anchor
+    return Budget(origin+(stamp(end)-instant).total_seconds(),clock=monotonic,wall_end=stamp(end),wall_clock=utc_now)
 
 
 class Process:
@@ -29,16 +37,30 @@ class Process:
         return self._call(self.raw.wait,timeout=timeout)
     def communicate(self,input=None,timeout=None):return self._call(self.raw.communicate,input=input,timeout=timeout)
     def _call(self,method,timeout=None,**kwargs):
-        cap=self.budget.timeout(timeout)
-        try:
-            value=method(timeout=cap,**kwargs)
-        except subprocess.TimeoutExpired:
-            self.budget.stop_process(self)
-            if timeout is None or cap<timeout:self.budget.expired=True
-            self.budget.check()
-            raise
-        self.budget.check()
-        return value
+        # Retry only communicate/wait's timed observation of the SAME process.
+        # Neither the command, SQL nor its input is submitted again. Recheck UTC
+        # while it is in flight; an entry-time monotonic timeout alone is unsafe.
+        nominal_end=self.budget.clock()+timeout if timeout is not None else float('inf')
+        while True:
+            nominal_remaining=nominal_end-self.budget.clock()
+            try:
+                self.budget.check()
+                if nominal_remaining<=0:raise subprocess.TimeoutExpired(self.raw.args,timeout)
+                cap=min(self.budget.timeout(nominal_remaining),INFLIGHT_CLOCK_CHECK_SECONDS)
+                value=method(timeout=cap,**kwargs)
+            except subprocess.TimeoutExpired:
+                if 'input' in kwargs:kwargs['input']=None
+                try:self.budget.check()
+                except WindowExpired:self.budget.stop_process(self);raise
+                if self.budget.clock()>=nominal_end:
+                    self.budget.stop_process(self)
+                    raise subprocess.TimeoutExpired(self.raw.args,timeout) from None
+                continue
+            except WindowExpired:
+                self.budget.stop_process(self);raise
+            try:self.budget.check()
+            except WindowExpired:self.budget.stop_process(self);raise
+            return value
 
 
 class Subprocess:
@@ -62,14 +84,18 @@ class Subprocess:
 
 
 class Budget:
-    def __init__(self,window_end,clock=monotonic,reserve=DATA_CLEANUP_RESERVE_SECONDS,cleanup_seconds=CLEANUP_BUDGET_SECONDS):
+    def __init__(self,window_end,clock=monotonic,reserve=DATA_CLEANUP_RESERVE_SECONDS,cleanup_seconds=CLEANUP_BUDGET_SECONDS,wall_end=None,wall_clock=utc_now):
         self.clock=clock;self.window_end=window_end;self.data_end=window_end-reserve
+        self.wall_end=wall_end;self.wall_clock=wall_clock;self.reserve=reserve
         self.cleanup_seconds=cleanup_seconds;self.cleanup_end=None
         self.processes=[];self.clusters=[];self.cleanup_ok=True;self.expired=False
+    def remaining(self):
+        utc_remaining=float('inf') if self.wall_end is None else (self.wall_end-self.wall_clock()).total_seconds()-self.reserve
+        return min(self.data_end-self.clock(),utc_remaining)
     def check(self):
-        if self.expired or self.clock()>=self.data_end:self.expired=True;raise WindowExpired()
+        if self.expired or self.remaining()<=0:self.expired=True;raise WindowExpired()
     def timeout(self,upper=None):
-        self.check();remaining=self.data_end-self.clock()
+        self.check();remaining=self.remaining()
         if remaining<=0:self.expired=True;raise WindowExpired()
         return min(upper,remaining) if upper is not None else remaining
     def cleanup_timeout(self,upper):
@@ -159,11 +185,13 @@ class Budget:
         result=None
         with self.bind(base,replay,diagnostics):
             try:result=operation()
+            except KeyboardInterrupt:
+                result={'status':'FAIL_LOCAL_RESTORE','cleanup':'UNKNOWN','reason':'WINDOW_INTERRUPTED'}
             except Exception as e:
                 result={'status':'FAIL_LOCAL_RESTORE','cleanup':'UNKNOWN','reason':str(e) if isinstance(e,WindowExpired) else 'WINDOW_OPERATION_FAILED_DETAILS_SUPPRESSED'}
         if not self.cleanup_ok:result.update(status='FAIL_LOCAL_RESTORE',cleanup='FAIL')
         elif result.get('cleanup')=='UNKNOWN':result['cleanup']='PASS'
-        result['windowDeadline']={'clock':'ONE_MONOTONIC_ABSOLUTE_WINDOW','cleanupReserveSeconds':self.window_end-self.data_end,
+        result['windowDeadline']={'clock':'UTC_AND_MONOTONIC_SHARED_ABSOLUTE_WINDOW','cleanupReserveSeconds':self.window_end-self.data_end,
                                   'dataExpired':self.expired,'ownedCleanupFence':'PASS' if self.cleanup_ok else 'UNKNOWN',
                                   'cleanupMayContinueAfterWindow':True}
         return result

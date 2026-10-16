@@ -73,7 +73,7 @@ class DeadlineGuards(unittest.TestCase):
         budget=deadline.Budget(10,clock=lambda:clock[0],reserve=2)
         proxy=deadline.Subprocess(raw,budget)
         with self.assertRaises(deadline.WindowExpired):proxy.run(['owned-host-command'],timeout=600)
-        self.assertEqual(caps,[8.0]);self.assertEqual(processes[0].returncode,-9)
+        self.assertEqual(sum(caps),8.0);self.assertLessEqual(max(caps),deadline.INFLIGHT_CLOCK_CHECK_SECONDS);self.assertEqual(processes[0].returncode,-9)
         with self.assertRaises(deadline.WindowExpired):proxy.run(['late-sql'])
         self.assertEqual(len(processes),1)
         clock[0]=0 # even a fake clock rewind never reopens an expired attempt
@@ -150,7 +150,8 @@ class DeadlineGuards(unittest.TestCase):
                 core.base.run(['schema-sql'],timeout=60)
                 core.base.capture.subprocess.run(['cipher-check'],timeout=600)
                 core.replay.subprocess.run(['replay-source'],timeout=10)
-                self.assertEqual(calls,[('schema-sql',6),('cipher-check',5),('replay-source',4)])
+                self.assertEqual([name for name,cap in calls],['schema-sql','cipher-check','replay-source'])
+                self.assertTrue(all(cap<=deadline.INFLIGHT_CLOCK_CHECK_SECONDS for name,cap in calls))
                 clock[0]=6
                 with self.assertRaises(deadline.WindowExpired):core.base.run(['late-sql'])
         self.assertEqual(len(calls),3)
@@ -166,6 +167,99 @@ class DeadlineGuards(unittest.TestCase):
         self.assertTrue(running[0]);self.assertEqual(len(commands),1)
         d.finish(fx.packet,fx.code,result)
         self.assertTrue((fx.archives/d.active_name()).exists())
+
+    def test_validation_latency_cannot_extend_approved_window(self):
+        deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
+        now=datetime.now(timezone.utc);clock=[1000.0]
+        with patch.object(deadline,'monotonic',lambda:clock[0]):
+            budget=deadline.from_window((now+timedelta(hours=1)).isoformat(),now,datetime.fromisoformat,anchor=100.0)
+        self.assertEqual(budget.window_end,3700.0) # not1000+3600
+        clock[0]=3580
+        with self.assertRaises(deadline.WindowExpired):budget.check()
+
+    def test_utc_forward_jump_expires_even_when_monotonic_does_not_advance(self):
+        deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
+        now=datetime.now(timezone.utc);wall=[now];clock=[0.0]
+        with patch.object(deadline,'monotonic',lambda:clock[0]),patch.object(deadline,'utc_now',lambda:wall[0],create=True):
+            budget=deadline.from_window((now+timedelta(hours=1)).isoformat(),now,datetime.fromisoformat)
+        wall[0]=now+timedelta(hours=2)
+        with self.assertRaises(deadline.WindowExpired):budget.check()
+
+    def test_utc_backward_jump_never_extends_monotonic_limit(self):
+        deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
+        now=datetime.now(timezone.utc);wall=[now];clock=[100.0]
+        with patch.object(deadline,'monotonic',lambda:clock[0]),patch.object(deadline,'utc_now',lambda:wall[0]):
+            budget=deadline.from_window((now+timedelta(hours=1)).isoformat(),now,datetime.fromisoformat)
+        self.assertEqual(budget.timeout(3600),3480)
+        wall[0]=now-timedelta(hours=1)
+        self.assertEqual(budget.timeout(3600),3480)
+        clock[0]=3580
+        with self.assertRaises(deadline.WindowExpired):budget.check()
+
+    def test_timeout_uses_the_smaller_utc_or_monotonic_remaining(self):
+        deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
+        now=datetime.now(timezone.utc);wall=[now];clock=[0.0]
+        budget=deadline.Budget(3600,clock=lambda:clock[0],wall_end=now+timedelta(hours=1),wall_clock=lambda:wall[0])
+        wall[0]=now+timedelta(minutes=57)
+        self.assertEqual(budget.timeout(600),60)
+        wall[0]=now-timedelta(hours=1);clock[0]=3470
+        self.assertEqual(budget.timeout(600),10)
+
+    def test_inflight_wait_rechecks_utc_jump_and_does_not_resubmit(self):
+        deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
+        now=datetime.now(timezone.utc);wall=[now];clock=[0.0];processes=[];caps=[]
+        class RawProcess:
+            def __init__(self,args,**kw):self.args=args;self.returncode=None;processes.append(self)
+            def communicate(self,input=None,timeout=None):
+                caps.append(timeout);wall[0]=now+timedelta(hours=2)
+                raise subprocess.TimeoutExpired(self.args,timeout)
+            def poll(self):return self.returncode
+            def kill(self):self.returncode=-9
+            def wait(self,timeout=None):return self.returncode
+        budget=deadline.Budget(3600,clock=lambda:clock[0],wall_end=now+timedelta(hours=1),wall_clock=lambda:wall[0])
+        proxy=deadline.Subprocess(SimpleNamespace(Popen=RawProcess,PIPE=subprocess.PIPE),budget)
+        with self.assertRaises(deadline.WindowExpired):proxy.run(['owned-sql'],input=b'fake SQL',timeout=600)
+        self.assertEqual(len(processes),1);self.assertEqual(processes[0].returncode,-9)
+        self.assertEqual(caps,[deadline.INFLIGHT_CLOCK_CHECK_SECONDS])
+        with self.assertRaises(deadline.WindowExpired):proxy.run(['next-phase'])
+        self.assertEqual(len(processes),1)
+
+    def test_same_communicate_retry_never_repeats_sql_input(self):
+        deadline=load('diagnostic-window-deadline');clock=[0.0];inputs=[];processes=[]
+        class RawProcess:
+            def __init__(self,args,**kw):self.args=args;self.returncode=None;processes.append(self)
+            def communicate(self,input=None,timeout=None):
+                inputs.append(input);clock[0]+=timeout
+                if len(inputs)==1:raise subprocess.TimeoutExpired(self.args,timeout)
+                self.returncode=0;return b'fixture',b''
+            def poll(self):return self.returncode
+            def kill(self):self.returncode=-9
+            def wait(self,timeout=None):return self.returncode
+        budget=deadline.Budget(10,clock=lambda:clock[0],reserve=1)
+        proxy=deadline.Subprocess(SimpleNamespace(Popen=RawProcess,PIPE=subprocess.PIPE),budget)
+        self.assertEqual(proxy.run(['owned-sql'],input=b'only-once',timeout=5).stdout,b'fixture')
+        self.assertEqual(inputs,[b'only-once',None]);self.assertEqual(len(processes),1)
+
+    def test_observation_slices_do_not_reset_original_command_timeout(self):
+        deadline=load('diagnostic-window-deadline');clock=[0.0];calls=[];processes=[]
+        class RawProcess:
+            def __init__(self,args,**kw):self.args=args;self.returncode=None;processes.append(self)
+            def communicate(self,input=None,timeout=None):calls.append(timeout);clock[0]+=timeout;raise subprocess.TimeoutExpired(self.args,timeout)
+            def poll(self):return self.returncode
+            def kill(self):self.returncode=-9
+            def wait(self,timeout=None):return self.returncode
+        budget=deadline.Budget(100,clock=lambda:clock[0],reserve=1)
+        proxy=deadline.Subprocess(SimpleNamespace(Popen=RawProcess,PIPE=subprocess.PIPE),budget)
+        with self.assertRaises(subprocess.TimeoutExpired):proxy.run(['nominal-one-second'],timeout=1)
+        self.assertEqual(sum(calls),1);self.assertEqual(processes[0].returncode,-9);self.assertFalse(budget.expired)
+
+    def test_keyboard_interrupt_records_failed_cleanup_result_after_owned_fence(self):
+        deadline=load('diagnostic-window-deadline');core=load('controlled-snapshot-restore');import time
+        budget=deadline.Budget(time.monotonic()+30,reserve=1)
+        def interrupted():raise KeyboardInterrupt()
+        value=budget.execute(interrupted,core.base,core.replay,core.safe_diagnostics)
+        self.assertEqual(value['status'],'FAIL_LOCAL_RESTORE');self.assertEqual(value['reason'],'WINDOW_INTERRUPTED')
+        self.assertEqual(value['cleanup'],'PASS')
 
     def test_absolute_deadline_is_anchored_once_not_per_phase(self):
         deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
