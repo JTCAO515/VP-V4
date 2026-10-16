@@ -1,0 +1,69 @@
+{
+  "observedAt": "2026-10-16T18:15:43.418700+00:00",
+  "task": "#683 readonly runtime refresh",
+  "deployment": {
+    "id": "dpl_J2MCK5WCiWhixV1tiuChczYbnYSp",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "target": null,
+    "readyState": "READY",
+    "createdAt": 1792173819150,
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "0b16b9bb7d3de06ecb3861c41c420e476ce6eeea",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "alias": {
+    "alias": "qatesting.go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "deploymentId": "dpl_J2MCK5WCiWhixV1tiuChczYbnYSp"
+  },
+  "http": [
+    {
+      "path": "/qa",
+      "httpStatus": 200,
+      "requestId": "sin1::vfb6p-1792174539694-5729a299413a"
+    },
+    {
+      "path": "/api/qa-agent/policy",
+      "httpStatus": 503,
+      "requestId": "sin1::iad1::6x6ns-1792174541460-ce1412c8fbaf",
+      "version": "qa-agent/1",
+      "errorCode": "PROVIDER_UNAVAILABLE",
+      "ack": "not_submitted"
+    }
+  ],
+  "resourceMutations": 0,
+  "browserCookiesSessionsTouched": false,
+  "businessPostRequests": 0,
+  "aliasDeploymentMatch": true,
+  "ecs": {
+    "instanceId": "i-j6c7q3kftufyroypiqvu",
+    "ip": "47.239.12.244",
+    "originalTabId": "1443631079",
+    "tabExists": true,
+    "observedUi": [
+      "\u8fdc\u7a0b\u8fde\u63a5\u5df2\u7ecf\u65ad\u5f00",
+      "\u8fdc\u7a0b\u8fde\u63a5\u5173\u95ed",
+      "\u5df2\u65ad\u5f00"
+    ],
+    "sessionUsable": false,
+    "hostCommandsExecuted": 0,
+    "containerServiceState": "UNRUN",
+    "imageSource": "UNRUN",
+    "enabled": "UNRUN",
+    "heartbeat": "UNRUN",
+    "blocker": "Original Workbench remote connection is closed; current lease forbids reconnect/new login or credential use.",
+    "minimumGap": "An already-valid original session, or a separately authorized normal reconnection lease, would be required for host metadata. No request for JT to repeat login was made.",
+    "returnedToLoginOrVnc": false,
+    "credentialsRead": false,
+    "historicalStageAAndDbStatusNotReusedAsCurrent": true
+  },
+  "status": "COMPLETE_READONLY_REFRESH_STOP",
+  "qaOwnerTab1443631083Touched": false,
+  "sourceOrHandoffChanged": false,
+  "newDataWindowOrRestoreOrE": "NOT_AUTHORIZED_NOT_ATTEMPTED"
+}
