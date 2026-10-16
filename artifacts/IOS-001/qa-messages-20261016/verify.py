@@ -41,11 +41,11 @@ with tempfile.TemporaryDirectory(prefix='qa-message-proof-') as tmp:
     sdk = subprocess.check_output(['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'], text=True).strip()
     run(['xcrun', 'swiftc', '-typecheck', '-swift-version', '6', '-strict-concurrency=complete', '-target', 'arm64-apple-ios17.0', '-sdk', sdk, '-module-cache-path', str(p / 'ios-cache'), str(scope_file)] + [str(f) for f in production], 'ios17-swift6-typecheck.log')
     card = (messages / 'NativeQAMessageCard.swift').read_text()
-    assert 'TimelineView(.animation)' in card
+    assert 'var body: some View {' in card
     assert 'NativeQAMessagePresentation.resolve(' in card
     assert 'Text(verbatim: presentation.input)' in card and 'Text(verbatim: response)' in card
     assert 'native.qa.answer.' in card and 'native.qa.message-status.' in card
-    for prohibited in ['@State', 'AsyncImage', 'Link(', 'openURL', 'UIPasteboard', 'textSelection', 'lineLimit(', 'Task {']:
+    for prohibited in ['TimelineView', 'Timer', '.task', '@State', 'AsyncImage', 'Link(', 'openURL', 'UIPasteboard', 'textSelection', 'lineLimit(', 'Task {']:
         assert prohibited not in card, prohibited
     print('source-only rendering guards PASS (not UI runtime evidence)')
     (OUT / 'source-pins.json').write_text(json.dumps({
