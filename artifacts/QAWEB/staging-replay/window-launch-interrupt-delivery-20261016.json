@@ -1,7 +1,7 @@
 {
   "status": "PASS_SYNTHETIC_LATE_LAUNCH_AND_INTERRUPT_EVIDENCE_FENCE",
   "base": "e5e022fe7ca28c841a3436a530945ff607e4bec8",
-  "restoreCodeSha256": "1c07da784d9b3a4119b9146735feb61473818d41012337473520d81cf59204d4",
+  "restoreCodeSha256": "3ca426c3427c58f26fb3b0dfa99430d3167b097f88c15135567e21495530a461",
   "red": "window-deadline-launch-interrupt-old-red.log: old cleanupPASS for pending absent launch, and restore/migration progress lost on interrupt",
   "green": "window-deadline-launch-interrupt-green.log:25 focused tests PASS",
   "launchFence": "issued != confirmed; unknown launch+absent neverPASS; observed own immutableID recorded/removal confirmed but unconfirmed launch remainsUNKNOWN; confirmed launch missing requires immutableID absence too; no sleep-based inference",
@@ -17,5 +17,10 @@
     "recognition": "exit1 + stdout empty/[] + exact identifier, uppercase/lowercase fixed NoSuchObject/Container prefixes only; no blanketcasefold",
     "launchUnknown": "remains UNKNOWN even with valid lowercase absence",
     "daemonAndImageReadiness": "Main reports29.8/API1.56 linuxarm64 + cached strict3866imageID matches; no new permission/actual data clone; managed restore proof remainsUNRUN"
+  },
+  "latestReplayJournalRepair": {
+    "delivery": "replay-journal-delivery-20261016.json",
+    "focusedCases": 5,
+    "restoreCodeSha256": "3ca426c3427c58f26fb3b0dfa99430d3167b097f88c15135567e21495530a461"
   }
 }

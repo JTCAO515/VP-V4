@@ -1,0 +1,25 @@
+test_interrupt_preserves_completed_restore_and_migration_prefix (oracle.DeadlineGuards) ... ERROR
+test_interrupted_prefix_survives_unknown_cleanup_and_persistence (oracle.DeadlineGuards) ... ERROR
+
+======================================================================
+ERROR: test_interrupt_preserves_completed_restore_and_migration_prefix (oracle.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 315, in test_interrupt_preserves_completed_restore_and_migration_prefix
+    self.assertEqual(result['replayProgress']['sourceGuardDiagnostics'],{v:{'guardVersion':v,'bodyMd5':'d'*32} for v in versions[:2]})
+KeyError: 'sourceGuardDiagnostics'
+
+======================================================================
+ERROR: test_interrupted_prefix_survives_unknown_cleanup_and_persistence (oracle.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 325, in test_interrupted_prefix_survives_unknown_cleanup_and_persistence
+    result=self.test_interrupt_preserves_completed_restore_and_migration_prefix()
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 315, in test_interrupt_preserves_completed_restore_and_migration_prefix
+    self.assertEqual(result['replayProgress']['sourceGuardDiagnostics'],{v:{'guardVersion':v,'bodyMd5':'d'*32} for v in versions[:2]})
+KeyError: 'sourceGuardDiagnostics'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.037s
+
+FAILED (errors=2)

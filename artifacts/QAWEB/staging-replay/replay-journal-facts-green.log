@@ -1,0 +1,8 @@
+test_acl_observation_survives_interrupt_before_next_interface (facts.ReplayJournal) ... ok
+test_completed_verification_facts_survive_interrupt_before_acl (facts.ReplayJournal) ... ok
+test_no_journal_preserves_legacy_outcome (facts.ReplayJournal) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK

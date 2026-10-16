@@ -306,12 +306,13 @@ class DeadlineGuards(unittest.TestCase):
         plan={'baselineVersions':[],'expectedVersions':versions,'reviewedMissing':versions,'sourceHead':'a'*40,'manifestSha256':'b'*64}
         sources=[{'version':v,'file':v+'_fixture.sql','sql':'begin;select 1;commit;'} for v in versions]
         budget=deadline.Budget(time.monotonic()+100,reserve=1)
-        with patch.object(core.base,'subprocess',SimpleNamespace(run=raw_run)),patch.object(core.base,'OwnCluster',Owned),patch.object(core.base,'restore_bundle',side_effect=base_restore),patch.object(core,'verify_manifest',return_value=({'verification':{'metadata':{'versions':[]}}},{'sequences':[]})),patch.object(core.replay,'load_plan',return_value=(plan,sources)),patch.object(core.replay,'versions',return_value=[]),patch.object(core.replay,'retained_data',return_value=[]),patch.object(core.replay,'fingerprints',return_value={}),patch.object(core.replay,'source_guard_diagnostics',return_value=None),patch.object(core.compat,'reinstate',return_value={'status':'PASS'}),patch.object(core.compat,'restore_archived_owner_maintain',return_value={'status':'PASS'}),patch.object(core.compat,'verify_restore_default_acl',return_value={'status':'PASS'}),patch.object(core.contract,'verify_restored_sequences',return_value={'status':'PASS'}):
+        with patch.object(core.base,'subprocess',SimpleNamespace(run=raw_run)),patch.object(core.base,'OwnCluster',Owned),patch.object(core.base,'restore_bundle',side_effect=base_restore),patch.object(core,'verify_manifest',return_value=({'verification':{'metadata':{'versions':[]}}},{'sequences':[]})),patch.object(core.replay,'load_plan',return_value=(plan,sources)),patch.object(core.replay,'versions',return_value=[]),patch.object(core.replay,'retained_data',return_value=[]),patch.object(core.replay,'fingerprints',return_value={}),patch.object(core.replay,'source_guard_diagnostics',side_effect=lambda db,item:{'guardVersion':item['version'],'bodyMd5':'d'*32}),patch.object(core.compat,'reinstate',return_value={'status':'PASS'}),patch.object(core.compat,'restore_archived_owner_maintain',return_value={'status':'PASS'}),patch.object(core.compat,'verify_restore_default_acl',return_value={'status':'PASS'}),patch.object(core.contract,'verify_restored_sequences',return_value={'status':'PASS'}):
             result=core.restore_bundle(Path('.'),Path('not-read'),{},Path('candidate'),window_budget=budget)
         self.assertEqual(result.get('ownerAclSchema'),'PASS')
         self.assertEqual(result.get('counts'),'PASS')
         self.assertEqual(result['completedRestoreResult']['status'],'PASS_LOCAL_BUNDLE_RESTORE_ONLY')
         self.assertEqual(result['completedRestoreResult']['ownerAclSchema'],'PASS')
+        self.assertEqual(result['replayProgress']['sourceGuardDiagnostics'],{v:{'guardVersion':v,'bodyMd5':'d'*32} for v in versions[:2]})
         self.assertEqual(result['replayProgress']['appliedVersions'],versions[:1])
         self.assertEqual(result['replayProgress']['inflightVersion'],versions[1])
         self.assertEqual(result['replayProgress']['inflightOutcome'],'UNKNOWN')
@@ -327,6 +328,7 @@ class DeadlineGuards(unittest.TestCase):
         persisted,_=d.read_private(fx.archives/d.filename(fx.window,1,'result'))
         self.assertEqual(persisted['outcome']['replayProgress']['appliedVersions'],['20261016000001'])
         self.assertEqual(persisted['outcome']['replayProgress']['inflightOutcome'],'UNKNOWN')
+        self.assertEqual(set(persisted['outcome']['replayProgress']['sourceGuardDiagnostics']),{'20261016000001','20261016000002'})
         self.assertTrue((fx.archives/d.active_name()).exists())
 
     def test_confirmed_launch_absence_requires_immutable_id_absence(self):

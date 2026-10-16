@@ -1,5 +1,6 @@
 """Pinned75→155 replay ONLY in an already verified owned offline restored clone."""
 import hashlib
+import copy
 import json
 from pathlib import Path
 import re
@@ -143,34 +144,52 @@ def replay_owned(db,manifest_path):
     require(db.created and info['Config']['Labels'].get('qaw.restore.owner')==db.nonce and info['HostConfig']['NetworkMode']=='none' and not info['Mounts'] and not info['HostConfig']['PortBindings'],'REPLAY_OWNED_OFFLINE_ONLY')
     m,sources=load_plan(manifest_path)
     journal=getattr(db,'_window_replay_progress',None)
-    if journal is not None:journal.update(stage='REPLAY_PREFLIGHT',sourceHead=m.get('sourceHead'),manifestSha256=m.get('manifestSha256'),appliedVersions=[],inflightVersion=None,inflightOutcome='NONE',rollbackInferred=False,automaticRetryAllowed=False)
+    if journal is not None:journal.update(stage='REPLAY_PREFLIGHT',sourceHead=m.get('sourceHead'),manifestSha256=m.get('manifestSha256'),qaMigrationSha256=QA_HASH,sourceGuardDiagnostics={},appliedVersions=[],inflightVersion=None,inflightOutcome='NONE',rollbackInferred=False,automaticRetryAllowed=False)
     require(versions(db)==m['baselineVersions'],'REPLAY_BASELINE_UNKNOWN_NEWER_OR_EXTRA')
+    if journal is not None:journal['baselineLedgerValidated']=True
     require(db.sql("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','turn_private') and p.proname like 'qa_%';")=='0','REPLAY_QA_ALREADY_PRESENT')
-    rows=retained_data(db);before=fingerprints(db,rows)
+    if journal is not None:journal['qaInitiallyAbsent']=True
+    rows=retained_data(db)
+    if journal is not None:journal['retainedRelations']=len(rows)
+    before=fingerprints(db,rows)
     history=db.sql("select encode(sha256(convert_to(coalesce(jsonb_agg(to_jsonb(t) order by version)::text,'[]'),'UTF8')),'hex') from supabase_migrations.schema_migrations t;")
+    if journal is not None:journal['baselineHistoryBeforeSha256']=history
     applied=[];failed=None;diagnostics={};retention_diffs=[]
     try:
         for item in sources:
             if item['version'] in m['reviewedMissing']:
-                failed=item['version'];diagnostic=source_guard_diagnostics(db,item)
-                if diagnostic is not None:diagnostics[item['version']]=diagnostic
+                failed=item['version']
+                if journal is not None:journal.update(stage='SOURCE_GUARD_DIAGNOSTICS',currentVersion=item['version'])
+                diagnostic=source_guard_diagnostics(db,item)
+                if diagnostic is not None:
+                    diagnostics[item['version']]=diagnostic
+                    if journal is not None:journal['sourceGuardDiagnostics']=copy.deepcopy(diagnostics)
                 if journal is not None:journal.update(stage='MIGRATION_EXECUTION',inflightVersion=item['version'],inflightOutcome='UNKNOWN')
                 db.sql(migration_transaction(item));applied.append(item['version'])
                 if journal is not None:journal.update(appliedVersions=list(applied),inflightVersion=None,inflightOutcome='NONE')
         if journal is not None:journal['stage']='REPLAY_VERIFICATION'
         require(versions(db)==m['expectedVersions'],'REPLAY_LEDGER_NOT_EXACT_PINNED_SOURCE')
+        if journal is not None:journal['finalLedgerValidated']=True
         after_data=fingerprints(db,rows)
         retention_diffs=[{'relation':key,'beforeCount':before[key]['count'],'afterCount':after_data.get(key,{}).get('count'),'beforeSha256':before[key]['sha256'],'afterSha256':after_data.get(key,{}).get('sha256')} for key in before if any(after_data.get(key,{}).get('digests',{}).get(digest,0)<count for digest,count in before[key]['digests'].items())]
+        if journal is not None:journal['retentionDifferences']=copy.deepcopy(retention_diffs)
         require(not retention_diffs,'REPLAY_EXISTING_DATA_CHANGED')
+        if journal is not None:journal['retainedOriginalColumnRows']='PASS_ORIGINAL_ROW_MULTISET_PRESERVED_APPROVED_SOURCE_ADDITIONS_ALLOWED'
         historical=db.sql("select encode(sha256(convert_to(coalesce(jsonb_agg(to_jsonb(t) order by version)::text,'[]'),'UTF8')),'hex') from supabase_migrations.schema_migrations t where version=any(array["+','.join("'"+v+"'" for v in m['baselineVersions'])+"]);")
+        if journal is not None:journal['baselineHistoryAfterSha256']=historical
         require(historical==history,'REPLAY_APPLIED_HISTORY_CHANGED')
+        if journal is not None:journal['baselineHistoryPreserved']=True
         gates={name:True for name in GATES}
         measured=json.loads(db.sql('select jsonb_build_object('+','.join("'"+name+"',"+name+'()' for name in gates)+');'))
+        if journal is not None:journal['lifecycleGates']=copy.deepcopy(measured)
         require(measured==gates,'REPLAY_LIFECYCLE_GATE_FAILED')
         acl=json.loads(db.sql("select jsonb_build_object('exists',to_regprocedure('public.qa_ready_groups_v2(integer,text,text,text)') is not null,'service',has_function_privilege('service_role','public.qa_ready_groups_v2(integer,text,text,text)','EXECUTE'),'anon',has_function_privilege('anon','public.qa_ready_groups_v2(integer,text,text,text)','EXECUTE'),'authenticated',has_function_privilege('authenticated','public.qa_ready_groups_v2(integer,text,text,text)','EXECUTE'),'public',(select exists(select 1 from aclexplode(coalesce(proacl,acldefault('f',proowner))) where grantee=0 and privilege_type='EXECUTE') from pg_proc where oid='public.qa_ready_groups_v2(integer,text,text,text)'::regprocedure));"))
+        if journal is not None:journal['qaV2Acl']=copy.deepcopy(acl)
         require(acl=={'exists':True,'service':True,'anon':False,'authenticated':False,'public':False},'REPLAY_QA_V2_ACL_FAILED')
         require(db.sql("select to_regprocedure('public.qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text)') is not null and to_regprocedure('public.qa_read_session_v1(uuid)') is not null;")=='t','REPLAY_REQUIRED_INTERFACE_MISSING')
+        if journal is not None:journal['requiredInterfacesValidated']=True
         require(db.sql('select enabled from turn_private.hosted_worker_control;')=='f','REPLAY_HOSTED_SWITCH_CHANGED')
+        if journal is not None:journal.update(hostedSwitchDisabled=True,stage='REPLAY_COMPLETE')
         return {'status':'PASS_OWNED_RESTORED_REPLAY_ONLY','sourceHead':m['sourceHead'],'manifestSha256':m['manifestSha256'],'qaMigrationSha256':QA_HASH,
                 'appliedMissingVersions':applied,'lifecycleGates':measured,'qaV2Acl':acl,'retainedRelations':len(rows),'retainedOriginalColumnRows':'PASS_ORIGINAL_ROW_MULTISET_PRESERVED_APPROVED_SOURCE_ADDITIONS_ALLOWED',
                 'baselineHistoryBeforeSha256':history,'sourceGuardDiagnostics':diagnostics,'targetWritten':False,'providerCalled':False,'liveRestoreAuthority':'NONE'}
