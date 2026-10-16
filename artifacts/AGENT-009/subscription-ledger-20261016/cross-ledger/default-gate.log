@@ -1,0 +1,11 @@
+INCOMPLETE: private subscription PG gated; no resource started
+﹣ subscription private PG17 persistence and denial vectors (0.259625ms) # SKIP
+﹣ cross-ledger pinned candidate and actual writer concurrency (0.045875ms) # SKIP
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 42.512
