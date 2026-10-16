@@ -1,0 +1,32 @@
+✖ total-byte exhaustion during streamed submit permanently blocks recovery dispatch (12.953083ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.57525
+
+✖ failing tests:
+
+test at tests/security/trip-inventory/acquisition.test.ts:55:1
+✖ total-byte exhaustion during streamed submit permanently blocks recovery dispatch (12.953083ms)
+  AssertionError [ERR_ASSERTION]: no actual transport call after total-byte exhaustion, including original driver recovery
+  + actual - expected
+  
+  + [
+  +   'session'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/trip-inventory-20261016/tests/security/trip-inventory/acquisition.test.ts:69:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'session' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
