@@ -1,0 +1,15 @@
+{
+  "product": "bd44d4c2ddfa4affdd74acaf3f31a3197f0581fa",
+  "historyViewSHA256": "75877b262ad5958134373795e5315269fd9d6d7921f938f0701f73dde864ff3c",
+  "repro": "/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/p0-realservice-20261016/integration-executor/hosted-r4-feedback-source.swift",
+  "reproSHA256": "462c9c0c32321332873df5f6099d4355f61e756ce7bd9c24fadeccb48f653512",
+  "log": "/Users/jtsm5p/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/test_sim_2026-10-16T09-01-55-287Z_pid30316_e777e548.log",
+  "logSHA256": "7b8559bea872d478621d4f0d0d95735c74332d08e44a35ace2fb72be9a39ea01",
+  "testStartLine": 990,
+  "feedbackLine": 1011,
+  "navigationUpdateInvalidationCount": 20,
+  "loopOwner": "UIKit.NavigationBarContentView",
+  "result": "TEST EXECUTE INTERRUPTED; not PASS",
+  "productDefectConfirmed": false,
+  "runtimeExperimentsByThisOwner": 0
+}
