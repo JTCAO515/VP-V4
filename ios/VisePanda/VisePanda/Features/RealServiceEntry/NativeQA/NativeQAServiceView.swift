@@ -7,8 +7,8 @@ struct NativeQAServiceView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var store: NativeQAStore
     @State private var noticeExpanded = false
-    @State private var sessionsExpanded = true
-    @FocusState private var composing: Bool
+    @State private var historyPresented = false
+    @State private var historyScope: NativeDataScope?
 
     init(transport: any NativeQATransport, chinese: Bool, isActive: Bool = true, onSignIn: (() -> Void)? = nil) {
         self.chinese = chinese; self.isActive = isActive; self.onSignIn = onSignIn
@@ -40,62 +40,41 @@ struct NativeQAServiceView: View {
                     if readable, let policy = store.policy {
                         notice(policy)
                     }
-                    if readable, store.state == .ready, store.policy?.consentState == .accepted, !store.sessions.isEmpty {
-                        DisclosureGroup(copy("已保存的会话", "Saved conversations"), isExpanded: $sessionsExpanded) {
-                            VStack(alignment: .leading, spacing: VPSpacing.standard) {
-                                ForEach(store.sessions) { session in
-                                    Button { Task { await store.select(session.id) } } label: {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(session.label).fixedSize(horizontal: false, vertical: true)
-                                            Text(session.updatedAt).font(.caption)
-                                            if store.selectedID == session.id { Text(copy("当前会话", "Current conversation")).font(.caption) }
-                                        }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                                    }
-                                    .disabled(store.busy || store.pending != nil)
-                                    .accessibilityIdentifier("native.qa.session.\(session.id)")
-                                }
-                                if presentation.action != .createSession {
-                                    Button(copy("开始新会话", "Start a new conversation")) { Task { await store.createSession() } }
-                                        .disabled(store.busy || store.pending != nil).frame(minHeight: 44)
-                                        .accessibilityIdentifier("native.qa.new-session")
-                                }
-                            }.padding(.top, VPSpacing.standard)
-                        }.id("native.qa.sessions")
+                    if readable, store.policy?.consentState == .accepted {
+                        Button(action: openHistory) {
+                            Label(copy("会话历史", "Conversation history"), systemImage: "clock.arrow.circlepath")
+                                .frame(minHeight: 44)
+                        }
+                        .disabled(store.busy)
+                        .accessibilityIdentifier("native.qa.history.open")
                     }
-                    ForEach(readable ? store.messages : []) { message in
-                        VStack(alignment: .leading, spacing: VPSpacing.standard) {
-                            Text(message.input).font(.body).fixedSize(horizontal: false, vertical: true)
-                            NativeQAWorkCard(presentation: .messageCard(message.status, chinese: chinese),
-                                             identifier: "native.qa.message-status.\(message.id)")
-                            if let answer = message.text {
-                                Text(answer).font(.body).fixedSize(horizontal: false, vertical: true)
-                                    .accessibilityIdentifier("native.qa.answer.\(message.id)")
-                            }
-                        }.frame(maxWidth: .infinity, alignment: .leading)
+                    if readable, let expectedScope = store.scope, let expectedSession = store.selectedID {
+                        ForEach(store.messages) { message in
+                            NativeQAMessageCard(message: message, expectedSessionID: expectedSession,
+                                                isCurrent: { payloadCurrent(scope: expectedScope, session: expectedSession) },
+                                                chinese: chinese)
+                        }
                     }
-                    if readable, store.policy?.consentState == .accepted, store.selectedID != nil,
-                       store.pending == nil, store.state == .ready {
-                        VStack(alignment: .leading, spacing: VPSpacing.standard) {
-                            Text(copy(store.messages.isEmpty ? "你的第一个问题" : "继续同一会话", store.messages.isEmpty ? "Your first question" : "Continue this conversation"))
-                                .font(.headline)
-                            if let maximum = store.policy?.maxTurns {
-                                Text(copy("本会话最多 \(maximum) 次提问。", "This conversation allows up to \(maximum) questions.")).font(.footnote).foregroundStyle(Color.vpSecondaryText)
-                            }
-                            TextField(copy("开始聊天", "Start chatting"), text: $store.draft, axis: .vertical)
-                                .textFieldStyle(.roundedBorder).focused($composing).disabled(store.busy)
-                                .accessibilityIdentifier("native.qa.input")
-                            if store.draft.utf16.count > 4000 {
-                                Text(copy("问题请控制在 4000 字以内。", "Keep the question within 4000 characters.")).font(.footnote)
-                            }
-                            Button(copy("发送问题", "Send question")) { Task { await store.send() } }
-                                .disabled(!store.canSend).frame(minHeight: 44).accessibilityIdentifier("native.qa.send")
-                        }.id("native.qa.composer")
-                    }
+                    Color.clear.frame(height: 1).id("native.qa.end")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading).padding(VPSpacing.standard)
             }
             .background(Color.vpBackground).scrollDismissesKeyboard(.interactively)
             .accessibilityIdentifier("native.qa.service")
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if readable, store.policy?.consentState == .accepted,
+                   let expectedScope = store.scope, let expectedSession = store.selectedID {
+                    NativeQAComposer(draft: $store.draft, canSend: store.canSend, isBusy: store.busy,
+                                     hasUnconfirmedRequest: hasUnconfirmedRequest, chinese: chinese,
+                                     isCurrent: { payloadCurrent(scope: expectedScope, session: expectedSession) },
+                                     onSend: { Task {
+                                         guard payloadCurrent(scope: expectedScope, session: expectedSession) else { return }
+                                         await store.send()
+                                     } })
+                        .id(NativeQAComposerIdentity(scope: expectedScope, session: expectedSession))
+                        .accessibilityIdentifier("native.qa.composer")
+                }
+            }
         }
         .task(id: readIdentity) {
             let identity = readIdentity
@@ -106,7 +85,53 @@ struct NativeQAServiceView: View {
                 if store.shouldPoll { await store.refresh() }
             }
         }
-        .onDisappear { store.invalidate() }
+        .sheet(isPresented: $historyPresented) {
+            NavigationStack {
+                NativeQAHistoryView(source: historySource, chinese: chinese)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) {
+                        Button(copy("完成", "Done")) { historyPresented = false }
+                    } }
+            }
+        }
+        .onChange(of: readIdentity) { _, _ in historyPresented = false; historyScope = nil }
+        .onDisappear { historyPresented = false; historyScope = nil; store.invalidate() }
+    }
+
+    private struct NativeQAComposerIdentity: Hashable { let scope: NativeDataScope; let session: String }
+    private var hasUnconfirmedRequest: Bool {
+        store.pending != nil || store.state == .pending || store.state == .unknown || store.messages.contains { $0.status.waiting }
+    }
+    private func payloadCurrent(scope: NativeDataScope, session: String) -> Bool {
+        readable && store.scope == scope && store.selectedID == session && store.policy?.consentState == .accepted
+    }
+    private func openHistory() {
+        guard readable, !store.busy, store.policy?.consentState == .accepted, let scope = store.scope else { return }
+        historyScope = scope
+        historyPresented = true
+    }
+    private var historySource: NativeQAHistorySource {
+        .init(currentScope: { readable ? store.scope : nil }, expectedScope: { historyScope }, read: {
+            guard readable, let scope = store.scope, scope == historyScope, store.policy?.consentState == .accepted else { return nil }
+            return .init(scope: scope, sessions: store.sessions, selectedID: store.selectedID,
+                         isLoading: store.busy, canSelect: !store.busy && !hasUnconfirmedRequest,
+                         canCreate: !store.busy && !hasUnconfirmedRequest)
+        }, onSelect: { id in
+            let expectedScope = historyScope
+            historyPresented = false
+            Task {
+                guard readable, let expectedScope, store.scope == expectedScope,
+                      store.policy?.consentState == .accepted, !hasUnconfirmedRequest else { return }
+                await store.select(id)
+            }
+        }, onCreate: {
+            let expectedScope = historyScope
+            historyPresented = false
+            Task {
+                guard readable, let expectedScope, store.scope == expectedScope,
+                      store.policy?.consentState == .accepted, !hasUnconfirmedRequest else { return }
+                await store.createSession()
+            }
+        })
     }
 
     private var needsNoticeReview: Bool {
@@ -157,8 +182,8 @@ struct NativeQAServiceView: View {
         case .signIn: return onSignIn
         case .refresh: return { Task { await store.refresh() } }
         case .createSession: return { Task { await store.createSession() } }
-        case .chooseSession: return { sessionsExpanded = true; reader.scrollTo("native.qa.sessions", anchor: .top) }
-        case .compose: return { reader.scrollTo("native.qa.composer", anchor: .bottom); composing = true }
+        case .chooseSession: return openHistory
+        case .compose: return { reader.scrollTo("native.qa.end", anchor: .bottom) }
         }
     }
 }
