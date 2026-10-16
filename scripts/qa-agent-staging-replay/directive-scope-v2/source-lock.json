@@ -1,0 +1,12 @@
+{
+  "container-diagnostic/restore/source-lock.json": "51fe393dd0a3d8b6802faef701bc8711f1e3d9aec8208536acc76e7b779bf9ff",
+  "directive-scope-v1/entry.py": "3cbb160607214dfd88de8b33aca11930f5f8d363ebc92512bdc78a92361f72b8",
+  "directive-scope-v1/evidence-pins.json": "8e3151b060539e1ffc1b0c75c87b4e20e3a95e694708d3064310cc3d702da89c",
+  "directive-scope-v1/live-controller.py": "cc1f80c303e729df1cba9fb50b69ed24f07b6959f5513d391b56a54b190eb876",
+  "directive-scope-v1/profile.py": "ea0ae6b77934e5e614ac9c2aacf43f9343f6654b7967262cda7acca7e63f6ae8",
+  "directive-scope-v1/start-provenance.py": "2719fca932cbae1619e22a72899fb161060bbe8aeb0ebb945990f644cf16f830",
+  "directive-scope-v2/bootstrap.py": "3801be547141844906b7052729f26a5207004c158590d5f7996c87b952b437f9",
+  "directive-scope-v2/entry.py": "4b97b50ffb25a6862954a675eeb8b11269ee286ecd449784bffde2ced0de360f",
+  "directive-scope-v2/pending-binding.json": "961ba05a48ed2483a88896259066abdc1ccab316f209ea81676d7221d2630db9",
+  "directive-scope-v2/profile.py": "e479344a81775e58074202f184bf3ed2a6b7ecaee45bfdbf40aaaaffb9b2a9ff"
+}

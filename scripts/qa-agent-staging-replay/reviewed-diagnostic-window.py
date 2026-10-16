@@ -42,8 +42,17 @@ OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
 
 _DIRECTIVE_PROFILE=None
+_DIRECTIVE_PROFILE_V2=None
 
-def _directive_profile():
+def _directive_profile(source_profile=None):
+    if isinstance(source_profile,dict) and source_profile.get('version')=='jt-next-bounded-scope/v2':
+        global _DIRECTIVE_PROFILE_V2
+        if _DIRECTIVE_PROFILE_V2 is None:
+            path=Path(__file__).resolve().parent/'directive-scope-v2/profile.py'
+            spec=importlib.util.spec_from_file_location('strict_directive_scope_v2',path)
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);_DIRECTIVE_PROFILE_V2=module
+        _DIRECTIVE_PROFILE_V2.require_binding()
+        return _DIRECTIVE_PROFILE_V2
     global _DIRECTIVE_PROFILE
     if _DIRECTIVE_PROFILE is None:
         path=Path(__file__).resolve().parent/'directive-scope-v1/profile.py'
@@ -54,7 +63,7 @@ def _directive_profile():
 
 def _source_binding(source_profile,name):
     if source_profile is None:return globals()[name]
-    return _directive_profile().binding(source_profile,name,ROOT,PRESERVED_KEYS)
+    return _directive_profile(source_profile).binding(source_profile,name,ROOT,PRESERVED_KEYS)
 
 def _claim_environment():
     return SimpleNamespace(ARCHIVES=ARCHIVES,read_private=read_private,exclusive=exclusive)
@@ -93,7 +102,7 @@ def message_reference_configured():
 
 def require_configured(source_profile=None):
     if source_profile is not None:
-        _directive_profile().require_configured(source_profile,ROOT,PRESERVED_KEYS);return
+        _directive_profile(source_profile).require_configured(source_profile,ROOT,PRESERVED_KEYS);return
     require(is_hash(HUMAN_SHA256) and HUMAN_SHA256!=OLD_HUMAN_SHA
             and (async_reference_configured() or message_reference_configured()) and is_hash(IDENTITY_PATH_SHA256)
             and isinstance(PRESERVED_PINS,dict) and set(PRESERVED_PINS)==PRESERVED_KEYS,
@@ -201,7 +210,7 @@ def validate_bestj_message_source(human):
 
 def validate_human_source(human,source_profile=None):
     if source_profile is not None:
-        _directive_profile().validate_record(human,source_profile);return
+        _directive_profile(source_profile).validate_record(human,source_profile);return
     require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
             and isinstance(human.get('humanQuestion'),str) and bool(human['humanQuestion'].strip())
             and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'].strip())
@@ -250,7 +259,7 @@ def validate(packet,code_hash,instant,stamp,locale_module,manifest=None,source_p
     HUMAN_FILE=_source_binding(source_profile,'HUMAN_FILE');HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
     START_FILE=_source_binding(source_profile,'START_FILE');IDENTITY_PATH_SHA256=_source_binding(source_profile,'IDENTITY_PATH_SHA256')
     PRESERVED_PINS=_source_binding(source_profile,'PRESERVED_PINS')
-    if source_profile is not None:_directive_profile().check_packet(source_profile,packet,code_hash,instant,stamp,sha(packet.get('identityPath','').encode()))
+    if source_profile is not None:_directive_profile(source_profile).check_packet(source_profile,packet,code_hash,instant,stamp,sha(packet.get('identityPath','').encode()))
     human,_=read_private(HUMAN_FILE,HUMAN_SHA256)
     validate_human_source(human,source_profile)
     expected_scope={'minutes':60,'maximumCopies':2,'noOtherPlannedDdlChanges':True,'ordinaryDmlContinues':True,
@@ -354,18 +363,18 @@ def claim(packet,code_hash,source_profile=None):
     require_configured(source_profile)
     if source_profile is not None:
         canonical_uuid(packet.get('windowId'))
-        _directive_profile().preclaim(source_profile,packet,code_hash,sha(packet.get('identityPath','').encode()))
+        _directive_profile(source_profile).preclaim(source_profile,packet,code_hash,sha(packet.get('identityPath','').encode()))
     fd=open_root()
     try:
         window=canonical_uuid(packet['windowId']);attempt=packet['attempt']
         require(type(attempt) is int and attempt in (1,2),'DIAGNOSTIC_COPY_CAP_REQUIRED')
         require(not os.path.lexists(ARCHIVES/filename(window,attempt,'used')),'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
-        if source_profile is not None:_directive_profile().check_authority_claim(_claim_environment(),source_profile,packet)
+        if source_profile is not None:_directive_profile(source_profile).check_authority_claim(_claim_environment(),source_profile,packet)
         record={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash,source_profile)}
         # One active copy across this original capture, including different
         # window IDs. Crash/write failure retains lock and claim; no stale reset.
         exclusive(fd,active_name(),record)
-        if source_profile is not None:_directive_profile().bind_authority_claim(_claim_environment(),source_profile,packet,fd)
+        if source_profile is not None:_directive_profile(source_profile).bind_authority_claim(_claim_environment(),source_profile,packet,fd)
         exclusive(fd,filename(window,attempt,'used'),record)
         return record
     finally:os.close(fd)
@@ -399,14 +408,14 @@ def caller_snapshot(db):
 def run(core,args,source_profile=None):
     if source_profile is None:return _run_after_preflight(core,args)
     environment=SimpleNamespace(ROOT=ROOT,ARCHIVES=ARCHIVES,RETAIN=RETAIN,ACTIONS=ACTIONS,PRESERVED_KEYS=PRESERVED_KEYS,read_private=read_private,open_root=open_root,active_name=active_name,filename=filename,canonical_uuid=canonical_uuid,binding_keys=bindings)
-    with _directive_profile().run_preflight(environment,core,args,source_profile) as lease:
+    with _directive_profile(source_profile).run_preflight(environment,core,args,source_profile) as lease:
         return _run_after_preflight(core,args,source_profile,lease)
 
 
 def _run_after_preflight(core,args,source_profile=None,lease=None):
     require_configured(source_profile)
     header=None
-    if source_profile is not None:header=_directive_profile().lease_header(lease,core,args,source_profile)
+    if source_profile is not None:header=_directive_profile(source_profile).lease_header(lease,core,args,source_profile)
     HUMAN_FILE=_source_binding(source_profile,'HUMAN_FILE');HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
     # All private input reads remain after profile qualification.
     ap,mp,ip,plan=map(Path,args)
@@ -417,7 +426,7 @@ def _run_after_preflight(core,args,source_profile=None,lease=None):
         packet,packet_sha=read_private(ap)
     else:
         packet,packet_sha=read_private(ap,header['packetSha256'])
-        _directive_profile().bind_header(header,packet,packet_sha,sha(packet.get('identityPath','').encode()),args)
+        _directive_profile(source_profile).bind_header(header,packet,packet_sha,sha(packet.get('identityPath','').encode()),args)
         require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
         read_private(HUMAN_FILE,HUMAN_SHA256)
     anchor=core.diagnostic_deadline.monotonic()
@@ -425,7 +434,7 @@ def _run_after_preflight(core,args,source_profile=None,lease=None):
     if source_profile is None:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
     else:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile,source_profile=source_profile)
     if source_profile is None:budget=core.diagnostic_deadline.from_window(packet['windowEnd'],instant,core.base.capture.stamp,anchor=anchor)
-    else:budget=_directive_profile().lease_budget(lease,core,args,source_profile)
+    else:budget=_directive_profile(source_profile).lease_budget(lease,core,args,source_profile)
     manifest,digest=read_private(mp,MANIFEST_SHA,max_bytes=4*1024*1024)
     require(packet.get('manifestPath')==str(mp.resolve()) and packet.get('identityPath')==str(ip.resolve()),'DIAGNOSTIC_PATH_BINDING_REQUIRED')
     core.verify_manifest(manifest);candidate,_=core.replay.load_plan(plan)
@@ -442,7 +451,7 @@ def _run_after_preflight(core,args,source_profile=None,lease=None):
     core.base.validate_approval(proxy,mp,ip)
     budget.check()
     record=claim(packet,core.code_hash(),source_profile)
-    if source_profile is not None:_directive_profile().release_preflight(lease)
+    if source_profile is not None:_directive_profile(source_profile).release_preflight(lease)
     # Failure, including a Python exception, consumes this attempt. Unknown
     # cleanup leaves active guard in place; never auto-start another copy.
     try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True,window_budget=budget)

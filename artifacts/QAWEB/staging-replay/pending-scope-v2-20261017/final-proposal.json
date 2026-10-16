@@ -1,0 +1,91 @@
+{
+  "status": "PROPOSAL_ONLY_NOT_AUTHORIZATION",
+  "candidateSource": "67167c59c5f2bad596f1410e8e09bdb975d3e899",
+  "purpose": "New explicitly authorized bounded local restore with safe typed diagnostics and live-process controller, using only retained original material.",
+  "actionsAfterApproval": [
+    "Collect actual new human event and official relay records; independently verify meaning, fixed actor, room, source hashes and stable new event grant identity.",
+    "Fill real v2 source binding refs/hashes/time, regenerate exact locks and reviewed source/data commit; do not change verifier algorithm.",
+    "Prepare and independently review exact private bootstrap binding, wrapper/source hashes, scoped records, material refs and fresh locale. No user JSON writing required.",
+    "Only after every original guard passes, construct actual START/Budget, exclusive records and live controller; original strict entry is sole copy path.",
+    "Second attempt only after real FAIL/cleanup PASS plus causal evidence and reviewed supported host repair, in same live process/object and original remaining window."
+  ],
+  "material": {
+    "captureId": "f97d05db-c706-4ce9-82d8-579cbb0b9310",
+    "manifestSha256": "668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085",
+    "retainUntil": "2026-10-20T23:59:59+08:00",
+    "newCaptureOrIdentity": false,
+    "retainedAgeArchives": 4
+  },
+  "minutes": 60,
+  "maximumAttempts": 2,
+  "dataReserveSeconds": 120,
+  "cleanupSeconds": 60,
+  "automaticRetry": false,
+  "liveProcessRequired": "Same live PID and exact original Budget; no serialize/rebuild/restart or paused deadline",
+  "lostProcessOrChangedFrozenDomain": "INELIGIBLE_NO_RESUME",
+  "cost": "Local bounded compute only; no provider fee or new paid service authorized.",
+  "excluded": [
+    "Mutating the original dump or business SQL/RLS/ACL semantics",
+    "Broad grants or privilege changes to bypass guards; faithful original GRANT restoration inside the authorized isolated copy is distinct",
+    "Shared target writes, E activation or 163 target apply",
+    "New credentials, capture, identity or service",
+    "Provider fees, production or TestFlight",
+    "Old bda reuse/reset/extension",
+    "Raw SQL/error/object/role/value logs"
+  ],
+  "unknownFacts": {
+    "newHumanEvent": null,
+    "newNativeSourcePins": null,
+    "newQualifiedBinding": null,
+    "actualStartTime": null,
+    "actualWindowId": null,
+    "actualResult": null,
+    "actualClockAnchor": null
+  },
+  "routing": "Fixed candidate review is complete. Main submits this one concrete scope proposal to product; new real human/source facts and narrowly reviewed bindings are still required before actual eligibility. Old JT messages or intent are not new authority.",
+  "candidateReview": {
+    "standards": 0,
+    "spec": 0,
+    "provenance": "Main confirmed independent fixed source and private wrapper review; code review does not authorize actual execution."
+  },
+  "candidateWrapper": {
+    "basename": "operator-bootstrap-v2-sender-fixed.py",
+    "sha256": "d62c654f97219b1a9e7362d52d1c03fb33cb25771d37f5da1eb6baa663e20332",
+    "bindingTemplateBasename": "operator-bootstrap-v2-binding.template.json",
+    "bindingTemplateSha256": "6ffa7bc4ed3f0840bf98d2d8d1d1a20be76205336fc262405bb0c77d1753ab27",
+    "configured": false
+  },
+  "evidence": {
+    "latestFixedEvidenceProof": "2a7fb0b57556d8e6459b924101a5d1096d964cd3",
+    "senderBoundaryEvidenceSha256": "8a61ef1e6528e788cced3d39b2c3815b5d38f6315709caa3aaee9068960d30eb",
+    "proposalProof": "COMMIT_CONTAINING_THIS_DOCUMENT; proof-only, source unchanged"
+  },
+  "allowedWithinFutureAuthorizedCopy": [
+    "Faithfully restore the original schema, owners, ACLs and existing GRANT statements into the exclusively owned isolated local copy; do not alter their semantics.",
+    "After full restore passes, run compatibility verification using only the existing fixed replay plan; do not append or substitute a new target plan."
+  ],
+  "fixedReplayPlan": {
+    "sourceCommit": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+    "manifestSha256": "c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688",
+    "sourceVersions": 162,
+    "capturedAppliedVersions": 75,
+    "missingVersions": 87,
+    "countsMeaning": "Existing fixed-plan/captured-baseline evidence, not a new live target measurement.",
+    "additionalPlanAuthorized": false
+  },
+  "unsupportedFrozenCoreRepair": "INELIGIBLE; only the reviewed controller supported dynamic-host repair scope can be considered, with all original second-attempt gates",
+  "executionStatus": {
+    "newActualExecution": "NOT_AUTHORIZED_UNRUN",
+    "retainedFirstAttempt": "FAIL_LOCAL_RESTORE",
+    "retainedStage": "SCHEMA_POST_DATA",
+    "retainedSqlstate": "42501",
+    "specificCause": "UNKNOWN",
+    "cleanup": "PASS",
+    "oldSecondAttempt": "UNRUN_INELIGIBLE",
+    "worker": {
+      "status": "DISABLED_UNRUN",
+      "provenance": "Main coordination status; not probed in this proof-only update"
+    },
+    "syntheticControllerProvesActualMaterialGates": false
+  }
+}

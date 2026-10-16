@@ -11,7 +11,7 @@
   "host-permission-diagnostics.py": "ed53752994e9037f27919d217ac08fed14a999fc2bfefe24462de22c236fd301",
   "owned-locale-profile.py": "bbfc39dbd9fb28153953802e300d5aec02449ba4134fc870a32185ad5d6520ec",
   "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
-  "reviewed-diagnostic-window.py": "f68852d6e69d847c87480f2c0c145e1bb17d6c79cf889f80e2cde7b18d85f500",
+  "reviewed-diagnostic-window.py": "70012956dc2dfb9f09dcb03b4a5f59d4e6eb03a645304c041e468718e04e2d34",
   "safe-restore-diagnostics.py": "26cd12a568c03d738def451d1e5dbd8d326f65ec9d0a7b25b7ed10092b106b3c",
   "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e"
 }
