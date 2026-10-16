@@ -1,0 +1,9 @@
+test_candidate_mutation_and_source_drift_reject (__main__.Candidate) ... ok
+test_exact_current_source_hashes_versions_and_transactions (__main__.Candidate) ... ok
+test_legacy_manifest_remains_155_and_same_baseline (__main__.Candidate) ... ok
+test_wrong_source_count_or_target_only_reject_before_blob_reads (__main__.Candidate) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.328s
+
+OK

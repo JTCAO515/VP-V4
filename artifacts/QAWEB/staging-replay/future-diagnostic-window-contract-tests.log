@@ -1,0 +1,18 @@
+test_adapter_snapshots_caller_before_postdata_without_replay_on_failure (__main__.DiagnosticWindow) ... ok
+test_claim_concurrency_repeat_and_failure_cleanup_guard (__main__.DiagnosticWindow) ... ok
+test_first_scope_and_unknown_bundle_caps_pins_expiration (__main__.DiagnosticWindow) ... ok
+test_legacy_cli_cannot_use_new_candidate_pin (__main__.DiagnosticWindow) ... ok
+test_original_chain_preserved_and_hash_mutation_rejected (__main__.DiagnosticWindow) ... ok
+test_pre_postdata_caller_snapshot_is_boolean_enum_only (__main__.DiagnosticWindow) ... ok
+test_second_denies_pass_or_incomplete_cleanup_and_missing_review (__main__.DiagnosticWindow) ... ok
+test_second_denies_unidentified_cause_or_unreviewed_repair (__main__.DiagnosticWindow) ... ok
+test_second_only_changed_reviewed_repair_after_failed_cleanup (__main__.DiagnosticWindow) ... ok
+test_second_parent_failure_cleanup_and_concurrent_attempts (__main__.DiagnosticWindow) ... ok
+test_second_unknown_cleanup_or_missing_consumed_parent_rejects (__main__.DiagnosticWindow) ... ok
+test_second_unknown_consumption_chain_is_rejected (__main__.DiagnosticWindow) ... ok
+test_unconfigured_entry_rejects_before_any_file_secret_or_clone_io (__main__.DiagnosticWindow) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.090s
+
+OK

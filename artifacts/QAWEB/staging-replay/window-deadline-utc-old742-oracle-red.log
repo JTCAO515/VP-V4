@@ -1,0 +1,14 @@
+test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (oracle.DeadlineGuards) ... FAIL
+
+======================================================================
+FAIL: test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (oracle.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 186, in test_utc_forward_jump_expires_even_when_monotonic_does_not_advance
+    with self.assertRaises(deadline.WindowExpired):budget.check()
+AssertionError: WindowExpired not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

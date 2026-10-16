@@ -1,0 +1,105 @@
+OLD SOURCE RED (synthetic direct-Main optional metadata)
+test_main_direct_accepts_absent_or_consistent_optional_metadata (cases.DiagnosticWindow) ... ok
+test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) ...
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='authorizer', value='BestJ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='authorizer', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayIsAuthorization', value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayIsAuthorization', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayIsAuthorization', value='False')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayIsAuthorization', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayThreadId', value='01a13313-19fd-77be-959c-9448bfab80ce')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayThreadId', value='01a13311-9212-7db3-8c75-691eac0f03ea')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='relayThreadId', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='officialRelayEvidence', value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) (field='officialRelayEvidence', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 96, in test_main_direct_rejects_explicit_authorizer_or_relay_contradictions
+    with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.012s
+
+FAILED (failures=11)
+
+NEW SOURCE GREEN (3 direct-only cases)
+test_main_direct_accepts_absent_or_consistent_optional_metadata (cases.DiagnosticWindow) ... ok
+test_main_direct_rejects_explicit_authorizer_or_relay_contradictions (cases.DiagnosticWindow) ... ok
+test_main_direct_source_metadata_cannot_claim_a_foreign_thread (cases.DiagnosticWindow) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.010s
+
+OK
