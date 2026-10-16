@@ -1,0 +1,85 @@
+{
+  "task": "683-QA177-DEPENDENCY-COMPAT",
+  "status": "SOURCE_COMPLETE_NONPHYSICAL_VALIDATED_PENDING_FIXED_DELTA_REVIEW",
+  "qaBase": "177ee31e8743919845fd472a3903d4e9bbc449e8",
+  "productHead": "30f42662df2e899912d390d57997389fc609d574",
+  "branch": "codex/qaw683-qa177-compat-20261016",
+  "transplant": {
+    "source": "060c0546bd11687c73fd986f3548ecb0ba8410ae",
+    "rangeBase": "7f5bdb78ee8bf317b949027561a11bf681997634",
+    "exactOriginalPaths": 58,
+    "unchangedByteParityPaths": 56,
+    "necessaryCompatibilityDeltaPaths": [
+      "scripts/qa-agent-staging-replay/container-diagnostic/restore/reviewed_entry.py",
+      "scripts/qa-agent-staging-replay/container-diagnostic/restore/source-lock.json"
+    ],
+    "additionalTest": "scripts/qa-agent-staging-replay/container-diagnostic/restore/test_qa_gate_compat.py",
+    "upstreamGateNotOverwritten": true
+  },
+  "dependency": {
+    "path": "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py",
+    "oldSha256": "67aa93b6fd97524e775f4c889baf5c3b15e622fea2979efda1d97feda7a5b492",
+    "qaSha256": "b284ab78f64e3dd4d80a2c322489e1a235d4794c690630c2ba81e381b6ba5141",
+    "sourceHistory": "Fixed QA includes d2ab6806bde3a73947a8d47e7c035328fe249f58 (#734). Both compared gate versions already contain its ordinary-message adaptation.",
+    "semanticDifference": "Exactly one leading DOCKER_HOST/DOCKER_CONTEXT presence rejection (plus comments) in run exists in owner060c but not QA177. Removing only that expression from old AST makes the complete module AST identical to QA. All APIs/constants/ordinary-message qualification/validate/claim/finish/max2/window behavior otherwise identical.",
+    "compatibilityFix": "Typed reviewed_entry rejects either override presence, including empty values, before require_configured, source/config reads, delegation or claim. QA gate stays byte-identical. Direct upstream non-typed entry remains QA behavior; use the explicit typed entry for this package."
+  },
+  "qualification": {
+    "oldSourceLockSha256": "7e54cf13d678ea98ac81fa99316c3b850b269f6430a091cf3cb0a2c657b9f421",
+    "newSourceLockSha256": "b2ef6b72a7ecbe46892c5656546a5917a01a4bf5b41e121a52a4ae57bed51331",
+    "currentCoreCodeHash": "a176fcda54ecf3f014f4d198d31792b54401c4d2c753020224338c7228ce9fc3",
+    "syntheticScopedHashProof": {
+      "configuration": {
+        "mode": "same-copy-typed-postdata/1",
+        "sourceLockSha256": "b2ef6b72a7ecbe46892c5656546a5917a01a4bf5b41e121a52a4ae57bed51331",
+        "windowBindingSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "reviewedCodeHash": "a8f5eaa041cd0e6c0d58f2d42dd6809da9c2e7d91a342d93296a2bb5bbf21c64",
+      "NOT_ACTUAL_APPROVAL": true
+    },
+    "actualReviewedCodeHash": "Must be derived with the eventual actually reviewed window binding/configuration; not generated or approved here. Old lock/configuration is rejected."
+  },
+  "runtime": {
+    "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+    "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+    "helperCommit": "4a3879517d26d86126a1ce45076e090060fcc691",
+    "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+    "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+    "imageInputsAndPinsByteIdenticalTo060c": true,
+    "sourceLockEmbeddedInImage": false,
+    "rebuild": "NOT_NEEDED_NOT_RUN",
+    "physicalEvidence": "Reuse060c final-image-core.log5 PASS and final-image-contracts.log13 PASS; all image inputs/helper/runtime, copy dispatch and post-admission flow unchanged. Current entry/qualification delta tested separately."
+  },
+  "tests": {
+    "nonphysicalSuites": {
+      "compat.log": 6,
+      "qa-window.log": 26,
+      "strict.log": 7,
+      "snapshot.log": 10,
+      "deadline.log": 25,
+      "admission.log": 6
+    },
+    "total": 80,
+    "result": "PASS",
+    "red": "Old lock rejects actual QA dependency; old typed entry reaches mocked gate with override. No real Docker/private data/claim action.",
+    "green": "New lock validates actual QA source set with fake runtime preflight; before-IO/claim overrides, unconfigured refusal, original gate/scoped hash/same Budget and stale-lock rejection PASS; QA ordinary-message/window/claim/max2 and original clock/source suites PASS."
+  },
+  "preservedSnapshots": [
+    "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+    "060c0546bd11687c73fd986f3548ecb0ba8410ae",
+    "4a038de2787615478974203bf1c9168a58cc9211"
+  ],
+  "proposalStatus": "Copied060c candidate is historical, not updated execution authority. New qualification pins supersede it for any future reviewed package. Original4a038 disabled1-copy proposal remains unchanged on original branch; max2 product choice still pending. No mode/count changes in this task.",
+  "unrun": [
+    "No new physical tests or image builds (same runtime evidence reused)",
+    "No actual authorization/material/recipient/identity/current guard inspection",
+    "No window, old795 reuse/third attempt, capture/restore, provider/fee/Production or merge"
+  ],
+  "actualRootCause": "UNKNOWN",
+  "owner": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d; original source scope retained; no successor",
+  "completion": "STOP after evidence-only commit; no inflight/planned writes",
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  }
+}

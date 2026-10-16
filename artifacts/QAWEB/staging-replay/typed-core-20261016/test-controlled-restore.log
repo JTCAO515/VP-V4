@@ -1,0 +1,12 @@
+test_default_never_reads_archive_or_starts_process (__main__.RestoreGates) ... ok
+test_identifier_quoting_and_count_batching (__main__.RestoreGates) ... ok
+test_known_profile_exact_and_unknown_rejected (__main__.RestoreGates) ... ok
+test_legacy_capture_has_no_restore_expectations (__main__.RestoreGates) ... ok
+test_no_tty_cannot_open_real_inputs (__main__.RestoreGates) ... ok
+test_schema_comparison_retains_owner_acl_and_source (__main__.RestoreGates) ... ok
+test_three_file_package_cannot_silently_drop_ledger (__main__.RestoreGates) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.010s
+
+OK

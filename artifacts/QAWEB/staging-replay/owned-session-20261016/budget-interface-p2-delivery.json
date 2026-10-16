@@ -1,0 +1,36 @@
+{
+  "task": "683",
+  "base": "16fba8210b93e09fd9b13634c955328769fe5424",
+  "branch": "codex/qaw683-typed-core-20261016",
+  "status": "BUDGET_INTERFACE_P2_REPAIRED_PENDING_FIXED_REVIEW",
+  "sourceSha256": {
+    "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+    "test-owned-pg-diagnostic-session.py": "167359f6707da618d2f579308e700bf89665b52e35c5a4d61f3a9099969ace8c",
+    "diagnostic-window-deadline.py": "e077175f287b9d2ae706e94b3dcc26e471e92198d3f939d6e0fac17bec1ddf9c",
+    "controlled-snapshot-restore.py": "23b2aa653dc1e21291bbcc311b997a8515db776c63f7a75fc1469b6c76c1c977"
+  },
+  "red": {
+    "log": "budget-interface-p2-red.log",
+    "method": "Loaded fixed16f source in temporary directory, used only new owned synthetic PG. Expired DiagnosticSession and BoundProxy each spawned one real metadata query before rejection; independent same-file core Budget rejected. Original fixture cleanup confirmed."
+  },
+  "green": {
+    "budget-interface-p2-tests-01.log": 23,
+    "budget-p2-test-diagnostic-window-deadline.log": 25,
+    "budget-p2-test-reviewed-diagnostic-window.log": 29,
+    "budget-p2-test-snapshot-mode.log": 10,
+    "total": 87,
+    "status": "PASS"
+  },
+  "proof": [
+    "Expired explicit Budget rejects before Popen and _read_identity in session and proxy",
+    "Near deadline real pg_sleep identity probe bounded to original remaining budget, no 3-second default overrun",
+    "UTC jump during control wait stops process within existing poll cap; cleanup still works after expiry",
+    "Real controlled-snapshot-restore loader returns same exact Budget class; original object retained",
+    "Fake Budget rejected, no duck typing",
+    "Shared loader is fixed resolved source path and content digest; no alternate source fallback",
+    "Budget clock/constructor/reserve/claims/slots logic unchanged; core change is only approved top-level loader hunk"
+  ],
+  "preserved": "edec/7f5/16f histories and all prior logs unchanged. Uncommitted container-diagnostic/restore draft retained; its initial16f runtime image is stale and not used for restore tests. No same-copy restore physical tests started after interface review pause.",
+  "remaining": "Fixed interface delta review, then continue same-copy full core integration. No actual diagnostic entry is enabled by this patch.",
+  "boundary": "No actual archives/keys/identity/window/third attempt/capture/restore/E/provider/Prod. Actual incident cause UNKNOWN. requested gpt-6-astra/medium; effective UNKNOWN."
+}

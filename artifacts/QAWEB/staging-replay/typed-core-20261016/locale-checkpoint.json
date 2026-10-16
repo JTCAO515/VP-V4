@@ -1,0 +1,11 @@
+{
+  "base": "5128de38ca04edd239af2c711bb3b3c50aa0de22",
+  "status": "ORIGINAL_ICU_INITIALIZATION_FIXED_FINAL_NEW_IMAGE_VALIDATION_PENDING",
+  "red": "icu-runtime-01.log: original fixed explicit ICU options rejected during init because helper minimal env omitted base LOCALE_ARCHIVE; own initialization copy removed.",
+  "green": "icu-runtime-02.log: exact original ICU profile creation/readback PASS, copy cleanup PASS.",
+  "change": "Image-only fixed locale launcher exports base archive path then execs original Nix initdb/postgres with unchanged argv. Frozen4a helper and PostgreSQL original executable unchanged. Additional Plan boundary now requires canonical exact Budget type, same as core.",
+  "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+  "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+  "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+  "remaining": "Final full5 restore and13 contract cases on new image, final evidence and next real-scope proposal. No real material/window/third attempt/targetE/provider/Prod."
+}

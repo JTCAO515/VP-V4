@@ -1,0 +1,157 @@
+test_absolute_deadline_is_anchored_once_not_per_phase (__main__.DeadlineGuards) ... ok
+test_after_deadline_cleanup_fences_container_not_just_exec_client (__main__.DeadlineGuards) ... ERROR
+test_confirmed_launch_absence_requires_immutable_id_absence (__main__.DeadlineGuards) ... ERROR
+test_execute_unknown_nonce_fence_propagates_to_active_window_guard (__main__.DeadlineGuards) ... FAIL
+test_inflight_command_capped_and_no_data_after_expiry (__main__.DeadlineGuards) ... ok
+test_inflight_wait_rechecks_utc_jump_and_does_not_resubmit (__main__.DeadlineGuards) ... ok
+test_interrupt_preserves_completed_restore_and_migration_prefix (__main__.DeadlineGuards) ... ok
+test_interrupted_prefix_survives_unknown_cleanup_and_persistence (__main__.DeadlineGuards) ... ok
+test_keyboard_interrupt_records_failed_cleanup_result_after_owned_fence (__main__.DeadlineGuards) ... ok
+test_label_conflict_never_removes_foreign_container_and_cleanup_unknown (__main__.DeadlineGuards) ... ERROR
+test_launch_timeout_before_created_flag_still_fences_own_nonce (__main__.DeadlineGuards) ... ERROR
+test_lowercase_absence_never_resolves_unconfirmed_launch (__main__.DeadlineGuards) ... ERROR
+test_observation_slices_do_not_reset_original_command_timeout (__main__.DeadlineGuards) ... ok
+test_private_module_budget_restores_all_references_and_hash_is_cancellable (__main__.DeadlineGuards) ... ok
+test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) ... test_recorded_launch_id_conflict_never_removes_a_different_id (__main__.DeadlineGuards) ... ERROR
+test_same_communicate_retry_never_repeats_sql_input (__main__.DeadlineGuards) ... ok
+test_subprocess_and_sql_paths_share_same_proxy_budget (__main__.DeadlineGuards) ... ok
+test_timeout_uses_the_smaller_utc_or_monotonic_remaining (__main__.DeadlineGuards) ... ok
+test_unknown_cleanup_keeps_future_active_consumption_guard (__main__.DeadlineGuards) ... ok
+test_unknown_launch_absent_can_later_create_and_must_keep_active (__main__.DeadlineGuards) ... ok
+test_utc_backward_jump_never_extends_monotonic_limit (__main__.DeadlineGuards) ... ok
+test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (__main__.DeadlineGuards) ... ok
+test_validation_latency_cannot_extend_approved_window (__main__.DeadlineGuards) ... ok
+test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration) ... ok
+
+======================================================================
+ERROR: test_after_deadline_cleanup_fences_container_not_just_exec_client (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 101, in test_after_deadline_cleanup_fences_container_not_just_exec_client
+    budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_confirmed_launch_absence_requires_immutable_id_absence (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 341, in test_confirmed_launch_absence_requires_immutable_id_absence
+    budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_label_conflict_never_removes_foreign_container_and_cleanup_unknown (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 107, in test_label_conflict_never_removes_foreign_container_and_cleanup_unknown
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_launch_timeout_before_created_flag_still_fences_own_nonce (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 113, in test_launch_timeout_before_created_flag_still_fences_own_nonce
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_lowercase_absence_never_resolves_unconfirmed_launch (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 371, in test_lowercase_absence_never_resolves_unconfirmed_launch
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=1, out=b'[]', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 361, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    if want_pass:budget.cleanup_owned(db);self.assertTrue(db._deadline_cleanup_pass)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=1, out=b'', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 361, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    if want_pass:budget.cleanup_owned(db);self.assertTrue(db._deadline_cleanup_pass)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=2, out=b'[]', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 363, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=1, out=b'not-json', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 363, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=1, out=b'[]', override='wrong-id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 363, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) (rc=1, out=b'[]', override='daemon-not-ready')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 363, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_recorded_launch_id_conflict_never_removes_a_different_id (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 347, in test_recorded_launch_id_conflict_never_removes_a_different_id
+    with self.assertRaises(ValueError):budget.cleanup_owned(db)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/diagnostic-window-deadline.py", line 160, in cleanup_owned
+    if db in getattr(self,'diagnostic_copies',{}):
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+FAIL: test_execute_unknown_nonce_fence_propagates_to_active_window_guard (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 168, in test_execute_unknown_nonce_fence_propagates_to_active_window_guard
+    self.assertTrue(running[0]);self.assertEqual(len(commands),1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.212s
+
+FAILED (failures=1, errors=12)

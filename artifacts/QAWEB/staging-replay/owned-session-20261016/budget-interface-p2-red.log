@@ -1,0 +1,4 @@
+session expired before-IO assertion RED: spawn count 1
+proxy expired before-IO assertion RED: spawn count 1
+same-file independent core Budget RED: OWN_ABSOLUTE_BUDGET_REQUIRED
+own synthetic fixture cleanup True

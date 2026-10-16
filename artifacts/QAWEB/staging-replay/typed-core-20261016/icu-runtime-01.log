@@ -1,0 +1,30 @@
+test_original_explicit_icu_profile_is_preserved (__main__.CopyContracts) ... ERROR
+
+======================================================================
+ERROR: test_original_explicit_icu_profile_is_preserved (__main__.CopyContracts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/test_contracts.py", line 98, in test_original_explicit_icu_profile_is_preserved
+    with owned(icu_profile=profile) as (plan,db,b):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 117, in __enter__
+    return next(self.gen)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/test_contracts.py", line 38, in owned
+    plan.bind_class(Copy);db=Copy();db.start()
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/test_contracts.py", line 37, in start
+    def start(self):plan.start(self);plan.ready(self)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 146, in start
+    db.docker(args);db.created=True;_verify(r)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/test_contracts.py", line 34, in docker
+    if args and args[0]=='run':return plan.launch(self,args)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 193, in launch
+    initialized=_rpc(r,'initialize',budget=_envelope(r))
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 78, in _rpc
+    reply=json.loads(output);require('error' not in reply,'TYPED_RUNTIME_REFUSED')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 22, in require
+    if not ok:raise ValueError(code)
+ValueError: TYPED_RUNTIME_REFUSED
+
+----------------------------------------------------------------------
+Ran 1 test in 0.566s
+
+FAILED (errors=1)

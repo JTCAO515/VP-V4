@@ -1,0 +1,57 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load remote build context
+#1 DONE 0.0s
+
+#2 copy /context /
+#2 DONE 0.0s
+
+#3 [internal] load metadata for public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#3 DONE 2.4s
+
+#4 [1/6] FROM public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#4 resolve public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b done
+#4 CACHED
+
+#5 [2/6] RUN printf '%s\n' https://dl-cdn.alpinelinux.org/alpine/v3.23/main > /etc/apk/repositories  && apk add --no-cache gdbm=1.26-r0 libbz2=1.0.8-r6 libexpat=2.8.5-r0 libffi=3.5.2-r0 libgcc=15.2.0-r2 libpanelw=6.5_p20251123-r0 libstdc++=15.2.0-r2 mpdecimal=4.0.1-r0 pyc=3.12.15-r0 python3=3.12.15-r0 python3-pyc=3.12.15-r0 python3-pycache-pyc0=3.12.15-r0 sqlite-libs=3.53.4-r0 xz-libs=5.8.4-r0  && mkdir -p /opt/homebrew/opt/postgresql@17/bin /private/tmp /opt/qaw  && for tool in psql pg_isready pg_dump pg_restore; do ln -s /nix/var/nix/profiles/default/bin/$tool /opt/homebrew/opt/postgresql@17/bin/$tool; done  && ln -s /nix/var/nix/profiles/default/share /opt/homebrew/opt/postgresql@17/share  && ln -s "$(pg_config --pkglibdir)" /opt/homebrew/opt/postgresql@17/lib  && chown postgres:postgres /private/tmp  && chmod 700 /private/tmp  && apk info -v | sort > /opt/qaw/runtime-packages.txt
+#5 0.839 ( 1/14) Installing gdbm (1.26-r0)
+#5 0.905 ( 2/14) Installing libbz2 (1.0.8-r6)
+#5 0.968 ( 3/14) Installing libexpat (2.8.5-r0)
+#5 1.032 ( 4/14) Installing libffi (3.5.2-r0)
+#5 1.092 ( 5/14) Installing libgcc (15.2.0-r2)
+#5 1.159 ( 6/14) Installing libpanelw (6.5_p20251123-r0)
+#5 1.220 ( 7/14) Installing libstdc++ (15.2.0-r2)
+#5 1.350 ( 8/14) Installing mpdecimal (4.0.1-r0)
+#5 1.413 ( 9/14) Installing pyc (3.12.15-r0)
+#5 1.413 (10/14) Installing xz-libs (5.8.4-r0)
+#5 1.479 (11/14) Installing sqlite-libs (3.53.4-r0)
+#5 1.561 (12/14) Installing python3 (3.12.15-r0)
+#5 1.851 (13/14) Installing python3-pycache-pyc0 (3.12.15-r0)
+#5 2.549 (14/14) Installing python3-pyc (3.12.15-r0)
+#5 2.549 Executing busybox-1.37.0-r30.trigger
+#5 2.554 OK: 65.1 MiB in 54 packages
+#5 2.570 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/main/aarch64/APKINDEX.tar.gz: No such file or directory
+#5 DONE 2.6s
+
+#6 [3/6] COPY owned-pg-diagnostic-session.py typed-pg-diagnostic-proxy.py diagnostic-window-deadline.py /opt/qaw/
+#6 DONE 0.0s
+
+#7 [4/6] COPY container-diagnostic/restore/runtime.py container-diagnostic/restore/client.py /opt/qaw/
+#7 DONE 0.0s
+
+#8 [5/6] COPY container-diagnostic/restore/locale-launcher.sh /opt/qaw/locale-launcher.sh
+#8 DONE 0.0s
+
+#9 [6/6] RUN chmod 755 /opt/qaw/locale-launcher.sh  && ln -s /opt/qaw/locale-launcher.sh /opt/homebrew/opt/postgresql@17/bin/initdb  && ln -s /opt/qaw/locale-launcher.sh /opt/homebrew/opt/postgresql@17/bin/postgres
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 0.7s done
+#10 exporting manifest sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451 done
+#10 exporting config sha256:43d0e10c7daa4b7593b2a6ebae1c146c3b955c9cc5bf05a2775b6eef25952a8c done
+#10 naming to docker.io/library/qaw683-diagnostic:restore-absolute done
+#10 unpacking to docker.io/library/qaw683-diagnostic:restore-absolute
+#10 unpacking to docker.io/library/qaw683-diagnostic:restore-absolute 0.2s done
+#10 DONE 0.8s
+{"builtImage": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451", "postgresBinaryUnchanged": true}

@@ -1,0 +1,10 @@
+test_cancel_resistant_restore_backend_requires_owned_fallback (__main__.StrictSyntheticRestore) ... ok
+test_complete_same_copy_strict_restore (__main__.StrictSyntheticRestore) ... ok
+test_normal_non_diagnostic_restore_unchanged (__main__.StrictSyntheticRestore) ... ok
+test_original_absolute_deadline_stops_actual_restore_backend (__main__.StrictSyntheticRestore) ... ok
+test_real_pg_restore_typed_postdata_failure (__main__.StrictSyntheticRestore) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 38.926s
+
+OK
