@@ -11,7 +11,7 @@ from types import SimpleNamespace
 def reviewed_code_hash(core,configuration):
     # Approval binds the exact opt-in/source-lock/window binding as well as
     # original core qualification. An old ordinary-mode packet cannot match.
-    if type(configuration) is not dict or set(configuration)!={'mode','sourceLockSha256','windowBindingSha256'} or configuration.get('mode')!='same-copy-typed-postdata/1':
+    if type(configuration) is not dict or set(configuration)!={'mode','sourceLockSha256','windowBindingSha256'} or configuration.get('mode') not in ('same-copy-typed-postdata/1','same-copy-typed-postdata/2'):
         raise ValueError('TYPED_EXPLICIT_CONFIGURATION_REQUIRED')
     return hashlib.sha256(core.code_hash().encode()+Path(__file__).read_bytes()+json.dumps(configuration,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 

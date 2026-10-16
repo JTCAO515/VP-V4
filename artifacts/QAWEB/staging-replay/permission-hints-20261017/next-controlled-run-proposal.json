@@ -1,0 +1,37 @@
+{
+  "status": "PROPOSAL_ONLY_NOT_AUTHORIZATION",
+  "purpose": "Observe bounded client category hints alongside unchanged typed .C on a newly authorized isolated restore; not a causal repair retry under the old window.",
+  "proposedMaximumMinutes": 60,
+  "proposedMaximumAttempts": 2,
+  "automaticRetry": false,
+  "priorWindowReusable": false,
+  "retentionEnd": "2026-10-20T23:59:59+08:00",
+  "materialScope": {
+    "existingCaptureId": "f97d05db-c706-4ce9-82d8-579cbb0b9310",
+    "existingManifestSha256": "668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085",
+    "newCaptureOrIdentity": false
+  },
+  "requiredBeforeAnyActualRun": [
+    "New explicit human authorization and official evidence chain for this new scope, reviewed source and bounded local-copy purpose; old directives/used authority cannot be reused.",
+    "Independently reviewed new scope binding, exact private driver/configuration/source/image hashes; no existing v4 or old profile relabeled as qualified.",
+    "Exact original-material/identity retention and file/hash/recipient guards, fresh permitted locale observation, capture-wide and per-attempt guards.",
+    "Actual START constructed in original process through controlled factory; metadata binds original dual-clock cap; data reserve120 seconds and cleanup budget60 seconds unchanged.",
+    "Second attempt only after actual first FAIL and verified cleanup, specific causal evidence and reviewed changed repair; original live process/Budget ownership and original remaining dual-clock window must persist. Current one-shot driver cannot supply post-exit continuity.",
+    "If any provenance, retention, cleanup, runtime or original clock proof is unavailable, refuse; no reset/extension/new UUID workaround."
+  ],
+  "futureOperationSequence": [
+    "After new scoped authorization and all guards, prepare exact non-activated packet/driver for independent review.",
+    "At authorized START run original local restore with explicit mode2; only finite safe diagnostic output and owned cleanup.",
+    "Report observed category hints separately from backend facts and keep unknowns explicit; no automatic retry or broad grant."
+  ],
+  "excluded": [
+    "target/shared writes",
+    "business SQL/RLS/ACL changes",
+    "credential changes",
+    "provider fees",
+    "production/TestFlight",
+    "reuse of old window/copy",
+    "unbounded raw stderr/SQL logs"
+  ],
+  "currentExecution": "NONE; submit proposal through Main for product decision"
+}

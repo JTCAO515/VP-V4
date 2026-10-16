@@ -150,3 +150,26 @@ available only for unchanged legacy paths; it does not qualify a directive START
 This corrects the fc45 preflight-only registration gap; fc45 is not review-cleared.
 
 START provenance lives in host-only `start-provenance.py`, covered by the profile source lock and qualified code hash. Image runtime inputs remain byte-identical to source9943. The d0 runtime-input mismatch is corrected without changing runtime pins, image IDs or Plan validation.
+
+### Optional host permission hints (candidate mode v2)
+
+`same-copy-typed-postdata/1` retains the existing output and DEVNULL stderr route.
+Explicit `same-copy-typed-postdata/2` adds `hostPermissionHints` in the post-data
+record. Both modes participate in the qualified configuration hash. The v2
+host reader drains stderr with at most 64 KiB retained in memory, no disk spill;
+raw bytes are cleared after finite-enum conversion. An incomplete, over-limit,
+ambiguous or nonfailed client yields no object/TOC hint. Cleanup still requires
+the existing runtime backend-stop proof, and unknown fences remain failures.
+
+The PostgreSQL `.C` field remains the only SQLSTATE authority. Permission class
+is derived only from typed 42501. Client TOC/object/permission-object categories
+are explicitly unstructured hints, not correlated error facts. Command class
+and failure-time privilege context remain UNKNOWN. A prior separate-connection
+caller snapshot must not populate these fields. Raw messages, SQL, role/object
+names and values are never returned. This does not diagnose the retained actual
+42501; it prepares a minimal observation path for a separately authorized run.
+
+Host helper and its existing parser dependency are in the typed source lock.
+No image source input/pin is changed. Plan source-qualification tests use actual
+repository bytes and mocked Docker replies, not a physical restore acceptance.
+No driver/actual configuration is activated by choosing the candidate mode.
