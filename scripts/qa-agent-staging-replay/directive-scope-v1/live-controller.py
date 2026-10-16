@@ -33,8 +33,9 @@ class Controller:
         # Budget already exists from controlled START in this process. Never
         # deserialize a Budget, sample another START or register a new window.
         self._entry=entry
-        if isinstance(source_profile,dict) and source_profile.get('version')=='jt-next-bounded-scope/v2':
-            spec=importlib.util.spec_from_file_location('controller_scope_v2_entry',HERE.parent/'directive-scope-v2/entry.py')
+        selected_folder={'jt-next-bounded-scope/v2':'directive-scope-v2','jt-delegated-bestj-20261017/v1':'delegated-scope-v1'}.get(source_profile.get('version')) if isinstance(source_profile,dict) else None
+        if selected_folder is not None:
+            spec=importlib.util.spec_from_file_location('controller_scope_v2_entry',HERE.parent/selected_folder/'entry.py')
             selected=importlib.util.module_from_spec(spec);spec.loader.exec_module(selected)
             selected.profile.require_binding();self._entry=selected
         self._entry.profile.provenance.verify_start_provenance(budget)
@@ -54,7 +55,8 @@ class Controller:
         require(len({str(args[0]),self._repair_packet,self._repair_start,str(self._descriptor)})==4)
         self._core_hash=core.code_hash()
         self._fixed={name:digest((HERE/name).read_bytes()) for name in ('entry.py','profile.py','start-provenance.py','live-controller.py')}
-        self._v2_fixed={name:digest((HERE.parent/'directive-scope-v2'/name).read_bytes()) for name in ('entry.py','profile.py','bootstrap.py','pending-binding.json')} if self._entry is not entry else {}
+        self._selected_folder=selected_folder
+        self._v2_fixed={name:digest((HERE.parent/self._selected_folder/name).read_bytes()) for name in ('entry.py','profile.py','bootstrap.py','pending-binding.json')} if self._entry is not entry else {}
         self._repair_original={name:digest((self._root/name).read_bytes()) for name in REPAIR_FILES}
         lock=json.loads((self._root/'container-diagnostic/restore/source-lock.json').read_text())
         require(type(lock) is dict and all(type(name) is str and not Path(name).is_absolute() and '..' not in Path(name).parts for name in lock))
@@ -66,7 +68,7 @@ class Controller:
         self._entry.profile.provenance.verify_start_provenance(self._budget)
         require(self._core.code_hash()==self._core_hash)
         require(all(digest((HERE/name).read_bytes())==value for name,value in self._fixed.items()))
-        require(all(digest((HERE.parent/'directive-scope-v2'/name).read_bytes())==value for name,value in self._v2_fixed.items()))
+        require(all(digest((HERE.parent/self._selected_folder/name).read_bytes())==value for name,value in self._v2_fixed.items()))
         require(all(digest((self._root/name).read_bytes())==value for name,value in self._frozen_inputs.items()))
     def snapshot(self):
         # No paths, error details, caller-provided strings or raw entry results.

@@ -43,8 +43,17 @@ OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
 _DIRECTIVE_PROFILE=None
 _DIRECTIVE_PROFILE_V2=None
+_DELEGATED_PROFILE=None
 
 def _directive_profile(source_profile=None):
+    if isinstance(source_profile,dict) and source_profile.get('version')=='jt-delegated-bestj-20261017/v1':
+        global _DELEGATED_PROFILE
+        if _DELEGATED_PROFILE is None:
+            path=Path(__file__).resolve().parent/'delegated-scope-v1/profile.py'
+            spec=importlib.util.spec_from_file_location('delegated_bestj_scope',path)
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);_DELEGATED_PROFILE=module
+        _DELEGATED_PROFILE.require_binding()
+        return _DELEGATED_PROFILE
     if isinstance(source_profile,dict) and source_profile.get('version')=='jt-next-bounded-scope/v2':
         global _DIRECTIVE_PROFILE_V2
         if _DIRECTIVE_PROFILE_V2 is None:
@@ -60,6 +69,10 @@ def _directive_profile(source_profile=None):
         module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
         _DIRECTIVE_PROFILE=module
     return _DIRECTIVE_PROFILE
+
+def _approval_label(source_profile):
+    if isinstance(source_profile,dict) and source_profile.get('version')=='jt-delegated-bestj-20261017/v1':return _directive_profile(source_profile).APPROVER
+    return 'JT'
 
 def _source_binding(source_profile,name):
     if source_profile is None:return globals()[name]
@@ -267,7 +280,7 @@ def validate(packet,code_hash,instant,stamp,locale_module,manifest=None,source_p
     require(human.get('scope')==expected_scope and all(type(human['scope'][k]) is type(v) for k,v in expected_scope.items()) and human.get('target')==TARGET and human.get('parentCaptureId')==CAPTURE_ID
             and human.get('manifestSha256')==MANIFEST_SHA and human.get('identityPathSha256')==IDENTITY_PATH_SHA256,
             'NEW_DIAGNOSTIC_HUMAN_SCOPE_REQUIRED')
-    require(packet.get('approvedBy')=='JT' and packet.get('proposalOnly') is False,'DIAGNOSTIC_APPROVED_PACKET_REQUIRED')
+    require(packet.get('approvedBy')==_approval_label(source_profile) and packet.get('proposalOnly') is False,'DIAGNOSTIC_APPROVED_PACKET_REQUIRED')
     window=canonical_uuid(packet.get('windowId'))
     require(window!=CAPTURE_ID and human.get('windowId')==window and packet.get('humanAuthorizationSha256')==HUMAN_SHA256,
             'NEW_DIAGNOSTIC_WINDOW_BINDING_REQUIRED')
