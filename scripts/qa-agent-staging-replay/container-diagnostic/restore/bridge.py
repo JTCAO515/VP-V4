@@ -14,7 +14,7 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent.parent
 spec=importlib.util.spec_from_file_location('absolute_deadline',ROOT/'diagnostic-window-deadline.py');deadline=importlib.util.module_from_spec(spec);spec.loader.exec_module(deadline);deadline=deadline.shared_runtime()
 MODE='same-copy-typed-postdata/1'
-SOURCE_FILES=('controlled-snapshot-restore.py','diagnostic-window-deadline.py','owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','owned-locale-profile.py','reviewed-diagnostic-window.py','container-diagnostic/restore/bridge.py','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime-pins.json','container-diagnostic/restore/reviewed_entry.py')
+SOURCE_FILES=('controlled-snapshot-restore.py','diagnostic-window-deadline.py','owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','owned-locale-profile.py','reviewed-diagnostic-window.py','container-diagnostic/restore/bridge.py','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime-pins.json','container-diagnostic/restore/reviewed_entry.py','container-diagnostic/restore/locale-launcher.sh')
 _PLANS=weakref.WeakKeyDictionary()
 _COPIES=weakref.WeakKeyDictionary()
 
@@ -111,7 +111,7 @@ class Plan:
         require(hashlib.sha256(lock_bytes).hexdigest()==configuration['sourceLockSha256'],'TYPED_SOURCE_LOCK_CONFLICT')
         lock=json.loads(lock_bytes);require(set(lock)==set(SOURCE_FILES),'TYPED_SOURCE_SET_CONFLICT')
         for name,digest in lock.items():require(hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==digest,'TYPED_SOURCE_PIN_CONFLICT')
-        require(budget is not None and budget.wall_end is not None and callable(getattr(budget,'export_for_remote',None)),'TYPED_ORIGINAL_ABSOLUTE_BUDGET_REQUIRED');budget.check()
+        require(type(budget) is deadline.Budget and budget.wall_end is not None,'TYPED_ORIGINAL_ABSOLUTE_BUDGET_REQUIRED');budget.check()
         pins=json.loads((HERE/'runtime-pins.json').read_text())
         require(pins['helperCommit']=='4a3879517d26d86126a1ce45076e090060fcc691' and re.fullmatch('sha256:[0-9a-f]{64}',pins['imageId']),'TYPED_RUNTIME_PIN_REQUIRED')
         for name,digest in pins['sourceSha256'].items():require(hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==digest,'TYPED_IMAGE_SOURCE_CHANGED')

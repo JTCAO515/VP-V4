@@ -1,6 +1,6 @@
 {
   "baseImage": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
-  "imageId": "sha256:5abad441bc337ae4bd1d8348f562d8d4b453eb0ba3453b4f67b9eb3d67191723",
+  "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
   "pythonVersion": "3.12.15",
   "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
   "helperCommit": "4a3879517d26d86126a1ce45076e090060fcc691",
@@ -9,9 +9,10 @@
     "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
     "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
     "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
-    "container-diagnostic/restore/Dockerfile": "bf6915f7c4db6c05c4a75c0ade6264d9d5cadf23cc6d00d8cf4d70f2aeb2021d",
+    "container-diagnostic/restore/Dockerfile": "e96965cbfca8cc6a3465c71588e19a790ae7b9f7b2504e28794e87ccd7394d17",
     "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
-    "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b"
+    "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b",
+    "container-diagnostic/restore/locale-launcher.sh": "ca15a6e3e35e50ebdebd75f7623f310ccfdf06027a15a924c4c75f4ef93bdf28"
   },
   "packagesSha256": "33f7e2396de3e24861f07c0aeac87eb050a075c0f8e23c3b03507d6d39ee4957",
   "apkTrustKeyHashes": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub\nd11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub",

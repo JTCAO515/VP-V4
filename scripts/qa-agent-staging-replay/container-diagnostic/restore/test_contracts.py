@@ -23,13 +23,14 @@ def configuration():return {'mode':bridge.MODE,'sourceLockSha256':hashlib.sha256
 def budget(seconds=20,**kw):return core.diagnostic_deadline.Budget(time.monotonic()+120+seconds,wall_end=datetime.now(timezone.utc)+timedelta(seconds=120+seconds),**kw)
 
 @contextmanager
-def owned(seconds=20,**kw):
+def owned(seconds=20,icu_profile=None,**kw):
     b=budget(seconds,**kw);plan=bridge.Plan(configuration(),b)
     with b.bind(core.base,core.replay,core.safe_diagnostics):
         original=core.base.OwnCluster
         class Copy(original):
             def __init__(self):super().__init__('supabase_admin');plan.new_copy(self)
             def docker(self,args,data=None):
+                if icu_profile is not None:args=core.locale_profile.patch_owned_run(args,icu_profile)
                 if args and args[0]=='run':return plan.launch(self,args)
                 return plan.docker(self,args,data)
             def command(self,program):return plan.command(self,program)
@@ -44,6 +45,10 @@ class Admission(unittest.TestCase):
             with patch.object(core,'verify_manifest') as manifest,patch.object(core.base,'run') as io:
                 with self.assertRaises(ValueError):core.restore_bundle('NEVER_READ','NEVER_READ',{},window_budget=b,typed_diagnostic=configuration())
                 manifest.assert_not_called();io.assert_not_called()
+        fake=type('BudgetImitation',(),{'wall_end':datetime.now(timezone.utc),'check':lambda self:None,'export_for_remote':lambda self,*args:{}})()
+        with patch.object(bridge,'_run') as control:
+            with self.assertRaisesRegex(ValueError,'TYPED_ORIGINAL_ABSOLUTE_BUDGET_REQUIRED'):bridge.Plan(configuration(),fake)
+            control.assert_not_called()
     def test_missing_or_changed_pin_set_fails_before_manifest(self):
         for config in ({},dict(configuration(),sourceLockSha256='0'*64),dict(configuration(),imageId='arbitrary'),dict(configuration(),windowBindingSha256='')):
             with patch.object(core,'verify_manifest') as manifest:
@@ -92,6 +97,10 @@ class Admission(unittest.TestCase):
         self.assertEqual(b.export_cleanup_for_remote(100.0,500.0),cleanup)
 
 class CopyContracts(unittest.TestCase):
+    def test_original_explicit_icu_profile_is_preserved(self):
+        profile={'databaseFacts':{'encoding':'UTF8','collate':'en_US.UTF-8','ctype':'en_US.UTF-8','localeProvider':'i'},'icuLocale':'en-US','icuRules':None,'collationVersion':'153.121','actualCollationVersion':'153.121'}
+        with owned(icu_profile=profile) as (plan,db,b):
+            self.assertEqual(core.locale_profile.verify_owned(db,profile)['status'],'PASS_EXACT_ICU_PROFILE_AND_VERSION')
     def test_wrong_copy_nonce_role_or_foreign_object_never_issues_control_or_signal(self):
         with owned() as (plan,db,b):
             for field,value in [('name','foreign-copy'),('nonce','0'*32),('admin','foreign_role'),('locale','foreign_locale'),('context','foreign_context'),('_deadline_container_id','0'*64)]:

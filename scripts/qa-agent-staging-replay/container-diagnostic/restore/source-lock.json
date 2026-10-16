@@ -1,9 +1,10 @@
 {
-  "container-diagnostic/restore/Dockerfile": "bf6915f7c4db6c05c4a75c0ade6264d9d5cadf23cc6d00d8cf4d70f2aeb2021d",
-  "container-diagnostic/restore/bridge.py": "520aceefb56cca88031cba5a3a6ba24778061ca32d5ff27fc4872434773a4e07",
+  "container-diagnostic/restore/Dockerfile": "e96965cbfca8cc6a3465c71588e19a790ae7b9f7b2504e28794e87ccd7394d17",
+  "container-diagnostic/restore/bridge.py": "9dbd573f69d12be83eea9f4042486e239d325edc4b80fccd16ed6ac0d9a42952",
   "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b",
+  "container-diagnostic/restore/locale-launcher.sh": "ca15a6e3e35e50ebdebd75f7623f310ccfdf06027a15a924c4c75f4ef93bdf28",
   "container-diagnostic/restore/reviewed_entry.py": "e1cdc7cf07a59563904dc85a95347a99efad0e77bb73e5239bbbad7e7bfe8fc6",
-  "container-diagnostic/restore/runtime-pins.json": "45e15868e67f56dbb4e8db83b202990aaf791122cb264543c3ac318597df1fe2",
+  "container-diagnostic/restore/runtime-pins.json": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
   "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
   "controlled-snapshot-restore.py": "68affbb99568cdb42b5b37f025a7ae01693b50ad759eb64f10441c4ca218ac70",
   "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",

@@ -11,7 +11,7 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent.parent
 BASE='sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b'
 HELPER_COMMIT='4a3879517d26d86126a1ce45076e090060fcc691'
-FILES=['owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','diagnostic-window-deadline.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py']
+FILES=['owned-pg-diagnostic-session.py','typed-pg-diagnostic-proxy.py','diagnostic-window-deadline.py','container-diagnostic/restore/Dockerfile','container-diagnostic/restore/runtime.py','container-diagnostic/restore/client.py','container-diagnostic/restore/locale-launcher.sh']
 
 def run(args):return subprocess.check_output(args,stderr=subprocess.DEVNULL)
 
