@@ -1,5 +1,7 @@
 """Physical tests use only newly created nonce-private PG17, never system/shared PG."""
 import importlib.util
+import gc
+import weakref
 import json
 from pathlib import Path
 import subprocess
@@ -138,6 +140,48 @@ class OwnedSession(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'SYNTHETIC_STARTUP_FAILURE'):m.OwnedSyntheticServer()
         self.assertEqual(len(children),1)
         self.assertIsNotNone(children[0][0].poll());self.assertFalse(children[0][1].exists())
+
+    def test_writable_closed_flag_cannot_authorize_live_directory_removal(self):
+        owner=self.server();owner.closed=True
+        try:
+            with patch.object(m.shutil,'rmtree') as removal:
+                try:owner.close()
+                except ValueError:pass
+                removal.assert_not_called()
+            self.assertTrue(owner.root.exists());self.assertIsNone(owner._process.poll())
+            self.assertFalse(owner.cleanup_confirmed)
+        finally:owner.closed=False;owner.cleanup_confirmed=False
+
+    def test_stopped_child_wrong_nonce_or_replaced_root_cannot_authorize_removal(self):
+        owner=self.server();m._stop_factory_child(owner,5)
+        marker=owner.marker.read_bytes()
+        owner.marker.write_text('{"nonce":"foreign"}')
+        try:
+            with patch.object(m.shutil,'rmtree') as removal:
+                try:owner.close()
+                except ValueError:pass
+                removal.assert_not_called()
+        finally:owner.marker.write_bytes(marker);owner.cleanup_confirmed=False
+        moved=owner.root.with_name(owner.root.name+'-held');owner.root.rename(moved);owner.root.mkdir(mode=0o700)
+        (owner.root/'owner.json').write_bytes(marker);(owner.root/'owner.json').chmod(0o600)
+        try:
+            with patch.object(m.shutil,'rmtree') as removal:
+                try:owner.close()
+                except ValueError:pass
+                removal.assert_not_called()
+        finally:
+            (owner.root/'owner.json').unlink();owner.root.rmdir();moved.rename(owner.root);owner.cleanup_confirmed=False
+
+    def test_gc_of_registered_owner_never_recursively_deletes_directory(self):
+        owner=m.OwnedSyntheticServer();root=owner.root
+        m._stop_factory_child(owner,5) # no live process survives this GC test
+        reference=weakref.ref(owner)
+        try:
+            del owner;gc.collect()
+            self.assertIsNone(reference());self.assertTrue(root.exists())
+        finally:
+            # This test retains exact ownership of its stopped fixture root.
+            if root.exists():m.shutil.rmtree(root)
 
 
 class FactoryProvenance(unittest.TestCase):

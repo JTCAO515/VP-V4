@@ -45,9 +45,37 @@ def _factory_receipt(owner):
     require(receipt is not None,'OWN_FACTORY_RECEIPT_REQUIRED')
     require(not any(name in owner.__dict__ for name,value in vars(OwnedSyntheticServer).items() if callable(value)), 'OWN_FACTORY_METHOD_REPLACED')
     require(owner._process is receipt['process'] and owner.lifecycle_lock is receipt['lock'],'OWN_FACTORY_PROCESS_REPLACED')
-    require((owner.root,owner.data,owner.sock,owner.marker,owner.nonce,owner.tmp)==receipt['resources'],'OWN_FACTORY_RESOURCES_CHANGED')
+    require((owner.root,owner.data,owner.sock,owner.marker,owner.nonce)==receipt['resources'],'OWN_FACTORY_RESOURCES_CHANGED')
     require(json.dumps(owner.identity,sort_keys=True)==receipt['identity'],'OWN_FACTORY_IDENTITY_CHANGED')
     return receipt
+
+
+def _filesystem_identity(path):
+    st=path.lstat()
+    return (st.st_dev,st.st_ino,st.st_uid,st.st_mode)
+
+
+def _verify_factory_root(receipt):
+    root,_,_,marker,nonce=receipt['resources']
+    require(_filesystem_identity(root)==receipt['rootIdentity'] and not root.is_symlink(),'OWN_ROOT_IDENTITY_CONFLICT')
+    require(_filesystem_identity(marker)==receipt['markerIdentity'] and not marker.is_symlink(),'OWN_MARKER_IDENTITY_CONFLICT')
+    require(marker.stat().st_nlink==1 and json.loads(marker.read_text())=={'nonce':nonce},'OWN_SERVER_NONCE_CONFLICT')
+
+
+def _remove_factory_root(owner):
+    receipt=_factory_receipt(owner)
+    with receipt['lock']:
+        child=receipt['process']
+        require(child is None or child.poll() is not None,'OWN_CHILD_EXIT_UNCONFIRMED')
+        if child is not None:child.wait(timeout=1)
+        root=receipt['resources'][0]
+        if receipt['removed']:
+            require(not root.exists(),'OWN_REMOVED_ROOT_REPLACED');return
+        _verify_factory_root(receipt)
+        # No TemporaryDirectory cleanup/finalizer can reach this deletion.
+        shutil.rmtree(root)
+        require(not root.exists(),'OWN_ROOT_REMOVAL_UNCONFIRMED')
+        receipt['removed']=True
 
 
 def _stop_factory_child(owner,timeout,construction=False,limit=None):
@@ -86,8 +114,8 @@ class OwnedSyntheticServer:
         require(type(self) is OwnedSyntheticServer,'OWN_FACTORY_EXACT_TYPE_REQUIRED')
         require(self not in _FACTORY_RECEIPTS,'OWN_FACTORY_ALREADY_CREATED')
         self.nonce=secrets.token_hex(16);self.key=secrets.token_bytes(32)
-        self.tmp=tempfile.TemporaryDirectory(prefix='qaw-session-',dir='/private/tmp')
-        self.root=Path(self.tmp.name);self.root.chmod(0o700)
+        # mkdtemp has no recursive-deletion finalizer or public cleanup handle.
+        self.root=Path(tempfile.mkdtemp(prefix='qaw-session-',dir='/private/tmp'));self.root.chmod(0o700)
         self.data=self.root/'data';self.sock=self.root/'sock';self.sock.mkdir(mode=0o700)
         self.marker=self.root/'owner.json';self.marker.write_text(json.dumps({'nonce':self.nonce}));self.marker.chmod(0o600)
         self.env={k:os.environ[k] for k in ('PATH','HOME','TMPDIR') if k in os.environ}
@@ -95,7 +123,7 @@ class OwnedSyntheticServer:
         self._process=None;self.identity=None;self.bindings=[];self.registrations={};self.closed=False;self.cleanup_confirmed=False
         self.lifecycle_lock=threading.RLock();self.active_session=None
         self.query_timeout=3
-        receipt={'process':None,'lock':self.lifecycle_lock,'resources':(self.root,self.data,self.sock,self.marker,self.nonce,self.tmp),'identity':'null'}
+        receipt={'process':None,'lock':self.lifecycle_lock,'resources':(self.root,self.data,self.sock,self.marker,self.nonce),'identity':'null','rootIdentity':_filesystem_identity(self.root),'markerIdentity':_filesystem_identity(self.marker),'removed':False}
         _FACTORY_RECEIPTS[self]=receipt
         try:
             require(subprocess.run([str(PG/'postgres'),'--version'],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=3).stdout.startswith(b'postgres (PostgreSQL) 17.'),'OWN_PG17_REQUIRED')
@@ -119,9 +147,8 @@ class OwnedSyntheticServer:
     def _construction_cleanup(self):
         try:
             _stop_factory_child(self,5,construction=True)
-            self.tmp.cleanup()
+            _remove_factory_root(self)
         except BaseException:
-            self.tmp._finalizer.detach()
             raise ValueError('OWN_CONSTRUCTION_CLEANUP_UNKNOWN_PRIVATE_DIR_RETAINED') from None
     def command(self,socket_dir=None):
         destination=Path(socket_dir or self.sock)
@@ -214,11 +241,10 @@ class OwnedSyntheticServer:
         with self.lifecycle_lock:
             try:return self._close_checked()
             except BaseException:
-                self.tmp._finalizer.detach()
                 raise ValueError('OWN_SERVER_CLEANUP_UNKNOWN_PRIVATE_DIR_RETAINED') from None
     def _close_checked(self):
         _factory_receipt(self)
-        if not self.closed and self._process is not None and self._process.poll() is None:
+        if self._process is not None and self._process.poll() is None:
             _stop_factory_child(self,5);self.closed=True
         end=time.monotonic()+2
         for binding in self.bindings:
@@ -226,14 +252,11 @@ class OwnedSyntheticServer:
                 try:os.kill(binding['pid'],0)
                 except ProcessLookupError:break
                 if time.monotonic()>=end:
-                    self.tmp._finalizer.detach()
                     raise ValueError('OWN_BACKEND_EXIT_UNCONFIRMED_DATA_DIR_RETAINED')
                 time.sleep(.025)
         for binding in self.bindings:binding.clear()
-        self.key=b'';self.tmp.cleanup()
-        # Python versions differ after an UNKNOWN detached the finalizer. A
-        # later verified explicit close must still remove its own stopped root.
-        if self.root.exists():shutil.rmtree(self.root)
+        _remove_factory_root(self)
+        self.key=b''
         self.cleanup_confirmed=True;self.active_session=None
 
 class BoundProxy(proxy.OwnedUnixProxy):
