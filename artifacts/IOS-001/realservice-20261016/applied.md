@@ -26,3 +26,9 @@ Product diff: two replacements, two files. The real-service launch flag now ensu
 Stable commit/push receipt will be sent directly to Main. After that receipt this owner stops writing both exact hunks and returns them to Main; no successor writer or in-flight build/transport is retained. Original Ask holder findings remain read-only and are not repaired under this lease.
 
 The earlier evidence.md describes the initial source audit and candidate-only phase. This applied record supersedes its candidate-not-applied status for exactly the two changes above. Original explicit same-key retry and server list recovery clarifications remain valid.
+
+## Direct App-module tests delivered
+
+Main requested the allowlist security checks as App tests. New `ios/VisePanda/VisePandaTests/NativeRealServiceEntryTests.swift` has eight XCTest methods calling actual `NativeSession.resolveEndpoint` through `@testable import VisePanda`; no copied resolver, network, credentials, global state or simulator is used. It covers exact installed staging HTTPS QA origin, suffix/userinfo/path/query/fragment/port and environment rejection, no remote launch override, no incomplete-config loopback fallback, and original staging/preview/loopback compatibility. Product files remain at the accepted after hashes.
+
+PASS: new Swift file syntax parsing and diff whitespace check. App-module compilation and actual XCTest execution remain UNRUN locally; Main owns PBX registration and App XCTest on its own resources. `test-delivery-pins.json` records full source SHA256. The prior executed pure-source probe evidence remains separate and is not reported as this App test suite passing.

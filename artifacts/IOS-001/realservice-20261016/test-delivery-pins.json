@@ -1,0 +1,10 @@
+{
+  "parent_commit": "87aea8c1c258fe7609cc81b4bd23641241803ef1",
+  "sha256": {
+    "ios/VisePanda/VisePanda/App/AppShellView.swift": "e8dd3231dc2f35c556d627fd1a417a941da8d431013539aedff02055862b7c82",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "f8ed02995af76ee3436b620ebf07a3b18fae92017eb8e509bf60f0b3d25e5e00",
+    "ios/VisePanda/VisePandaTests/NativeRealServiceEntryTests.swift": "015b8a3c111ce797901d2a168d83c3f44c4c330e078c6d740508f2698c1cb79f"
+  },
+  "test_methods": 8,
+  "local_verification": "syntax parse PASS; App XCTest UNRUN; PBX registration reserved to Main"
+}
