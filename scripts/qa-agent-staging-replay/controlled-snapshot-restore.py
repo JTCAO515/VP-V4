@@ -43,9 +43,17 @@ def verify_manifest(manifest):
     return adapted,snapshot
 
 
-def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None,observe_caller=False,window_budget=None):
+def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None,observe_caller=False,window_budget=None,typed_diagnostic=None):
+    active_budget=window_budget or getattr(base.subprocess,'window_deadline',None)
+    typed_plan=None
+    if typed_diagnostic is not None:
+        if type(active_budget) is not diagnostic_deadline.Budget or active_budget.wall_end is None:
+            raise ValueError('TYPED_ORIGINAL_ABSOLUTE_BUDGET_REQUIRED')
+        active_budget.check()
+        typed_bridge=load('typed_restore_bridge',HERE/'container-diagnostic/restore/bridge.py')
+        typed_plan=typed_bridge.Plan(typed_diagnostic,active_budget)
     if window_budget is not None:
-        return window_budget.execute(lambda:restore_bundle(directory,identity,manifest,replay_manifest,icu_profile,observe_caller),base,replay,safe_diagnostics)
+        return window_budget.execute(lambda:restore_bundle(directory,identity,manifest,replay_manifest,icu_profile,observe_caller,typed_diagnostic=typed_diagnostic),base,replay,safe_diagnostics)
     adapted,snapshot=verify_manifest(manifest)
     if replay_manifest is not None:
         plan,_=replay.load_plan(replay_manifest)
@@ -62,16 +70,21 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
                 # the explicit ICU adapter, without declaring the source libc.
                 super().__init__(args[0],None)
             copies.append(self)
+            if typed_plan is not None:typed_plan.new_copy(self)
         def docker(self,args,data=None):
             if icu_profile is not None:args=locale_profile.patch_owned_run(args,icu_profile)
+            if typed_plan is not None and args and args[0]=='run':
+                return typed_plan.launch(self,args,lambda routed:super(VerifiedOwnedCopy,self).docker(routed,data))
             return super().docker(args,data)
         def start(self):
             super().start()
+            if typed_plan is not None:typed_plan.ready(self)
             if icu_profile is not None:self.icuBootstrap=locale_profile.verify_owned(self,icu_profile)
         def close(self):
             # Private restore phase defers cleanup only until this synchronous
             # adapter verifies sequences/replays. Never return this handle.
             pass
+    if typed_plan is not None:typed_plan.bind_class(VerifiedOwnedCopy)
     result={'status':'FAIL_LOCAL_RESTORE','cleanup':'PENDING_OWNED_COPY'}
     active_budget=getattr(base.subprocess,'window_deadline',None)
     if active_budget is not None:
@@ -86,7 +99,10 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
         elif '--section=post-data' in consumer:stage='SCHEMA_POST_DATA'
         elif '--data-only' in consumer:stage='PLATFORM_LEDGER' if producer[-1].endswith(base.ledger.ARCHIVE) else 'SCOPED_DATA'
         if active_budget is not None:active_budget.progress['stage']=stage
-        value=safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
+        if typed_plan is not None and stage=='SCHEMA_POST_DATA':
+            if len(copies)!=1 or not copies[0].created:raise ValueError('TYPED_ORIGINAL_COPY_REQUIRED')
+            value=typed_plan.pipeline(copies[0],producer,consumer,collect,diagnostics)
+        else:value=safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
         if active_budget is not None:
             active_budget.progress['completedIoStages'].append(stage)
             active_budget.progress['stage']=stage+'_IO_COMPLETED_PENDING_VERIFICATION'

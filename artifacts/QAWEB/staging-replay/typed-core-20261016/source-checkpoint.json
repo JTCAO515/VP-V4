@@ -1,0 +1,11 @@
+{
+  "base": "4a3879517d26d86126a1ce45076e090060fcc691",
+  "status": "CORE_SOURCE_IMPLEMENTED_FINAL_VALIDATION_PENDING",
+  "scope": [
+    "controlled-snapshot-restore.py restore_bundle/private_pipeline optional mode",
+    "diagnostic-window-deadline.py absolute snapshot/diagnostic cleanup coordination only",
+    "container-diagnostic/restore new runtime bridge/tests/pins"
+  ],
+  "validation": "Initial strict5 physical PASS on intermediate source/image; contract8 of9 passed, one pre-IO foreign-object error type fixed. Final fixed-source/final-image full matrix PENDING. AST/runtime-source lock consistency PASS.",
+  "noAuthority": "Historical window795 remains unavailable. No actual protected data/keys/window/capture/restore/E/provider/Prod. Actual rootcause UNKNOWN."
+}

@@ -9,6 +9,7 @@ from pathlib import Path
 import threading
 from datetime import datetime,timezone
 import json
+import math
 import re
 import subprocess
 import sys
@@ -129,6 +130,23 @@ class Budget:
         remaining=self.cleanup_end-self.clock()
         if remaining<=0:raise ValueError('OWNED_CLEANUP_BUDGET_EXHAUSTED')
         return min(upper,remaining)
+    def export_for_remote(self,remote_stamp,local_received):
+        self.check()
+        if self.wall_end is None or self.wall_end.tzinfo is None or not all(type(x) in (int,float) and math.isfinite(x) for x in (remote_stamp,local_received)) or local_received>self.clock():raise ValueError('ABSOLUTE_REMOTE_ANCHOR_REQUIRED')
+        # Remote sample preceded local receipt. This lower-bound clock offset
+        # can shorten, never extend, the original host monotonic deadline.
+        return {'clock':'ORIGINAL_ABSOLUTE_BUDGET','windowEnd':remote_stamp+self.window_end-local_received,
+                'wallEnd':self.wall_end.isoformat(),'reserve':self.reserve,'cleanupSeconds':self.cleanup_seconds}
+    def export_cleanup_for_remote(self,remote_stamp,local_received):
+        if not all(type(x) in (int,float) and math.isfinite(x) for x in (remote_stamp,local_received)) or local_received>self.clock():raise ValueError('ABSOLUTE_REMOTE_ANCHOR_REQUIRED')
+        self.cleanup_timeout(self.cleanup_seconds)
+        return remote_stamp+self.cleanup_end-local_received
+    def register_diagnostic_copy(self,db,capability):
+        registry=getattr(self,'diagnostic_copies',None)
+        if registry is None:registry={};self.diagnostic_copies=registry
+        if db not in self.clusters or db in registry or getattr(db,'_deadline_cleanup_attempted',False):
+            raise ValueError('DIAGNOSTIC_COPY_REGISTRATION_CONFLICT')
+        registry[db]=capability
     def stop_process(self,p):
         try:
             if p.raw.poll() is None:p.kill()
@@ -139,6 +157,12 @@ class Budget:
             if not getattr(db,'_deadline_cleanup_pass',False):raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN')
             return
         db._deadline_cleanup_attempted=True
+        if db in getattr(self,'diagnostic_copies',{}):
+            try:
+                self.diagnostic_copies[db].cleanup(self);db._deadline_cleanup_pass=True
+            except Exception:
+                self.cleanup_ok=False;raise ValueError('OWNED_DIAGNOSTIC_CLEANUP_UNKNOWN') from None
+            return
         if not getattr(db,'_deadline_run_issued',False) and not db.created:
             db._deadline_cleanup_pass=True;return
         try:
