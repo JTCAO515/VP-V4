@@ -1,0 +1,54 @@
+test_forged_exact_type_and_subclass_refuse_all_public_entries (__main__.FactoryProvenance) ... ok
+test_subclass_cannot_acquire_receipt_by_calling_factory_initializer (__main__.FactoryProvenance) ... ok
+test_unregistered_subclass_never_signals_during_construction_cleanup (__main__.FactoryProvenance) ... ok
+test_cancel_resistant_backend_requires_exclusive_owned_postmaster_fence (__main__.OwnedSession) ... ok
+test_control_identity_mismatch_preserves_unknown_without_process_kill (__main__.OwnedSession) ... ok
+test_foreign_nonce_server_epoch_or_backend_lifetime_never_signals (__main__.OwnedSession) ... ok
+test_foreign_server_binding_never_cancels_or_stops_either_server (__main__.OwnedSession) ... ok
+test_no_shared_socket_or_parallel_session_attachment (__main__.OwnedSession) ... ok
+test_orchestrated_timeout_confirms_backend_stop_without_fabricated_error (__main__.OwnedSession) ... ok
+test_original_role_and_application_name_not_rewritten (__main__.OwnedSession) ... ok
+test_registered_startup_failure_reclaims_original_child (__main__.OwnedSession) ... /Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1052: ResourceWarning: subprocess 76318 is still running
+  _warn("subprocess %s is still running" % self.pid,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ERROR
+test_replaced_process_and_identity_reject_every_signal_entry (__main__.OwnedSession) ... /Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:765: ResourceWarning: unclosed file <_io.BufferedReader name=4>
+  _cleanup()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FAIL
+test_socket_close_does_not_stop_backend_but_bound_cancel_confirms_exit (__main__.OwnedSession) ... ok
+test_typed_failure_preserves_protocol_provenance_and_no_secret_output (__main__.OwnedSession) ... ok
+test_unknown_fence_preserves_active_session_and_blocks_next_session (__main__.OwnedSession) ... ok
+
+======================================================================
+ERROR: test_registered_startup_failure_reclaims_original_child (__main__.OwnedSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 138, in test_registered_startup_failure_reclaims_original_child
+    with self.assertRaisesRegex(ValueError,'SYNTHETIC_STARTUP_FAILURE'):m.OwnedSyntheticServer()
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/owned-pg-diagnostic-session.py", line 96, in __init__
+    require(subprocess.run([str(PG/'postgres'),'--version'],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=3).stdout.startswith(b'postgres (PostgreSQL) 17.'),'OWN_PG17_REQUIRED')
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/unittest/mock.py", line 1093, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/unittest/mock.py", line 1097, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/unittest/mock.py", line 1158, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 135, in track
+    if str(m.PG/'postgres')==args[0][0]:children.append((child,Path(args[0][2]).parent))
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_replaced_process_and_identity_reject_every_signal_entry (__main__.OwnedSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 21, in close_and_verify
+    owner.close();self.assertTrue(owner.cleanup_confirmed);self.assertFalse(owner.root.exists())
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 15 tests in 9.478s
+
+FAILED (failures=1, errors=1)
