@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { parseAskRun } from "../runtime-ask/contract.ts";
 import { runRuntimeAsk, type AskReport } from "../runtime-ask/index.ts";
+import { isFailureCode } from "../../../lib/server/contracts/errors/index.ts";
 import { RuntimeFailure } from "../runtime-recovery/transport.ts";
 import { parseInventory, INVENTORY_COVERAGE, stableJSON, type TripInventory } from "../../../lib/server/trip/inventory/contract.ts";
 import { inventoryBudget, type InventoryTransport, type InventoryObservation } from "./transport.ts";
@@ -42,19 +43,20 @@ export async function acquireH04TripInventory(input: unknown, transport?: Invent
     if (!snapshot || snapshot.ownerId !== run.context.ownerId) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
     await session(); port.check(); return snapshot;
   };
-  let submits = 0;
+  let submits = 0, attemptedAsk = false;
   try {
     before = await observe();
     // Reserve after's session/inventory/session requests; the global port also enforces all actual bytes.
     const maxRequests = run.bounds.maxRequests - port.requests - 3, maxTotalBytes = run.bounds.maxTotalBytes - port.bytes;
     const timeoutMs = Math.floor(deadline - performance.now());
     if (maxRequests < 1 || maxTotalBytes < 1 || timeoutMs < 1) throw new RuntimeFailure("RATE_LIMITED");
+    attemptedAsk = true;
     ask = await runRuntimeAsk({ ...run, bounds: { ...run.bounds, maxRequests, maxTotalBytes, maxResponseBytes: Math.min(run.bounds.maxResponseBytes, maxTotalBytes), timeoutMs } }, async (request, s) => {
       port.check(); if (request.port === "submit" && ++submits > 1) throw new RuntimeFailure("SERVICE_TASK_CONFLICT");
       return port.call(request, s);
     }, controller.signal);
     port.check();
-    if (ask.code !== null || ask.outcome === "unknown" || ask.outcome === "NOT_RUN") throw new RuntimeFailure("PROVIDER_UNAVAILABLE");
+    if (ask.code !== null || ask.outcome === "unknown" || ask.outcome === "NOT_RUN") throw new RuntimeFailure(isFailureCode(ask.code) ? ask.code : "PROVIDER_UNAVAILABLE");
     after = await observe(); port.check();
   } catch (error) { reason = error instanceof RuntimeFailure ? error.code : "PROVIDER_UNAVAILABLE"; after = null; }
   finally { clearTimeout(timer); signal.removeEventListener("abort", abort); }
@@ -63,6 +65,6 @@ export async function acquireH04TripInventory(input: unknown, transport?: Invent
   const result: InventoryReport = { ...base, state: before ? after ? "observed" : "unknown" : "NOT_RUN", reason,
     before: before ? metadata(before) : null, after: after ? metadata(after) : null, ask, submitDispatches: submits,
     tripCollectionUnchanged: before && after ? before.digest === after.digest : "unknown", observations: [...port.observations] };
-  if (controller.signal.aborted || performance.now() >= deadline) return { ...result, state: "unknown", tripCollectionUnchanged: "unknown", reason: "CANCELLED", before: null, after: null, ask: null };
+  if (controller.signal.aborted || performance.now() >= deadline) return { ...result, state: attemptedAsk ? "unknown" : "NOT_RUN", tripCollectionUnchanged: "unknown", reason: "CANCELLED", before: null, after: null, ask: null };
   return result;
 }
