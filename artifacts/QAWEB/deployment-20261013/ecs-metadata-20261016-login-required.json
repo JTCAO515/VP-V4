@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-10-16T03:00:13.055303+00:00",
+  "instanceId": "i-j6c7q3kftufyroypiqvu",
+  "approvedIp": "47.239.12.244",
+  "scope": "fixed ECS read-only metadata",
+  "officialEntry": "https://ecs.console.aliyun.com/",
+  "actualPage": "https://account.aliyun.com/login/login.htm",
+  "visiblePageTitle": "阿里云登录页",
+  "visibleLoginOptions": [
+    "阿里云APP/支付宝/钉钉扫码",
+    "账密登录",
+    "手机号登录",
+    "通行密钥"
+  ],
+  "existingWorkbenchTabPresent": false,
+  "loginSessionAvailable": false,
+  "uiTabId": "1443631076",
+  "tabRetainedForLoginHandoff": true,
+  "nextOfficialSteps": [
+    "Existing original account holder completes official login without sending secrets in chat",
+    "Select original Hong Kong ECS i-j6c7q3kftufyroypiqvu / 47.239.12.244",
+    "Use original remote-connect/Workbench entry; verify instance before metadata-only commands"
+  ],
+  "hostBoot": "UNKNOWN",
+  "workerContainerProcessImageSource": "UNKNOWN",
+  "publicProfileRefVersionFlags": "UNKNOWN",
+  "keyFileMetadata": "UNKNOWN",
+  "keyAuthentication": "UNRUN",
+  "providerRequests": 0,
+  "hostCommandsExecuted": 0,
+  "secretContentsReadOrPersisted": false,
+  "resourceMutations": 0,
+  "permissionDenied": false,
+  "blocker": "Official login required; no active Workbench session is available in the current browser inventory. This is not an ECS permission-denied result."
+}

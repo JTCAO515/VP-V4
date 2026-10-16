@@ -1,0 +1,100 @@
+{
+  "observedAt": "2026-10-16T02:58:28.448953+00:00",
+  "project": {
+    "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "name": "vp-v4",
+    "accountId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "rootDirectory": null,
+    "framework": "nextjs"
+  },
+  "deployment": {
+    "id": "dpl_F9GFMNCULZ6ydNLSyf9bQbVZz85K",
+    "url": "vp-v4-q8ltzth0l-jtcao515s-projects.vercel.app",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "target": null,
+    "readyState": "READY",
+    "createdAt": 1792114239596,
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "domain": {
+    "name": "qatesting.go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "gitBranch": "codex/qaw005-independent-target-20261013",
+    "verified": true
+  },
+  "qaEnvironmentMetadata": [
+    {
+      "key": "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    }
+  ],
+  "plainMatchingBooleans": {
+    "VISEPANDA_QA_SUPABASE_PROJECT_REF": {
+      "present": true,
+      "allPlain": true,
+      "allMatch": true
+    },
+    "VISEPANDA_QA_AGENT_ORIGIN": {
+      "present": true,
+      "allPlain": true,
+      "allMatch": true
+    }
+  },
+  "resourceMutations": 0,
+  "valuesPrintedOrPersisted": false,
+  "httpObservedAt": "2026-10-16T02:59:25.760982+00:00",
+  "ordinaryAnonymousGet": [
+    {
+      "path": "/qa",
+      "status": 200,
+      "requestId": "sin1::4k5wx-1792119564036-dfc3a54f8cee"
+    },
+    {
+      "path": "/api/qa-agent/sessions",
+      "status": 503,
+      "requestId": "sin1::iad1::fmf82-1792119564719-1378af7311a1",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      }
+    },
+    {
+      "path": "/api/qa-agent/policy",
+      "status": 503,
+      "requestId": "sin1::iad1::9w5cx-1792119565379-6989e4cf5fee",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      }
+    }
+  ],
+  "sameIdentity": "jtcao515",
+  "missingQaEnable": true,
+  "missingQaPolicyId": true,
+  "missingContextModeUsesSupportedDefault": true,
+  "sourceEarlyGate": "qaConfig returns null before adapter/auth/SQL if QA_AGENT not true or POLICY_ID not uuid",
+  "providerAuthentication": "UNRUN",
+  "workerReadiness": "UNKNOWN",
+  "realMultiRound": "UNRUN"
+}
