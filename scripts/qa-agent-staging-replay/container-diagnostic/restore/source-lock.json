@@ -10,6 +10,6 @@
   "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
   "owned-locale-profile.py": "bbfc39dbd9fb28153953802e300d5aec02449ba4134fc870a32185ad5d6520ec",
   "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
-  "reviewed-diagnostic-window.py": "b284ab78f64e3dd4d80a2c322489e1a235d4794c690630c2ba81e381b6ba5141",
+  "reviewed-diagnostic-window.py": "7ef1d05a00e835b031b68f247198f0537f02ea97dd00ba7875eed93eb6d32fe1",
   "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e"
 }

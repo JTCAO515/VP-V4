@@ -1,0 +1,81 @@
+# Fixed JT directive scope v1
+
+This explicit profile binds only the two supplied JT messages (9fd/e4ac), their
+actual report/acknowledgement contexts, known room, exact parent API return and
+actual BestJ-to-Mac-to-Main transports. It does not reinterpret a report as an
+approval question, require an approval keyword, or invent an explicit reply for
+the final message. All five returned messages remain bound by the full raw pin.
+The private actor identity is bound by that exact raw response and is not emitted.
+Raw source records are private inputs and are not committed with this package.
+
+`evidence-pins.json` is the fixed source descriptor, covered by the profile source
+lock. The first native name remains `cloud_threads.send_message`; second hops
+remain `codex_app.send_message_to_thread`, with their distinct actual record
+kinds. `semanticProjection` is only a declared semantic label, never a renamed
+native tool. Missing native call/result fields are not invented. The parent raw
+read is explicitly parent-reported, not a Mac/owner independent upstream read.
+
+The original legacy profile, fixed90d checks and ordinary/async schemas remain
+available unchanged. `reviewed-diagnostic-window.py` takes an optional explicit
+`source_profile`; only v1 is implemented. Its shared validation, preservation,
+window, second-attempt, active/used marker and cleanup algorithms still run.
+There is no mutation of legacy globals, runtime monkeypatch, fallback from an
+invalid v1 configuration, new CLI/environment switch, or low-level restore entry.
+
+## Qualified entry
+
+Use `entry.run(core, args, typed_configuration, source_profile)` only after a fixed commit/clean execution checkout, independent fixed-source
+safety review, complete relevant local checks and all original execution/record
+gates hold. Repository CI/protected merge governs engineering delivery; it is not
+an extra prerequisite for the newly authorized reversible local offline use. The
+profile requires its source-lock digest, the base typed source-lock digest,
+original capture/manifest/identity reference, exact original image, localOnly and
+the unchanged60-minute/max2 scope. New human/start metadata filenames must have
+the explicit directive-v1 prefixes directly under the original gate ROOT; old
+records cannot be repurposed. A missing/changed field rejects before operator
+reads. The entry and gate both verify the source/profile/configuration-bound code
+hash; the original unsalted core hash cannot admit this profile.
+
+The v1 qualification record contains `sourceEvidence = verify_sources()` (the
+truthful hash-bound projection), version/status, fileDoesNotSelfAuthorize,
+windowId/windowBindingSha256, target/capture/manifest/identity, scope/localOnly and
+image. It is a technical qualification record, not a fabricated human signature.
+Actual record paths/hashes and the seven preserved historical pins are explicit
+configuration inputs. No source function creates actual qualification/START
+records. Only the ordinary claim path writes a claim after all original gates.
+
+At authorized START, derive the original actual window frame and
+`window_binding(packet)`. This binds the fixed directive authorization, window
+UUID/start/end, original material and identity, fixed image and max2/localOnly.
+It intentionally excludes per-attempt repair/source hashes: those are separately
+bound by `qualified_hash`, the packet and Main START. Then finalize the genuine
+qualification record SHA, source-profile configuration and scoped code hash.
+There is no now-plus-remaining replacement window or synthesized START time.
+
+An additional `diagnostic-authority-<digest>.used.json` binds this authorization
+to one window. Its key depends on actual directive IDs/room/source/capture, not
+profile version, source revision, relay hash or chosen window. It is never deleted.
+Attempt1 checks absence before acquiring the original capture-wide active guard,
+then exclusively binds authority and consumes the original attempt marker.
+Attempt2 must match that same window/human record/binding, and still satisfy every
+original failure, cleanup, causal repair and independent-review gate. Existing
+795/used records are never reset; UNKNOWN cleanup retains the original active
+guard. A source repair cannot obtain a new window from the same directives.
+
+## Validation boundaries
+
+`test_profile.py` validates the actual supplied non-secret records when available
+and mutates their in-memory copies for rejection tests. It uses the unchanged
+legacy fixture builder for synthetic state/START records and isolated claim roots.
+One synthetic identity reference is explicitly stubbed because the real identity
+path/key is intentionally not read; wrong references still reject. This is not
+actual material/identity acceptance. Missing private evidence is explicitly
+SKIPPED on other hosts, never replaced with invented source data. No raw actor
+identifier or original source bodies are printed in test output.
+
+The base runtime image and all its inputs are unchanged. No PG/image matrix needs
+rebuilding for this admission-only change. Actual execution remains NOT_STARTED
+until a clean fixed candidate is independently safety-reviewed and locally
+validated, with qualified operator configuration, actual START and every original
+preflight condition. If used before merge, label it a local candidate, not delivered
+or deployed code. No actual START is derived from human-message/model/old795 time.
