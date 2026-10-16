@@ -4,17 +4,17 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createTripInventoryReader } from "../../../lib/server/trip/inventory/reader.ts";
 import { inventoryDigest, parseInventory } from "../../../lib/server/trip/inventory/contract.ts";
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
-const row = { id: id(2), title: "Private title", head_version: 0, updated_at: "2026-10-16T00:00:00Z" };
+const row = { id: id(2), owner_id: id(1), title: "Private title", head_version: 0, updated_at: "2026-10-16T00:00:00Z" };
 function fixture(replies: unknown[] = [{ data: [row], count: 1, error: null }, { data: [row], count: 1, error: null }]) {
   const calls: unknown[] = []; let auth = 0;
-  const client = { from(table: string) { calls.push(table); return { select(columns: string, options: unknown) { calls.push([columns, options]); return { order(key: string, options: unknown) { calls.push([key, options]); return { limit(n: number) { calls.push(n); return { abortSignal() { return Promise.resolve(replies.shift()); } }; } }; } }; } }; } } as unknown as SupabaseClient;
+  const client = { from(table: string) { calls.push(table); return { select(columns: string, options: unknown) { calls.push([columns, options]); return { eq(column: string, owner: string) { calls.push([column, owner]); return this; }, order(key: string, options: unknown) { calls.push([key, options]); return { limit(n: number) { calls.push(n); return { abortSignal() { return Promise.resolve(replies.shift()); } }; } }; } }; } }; } } as unknown as SupabaseClient;
   const canonical = { trip: { id: row.id, title: row.title, headVersion: 0, updatedAt: row.updated_at }, content: { days: [] }, confirmationState: "initial" as const };
   return { calls, canonical, read: (read = async () => ({ data: canonical }), authenticate = async () => { auth++; return { data: id(1) }; }) => createTripInventoryReader(client, authenticate, read), get auth() { return auth; } };
 }
 test("ordinary bound client uses exact count, stable id, canonical zero and two reads", async () => {
   const f = fixture(), result = await f.read()(); assert.ok("data" in result);
   assert.equal(result.data.count, 1); assert.equal(result.data.complete, true); assert.equal(result.data.ownerId, id(1)); assert.equal(f.auth, 2);
-  assert.deepEqual(f.calls, ["trips", ["id,title,head_version,updated_at", { count: "exact" }], ["id", { ascending: true }], 9, "trips", ["id,title,head_version,updated_at", { count: "exact" }], ["id", { ascending: true }], 9]);
+  assert.deepEqual(f.calls, ["trips", ["id,owner_id,title,head_version,updated_at", { count: "exact" }], ["owner_id", id(1)], ["id", { ascending: true }], 9, "trips", ["id,owner_id,title,head_version,updated_at", { count: "exact" }], ["owner_id", id(1)], ["id", { ascending: true }], 9]);
   assert.deepEqual(parseInventory(result.data), result.data);
 });
 test("only exact zero counts with non-null arrays can be empty complete", async () => {
