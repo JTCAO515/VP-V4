@@ -18,6 +18,13 @@ type Pending = { requestId: string; text: string | null; retryAllowed: boolean }
 export function QaAgentWorkspace() {
   const params = useSearchParams();
   const locale = params.get("locale") === "en" ? "en" : "zh";
+  const initialSession = params.get("session");
+  // Only the QA route's public navigation parameters survive the login handoff.
+  const returnParams = new URLSearchParams();
+  if (params.has("locale")) returnParams.set("locale", locale);
+  if (initialSession && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(initialSession)) returnParams.set("session", initialSession);
+  const returnTo = "/qa" + (returnParams.size ? `?${returnParams}` : "");
+  const signInHref = "/auth/sign-in?" + new URLSearchParams({ returnTo });
   const [actor, setActor] = useState<string | null>(null);
   const authActor = useRef<string | null>(null);
   useEffect(() => {
@@ -33,12 +40,12 @@ export function QaAgentWorkspace() {
     return () => data.subscription.unsubscribe();
   }, []);
   if (actor === null) return <p role="status">{copy[locale].loading}</p>;
-  if (actor === "signed-out") return <Link href="/auth/sign-in?returnTo=/qa">{copy[locale].signIn}</Link>;
+  if (actor === "signed-out") return <Link href={signInHref}>{copy[locale].signIn}</Link>;
   if (actor === "unavailable") return <p role="alert">{copy[locale].error}</p>;
-  return <Workspace key={actor} locale={locale} actorId={actor} initialSession={params.get("session")} />;
+  return <Workspace key={actor} locale={locale} actorId={actor} initialSession={initialSession} signInHref={signInHref} />;
 }
 
-function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; actorId: string; initialSession: string | null }) {
+function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "zh" | "en"; actorId: string; initialSession: string | null; signInHref: string }) {
   const c = copy[locale];
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -401,7 +408,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
     catch (reason) { fail(reason, token); }
     finally { if (current.current === token && !token.controller.signal.aborted) { token.busy = false; setBusy(false); } }
   }
-  if (unauthenticated) return <Link href="/auth/sign-in?returnTo=/qa">{c.signIn}</Link>;
+  if (unauthenticated) return <Link href={signInHref}>{c.signIn}</Link>;
   const waiting = messages.some(message => message.status === "pending" && stopViews[message.requestId]?.ack !== "observed");
   const unsettledHistory = messages.some(message => message.status === "pending");
   return <main className={styles.workspace} lang={locale === "zh" ? "zh-CN" : "en"}>

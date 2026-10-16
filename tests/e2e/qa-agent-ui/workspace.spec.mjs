@@ -107,7 +107,9 @@ test('401 clears private history and offers existing sign-in',async({page,contex
   let expired=false;
   await fixture(page,context,async(route,{path})=>{if(expired&&path.endsWith(idB)){await route.fulfill({status:401,body:'{}'});return true;}return false;});
   expired=true;await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();
-  await expect(page.getByRole('link',{name:'Sign in',exact:true})).toHaveAttribute('href','/auth/sign-in?returnTo=/qa');
+  const signIn=page.getByRole('link',{name:'Sign in',exact:true});await expect(signIn).toBeVisible();
+  const target=new URL(await signIn.getAttribute('href'),'http://127.0.0.1:3019');
+  expect(target.pathname).toBe('/auth/sign-in');expect(target.searchParams.get('returnTo')).toBe(`/qa?locale=en&session=${idB}`);
   await expect(page.getByRole('log')).toHaveCount(0);
 });
 test('duplicate submit is locked immediately and terminal errors never become answers',async({page,context})=>{
@@ -804,3 +806,30 @@ test('review history401 invalidates a held stop preflight before it can rebuild 
  expire=true;await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible({timeout:10000});release();await page.waitForTimeout(100);
  expect(h.stops).toHaveLength(0);expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();await expect(page.getByRole('log')).toHaveCount(0);
 });
+
+for (const width of [1440,390]) {
+ test(`P0 signed-out QA bookmark preserves same Session and locale at ${width}px`,async({page})=>{
+  await page.setViewportSize({width,height:900});const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(`/qa?locale=en&session=${idA}&returnTo=https%3A%2F%2Fexample.invalid&ignored=drop`);
+  const link=page.getByRole('link',{name:'Sign in',exact:true});await expect(link).toBeVisible();
+  const target=new URL(await link.getAttribute('href'),'http://127.0.0.1:3019');
+  expect(target.pathname).toBe('/auth/sign-in');expect(target.searchParams.get('returnTo')).toBe(`/qa?locale=en&session=${idA}`);
+  await link.click();await expect(page).toHaveURL(target.href);await expect(page.getByLabel('邮箱',{exact:true})).toBeVisible();
+  expect(errors).toEqual([]);
+ });
+}
+
+test('P0 signed-out QA login discards an invalid Session and unrelated return parameters',async({page})=>{
+ await page.goto('/qa?locale=en&session=https%3A%2F%2Fexample.invalid&returnTo=https%3A%2F%2Fexample.invalid');
+ const link=page.getByRole('link',{name:'Sign in',exact:true});await expect(link).toBeVisible();
+ expect(new URL(await link.getAttribute('href'),'http://127.0.0.1:3019').searchParams.get('returnTo')).toBe('/qa?locale=en');
+});
+for (const width of [1440,390]) {
+ test(`P0 unavailable503 shows recovery without an answer or automatic POST at ${width}px`,async({page,context})=>{
+  await page.setViewportSize({width,height:900});const seen=[];
+  await fixture(page,context,async(route,{method})=>{seen.push(method);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;},{ready:false,select:false});
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
+  await expect(page.getByRole('log')).not.toContainText('Saved answer');await page.getByRole('button',{name:'Reload',exact:true}).click();
+  await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('main').getByRole('alert')).toContainText('The request could not be completed.');expect(seen.every(method=>method==='GET')).toBe(true);
+ });
+}
