@@ -84,3 +84,35 @@ No shared edit is made or implied by this proposal.
 Patch/after hashes will be generated for the exact leased implementation;
 none are invented for this interface proposal. Actual target writes/start/
 provider remain STOP. The separate minimum-SQL closure analysis continues.
+
+## Exact proposed contract for lease confirmation
+
+- Env: `VISEPANDA_QA_RUNTIME_BINDING`, JSON with exactly
+  `{schemaVersion:"qa-runtime-binding/1",projectRef,ownerId,policyId,scopeId,noticeHash}`.
+  Produced from validated target/2, emitted as the third line after profile and
+  endpoint, never derived from a discovery group. IDs canonical lowercase UUID;
+  hash exactly 64 lowercase hex; project ref must equal the approved profile/root.
+- Owned module candidate: `lib/server/qa-agent/runtime-binding.ts` exports the
+  closed immutable binding parser/type. `HostedWorkerDependencies.qaBinding`
+  is optional for legacy profiles and required for `/4`; this is independently
+  supplied to planner and `QaWorkerDependencies`, with missing/mismatch rejected.
+- New append-only SQL candidate:
+  `public.qa_ready_groups_v3(p_limit integer,p_model text,p_price_version text,p_endpoint text,p_owner_id uuid,p_policy_id uuid,p_scope_id uuid,p_notice_hash text)`.
+  Preserve original qualification; filter exact owner/policy/notice before LIMIT,
+  retain original unique matching-scope requirement and verify its ID equals
+  p_scope_id. Return noticeHash from the real protected policy for defense in TS.
+- New append-only SQL candidate:
+  `public.qa_authorize_dispatch_v2(p_turn_id uuid,p_lease_token uuid,p_scope_id uuid,p_policy_id uuid,p_provider text,p_context_digest text,p_owner_id uuid,p_notice_hash text)`.
+  Lock/check the actual immutable policy row and protected lease owner/policy
+  against supplied tuple, then call original `qa_authorize_dispatch_v1` in the
+  same transaction, retaining original budget/lease/context/dispatch semantics.
+  The existing notice authority is `turn_private.text_policies.notice_hash`,
+  protected by `immutable_text_policy` (only revocation updates allowed).
+- QA worker adapter can translate its existing logical
+  `qa_authorize_dispatch_v1` request to physical v2 and inject p_owner_id and
+  p_notice_hash from the independent trusted binding. Existing scope/policy
+  params must equal it. Context composer stays untouched; original logical v1
+  API is not rewritten or globally upgraded.
+- Main allocates the new migration timestamp and exact SQL/role scope; this
+  proposal does not grant any SQL writer or new function privilege. Old v1/v2
+  functions, old QA migration, root profiles and all non-QA modes remain intact.
