@@ -4,7 +4,8 @@ import {spawn} from 'node:child_process';
 import {mkdtemp,mkdir,chmod,readFile,readdir} from 'node:fs/promises';
 import {randomUUID,createHash} from 'node:crypto';
 import {join,isAbsolute} from 'node:path';
-test('original SQL + exact runtime tuple: isolation, before-LIMIT, dispatch rollback and unchanged old catalog',async t=>{
+test('original SQL + exact runtime tuple: isolation, before-LIMIT, dispatch rollback and unchanged old catalog',
+  {skip:process.env.QA_RUNTIME_BINDING_PG!=='1'},async t=>{
 const pg=process.env.QA_BINDING_PG_BIN??process.env.VP_WIKI_PG_BIN??(process.platform==='darwin'?'/opt/homebrew/opt/postgresql@17/bin':'/usr/lib/postgresql/17/bin');
 assert.ok(isAbsolute(pg));
 const root=await mkdtemp((process.platform==='darwin'?'/private/tmp':'/tmp')+'/qrb-'),data=join(root,'d'),socket=join(root,'s');
