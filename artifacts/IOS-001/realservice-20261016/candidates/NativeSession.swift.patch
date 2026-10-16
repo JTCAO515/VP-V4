@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -350,7 +350,7 @@
+                   url.user == nil, url.password == nil, url.query == nil, url.fragment == nil,
+                   url.path.isEmpty || url.path == "/",
+                   let host = url.host,
+-                  (host == "staging.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
++                  (host == "staging.go2china.space" || host == "qatesting.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
+             else { return nil }
+             return URL(string: "https://" + host)
+         }
