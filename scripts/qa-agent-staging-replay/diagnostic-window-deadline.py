@@ -2,6 +2,7 @@
 Private-module subprocess adapters; nonce-fenced owned cleanup survives expiry.
 """
 from contextlib import contextmanager
+import copy
 from datetime import datetime,timezone
 import json
 import re
@@ -89,6 +90,7 @@ class Budget:
         self.wall_end=wall_end;self.wall_clock=wall_clock;self.reserve=reserve
         self.cleanup_seconds=cleanup_seconds;self.cleanup_end=None
         self.processes=[];self.clusters=[];self.cleanup_ok=True;self.expired=False
+        self.progress={'stage':'WINDOW_OPERATION_STARTED','completedIoStages':[],'replay':{}}
     def remaining(self):
         utc_remaining=float('inf') if self.wall_end is None else (self.wall_end-self.wall_clock()).total_seconds()-self.reserve
         return min(self.data_end-self.clock(),utc_remaining)
@@ -125,19 +127,29 @@ class Budget:
                     'Error: No such object: '+identifier,'Error: No such container: '+identifier,
                     'Error response from daemon: No such container: '+identifier)
             info=run(['inspect',db.name])
-            if absent(info,db.name):db.created=False;db._deadline_cleanup_pass=True;return
+            confirmed=getattr(db,'_deadline_launch_confirmed',False)
+            known_id=getattr(db,'_deadline_container_id',None)
+            if absent(info,db.name):
+                if not confirmed or not isinstance(known_id,str) or not re.fullmatch('[a-f0-9]{64}',known_id):
+                    raise ValueError('OWNED_LAUNCH_UNRESOLVED_ABSENCE')
+                if not absent(run(['inspect',known_id]),known_id):raise ValueError('OWNED_CLEANUP_ID_ABSENCE_UNKNOWN')
+                db.created=False;db._deadline_cleanup_pass=True;return
             if info.returncode:raise ValueError('OWNED_CLEANUP_INSPECT_UNKNOWN')
             data=json.loads(info.stdout)
             if len(data)!=1:raise ValueError('OWNED_CLEANUP_INSPECT_UNKNOWN')
             item=data[0];container_id=item.get('Id','')
             if item.get('Name')!='/'+db.name or item.get('Config',{}).get('Labels',{}).get('qaw.restore.owner')!=db.nonce or not re.fullmatch('[a-f0-9]{64}',container_id):
                 raise ValueError('OWNED_CLEANUP_NONCE_CONFLICT')
+            if known_id is not None and known_id!=container_id:raise ValueError('OWNED_CLEANUP_LAUNCH_ID_CONFLICT')
+            db._deadline_container_id=container_id
             # Remove by inspected immutable ID, not a potentially replaced name.
             removed=run(['rm','-f',container_id])
             if removed.returncode and not absent(removed,container_id):raise ValueError('OWNED_CLEANUP_REMOVE_UNKNOWN')
             confirm=run(['inspect',container_id])
             if not absent(confirm,container_id):raise ValueError('OWNED_CLEANUP_NOT_CONFIRMED')
-            db.created=False;db._deadline_cleanup_pass=True
+            db.created=False;db._deadline_id_removal_confirmed=True
+            if not confirmed:raise ValueError('OWNED_LAUNCH_COMPLETION_UNKNOWN_AFTER_FENCE')
+            db._deadline_cleanup_pass=True
         except Exception:
             self.cleanup_ok=False;raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN') from None
     def cleanup_all(self):
@@ -155,12 +167,19 @@ class Budget:
         original_cluster=base.OwnCluster;original_hash=base.file_hash;budget=self
         class DeadlineOwned(original_cluster):
             def __init__(self,*args,**kwargs):
-                super().__init__(*args,**kwargs);self._deadline_run_issued=False;budget.clusters.append(self)
+                super().__init__(*args,**kwargs);self._deadline_run_issued=False;self._deadline_launch_confirmed=False;self._deadline_container_id=None
+                self._window_replay_progress=budget.progress['replay'];budget.clusters.append(self)
             def docker(self,args,data=None):
                 if args and args[0]=='run':
                     if '--name' not in args or args[args.index('--name')+1]!=self.name or 'qaw.restore.owner='+self.nonce not in args:
                         raise ValueError('DEADLINE_OWNED_LAUNCH_BINDING_REQUIRED')
+                    if self._deadline_run_issued:raise ValueError('DEADLINE_DUPLICATE_LAUNCH_FORBIDDEN')
                     self._deadline_run_issued=True
+                    value=super().docker(args,data)
+                    identifier=value.decode().strip()
+                    if not re.fullmatch('[a-f0-9]{64}',identifier):raise ValueError('OWNED_LAUNCH_ID_UNKNOWN')
+                    self._deadline_container_id=identifier;self._deadline_launch_confirmed=True
+                    return value
                 return super().docker(args,data)
             def close(self):return budget.cleanup_owned(self)
         proxy=Subprocess(self.raw_subprocess,self)
@@ -181,17 +200,33 @@ class Budget:
             self.cleanup_all()
             base.OwnCluster=original_cluster;base.file_hash=original_hash
             for module,raw in previous:module.subprocess=raw
+    def interrupted_result(self,reason):
+        prior=self.progress.get('adapterResult') or self.progress.get('restoreResult') or {}
+        value=copy.deepcopy(prior)
+        replay=copy.deepcopy(self.progress['replay'])
+        value.update(status='FAIL_LOCAL_RESTORE',cleanup='UNKNOWN',reason=reason)
+        value['interruption']={'stage':self.progress['stage'],'rollbackInferred':False,'automaticRetryAllowed':False}
+        if replay:value['replayProgress']=replay
+        for key in ('safeRestoreDiagnostics','prePostDataCaller'):
+            if self.progress.get(key):value[key]=copy.deepcopy(self.progress[key])
+        return value
     def execute(self,operation,base,replay,diagnostics):
         result=None
         with self.bind(base,replay,diagnostics):
             try:result=operation()
-            except KeyboardInterrupt:
-                result={'status':'FAIL_LOCAL_RESTORE','cleanup':'UNKNOWN','reason':'WINDOW_INTERRUPTED'}
-            except Exception as e:
-                result={'status':'FAIL_LOCAL_RESTORE','cleanup':'UNKNOWN','reason':str(e) if isinstance(e,WindowExpired) else 'WINDOW_OPERATION_FAILED_DETAILS_SUPPRESSED'}
+            except KeyboardInterrupt:result=self.interrupted_result('WINDOW_INTERRUPTED')
+            except Exception as e:result=self.interrupted_result(str(e) if isinstance(e,WindowExpired) else 'WINDOW_OPERATION_FAILED_DETAILS_SUPPRESSED')
         if not self.cleanup_ok:result.update(status='FAIL_LOCAL_RESTORE',cleanup='FAIL')
         elif result.get('cleanup')=='UNKNOWN':result['cleanup']='PASS'
+        if self.progress.get('restoreResult'):result['completedRestoreResult']=copy.deepcopy(self.progress['restoreResult'])
+        if self.progress['replay']:result['replayProgress']=copy.deepcopy(self.progress['replay'])
+        result['stageProgress']={'stage':self.progress['stage'],'completedIoStages':list(self.progress['completedIoStages'])}
         result['windowDeadline']={'clock':'UTC_AND_MONOTONIC_SHARED_ABSOLUTE_WINDOW','cleanupReserveSeconds':self.window_end-self.data_end,
                                   'dataExpired':self.expired,'ownedCleanupFence':'PASS' if self.cleanup_ok else 'UNKNOWN',
-                                  'cleanupMayContinueAfterWindow':True}
+                                  'cleanupMayContinueAfterWindow':True,
+                                  'containers':[{'name':db.name,'nonce':db.nonce,'launchIssued':getattr(db,'_deadline_run_issued',False),
+                                     'launchConfirmed':getattr(db,'_deadline_launch_confirmed',False),
+                                     'containerId':getattr(db,'_deadline_container_id',None),
+                                     'idRemovalConfirmed':getattr(db,'_deadline_id_removal_confirmed',False),
+                                     'cleanup':'PASS' if getattr(db,'_deadline_cleanup_pass',False) else 'UNKNOWN'} for db in self.clusters]}
         return result

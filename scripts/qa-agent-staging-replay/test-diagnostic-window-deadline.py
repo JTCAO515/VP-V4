@@ -81,7 +81,7 @@ class DeadlineGuards(unittest.TestCase):
 
     def fence(self,conflict=False,created=True):
         deadline=load('diagnostic-window-deadline');clock=[20.0];commands=[];running=[True]
-        db=SimpleNamespace(name='qaw-restore-owned',nonce='owned-nonce',context='desktop-linux',created=created,_deadline_run_issued=True)
+        db=SimpleNamespace(name='qaw-restore-owned',nonce='owned-nonce',context='desktop-linux',created=created,_deadline_run_issued=True,_deadline_launch_confirmed=created,_deadline_container_id='c'*64 if created else None)
         def raw_run(args,**kw):
             commands.append(args);self.assertLessEqual(kw['timeout'],15)
             tail=args[3:]
@@ -110,8 +110,9 @@ class DeadlineGuards(unittest.TestCase):
 
     def test_launch_timeout_before_created_flag_still_fences_own_nonce(self):
         _,budget,db,commands,running=self.fence(created=False)
-        budget.cleanup_owned(db)
-        self.assertFalse(running[0]);self.assertTrue(db._deadline_cleanup_pass)
+        with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+        self.assertFalse(running[0]);self.assertEqual(db._deadline_container_id,'c'*64)
+        self.assertFalse(getattr(db,'_deadline_cleanup_pass',False))
 
     def test_unknown_cleanup_keeps_future_active_consumption_guard(self):
         fx=fixtures.DiagnosticWindow('runTest');fx.setUp();self.addCleanup(fx.doCleanups)
@@ -165,6 +166,7 @@ class DeadlineGuards(unittest.TestCase):
             result=budget.execute(lambda:{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS','reason':'FIXTURE_STOP'},core.base,core.replay,core.safe_diagnostics)
         self.assertEqual(result['cleanup'],'FAIL');self.assertEqual(result['windowDeadline']['ownedCleanupFence'],'UNKNOWN')
         self.assertTrue(running[0]);self.assertEqual(len(commands),1)
+        self.assertEqual(result['windowDeadline']['containers'][0]['containerId'],'c'*64)
         d.finish(fx.packet,fx.code,result)
         self.assertTrue((fx.archives/d.active_name()).exists())
 
@@ -260,6 +262,88 @@ class DeadlineGuards(unittest.TestCase):
         value=budget.execute(interrupted,core.base,core.replay,core.safe_diagnostics)
         self.assertEqual(value['status'],'FAIL_LOCAL_RESTORE');self.assertEqual(value['reason'],'WINDOW_INTERRUPTED')
         self.assertEqual(value['cleanup'],'PASS')
+
+    def test_unknown_launch_absent_can_later_create_and_must_keep_active(self):
+        fx=fixtures.DiagnosticWindow('runTest');fx.setUp();self.addCleanup(fx.doCleanups)
+        d=fixtures.d;fx.valid();d.claim(fx.packet,fx.code)
+        deadline=load('diagnostic-window-deadline');core=load('controlled-snapshot-restore');late=[False]
+        db=SimpleNamespace(name='qaw-restore-late',nonce='nonce-late',context='desktop-linux',created=False,_deadline_run_issued=True,_deadline_launch_confirmed=False)
+        def raw_run(args,**kw):
+            self.assertEqual(args[3:],['inspect',db.name])
+            return subprocess.CompletedProcess(args,1,b'[]',('Error: No such object: '+db.name).encode())
+        budget=deadline.Budget(10,clock=lambda:20,reserve=1);budget.clusters.append(db)
+        with patch.object(core.base,'subprocess',SimpleNamespace(run=raw_run)):
+            result=budget.execute(lambda:{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS'},core.base,core.replay,core.safe_diagnostics)
+        late[0]=True # daemon finishes its previously accepted create afterwards
+        self.assertEqual(result['cleanup'],'FAIL')
+        d.finish(fx.packet,fx.code,result)
+        self.assertTrue((fx.archives/d.active_name()).exists())
+        with self.assertRaises(ValueError):d.claim({**fx.packet,'attempt':2},fx.code)
+
+    def test_interrupt_preserves_completed_restore_and_migration_prefix(self):
+        deadline=load('diagnostic-window-deadline');core=load('controlled-snapshot-restore');import json,re,time
+        versions=['20261016000001','20261016000002','20261016000003'];fence_calls=[]
+        class Owned:
+            def __init__(self,*args):self.name='qaw-restore-prefix';self.nonce='nonce-prefix';self.context='desktop-linux';self.created=True
+            def docker(self,args,data=None):return json.dumps([{'Config':{'Labels':{'qaw.restore.owner':self.nonce}},'HostConfig':{'NetworkMode':'none','PortBindings':None},'Mounts':[]}]).encode()
+            def sql(self,sql):
+                if "proname like 'qa_%'" in sql:return '0'
+                if 'insert into supabase_migrations.schema_migrations' in sql:
+                    if versions[1] in sql:raise KeyboardInterrupt()
+                    return ''
+                return 'fixture-history'
+            def close(self):self.created=False
+        def raw_run(args,**kw):
+            fence_calls.append(args[3:])
+            if args[3:]==['inspect','qaw-restore-prefix']:
+                return subprocess.CompletedProcess(args,0,json.dumps([{'Id':'c'*64,'Name':'/qaw-restore-prefix','Config':{'Labels':{'qaw.restore.owner':'other-owner' if getattr(self,'_synthetic_cleanup_conflict',False) else 'nonce-prefix'}}}]).encode(),b'')
+            if args[3:]==['rm','-f','c'*64]:return subprocess.CompletedProcess(args,0,b'',b'')
+            return subprocess.CompletedProcess(args,1,b'[]',b'Error: No such object: '+b'c'*64)
+        def base_restore(*args):
+            db=core.base.OwnCluster('supabase_admin')
+            db._deadline_run_issued=True;db._deadline_launch_confirmed=True;db._deadline_container_id='c'*64
+            return {'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS','ownerAclSchema':'PASS','counts':'PASS','globalRoles':'PASS','schemaDigest':'a'*64}
+        plan={'baselineVersions':[],'expectedVersions':versions,'reviewedMissing':versions,'sourceHead':'a'*40,'manifestSha256':'b'*64}
+        sources=[{'version':v,'file':v+'_fixture.sql','sql':'begin;select 1;commit;'} for v in versions]
+        budget=deadline.Budget(time.monotonic()+100,reserve=1)
+        with patch.object(core.base,'subprocess',SimpleNamespace(run=raw_run)),patch.object(core.base,'OwnCluster',Owned),patch.object(core.base,'restore_bundle',side_effect=base_restore),patch.object(core,'verify_manifest',return_value=({'verification':{'metadata':{'versions':[]}}},{'sequences':[]})),patch.object(core.replay,'load_plan',return_value=(plan,sources)),patch.object(core.replay,'versions',return_value=[]),patch.object(core.replay,'retained_data',return_value=[]),patch.object(core.replay,'fingerprints',return_value={}),patch.object(core.replay,'source_guard_diagnostics',return_value=None),patch.object(core.compat,'reinstate',return_value={'status':'PASS'}),patch.object(core.compat,'restore_archived_owner_maintain',return_value={'status':'PASS'}),patch.object(core.compat,'verify_restore_default_acl',return_value={'status':'PASS'}),patch.object(core.contract,'verify_restored_sequences',return_value={'status':'PASS'}):
+            result=core.restore_bundle(Path('.'),Path('not-read'),{},Path('candidate'),window_budget=budget)
+        self.assertEqual(result.get('ownerAclSchema'),'PASS')
+        self.assertEqual(result.get('counts'),'PASS')
+        self.assertEqual(result['completedRestoreResult']['status'],'PASS_LOCAL_BUNDLE_RESTORE_ONLY')
+        self.assertEqual(result['completedRestoreResult']['ownerAclSchema'],'PASS')
+        self.assertEqual(result['replayProgress']['appliedVersions'],versions[:1])
+        self.assertEqual(result['replayProgress']['inflightVersion'],versions[1])
+        self.assertEqual(result['replayProgress']['inflightOutcome'],'UNKNOWN')
+        self.assertFalse(result['interruption']['rollbackInferred']);self.assertFalse(result['interruption']['automaticRetryAllowed'])
+        self.assertEqual(result['cleanup'],'FAIL' if getattr(self,'_synthetic_cleanup_conflict',False) else 'PASS')
+        return result
+
+    def test_interrupted_prefix_survives_unknown_cleanup_and_persistence(self):
+        self._synthetic_cleanup_conflict=True
+        result=self.test_interrupt_preserves_completed_restore_and_migration_prefix()
+        fx=fixtures.DiagnosticWindow('runTest');fx.setUp();self.addCleanup(fx.doCleanups)
+        d=fixtures.d;fx.valid();d.claim(fx.packet,fx.code);d.finish(fx.packet,fx.code,result)
+        persisted,_=d.read_private(fx.archives/d.filename(fx.window,1,'result'))
+        self.assertEqual(persisted['outcome']['replayProgress']['appliedVersions'],['20261016000001'])
+        self.assertEqual(persisted['outcome']['replayProgress']['inflightOutcome'],'UNKNOWN')
+        self.assertTrue((fx.archives/d.active_name()).exists())
+
+    def test_confirmed_launch_absence_requires_immutable_id_absence(self):
+        deadline=load('diagnostic-window-deadline');calls=[]
+        db=SimpleNamespace(name='qaw-confirmed',nonce='nonce',context='desktop-linux',created=False,_deadline_run_issued=True,_deadline_launch_confirmed=True,_deadline_container_id='c'*64)
+        def raw(args,**kwargs):
+            identifier=args[-1];calls.append(identifier)
+            return subprocess.CompletedProcess(args,1,b'[]',('Error: No such object: '+identifier).encode())
+        budget=deadline.Budget(10,clock=lambda:20,reserve=1);budget.raw_subprocess=SimpleNamespace(run=raw)
+        budget.cleanup_owned(db)
+        self.assertEqual(calls,[db.name,'c'*64]);self.assertTrue(db._deadline_cleanup_pass)
+
+    def test_recorded_launch_id_conflict_never_removes_a_different_id(self):
+        _,budget,db,commands,running=self.fence()
+        db._deadline_container_id='d'*64
+        with self.assertRaises(ValueError):budget.cleanup_owned(db)
+        self.assertEqual(len(commands),1);self.assertTrue(running[0])
 
     def test_absolute_deadline_is_anchored_once_not_per_phase(self):
         deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta

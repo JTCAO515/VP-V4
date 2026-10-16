@@ -73,18 +73,31 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             # adapter verifies sequences/replays. Never return this handle.
             pass
     result={'status':'FAIL_LOCAL_RESTORE','cleanup':'PENDING_OWNED_COPY'}
+    active_budget=getattr(base.subprocess,'window_deadline',None)
+    if active_budget is not None:
+        active_budget.progress.update(stage='RESTORE_STARTED',adapterResult=result,safeRestoreDiagnostics=diagnostics,prePostDataCaller=callers)
     base.OwnCluster=VerifiedOwnedCopy
     def private_pipeline(producer,consumer,collect=False):
         if observe_caller and '--section=post-data' in consumer:
             if len(copies)!=1 or not copies[0].created:raise ValueError('OWNED_POSTDATA_CALLER_COPY_REQUIRED')
             callers.append(diagnostic_window.caller_snapshot(copies[0]))
-        return safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
+        stage='SCHEMA_DEFINITION_READ' if '--file=-' in consumer else 'RESTORE_PIPELINE'
+        if '--section=pre-data' in consumer:stage='SCHEMA_PRE_DATA'
+        elif '--section=post-data' in consumer:stage='SCHEMA_POST_DATA'
+        elif '--data-only' in consumer:stage='PLATFORM_LEDGER' if producer[-1].endswith(base.ledger.ARCHIVE) else 'SCOPED_DATA'
+        if active_budget is not None:active_budget.progress['stage']=stage
+        value=safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
+        if active_budget is not None:
+            active_budget.progress['completedIoStages'].append(stage)
+            active_budget.progress['stage']=stage+'_IO_COMPLETED_PENDING_VERIFICATION'
+        return value
     base.pipeline=private_pipeline
     if replay_manifest is not None:
         base.verify.normalize_schema=lambda sql:compat.normalized(original_normalize(sql))
     try:
         result=base.restore_bundle(directory,identity,adapted)
         result['cleanup']='PENDING_OWNED_COPY'
+        if active_budget is not None:active_budget.progress.update(stage='RESTORE_RETURNED',adapterResult=result,restoreResult=dict(result))
         if result['status']=='PASS_LOCAL_BUNDLE_RESTORE_ONLY':
             if len(copies)!=1 or not copies[0].created:raise ValueError('OWNED_RESTORED_COPY_REQUIRED')
             db=copies[0]
@@ -93,8 +106,10 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
                 result['restoreCompatibility']=compat.reinstate(db)
                 result['archivedAclCompatibility']=compat.restore_archived_owner_maintain(db,adapted['verification']['metadata'])
                 result['defaultAclCompatibility']=compat.verify_restore_default_acl(db,adapted['verification']['metadata'])
+            if active_budget is not None:active_budget.progress['stage']='SEQUENCE_VERIFICATION'
             result['sequenceSafety']=contract.verify_restored_sequences(db,snapshot['sequences'])
             if replay_manifest is not None:
+                if active_budget is not None:active_budget.progress['stage']='OWNED_REPLAY'
                 outcome=replay.replay_owned(db,replay_manifest);result['replay']=outcome
                 if outcome['status']!='PASS_OWNED_RESTORED_REPLAY_ONLY':
                     result.update(status='FAIL_LOCAL_RESTORE_REPLAY',failedStage='owned replay before cleanup',reason=outcome['reason'])
