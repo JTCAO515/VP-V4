@@ -33,7 +33,7 @@ export function createTripInventoryReader(client: SupabaseClient, authenticated:
       for (const header of before) {
         const read = await checked(() => readCanonicalTrip(header.id));
         if ("error" in read || stableJSON(read.data.trip) !== stableJSON(header)) throw Error("Unavailable");
-        const trip = { ...header, content: read.data.content, confirmationState: read.data.confirmationState };
+        const trip = JSON.parse(stableJSON({ ...header, content: read.data.content, confirmationState: read.data.confirmationState })) as InventoryTrip;
         if (!validTrip(trip)) throw Error("Unavailable");
         trips.push(trip);
         // Bound intermediate data too, and detach from a caller's mutable projection.
