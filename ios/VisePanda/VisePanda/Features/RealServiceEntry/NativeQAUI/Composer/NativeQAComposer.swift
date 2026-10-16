@@ -10,18 +10,18 @@ struct NativeQAComposer: View {
     let hasUnconfirmedRequest: Bool
     let chinese: Bool
     let isCurrent: @MainActor () -> Bool
-    let onSend: @MainActor () -> Void
+    let onSend: NativeQAComposerAccess.Send
 
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @FocusState private var focused: Bool
-    @State private var sendLatched = false
+    @State private var attempt = NativeQAComposerAttempt()
 
     init(
         draft: Binding<String>, canSend: Bool, isBusy: Bool,
         hasUnconfirmedRequest: Bool, chinese: Bool,
         isCurrent: @escaping @MainActor () -> Bool,
-        onSend: @escaping @MainActor () -> Void
+        onSend: @escaping NativeQAComposerAccess.Send
     ) {
         _draft = draft
         self.canSend = canSend
@@ -33,7 +33,7 @@ struct NativeQAComposer: View {
     }
 
     private var current: Bool { scenePhase == .active && isCurrent() }
-    private var editable: Bool { current && !isBusy && !hasUnconfirmedRequest && !sendLatched }
+    private var editable: Bool { current && !isBusy && !hasUnconfirmedRequest && !attempt.isLatched }
     private var sendEnabled: Bool { editable && canSend && NativeQAComposerAccess.validInput(draft) }
     private func copy(_ zh: String, _ en: String) -> String { chinese ? zh : en }
 
@@ -69,7 +69,7 @@ struct NativeQAComposer: View {
 
                 if hasUnconfirmedRequest {
                     notice(copy("上次请求结果尚待确认，请先核对已保存状态。", "The previous request needs confirmation. Check saved state first."))
-                } else if isBusy || sendLatched {
+                } else if isBusy || attempt.isLatched {
                     notice(copy("正在核对请求状态…", "Checking request state…"))
                 } else if draft.utf16.count > NativeQAComposerAccess.maximumUTF16Count {
                     notice(copy("问题超过长度限制，请缩短后发送。", "The question exceeds the length limit. Shorten it before sending."))
@@ -81,16 +81,12 @@ struct NativeQAComposer: View {
         .padding(.horizontal, 16).padding(.vertical, 8)
         .background(.regularMaterial)
         .accessibilityIdentifier("native.qa.composer")
-        .onChange(of: current) { _, value in if !value { focused = false } }
-        .onChange(of: isBusy) { wasBusy, busy in
-            if wasBusy && !busy { sendLatched = false }
-            if busy { focused = false }
+        .onChange(of: current) { _, value in
+            if !value { focused = false; attempt.invalidate() }
         }
-        .onChange(of: canSend) { wasAllowed, allowed in
-            if !wasAllowed && allowed { sendLatched = false }
-        }
+        .onChange(of: isBusy) { _, busy in if busy { focused = false } }
         .onChange(of: hasUnconfirmedRequest) { _, pending in if pending { focused = false } }
-        .onDisappear { focused = false }
+        .onDisappear { focused = false; attempt.invalidate() }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 if current && focused {
@@ -117,7 +113,7 @@ struct NativeQAComposer: View {
     private func send() {
         if NativeQAComposerAccess.send(
             draft: $draft, canSend: canSend, isBusy: isBusy,
-            hasUnconfirmedRequest: hasUnconfirmedRequest, latched: &sendLatched,
+            hasUnconfirmedRequest: hasUnconfirmedRequest, attempt: attempt,
             isCurrent: { current }, onSend: onSend
         ) { focused = false }
     }
