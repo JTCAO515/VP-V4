@@ -1,0 +1,105 @@
+{
+  "sourceHead": "ef495c75eaadda2a0821aa29698376bb6f7e8e69",
+  "sourceBase": "8fd76ddf807fe6b5a29f5a17b3ef53530a6ec9de",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE",
+  "branch": "codex/qaw683-frame-classification-20261017",
+  "review": "PENDING_INDEPENDENT_REVIEW",
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/container-diagnostic/restore/source-lock.json": "6d42ad649251452ba64ec55f00125846d70e0f57f8e52fc64174ac0cab1c628f",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/source-lock.json": "bae6c857f86e3e4bac7958b79f055a9035a414d9ca897baf59946ab19630d388",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": "a1a5e52f076a90208ef236e1ce58b377035569c175d1c6e796c8b0e03a5eb5de",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/source-lock.json": "4a19ae2fb946b099587cfe1bf2e32ef3db57d8a86faf801c6437cc5158c49a8a",
+    "scripts/qa-agent-staging-replay/host-permission-diagnostics.py": "7832b6d58c5689d555e966e6a241ebe0c94652b33bf68d93d5ff9cf827f50b61",
+    "scripts/qa-agent-staging-replay/test-host-permission-diagnostics.py": "1d75c0aa2255d5b8016bc75ac0e0ad8e3d5d0e13d2df9e415eec4d8a24a68d4a"
+  },
+  "actualEvidence": {
+    "windowId": "e1338727-9a18-4a2e-aa13-e10e47dc686f",
+    "executionHead": "958f30fe23a104d059fb194e4959645b3496b720",
+    "stage": "SCHEMA_POST_DATA",
+    "typedSqlstate": "42501",
+    "queryUnit": 712,
+    "clientHintStatus": "UNKNOWN_FRAME",
+    "specificCause": "UNKNOWN",
+    "firstCleanup": "PASS",
+    "controllerFinal": "ABORTED",
+    "entryInvocations": 1,
+    "secondAttempt": "UNRUN_INELIGIBLE",
+    "originalWindowEndUnchanged": "2026-10-16T21:00:52.684282+00:00",
+    "abortObservedUTC": "2026-10-16T20:26:12+00:00",
+    "pidAbsent": true,
+    "firstSummarySha256": "1a1323117364d682068cbefa5364665345f96e818173f6132b58efeccaa37fc1",
+    "finalSummarySha256": "613131d4783df1d93e059e811e724dbec27de8bc6e130dab2f66f81326ab270d",
+    "transcriptSha256": "7a76639778d66eb793993f0b2d5168ef7145645b58e2b5cb9b4efa1feb7b05d4"
+  },
+  "sourceFinding": {
+    "oldClassifier": "Every complete bounded input whose parsed tocEntryId is null becomes UNKNOWN_FRAME. This collapses empty, rejected and valid no-TOC error frames.",
+    "actualInferenceLimit": "Actual old UNKNOWN_FRAME proves only that branch; raw stderr was cleared, so actual frame shape/category cannot be recovered or claimed. Query712 is not a TOC/object ID.",
+    "syntheticProof": "A valid no-TOC permission error loses its finite permission-object hint on old source; RED retained and candidate GREEN.",
+    "pipelineCausality": "The consumer failure is determined by process return status before host hint classification. This diagnostic repair does not repair or explain PostgreSQL42501."
+  },
+  "candidate": "Explicit host-permission-hints/2 emits bounded frame-class/category enums and preserves validated no-TOC hints, while maintaining uncorrelated stderr provenance, typed .C authority, UNKNOWN command/failure-role context and canary privacy. Mode1 remains unchanged; new source locks bind upgraded helper.",
+  "checks": {
+    "hostPipePrivacyAndCleanupBoundary": 14,
+    "existingParser": 13,
+    "actualPlanQualificationSyntheticDocker": 4,
+    "total": 31
+  },
+  "logs": [
+    {
+      "privateBasename": "frame-classification-red.log",
+      "sha256": "5879872d9ff61f5d00cc8924be1b1dbeb13653f3fd7d147b62e9549a5b631c06",
+      "summary": [
+        "Ran 13 tests in 0.230s",
+        "FAILED (failures=2, errors=2)"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "frame-classification-green.log",
+      "sha256": "965b1a4c55f6333a333d4858b7beb5ce1a5a46ac20b2b944d724329a340dae51",
+      "summary": [
+        "Ran 13 tests in 0.219s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "frame-classification-final.log",
+      "sha256": "72e05d9e9c290b0b7d0fe3a446c91bb2115cdc13480912a4235eee958017b849",
+      "summary": [
+        "Ran 14 tests in 0.230s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "frame-classification-parser.log",
+      "sha256": "b6f925ac36ec949a31e8f45464088642d4205b3635acc95106b1c963e5c2fae1",
+      "summary": [
+        "Ran 13 tests in 0.027s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "frame-classification-plan.log",
+      "sha256": "ed51c61f4629b5777642392c0f874b953c0674ecb0881e9c76ed003458bedf61",
+      "summary": [
+        "Ran 4 tests in 0.009s",
+        "OK"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "cleanupBoundary": {
+    "sourceFact": "Original cleanup_end is initialized once by cleanup_timeout and not reset while holding the same Budget.",
+    "syntheticProof": "Data Budget.check can pass while cleanup_timeout raises OWNED_CLEANUP_BUDGET_EXHAUSTED.",
+    "actualLimit": "Fixed live status did not expose numeric cleanup remaining; HOLD was not proof of second cleanup readiness. No cross-process estimate or reset performed.",
+    "fixApplied": false,
+    "frozenCoreReloadEligible": false
+  },
+  "secondEligibility": "NOT_SATISFIED: no specific original PostgreSQL failure causal repair; observer-only fix is not a cause-gate substitute. Original process was safely aborted without retry.",
+  "runtime": "Seven image inputs/pins unchanged; no runtime image build, PG/copy/material/identity or target access in this diagnostic branch.",
+  "actualCheckoutChanged": false,
+  "next": "Main independent source review and product decision if any different actual diagnostic scope is desired. No new actual scope/window requested or created here."
+}
