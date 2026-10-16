@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 import sys
+import time
 sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parent
 
@@ -76,6 +77,7 @@ class SyntheticGate(ActualSources):
     def setUp(self):
         self.fx=legacy.DiagnosticWindow('runTest');self.fx.setUp();self.addCleanup(self.fx.doCleanups)
         self.g=legacy.d;self.code=self.fx.code
+        self.fx.packet['windowStartMonotonic']=time.monotonic()
         original_sha=self.g.sha
         # The actual identity path is intentionally unavailable/unread. Map one
         # synthetic fixture reference only; other/wrong paths use real SHA256.
@@ -85,7 +87,7 @@ class SyntheticGate(ActualSources):
         self.human={'status':'DIRECTIVE_SCOPE_QUALIFIED_NOT_EXECUTED','profileVersion':p.VERSION,'fileDoesNotSelfAuthorize':True,'sourceEvidence':self.view,'windowId':self.fx.window,'windowBindingSha256':p.window_binding(self.fx.packet),'target':self.g.TARGET,'parentCaptureId':p.CAPTURE,'manifestSha256':p.MANIFEST,'identityPathSha256':p.IDENTITY,'scope':copy.deepcopy(p.SCOPE),'localOnly':True,'runtimeImage':p.IMAGE}
         self.cfg['humanRecord']['sha256']=self.write(Path(self.cfg['humanRecord']['path']),self.human)
         self.packet=copy.deepcopy(self.fx.packet);self.packet['humanAuthorizationSha256']=self.cfg['humanRecord']['sha256']
-        self.start=copy.deepcopy(self.fx.start);self.start.update(humanAuthorizationSha256=self.cfg['humanRecord']['sha256'],identityPathSha256=p.IDENTITY)
+        self.start=copy.deepcopy(self.fx.start);self.start.update(humanAuthorizationSha256=self.cfg['humanRecord']['sha256'],identityPathSha256=p.IDENTITY,windowStartMonotonic=self.packet['windowStartMonotonic'])
         self.bind_start()
         # Source projection was actually verified once above. Integration cases
         # reuse that proof and test the unchanged window/claim algorithm only.
@@ -105,12 +107,13 @@ class SyntheticGate(ActualSources):
         packet_sha=self.write(ap,self.packet)
         # Explicit minimal non-secret header for new run preflight. It does not
         # constitute START or a claim, and is bound to the actual packet bytes.
-        keys=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
+        keys=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','windowStartMonotonic','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
         header={k:self.packet[k] for k in keys}
-        header.update(version='directive-execution-header/v1',authorizationDigest=p.AUTHORIZATION,packetSha256=packet_sha,identityPathSha256=p.IDENTITY)
+        header.update(version=p.HEADER_VERSION,authorizationDigest=p.AUTHORIZATION,packetSha256=packet_sha,identityPathSha256=p.IDENTITY)
         self.write(ap.with_suffix('.execution-header.json'),header)
         deadline=load('run_deadline',ROOT/'diagnostic-window-deadline.py').shared_runtime()
-        facade=SimpleNamespace(code_hash=lambda:digest,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg),diagnostic_deadline=deadline,base=SimpleNamespace(capture=SimpleNamespace(now=lambda:self.fx.t,stamp=datetime.fromisoformat)),locale_profile=legacy.locale)
+        start_budget=deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        facade=SimpleNamespace(directiveStartBudget=start_budget,code_hash=lambda:digest,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg),diagnostic_deadline=deadline,base=SimpleNamespace(capture=SimpleNamespace(now=lambda:self.fx.t,stamp=datetime.fromisoformat)),locale_profile=legacy.locale)
         return facade,[str(ap),self.packet['manifestPath'],self.fx.identity,'never-plan']
     def refuse_operator_reads(self,path,*args,**kwargs):
         path=Path(path)
@@ -144,6 +147,32 @@ class SyntheticGate(ActualSources):
         result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
         self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
         self.run_refusal('DIRECTIVE_SECOND_WINDOW_NOT_ELIGIBLE')
+    def test_start_budget_cannot_be_replaced_extended_or_omitted(self):
+        facade,args=self.run_inputs();header=json.loads(p.header_path(args[0]).read_text());b=facade.directiveStartBudget
+        self.assertIs(p.start_budget(facade,header),b)
+        for field,value in [('window_end',b.window_end+5),('data_end',b.data_end+5),('reserve',0),('cleanup_seconds',120)]:
+            original=getattr(b,field);setattr(b,field,value)
+            try:
+                with self.subTest(field=field),self.assertRaisesRegex(ValueError,'DIRECTIVE_START_DEADLINE_CONFLICT'):p.start_budget(facade,header)
+            finally:setattr(b,field,original)
+        facade.directiveStartBudget=None
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REQUIRED'):p.start_budget(facade,header)
+        facade.directiveStartBudget=facade.diagnostic_deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REPLACED'):p.start_budget(facade,header,b)
+    def test_finalization_delay_and_utc_rollback_cannot_extend_start_mono_end(self):
+        d=load('start_cap_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
+        wall0=datetime.now(timezone.utc);mono=[1000.0];wall=[wall0]
+        clock=lambda:mono[0];utc_now=lambda:wall[0]
+        b=d.Budget(4600,clock=clock,wall_end=wall0+timedelta(hours=1),wall_clock=utc_now)
+        module=SimpleNamespace(Budget=d.Budget,monotonic=clock,utc_now=utc_now,DATA_CLEANUP_RESERVE_SECONDS=120,CLEANUP_BUDGET_SECONDS=60)
+        facade=SimpleNamespace(diagnostic_deadline=module,directiveStartBudget=b,base=SimpleNamespace(capture=SimpleNamespace(stamp=datetime.fromisoformat)))
+        header={'windowStartMonotonic':1000.0,'windowEnd':(wall0+timedelta(hours=1)).isoformat()}
+        for elapsed,utc_advance in ((10,5),(120,120),(120,20)):
+            mono[0]=1000+elapsed;wall[0]=wall0+timedelta(seconds=utc_advance)
+            self.assertIs(p.start_budget(facade,header),b)
+            self.assertEqual(b.window_end,4600);self.assertLessEqual(b.remaining(),3480-elapsed)
+        mono[0]=4480;wall[0]=wall0+timedelta(seconds=20)
+        with self.assertRaises(d.WindowExpired):p.start_budget(facade,header)
     def test_run_header_tamper_rejected_before_human_or_material_reads(self):
         facade,args=self.run_inputs();ap=Path(args[0]);header_path=p.header_path(ap)
         header=json.loads(header_path.read_text());header['packetSha256']='0'*64;self.write(header_path,header)
@@ -196,10 +225,10 @@ class SyntheticGate(ActualSources):
             fd=os.open(self.fx.archives/('diagnostic-parent-'+p.CAPTURE+'.preflight.lock'),os.O_RDWR)
             try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
             finally:os.close(fd)
-            self.assertIs(type(kw['window_budget']),facade.diagnostic_deadline.Budget)
+            self.assertIs(kw['window_budget'],facade.directiveStartBudget)
             calls.append('restore-stub');return {'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS'}
         facade.restore_bundle=restore
-        with patch.object(self.g,'read_private',side_effect=read):result=self.g.run(facade,args,source_profile=self.cfg)
+        with patch.object(self.g,'read_private',side_effect=read),patch.object(facade.diagnostic_deadline,'from_window',side_effect=AssertionError('must reuse START Budget')):result=self.g.run(facade,args,source_profile=self.cfg)
         self.assertEqual(result['status'],'PASS_LOCAL_BUNDLE_RESTORE_ONLY')
         self.assertEqual(calls,['base-preflight','base-preflight','restore-stub'])
         self.assertFalse((self.fx.archives/self.g.active_name()).exists())
@@ -285,14 +314,16 @@ class SyntheticGate(ActualSources):
         with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED'):self.g.claim(self.packet,self.code,self.cfg)
         self.assertEqual(used.read_bytes(),before);self.assertFalse((self.fx.archives/p.authority_name()).exists())
     def test_entry_qualified_hash_binds_real_profile_and_keeps_original_budget(self):
-        core=SimpleNamespace(code_hash=lambda:self.code,diagnostic_window=self.g,diagnostic_deadline=SimpleNamespace(Budget=object))
+        d=load('entry_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
+        core=SimpleNamespace(code_hash=lambda:self.code,diagnostic_window=self.g,diagnostic_deadline=d)
+        start_budget=d.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
         config={'mode':'same-copy-typed-postdata/1','sourceLockSha256':self.cfg['sourceLockSha256'],'windowBindingSha256':self.cfg['windowBindingSha256']}
         digest=entry.qualified_hash(core,config,self.cfg)
         self.assertNotEqual(digest,self.code)
         with self.assertRaises(ValueError):entry.qualified_hash(core,{**config,'windowBindingSha256':'0'*64},self.cfg)
         with patch.object(self.g,'run',return_value={'fixture':True}) as gate,patch.object(entry.profile,'verify_sources',return_value=self.view):
             core.base=None;core.locale_profile=None;core.verify_manifest=None;core.replay=None
-            self.assertEqual(entry.run(core,[],config,self.cfg),{'fixture':True})
+            self.assertEqual(entry.run(core,[],config,self.cfg,start_budget=start_budget),{'fixture':True})
             self.assertEqual(gate.call_args.kwargs['source_profile'],self.cfg)
             self.assertEqual(gate.call_args.args[0].directiveSourceFingerprint,entry.profile.fingerprint(self.cfg))
 

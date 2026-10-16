@@ -2,6 +2,7 @@
 Original raw records remain private. No original human ID/author is fabricated.
 """
 import hashlib
+import math
 import copy
 from contextlib import contextmanager
 import fcntl
@@ -148,8 +149,9 @@ def window_binding(packet):
     # Stable across causal source repairs in the SAME window. Per-attempt source
     # and profile locks are separately bound by qualified_hash and Main START.
     identifier=packet.get('windowId')
+    require(type(packet.get('windowStartMonotonic')) in (int,float) and math.isfinite(packet['windowStartMonotonic']),'DIRECTIVE_START_MONOTONIC_REQUIRED')
     require(type(identifier) is str and str(uuid.UUID(identifier))==identifier and uuid.UUID(identifier).int!=0 and identifier!=CAPTURE and type(packet.get('windowStart')) is str and type(packet.get('windowEnd')) is str,'DIRECTIVE_ACTUAL_WINDOW_FIELDS_REQUIRED')
-    return sha(canonical({'authorizationDigest':AUTHORIZATION,'windowId':packet.get('windowId'),'windowStart':packet.get('windowStart'),'windowEnd':packet.get('windowEnd'),'captureId':CAPTURE,'manifestSha256':MANIFEST,'identityPathSha256':IDENTITY,'runtimeImage':IMAGE,'maximumCopies':2,'localOnly':True}))
+    return sha(canonical({'authorizationDigest':AUTHORIZATION,'windowId':packet.get('windowId'),'windowStart':packet.get('windowStart'),'windowEnd':packet.get('windowEnd'),'windowStartMonotonic':packet.get('windowStartMonotonic'),'captureId':CAPTURE,'manifestSha256':MANIFEST,'identityPathSha256':IDENTITY,'runtimeImage':IMAGE,'maximumCopies':2,'localOnly':True}))
 
 def check_packet(profile,packet,code_hash,instant,stamp,identity_digest):
     require(is_hash(code_hash) and identity_digest==IDENTITY,'DIRECTIVE_PACKET_IDENTITY_REQUIRED')
@@ -165,7 +167,7 @@ def preclaim(profile,packet,code_hash,identity_digest):
 
 def authority_name():return 'diagnostic-authority-'+AUTHORIZATION+'.used.json'
 def authority_record(profile,packet):
-    return {'status':'AUTHORIZATION_BOUND_BEFORE_ARCHIVE_READ','authorizationDigest':AUTHORIZATION,'humanRecordSha256':profile['humanRecord']['sha256'],'windowId':packet['windowId'],'windowStart':packet['windowStart'],'windowEnd':packet['windowEnd'],'parentCaptureId':CAPTURE,'manifestSha256':MANIFEST,'identityPathSha256':IDENTITY,'maximumCopies':2,'runtimeImage':IMAGE,'windowBindingSha256':profile['windowBindingSha256']}
+    return {'status':'AUTHORIZATION_BOUND_BEFORE_ARCHIVE_READ','authorizationDigest':AUTHORIZATION,'humanRecordSha256':profile['humanRecord']['sha256'],'windowId':packet['windowId'],'windowStart':packet['windowStart'],'windowEnd':packet['windowEnd'],'windowStartMonotonic':packet['windowStartMonotonic'],'parentCaptureId':CAPTURE,'manifestSha256':MANIFEST,'identityPathSha256':IDENTITY,'maximumCopies':2,'runtimeImage':IMAGE,'windowBindingSha256':profile['windowBindingSha256']}
 
 def check_authority_claim(gate,profile,packet):
     expected=authority_record(profile,packet);path=gate.ARCHIVES/authority_name()
@@ -178,8 +180,8 @@ def bind_authority_claim(gate,profile,packet,fd):
     else:check_authority_claim(gate,profile,packet)
 
 # Only this fixed schema may be read before operator/material qualification.
-HEADER_VERSION='directive-execution-header/v1'
-HEADER_PACKET_FIELDS=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
+HEADER_VERSION='directive-execution-header/v2'
+HEADER_PACKET_FIELDS=('approvedBy','proposalOnly','windowId','windowStart','windowEnd','windowStartMonotonic','attempt','maximumCopies','target','parentCaptureId','manifestSha256','codeSha256','humanAuthorizationSha256','reviewedSourceCommit','parentFailureSha256','mainStartReceiptSha256','actions','retainUntil','noNewCaptureKeyGrantProviderOrE')
 
 def execution_header(packet,packet_sha,identity_digest):
     require(is_hash(packet_sha) and is_hash(identity_digest),'DIRECTIVE_HEADER_HASH_REQUIRED')
@@ -213,10 +215,25 @@ _LEASES=weakref.WeakKeyDictionary()
 class _RunLease:
     __slots__=('__weakref__',)
 
+def start_budget(core,header,expected_object=None):
+    d=core.diagnostic_deadline;b=getattr(core,'directiveStartBudget',None)
+    require(type(b) is d.Budget,'DIRECTIVE_START_BUDGET_REQUIRED')
+    if expected_object is not None:require(b is expected_object,'DIRECTIVE_START_BUDGET_REPLACED')
+    anchor=header['windowStartMonotonic']
+    require(type(anchor) in (int,float) and math.isfinite(anchor) and anchor<=d.monotonic(),'DIRECTIVE_START_MONOTONIC_CONFLICT')
+    require(b.clock is d.monotonic and b.wall_clock is d.utc_now,'DIRECTIVE_START_CLOCK_CONFLICT')
+    require(b.window_end==anchor+3600 and b.data_end==b.window_end-d.DATA_CLEANUP_RESERVE_SECONDS and b.reserve==d.DATA_CLEANUP_RESERVE_SECONDS and b.cleanup_seconds==d.CLEANUP_BUDGET_SECONDS and b.wall_end==core.base.capture.stamp(header['windowEnd']),'DIRECTIVE_START_DEADLINE_CONFLICT')
+    b.check();return b
+
+def lease_budget(lease,core,args,profile):
+    header=lease_header(lease,core,args,profile)
+    return start_budget(core,header,_LEASES[lease]['budget'])
+
 def lease_header(lease,core,args,profile):
     require(type(lease) is _RunLease,'DIRECTIVE_PREFLIGHT_LEASE_REQUIRED')
     state=_LEASES.get(lease)
     require(state is not None and state['fd'] is not None and state['args']==tuple(map(str,args)) and state['profile']==fingerprint(profile) and state['code']==core.code_hash(),'DIRECTIVE_PREFLIGHT_LEASE_CONFLICT')
+    start_budget(core,state['header'],state['budget'])
     return copy.deepcopy(state['header'])
 
 def release_preflight(lease):
@@ -249,6 +266,7 @@ def run_preflight(gate,core,args,profile):
     instant=core.base.capture.now();stamp=core.base.capture.stamp
     check_packet(profile,header,expected,instant,stamp,header['identityPathSha256'])
     require(stamp(header['windowEnd'])<stamp(gate.RETAIN),'DIRECTIVE_WINDOW_EXPIRED')
+    budget=start_budget(core,header)
     root_fd=gate.open_root();lock_fd=None;lease=None
     try:
         # Coordination only: empty persistent lock inode, no START/window/claim
@@ -260,7 +278,7 @@ def run_preflight(gate,core,args,profile):
         try:fcntl.flock(lock_fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
         except BlockingIOError:raise ValueError('DIRECTIVE_PREFLIGHT_BUSY') from None
         _early_ledger(gate,profile,header)
-        lease=_RunLease();_LEASES[lease]={'fd':lock_fd,'header':header,'args':tuple(map(str,args)),'profile':fingerprint(profile),'code':expected};lock_fd=None
+        lease=_RunLease();_LEASES[lease]={'fd':lock_fd,'header':header,'args':tuple(map(str,args)),'profile':fingerprint(profile),'code':expected,'budget':budget};lock_fd=None
         yield lease
     finally:
         if lease is not None:release_preflight(lease)
