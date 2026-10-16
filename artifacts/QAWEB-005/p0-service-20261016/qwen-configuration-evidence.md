@@ -62,8 +62,9 @@ context大小；不能把它改成当前短 prompt、缓存命中估计或1,000,
 当前 price schema **没有阶梯费率选择器**。flat 按配置单价算所有输入，cache_split 按
 真实 cached 数拆分，两者均按同一组固定费率结算。长档上界用于全上下文保守预算可以是
 Main审定的开发成本口径，但把它直接标为每笔供应商精确实际费用会高估短档；反过来选短档
-覆盖所有输入则缺少跨档保证。Main需要明确批准的计费口径/支持范围，并与实际scope、
-provider limit、priceVersion保持一致；本任务不新增阶梯实现，也不把公开价自动写入配置。
+覆盖所有通用长输入则缺少跨档保证。Main可在既有授权内自行固定“仅当前有界QA”的计费口径/
+支持范围，并与实际scope、provider limit、priceVersion保持一致；不因schema没有tier selector
+新增产品审批。本任务不新增阶梯实现，也不把公开价自动写入配置。具体边界见第六节。
 
 `createTextJobPrice` 对原始有效usage总数做整数计算，并在合计后一次向上取整。
 cache_split 缺 cached 计数返回 null；不能填0假定没有命中。原 protocol 将 cost 标为unknown，
@@ -94,3 +95,54 @@ unknown usage/price/ACK 继续保留原 pending/reconciliation，不零费用结
 只交本文件，未修改已交Main的源码/SQL/CI/target配置；未重跑71/18/PG矩阵。
 公开文档是2026-10-16观察值，具体price生效日、账号优惠、账户币种/余额/权限、实际字段绑定与
 真人首答持久恢复验收均不能由它替代。Main仍为唯一最终配置/运行lease/数据权限负责人。
+
+## 六、补充：仅当前有界 QA 的短档适用范围（只读澄清）
+
+**源码侧结论：完整发送 messages 有强制32 KiB边界，output有强制4096上限，未发现同一
+QA /4实例走到长输入或工具扩展的反例。** 因此不能仅凭通用供应商有阶梯价，就认定这个
+受限QA必须新增阶梯实现或产品审批。Main可自行将固定2/8 CNY口径限定于这一支持范围，
+保留原1,048,576预留公式不降。这里没有修改费率登记，也没有声称已证明账号/账单。
+
+最短调用链与硬边界：
+
+1. hosted `/4` → `planQaGroup` → `createQaWorker` → `createQaContextInvoker`
+   → `invokeQaSessionContext` → `invokeTextProviderProtocol` → `invokeProtocol`
+   → `requestBody` → 原 HTTP transport POST。
+2. qa-agent-context/session.ts:49–57 在首次 read 和授权前 fresh read 都运行
+   assembler：只选最多6条历史 + 当前1条，计入固定 `TEXT_TASK_SYSTEM_PROMPT` 后，
+   **整个 messages 数组** JSON UTF8 bytes≤32768，文本内容合计≤16384；超过直接拒绝。
+   后续不再加入另一份system/history；输入字符串不可变，所选history对象/数组冻结。
+3. provider-protocol.ts:122–139 固定 task=text_task_v2；225–240 构造同一个 system、
+   同一组history、同一个current，因此8条消息以内的所有发送内容均已计入。没有工具定义、
+   附件、多模态content、检索结果或搜索开关；tools只在另一个tool_candidate任务加入，
+   `validRequest` 对本任务要求 tool===undefined。URL作为普通文本不触发本地抓取。
+   `response_format=json_object` 是固定标量配置，不是额外任意长度的schema或工具说明。
+4. `/4` 闭profile在 hosted-profile.ts:31 将output限定1–4096；复制到只读job/config，
+   protocol实际发max_tokens，enable_thinking=false。通用protocol自身允许8192，但这个
+   `/4`生产入口不会取到该更大值；不能把另一个直接protocol调用当作这个实例的分支。
+5. hosted-text-worker.ts:379–418 的 `/4` 只用v3 QA discovery、tuple guard、QA worker/
+   context invoker；group不合格直接null，不落到后续普通Staging worker。profile planning=null，
+   与S1 /1、planning /2、历史/3或scoped-edit入口分离；改profile/启动opt-in是另一配置，不是
+   本实例隐式fallback。源码没有调度外部搜索/工具/附件来扩大本条QA请求的路径。
+
+**供应商 token 证明的准确边界：** manifest把promptBytes记作本地 `tokenUpperBound`，
+这是一项本地保守上下文契约，不是供应商返回的输入token测量值。
+[Qwen官方概念文档](https://github.com/QwenLM/Qwen3/blob/main/docs/source/getting_started/concepts.md)
+介绍byte-level BPE，支持“普通文本的byte预算是保守工程口径”的推理；但它不是这个闭源
+`qwen3.7-plus-2026-05-26`服务的完整tokenizer/chat-template规范。
+[阿里云文本生成FAQ](https://help.aliyun.com/zh/model-studio/text-generation)
+明确角色/边界等Chat Template标记也计入输入token；本地JSON长度不能直接声称等于计费token。
+未取得该快照的服务端模板/JSON模式预处理硬上界，故本轮**不能把“所有供应商计费输入严格
+<256000”标成已证实**，也没有实际超档反例。普通BPE文本边界与256K有很大工程余量，
+Main可据现有支持范围自主固定短档；若要求供应商级精确跨档保证，缺的是该快照token化/
+模板边界事实，而不是另一个产品批准。本轮不猜其额外token数、不调用tokenizer/provider，
+不把Qwen3.8的示例token数套到本快照。
+
+cached usage缺失的实际行为：provider-protocol.ts:328–345把缺失cached计数保留为null，
+不会补0。`cache_split`在staging-text-job.ts:84–88返回null价；executor.ts:94–101在
+已dispatch情形不会写usage收据或按0 settle，finally保留原pending/unknown流程。
+`flat`本来不区分cache，仍按有效prompt/output总数计算固定口径，因此“cache计数缺失”
+不等于所有flat调用都pending；但它仍不是精确含缓存折扣的供应商实际费用。
+
+补充仅源审查/官方公开文档，无源码/限额/价格记录/账号/target/provider调用/CI修改，
+无重测；结论交Main后本轮STOP。
