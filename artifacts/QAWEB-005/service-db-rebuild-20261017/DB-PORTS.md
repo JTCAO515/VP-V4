@@ -31,10 +31,11 @@ Empty local PG with synthetic roles/identities is development proof only.
 
 - M0: freeze current API → repository → DB port mapping, prove source reuse and
   document actual repository dependencies. This delivery is that review input.
-- M1: consume the original DB owner's stable empty-PG baseline head and exclusively
-  owned fixture interface; run the affected existing API/repository path against
-  that implementation. **UNRUN**: no baseline head/interface consumed yet. No old
-  container, restored data, real identity/material or target access is borrowed.
+- M1a: fixed c66a58b8 baseline consumed through its reusable Fixture.start/sql/close
+  and committed SQL. Declared Native read/consent/epoch/recovery slice **PASS** through
+  real loopback route/SDK/service→owned empty PG; see CONSUMER-C66.md and raw proof.
+- M1b: complete first answer/admission/worker/budget/result write closure **UNRUN**,
+  not supplied by c66. No old container, restore, real identity or target is borrowed.
 - Adapter implementation is warranted only for a concrete reproduced difference
   in that contract. Existing QaStore and worker dependency injection already
   provide seams; no new repository/queue/authority is needed if ports are preserved.
@@ -212,29 +213,30 @@ repository is justified for **unchanged DB ports**. The Browser auxiliary metada
 relations are the one explicit minimal-schema coupling to discuss, not a reason
 to require every old migration or invent a second repository up front.
 
-Next consumed input: DB owner's exact empty-baseline source SHA, matching public
-RPC DTOs/role contracts, and its uniquely owned synthetic fixture interface. Any
+Consumed input: DB owner c66a58b8 fixed source/SQL and reusable Fixture lifecycle;
+independent owned-resource API consumption PASS for its declared read slice. Next
+required input is the write/worker closure under a new stable baseline head. Any
 actual mismatch will be reported by parameter/field/code and affected caller;
 only an evidenced QA-owned adapter gap will be implemented. Baseline/schema/Auth/
 RLS/native/identity/turn/context or registry differences remain with their original
 owners via Main, without blocking unrelated safe source work.
 
-M1 empty-PG integration, target DB, real Auth/provider/fees, iOS/device and release
-remain UNRUN. This does not claim DB rebuild done. No dependency on old snapshots,
+M1a declared-read empty-PG API consumption is PASS; full first answer/write closure,
+target DB, real Auth/provider/fees, iOS/device and release remain UNRUN. This does not claim DB rebuild done. No dependency on old snapshots,
 restore success or full migration replay is reinstated by this port review.
 
 ## 7. Astra first increment versus the complete answer path
 
 Main's fresh first-increment report names Native session validation, Session
 reads, consent and unknown-ACK projection; submit/worker remain uncovered and
-must fail closed. No baseline source SHA, precise fixture interface or per-port
-result has yet been consumed here. Labels below distinguish necessary caller
-ports from a claim that any implementation has already passed.
+must fail closed. c66a58b8 and its Fixture interface have now been consumed on new
+owned resources; CONSUMER-C66.md gives the independent API proof. Labels below
+retain the original slice distinction; only that declared read scope passed.
 
 | Slice | Exact ports / smallest behavior to prove | Status of this delivery |
 | --- | --- | --- |
-| Declared Native identity/read | native_session_v2 strict active epoch; qa_native_session_v1 list/read plus original qa_list_sessions_v1/qa_read_session_v1/read_text_turn actions | Contract mapped; actual baseline implementation/head UNVERIFIED |
-| Declared policy/consent | qa_read_policy_v1/qa_accept_policy_v1, exact notice/hash/actor, QA mode and real acceptance/withdrawal | Contract mapped; not an invented ready notice |
+| Declared Native identity/read | native_session_v2 strict active epoch; qa_native_session_v1 list/read plus original qa_list_sessions_v1/qa_read_session_v1/read_text_turn actions | c66 declared read ports consumed by actual API/SDK/service on owned PG: PASS |
+| Declared policy/consent | qa_read_policy_v1/qa_accept_policy_v1, exact notice/hash/actor, QA mode and real acceptance/withdrawal | c66 actual policy/consent consumed: PASS; notice is explicitly synthetic |
 | Declared unknown-ACK projection | original scoped Session/Turn/result read; reconciliationRequired from durable authority; cancellation receipt read if present | Must retain unknown bytes and scope; missing row does not prove original not_submitted. Exact projected ports/source still need baseline verification |
 | Missing sending/admission closure | qa_submit_message_v1 atomic original request→Task/Turn/queue and byte idempotency, behind Native epoch wrapper | Not established by first increment; cannot obtain first answer without it |
 | Missing worker closure | qa_ready_groups_v3, qa_claim_work_v1, qa_read_work_v1, physical qa_authorize_dispatch_v2 and original delegated v1 authority | Not established; original owner/policy/scope/notice/model binding required |

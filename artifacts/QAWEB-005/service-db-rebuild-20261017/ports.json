@@ -16,7 +16,7 @@
         }
       ],
       "resultRequiredByCaller": "policy + original QaPolicy including contextMode=qa_session_history_v1, maxTurns=8",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -33,7 +33,7 @@
         }
       ],
       "resultRequiredByCaller": "accepted + policyId",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -46,7 +46,7 @@
         }
       ],
       "resultRequiredByCaller": "sessions + sessions[] with unique threadId, at most20",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -59,7 +59,7 @@
         }
       ],
       "resultRequiredByCaller": "session + qa-session/1 + threadId/policyId/serviceTaskId/lastTurnId/messages[]",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -113,7 +113,7 @@
         }
       ],
       "resultRequiredByCaller": "text + turnId/input/output/outcome, original protected saved output",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -134,7 +134,7 @@
         }
       ],
       "resultRequiredByCaller": "exact qa-cancellation/1 receipt, no new admission/refund",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "UNIMPLEMENTED: actual Native API => SQL42883 =>503 unknown; no observed receipt invented"
     },
     {
       "schema": "public",
@@ -172,7 +172,7 @@
         }
       ],
       "resultRequiredByCaller": "exact {version:2,subject,sessionId,mobileEpoch}; active mobile epoch authority",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -193,7 +193,7 @@
         }
       ],
       "resultRequiredByCaller": "original operation result; SECURITY INVOKER epoch check and QA op in same transaction",
-      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+      "firstIncrementClassification": "declared read/consent/recovery slice independently consumed on c66; synthetic Auth/retained result only"
     },
     {
       "schema": "public",
@@ -594,7 +594,7 @@
       "p_request_id": "uuid"
     }
   },
-  "emptyPgBaselineValidation": "UNRUN: no baseline source/head/proof consumed yet; no legacy migration replay is proposed",
+  "emptyPgBaselineValidation": "PASS_DECLARED_READ_SLICE c66a58b8 via original Native routes/SDK/service and new owned Fixture; full first-answer/write closure UNRUN",
   "firstIncrementReport": {
     "source": "Main delegation, 2026-10-17",
     "declared": [
@@ -609,7 +609,20 @@
       "budget dispatch/settle",
       "result completion"
     ],
-    "baselineHead": "UNKNOWN / not consumed by this service owner",
+    "baselineHead": "c66a58b8ba63f7107663a5b63fbcae66bdc4e6eb",
     "technicalUnimplementedContract": "Explicit technical RPC failure e.g. PROVIDER_UNAVAILABLE; do not emit kind=blocked/unavailable for technical not-implemented because the unchanged service maps those tags to DATA_POLICY_BLOCKED403. Actual submit RPC technical uncertainty preserves ack unknown."
+  },
+  "independentConsumerProof": {
+    "testCommit": "4d5d6c6b",
+    "source": "c66a58b8ba63f7107663a5b63fbcae66bdc4e6eb",
+    "status": "PASS_DECLARED_READ_SLICE",
+    "evidence": "consumer-c66-132fc248ccf34a4eadb0864f9435605d.json",
+    "actualSubmitSqlState": "42883",
+    "actualCancellationSqlState": "42883",
+    "actualWorkerClaimSqlState": "42883",
+    "fullFirstAnswer": "UNRUN",
+    "realAuth": "UNRUN",
+    "provider": "UNRUN",
+    "target": "UNRUN"
   }
 }
