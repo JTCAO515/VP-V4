@@ -1,0 +1,1 @@
+PASS c519 versus new no-journal: identical synthetic return dictionary and exact SQL call sequence; no real PG/data IO
