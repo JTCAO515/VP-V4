@@ -77,7 +77,11 @@ class SyntheticGate(ActualSources):
     def setUp(self):
         self.fx=legacy.DiagnosticWindow('runTest');self.fx.setUp();self.addCleanup(self.fx.doCleanups)
         self.g=legacy.d;self.code=self.fx.code
-        self.fx.packet['windowStartMonotonic']=time.monotonic()
+        deadline=load('fixture_start',ROOT/'diagnostic-window-deadline.py').shared_runtime()
+        self.original_budget,anchor,instant=p.provenance.new_start_budget()
+        self.fx.t=instant
+        self.fx.packet.update(windowStartMonotonic=anchor,windowStart=instant.isoformat(),windowEnd=self.original_budget.wall_end.isoformat())
+        self.fx.start.update(windowStart=instant.isoformat(),windowEnd=self.original_budget.wall_end.isoformat())
         original_sha=self.g.sha
         # The actual identity path is intentionally unavailable/unread. Map one
         # synthetic fixture reference only; other/wrong paths use real SHA256.
@@ -112,7 +116,9 @@ class SyntheticGate(ActualSources):
         header.update(version=p.HEADER_VERSION,authorizationDigest=p.AUTHORIZATION,packetSha256=packet_sha,identityPathSha256=p.IDENTITY)
         self.write(ap.with_suffix('.execution-header.json'),header)
         deadline=load('run_deadline',ROOT/'diagnostic-window-deadline.py').shared_runtime()
-        start_budget=deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        if not hasattr(self,'original_budget'):
+            self.original_budget=deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        start_budget=self.original_budget
         facade=SimpleNamespace(directiveStartBudget=start_budget,code_hash=lambda:digest,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg),diagnostic_deadline=deadline,base=SimpleNamespace(capture=SimpleNamespace(now=lambda:self.fx.t,stamp=datetime.fromisoformat)),locale_profile=legacy.locale)
         return facade,[str(ap),self.packet['manifestPath'],self.fx.identity,'never-plan']
     def refuse_operator_reads(self,path,*args,**kwargs):
@@ -144,6 +150,8 @@ class SyntheticGate(ActualSources):
         self.run_refusal('DIRECTIVE_WINDOW_EXPIRED')
     def test_run_successful_closed_window_refuses_second_before_operator_reads(self):
         self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS'},self.cfg)
+        facade,args=self.run_inputs()
+        self.g._directive_profile().start_budget(facade,json.loads(p.header_path(args[0]).read_text()))
         result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
         self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
         self.run_refusal('DIRECTIVE_SECOND_WINDOW_NOT_ELIGIBLE')
@@ -159,20 +167,65 @@ class SyntheticGate(ActualSources):
         with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REQUIRED'):p.start_budget(facade,header)
         facade.directiveStartBudget=facade.diagnostic_deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
         with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REPLACED'):p.start_budget(facade,header,b)
+    def test_second_attempt_requires_live_original_clock_owner(self):
+        facade,args=self.run_inputs();header=json.loads(p.header_path(args[0]).read_text())
+        header['attempt']=2
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_ORIGINAL_CLOCK_OWNER_UNAVAILABLE'):
+            p.start_budget(facade,header)
+        header['attempt']=1;b=p.start_budget(facade,header)
+        header['attempt']=2
+        self.assertIs(p.start_budget(facade,header),b)
+        # Same scalars and exact Budget class do not prove an original owner.
+        d=facade.diagnostic_deadline
+        facade.directiveStartBudget=d.from_window(header['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=header['windowStartMonotonic'])
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_PROVENANCE_REQUIRED'):
+            p.start_budget(facade,header)
+        facade.directiveStartBudget=b
+        with patch.object(p.os,'getpid',return_value=-1):
+            with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_CREATOR_PROCESS_CONFLICT'):
+                p.start_budget(facade,header)
+        self.assertIs(p.start_budget(facade,header),b)
+
+    def test_new_factory_cannot_rebind_old_start_header(self):
+        facade,args=self.run_inputs();header=json.loads(p.header_path(args[0]).read_text())
+        facade.directiveStartBudget,_,_=p.provenance.new_start_budget()
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(DEADLINE_CONFLICT|ORIGIN_BINDING_CONFLICT)'):
+            p.start_budget(facade,header)
+
+    def test_pre_registration_fork_and_rebuilt_attempt1_read_nothing(self):
+        facade,args=self.run_inputs();d=facade.diagnostic_deadline
+        original=facade.directiveStartBudget
+        rebuilt=d.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        module=self.g._directive_profile()
+        for kind in ('rebuilt','fork'):
+            with self.subTest(kind=kind):
+                facade.directiveStartBudget=rebuilt if kind=='rebuilt' else original
+                with patch.object(p.provenance.os,'getpid',return_value=-1 if kind=='fork' else p.provenance.os.getpid()),patch.object(module,'verify_sources') as sources,patch.object(module,'require_configured') as configured,patch.object(module,'_read_header') as header,patch.object(self.g,'read_private') as private,patch.object(self.g,'open_root') as opened,patch.object(self.g,'claim') as claim:
+                    with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(PROVENANCE_REQUIRED|CREATOR_PROCESS_CONFLICT)'):
+                        self.g.run(facade,args,source_profile=self.cfg)
+                    for spy in (sources,configured,header,private,opened,claim):spy.assert_not_called()
+                core=SimpleNamespace(diagnostic_deadline=d)
+                with patch.object(entry,'qualified_hash') as qualified:
+                    with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(PROVENANCE_REQUIRED|CREATOR_PROCESS_CONFLICT)'):
+                        if kind=='fork':
+                            with patch.object(p.provenance.os,'getpid',return_value=-1):entry.run(core,[],{}, {},start_budget=original)
+                        else:entry.run(core,[],{}, {},start_budget=rebuilt)
+                    qualified.assert_not_called()
+
     def test_finalization_delay_and_utc_rollback_cannot_extend_start_mono_end(self):
         d=load('start_cap_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
         wall0=datetime.now(timezone.utc);mono=[1000.0];wall=[wall0]
         clock=lambda:mono[0];utc_now=lambda:wall[0]
-        b=d.Budget(4600,clock=clock,wall_end=wall0+timedelta(hours=1),wall_clock=utc_now)
-        module=SimpleNamespace(Budget=d.Budget,monotonic=clock,utc_now=utc_now,DATA_CLEANUP_RESERVE_SECONDS=120,CLEANUP_BUDGET_SECONDS=60)
-        facade=SimpleNamespace(diagnostic_deadline=module,directiveStartBudget=b,base=SimpleNamespace(capture=SimpleNamespace(stamp=datetime.fromisoformat)))
-        header={'windowStartMonotonic':1000.0,'windowEnd':(wall0+timedelta(hours=1)).isoformat()}
-        for elapsed,utc_advance in ((10,5),(120,120),(120,20)):
-            mono[0]=1000+elapsed;wall[0]=wall0+timedelta(seconds=utc_advance)
-            self.assertIs(p.start_budget(facade,header),b)
-            self.assertEqual(b.window_end,4600);self.assertLessEqual(b.remaining(),3480-elapsed)
-        mono[0]=4480;wall[0]=wall0+timedelta(seconds=20)
-        with self.assertRaises(d.WindowExpired):p.start_budget(facade,header)
+        with patch.object(d,'monotonic',clock),patch.object(d,'utc_now',utc_now):
+            b,anchor,instant=p.provenance.new_start_budget()
+            facade=SimpleNamespace(diagnostic_deadline=d,directiveStartBudget=b,base=SimpleNamespace(capture=SimpleNamespace(stamp=datetime.fromisoformat)))
+            header={'windowId':str(uuid.uuid4()),'attempt':1,'windowStartMonotonic':anchor,'windowStart':instant.isoformat(),'windowEnd':b.wall_end.isoformat()}
+            for elapsed,utc_advance in ((10,5),(120,120),(120,20)):
+                mono[0]=1000+elapsed;wall[0]=wall0+timedelta(seconds=utc_advance)
+                self.assertIs(p.start_budget(facade,header),b)
+                self.assertEqual(b.window_end,4600);self.assertLessEqual(b.remaining(),3480-elapsed)
+            mono[0]=4480;wall[0]=wall0+timedelta(seconds=20)
+            with self.assertRaises(d.WindowExpired):p.start_budget(facade,header)
     def test_run_header_tamper_rejected_before_human_or_material_reads(self):
         facade,args=self.run_inputs();ap=Path(args[0]);header_path=p.header_path(ap)
         header=json.loads(header_path.read_text());header['packetSha256']='0'*64;self.write(header_path,header)
@@ -187,6 +240,8 @@ class SyntheticGate(ActualSources):
         self.run_refusal('DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
     def test_valid_attempt2_reaches_original_causal_guard_not_material(self):
         self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS'},self.cfg)
+        facade,args=self.run_inputs()
+        self.g._directive_profile().start_budget(facade,json.loads(p.header_path(args[0]).read_text()))
         result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
         self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
         self.cfg['startFile']=str(self.fx.root/('directive-v1-start-'+self.fx.window+'-2.json'))
@@ -252,7 +307,7 @@ class SyntheticGate(ActualSources):
                 read.assert_not_called();claim.assert_not_called()
     def test_direct_gate_cannot_use_unsalted_old_code_hash(self):
         config={'mode':'same-copy-typed-postdata/1','sourceLockSha256':self.cfg['sourceLockSha256'],'windowBindingSha256':self.cfg['windowBindingSha256']}
-        facade=SimpleNamespace(code_hash=lambda:self.code,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg))
+        facade=SimpleNamespace(diagnostic_deadline=load('hash_guard_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime(),directiveStartBudget=self.original_budget,code_hash=lambda:self.code,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg))
         with patch.object(self.g,'read_private') as read,patch.object(self.g,'claim') as claim:
             with self.assertRaisesRegex(ValueError,'DIRECTIVE_QUALIFIED_CODE_HASH_CONFLICT'):self.g.run(facade,['NEVER']*4,source_profile=self.cfg)
             read.assert_not_called();claim.assert_not_called()
@@ -316,7 +371,7 @@ class SyntheticGate(ActualSources):
     def test_entry_qualified_hash_binds_real_profile_and_keeps_original_budget(self):
         d=load('entry_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
         core=SimpleNamespace(code_hash=lambda:self.code,diagnostic_window=self.g,diagnostic_deadline=d)
-        start_budget=d.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        start_budget=self.original_budget
         config={'mode':'same-copy-typed-postdata/1','sourceLockSha256':self.cfg['sourceLockSha256'],'windowBindingSha256':self.cfg['windowBindingSha256']}
         digest=entry.qualified_hash(core,config,self.cfg)
         self.assertNotEqual(digest,self.code)
