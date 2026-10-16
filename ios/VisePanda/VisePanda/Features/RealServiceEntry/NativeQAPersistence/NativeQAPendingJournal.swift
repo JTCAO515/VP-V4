@@ -24,7 +24,7 @@ final class NativeQAPendingJournal {
         let pending: NativeQAPending
     }
 
-    private static let service = "space.go2china.visepanda.nativeqa.pending.v1"
+    static func service(_ endpoint: String) -> String { "com.visepanda.native.qa-submission.v1." + endpoint }
     // Shared across instances: vault primitives are synchronous, but injected callbacks can reenter.
     private static var busy = false
     private let vault: any NativeCredentialVault
@@ -56,7 +56,7 @@ final class NativeQAPendingJournal {
             let record = Record(version: 1, identity: UUID(), pending: pending)
             let bytes = try JSONEncoder().encode(record)
             try check(scope)
-            let status = vault.write(bytes, service: Self.service, owner: Self.account(scope.endpoint, scope.subject))
+            let status = vault.write(bytes, service: Self.service(scope.endpoint), owner: scope.subject)
             try check(scope)
             guard status == errSecSuccess else { throw NativeQAError.journalUnavailable }
             guard let stored = try read(scope), stored.bytes == bytes, stored.pending == pending else {
@@ -66,7 +66,8 @@ final class NativeQAPendingJournal {
         }
     }
 
-    /// Low-level CAS only; Main/UI must have an exact authoritative terminal receipt first.
+    /// Low-level CAS only; Main/UI must have an exact authoritative admission/message receipt first.
+    /// A persisted pending row can prove admission; this does not prove task completion.
     /// A prior successful load/retain on this instance is required. Absent/403/cancel is not a receipt.
     func clearExact(_ pending: NativeQAPending, scope: NativeDataScope) throws {
         try transaction(scope) { try removeExact(pending, scope: scope) }
@@ -101,9 +102,9 @@ final class NativeQAPendingJournal {
         func check() throws {
             guard authorized() else { throw NativeQAError.stale }
         }
-        let key = account(endpoint, owner)
+        let itemService = service(endpoint)
         try check()
-        let before = vault.read(service: service, owner: key)
+        let before = vault.read(service: itemService, owner: owner)
         try check()
         guard before.0 == errSecSuccess || (before.0 == errSecItemNotFound && before.1 == nil) else {
             throw NativeQAError.journalUnavailable
@@ -111,14 +112,14 @@ final class NativeQAPendingJournal {
         if before.0 == errSecSuccess {
             guard let bytes = before.1 else { throw NativeQAError.journalUnavailable }
             // Compare physical bytes again immediately before remove, including corrupt records.
-            let compare = vault.read(service: service, owner: key)
+            let compare = vault.read(service: itemService, owner: owner)
             try check()
             guard compare.0 == errSecSuccess, compare.1 == bytes else { throw NativeQAError.journalUnavailable }
-            let status = vault.remove(service: service, owner: key)
+            let status = vault.remove(service: itemService, owner: owner)
             try check()
             guard status == errSecSuccess else { throw NativeQAError.journalUnavailable }
         }
-        let after = vault.read(service: service, owner: key)
+        let after = vault.read(service: itemService, owner: owner)
         try check()
         guard after.0 == errSecItemNotFound, after.1 == nil else { throw NativeQAError.journalUnavailable }
     }
@@ -131,7 +132,7 @@ final class NativeQAPendingJournal {
         // A second physical compare catches replacement during read callbacks; synchronous single writer.
         guard let compare = try read(scope), compare.bytes == expected.bytes else { throw NativeQAError.journalUnavailable }
         try check(scope)
-        let status = vault.remove(service: Self.service, owner: Self.account(scope.endpoint, scope.subject))
+        let status = vault.remove(service: Self.service(scope.endpoint), owner: scope.subject)
         try check(scope)
         guard status == errSecSuccess else { throw NativeQAError.journalUnavailable }
         guard try read(scope) == nil else { throw NativeQAError.journalUnavailable }
@@ -160,7 +161,7 @@ final class NativeQAPendingJournal {
 
     private func read(_ scope: NativeDataScope) throws -> Snapshot? {
         try check(scope)
-        let (status, bytes) = vault.read(service: Self.service, owner: Self.account(scope.endpoint, scope.subject))
+        let (status, bytes) = vault.read(service: Self.service(scope.endpoint), owner: scope.subject)
         try check(scope)
         if status == errSecItemNotFound, bytes == nil { return nil }
         guard status == errSecSuccess, let bytes, bytes.count <= 100_000,
@@ -169,8 +170,4 @@ final class NativeQAPendingJournal {
         return Snapshot(scope: scope, bytes: bytes, pending: record.pending)
     }
 
-    private static func account(_ endpoint: String, _ owner: String) -> String {
-        // Length prefix prevents delimiter ambiguity; this key is never exported or logged.
-        "\(endpoint.utf8.count):\(endpoint)\(owner)"
-    }
 }

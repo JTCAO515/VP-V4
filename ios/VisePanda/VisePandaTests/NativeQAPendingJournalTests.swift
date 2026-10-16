@@ -25,7 +25,8 @@ struct NativeQAPendingJournalTests {
         #expect(vault.bytes == original)
         #expect(vault.writes == 1)
         #expect(try journal.load(scope: scope) == command)
-        #expect(vault.services == ["space.go2china.visepanda.nativeqa.pending.v1"])
+        #expect(vault.services == [NativeQAPendingJournal.service(scope.endpoint)])
+        #expect(vault.owners == [scope.subject])
     }
 
     @Test func unknownACKReopenPreservesNoncanonicalOriginalBody() throws {
@@ -294,6 +295,29 @@ struct NativeQAPendingJournalTests {
         }
     }
 
+    @Test func journalDataCompanionUsesSameAddressForEveryOperation() throws {
+        let vault = SyntheticQAVault()
+        let journal = NativeQAPendingJournal(vault: vault, currentScope: { scope })
+        let command = try pending(scope)
+        let service = NativeQAPendingJournal.service(scope.endpoint)
+        #expect(service == "com.visepanda.native.qa-submission.v1." + scope.endpoint)
+        #expect(service != NativeQAPendingJournal.service("https://other.invalid"))
+        try journal.retain(command, scope: scope)
+        let companionRead = vault.read(service: service, owner: scope.subject)
+        #expect(companionRead.0 == errSecSuccess)
+        #expect(companionRead.1 != nil)
+        _ = try journal.load(scope: scope)
+        _ = try journal.metadata(scope: scope)
+        try journal.clearExact(command, scope: scope)
+        try journal.retain(command, scope: scope)
+        try journal.abandonLocally(command, scope: scope)
+        try journal.retain(command, scope: scope)
+        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, authorized: { true })
+        #expect(vault.services == [service])
+        #expect(vault.owners == [scope.subject])
+        #expect(vault.bytes == nil)
+    }
+
     private func changedScope(_ field: String) -> NativeDataScope? {
         if field == "nil" { return nil }
         return NativeDataScope(endpoint: field == "endpoint" ? "https://other.invalid" : scope.endpoint,
@@ -315,22 +339,23 @@ struct NativeQAPendingJournalTests {
     var onRemove: (() -> Void)?
     var events: [String] = []
     var services: Set<String> = []
+    var owners: Set<String> = []
     var writes = 0
     var removes = 0
     func write(_ data: Data, service: String, owner: String) -> OSStatus {
-        events.append("write"); services.insert(service); writes += 1
+        events.append("write"); services.insert(service); owners.insert(owner); writes += 1
         if writeStatus == errSecSuccess { bytes = data }
         onWrite?()
         return writeStatus
     }
     func read(service: String, owner: String) -> (OSStatus, Data?) {
-        events.append("read"); services.insert(service)
+        events.append("read"); services.insert(service); owners.insert(owner)
         let result: (OSStatus, Data?) = readStatus == errSecSuccess ? (bytes == nil ? errSecItemNotFound : errSecSuccess, bytes) : (readStatus, nil)
         onRead?()
         return result
     }
     func remove(service: String, owner: String) -> OSStatus {
-        events.append("remove"); services.insert(service); removes += 1
+        events.append("remove"); services.insert(service); owners.insert(owner); removes += 1
         if removeStatus == errSecSuccess && !keepOnRemove { bytes = nil }
         onRemove?()
         return removeStatus
