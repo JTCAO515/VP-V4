@@ -1,0 +1,5 @@
+Test Case '-[CancellationTests.NativeQACancellationConsumerTests testDisplayedCheckIntentQueuedBeforeRebindCannotReadSuccessor]' passed (0.000 seconds).
+Test Case '-[CancellationTests.NativeQACancellationConsumerTests testDisplayedStopIntentQueuedBeforeRebindCannotCancelSuccessor]' passed (0.000 seconds).
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.012 (0.014) seconds
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.012 (0.014) seconds
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.012 (0.015) seconds
