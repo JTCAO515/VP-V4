@@ -1,5 +1,7 @@
 # 新诊断窗口候选：供 Main 审阅，当前未批准、不可执行
 
+当前精确候选已更新为已合QA `4abeeb41e87f2ac36f0efdb9ba94780ce0049a13` 的162/75/87；下方161/86为保留的历史阶段。当前source/hash及验证见candidate162-delivery-20261016.json。
+
 当前固定 Go2China `dzqdzetcctkhbrhlxxgn` 与 Production 同数据。旧 capture `f97d05db-c706-4ce9-82d8-579cbb0b9310` 的四 AGE 密文、manifest SHA `668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085`、同一 identity 及三份 consumed claims、两份 FAIL/cleanupPASS、原 START 原字节全部保留。旧 locale 失败与 post-data `RESTORE_PERMISSION_DENIED` 仍是历史实际失败；后者不是已确定的 PG 协议错误事实，具体 ACL/command 原因仍 UNKNOWN。未完成实际 owner/ACL/count 验证，不称恢复成功，不闭 #230/#683。
 
 ## 拟向 JT 一次集中说明的动作（本文件不申请、不授权）
@@ -71,3 +73,12 @@ KeyboardInterrupt/取消不丢已完成阶段。保completedRestoreResult、后�
 ### CLI协议及环境事实更新
 Main用独立无数据空sleep fixture证实Docker29.8的not-found可为小写 `error: no such object: <exactid>`。新识别只扩有限前缀，仍要求exit1、stdout空/[]、exact identifier，不能把daemon错误/别的id/其他exitcode当不存在。unknown launch仍UNKNOWN，绝不absent转PASS。25项focused含旧59小写协议RED。
 Main另只读确认desktop-linux daemon29.8/API1.56及原缓存strict镜像3866/linuxarm64可用（替代前述server不可用的单时点事实）；没有pull/tag改动/PG副本/真实数据操作。它不构成managed-ownerACL实际恢复证明或新增窗口授权。当前仍C/E STOP；新runtime-binding追加迁移未合QA，候选暂161/86，不虚填162/87的来源相等布尔。
+
+
+## PR731正式合QA后的162/87候选
+
+实际QA4abe Git对象新增且仅新增 `20261016040522_qa_runtime_binding.sql`，SHA `a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c`，原161全部hash不变。原155/80 manifest不动；新candidate mode明确75-to162。Main新鲜官方75 baseline逐项等于原capture75，全162 source map/87missing/targetOnly0补件实算SHA `9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`，sourceMetadataHead现在4abe；旧5e的161覆盖另保历史，不以它的“全相同”冒162证明。
+
+只有fullrestore PASS、同copy exact87完成且原v2/生命周期/开关全部门禁已过，candidate分支才查询两个新port的pg_catalog：qa_ready_groups_v3(integer,text,text,text,uuid,uuid,uuid,text)、qa_authorize_dispatch_v2(uuid,uuid,uuid,uuid,text,text,uuid,text)。返回/可选journal仅保观察到的布尔事实：exists/ownerIsPostgres/securityDefiner/emptySearchPath/serviceExecute true，anon/authenticated/publicExecute false。实际SQL不调用port、不发claim/userwork/provider、不创建fixture用户或预算，不吐角色名/配置值。缺失/ACL漂移/错误shape均FAIL；未查询不报告PASS。
+
+本轮4项manifest与5项port focusedcases（含多ACL负例）、旧89→新legacy返回/SQL序列golden PASS；原25+5证据复用，不重矩阵。真实保护副本、87重放与新port物理metadata查询仍UNRUN；全部新授权pins仍None，无新window/slot/claim/identity/AGE/host动作。Main仍soleactualoperator；实际C/E继续STOP，待集中具体新批准。

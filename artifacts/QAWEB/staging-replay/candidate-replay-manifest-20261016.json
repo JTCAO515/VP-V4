@@ -1,7 +1,7 @@
 {
   "schemaVersion": "qaw-owned-replay-candidate/1",
   "projectId": "dzqdzetcctkhbrhlxxgn",
-  "sourceHead": "3d99a8af1805d714b71dce959b0811da468c24ea",
+  "sourceHead": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
   "expectedVersions": [
     "20260824101500",
     "20260824104424",
@@ -163,7 +163,8 @@
     "20261015043710",
     "20261015055708",
     "20261015083120",
-    "20261015161024"
+    "20261015161024",
+    "20261016040522"
   ],
   "baselineVersions": [
     "20260824101500",
@@ -328,7 +329,8 @@
     "20261015043710",
     "20261015055708",
     "20261015083120",
-    "20261015161024"
+    "20261015161024",
+    "20261016040522"
   ],
   "sourceSha256": {
     "20260824101500_v4_baseline.sql": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78",
@@ -491,15 +493,32 @@
     "20261015043710_agent001_qa_cancellation.sql": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
     "20261015055708_agent008_trip_service_task_settlement_current.sql": "cdbe97c1931cac1a077ae3f898377cb6ee552dada66a23a2490a9565e9134021",
     "20261015083120_agent005_canonical_place_ask.sql": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
-    "20261015161024_ios004_online_user_address.sql": "62074a2fb1b56b35620f835b9a09f667e87d2a826ffc64cd3734e196ef997f4a"
+    "20261015161024_ios004_online_user_address.sql": "62074a2fb1b56b35620f835b9a09f667e87d2a826ffc64cd3734e196ef997f4a",
+    "20261016040522_qa_runtime_binding.sql": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c"
   },
   "baselineCount": 75,
-  "expectedCount": 161,
-  "missingCount": 86,
+  "expectedCount": 162,
+  "missingCount": 87,
   "targetOnlyVersions": [],
-  "sourceMetadataEvidenceSha256": "c707fc3d947a8dc184b326ec847061cbd8ce90907ecdb34988741dbf2f97e22e",
-  "sourceMetadataHead": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+  "sourceMetadataEvidenceSha256": "9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e",
+  "sourceMetadataHead": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
   "sourceMetadataMigrationHashesEqualPinnedHead": true,
   "targetApplyAuthority": "NONE",
-  "newWindowApproved": false
+  "newWindowApproved": false,
+  "sourceMetadataCommon161HashesUnchanged": true,
+  "sourceMetadataCoverage": "fresh official75 and all162 sourcehashes from QA4abe; single observation, not new approved window",
+  "additionalSourceEvidence": {
+    "authoritativeGitHead": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+    "pullRequest": "https://github.com/JTCAO515/VP-V4/pull/731",
+    "reviewedSourceHead": "12ada21db9840525c2c8fc94067846b487476fdc",
+    "migrationFile": "20261016040522_qa_runtime_binding.sql",
+    "sha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
+    "targetObservedOrWritten": false
+  },
+  "priorSourceMetadataEvidence": {
+    "sourceHead": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+    "sha256": "c707fc3d947a8dc184b326ec847061cbd8ce90907ecdb34988741dbf2f97e22e",
+    "coverage": "old161 only; not complete162"
+  },
+  "sourceMetadataObservedAt": "2026-10-16T05:15:11.666420+00:00"
 }

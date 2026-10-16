@@ -12,7 +12,7 @@ VERSIONS=['20261016000001','20261016000002']
 ACL={'exists':True,'service':True,'anon':False,'authenticated':False,'public':False}
 
 
-def run(module,stop=None,journal=True):
+def run(module,stop=None,journal=True,candidate=False,port_values=None):
     class Db:
         name='synthetic-owned';nonce='nonce';created=True
         def __init__(self):
@@ -32,8 +32,11 @@ def run(module,stop=None,journal=True):
                 if stop=='after-acl':raise KeyboardInterrupt()
                 return 't'
             if sql=='select enabled from turn_private.hosted_worker_control;':return 'f'
+            if 'pg_catalog.pg_proc p on p.oid=r.oid' in sql:
+                name=next(name for name,sig in module.RUNTIME_PORTS if sig in sql)
+                return json.dumps((port_values or {}).get(name,module.RUNTIME_PORT_EXPECTED))
             return 'a'*64
-    db=Db();plan={'baselineVersions':[],'expectedVersions':VERSIONS,'reviewedMissing':VERSIONS,'sourceHead':'1'*40,'manifestSha256':'2'*64}
+    db=Db();plan={'mode':module.CANDIDATE_MODE if candidate else module.MODE,'baselineVersions':[],'expectedVersions':VERSIONS,'reviewedMissing':VERSIONS,'sourceHead':'1'*40,'manifestSha256':'2'*64}
     sources=[{'version':v,'file':v+'_synthetic.sql','sql':'begin;select 1;commit;'} for v in VERSIONS]
     fingerprints={'public.synthetic':{'count':0,'sha256':'3'*64,'digests':{}}}
     outcome=None
