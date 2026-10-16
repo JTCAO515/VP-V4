@@ -1,0 +1,36 @@
+Building for debugging...
+[2 / 6] VisePandaTests-product
+[4 / 8] VisePandaTests-product
+[10 / 12] VisePandaTests-product
+Build complete! (1.21秒)
+Test Suite 'All tests' started at 2026-10-16 17:02:33.109.
+Test Suite 'All tests' passed at 2026-10-16 17:02:33.110.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAComposerTests started.
+◇ Test staleBindingHidesAndCannotOverwriteNewScope() started.
+◇ Test utf16AndWhitespaceBoundaries() started.
+◇ Test sendsOnceWithoutClearingOrChangingBytes() started.
+◇ Test staleSendAndAllDenialsDoNotCallOwner() started.
+◇ Test completionNeverGrantsUnknownRequestSendPermission() started.
+◇ Test preservesOriginalBytesAndOverLimitEdits() started.
+◇ Test staleScopeAndDuplicateCompletionsCannotUnlockSuccessorAttempt() started.
+◇ Test coalescedFastCompletionAllowsNextQuestion() started.
+◇ Test inactiveAndPendingBindingsRejectWrites() started.
+◇ Test refusalExplicitlyCompletesAndReleasesInput() started.
+◇ Test cancelledOwnerTaskCompletesWithoutRevivingPrivateInput() started.
+✔ Test sendsOnceWithoutClearingOrChangingBytes() passed after 0.001 seconds.
+✔ Test preservesOriginalBytesAndOverLimitEdits() passed after 0.001 seconds.
+✔ Test staleSendAndAllDenialsDoNotCallOwner() passed after 0.001 seconds.
+✔ Test utf16AndWhitespaceBoundaries() passed after 0.001 seconds.
+✔ Test staleScopeAndDuplicateCompletionsCannotUnlockSuccessorAttempt() passed after 0.001 seconds.
+✔ Test refusalExplicitlyCompletesAndReleasesInput() passed after 0.001 seconds.
+✔ Test inactiveAndPendingBindingsRejectWrites() passed after 0.001 seconds.
+✔ Test staleBindingHidesAndCannotOverwriteNewScope() passed after 0.001 seconds.
+✔ Test completionNeverGrantsUnknownRequestSendPermission() passed after 0.001 seconds.
+✔ Test coalescedFastCompletionAllowsNextQuestion() passed after 0.001 seconds.
+✔ Test cancelledOwnerTaskCompletesWithoutRevivingPrivateInput() passed after 0.001 seconds.
+✔ Suite NativeQAComposerTests passed after 0.001 seconds.
+✔ Test run with 11 tests in 1 suite passed after 0.001 seconds.

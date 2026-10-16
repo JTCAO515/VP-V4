@@ -22,14 +22,15 @@ let package = Package(name: "ComposerChecks", platforms: [.macOS(.v14)], targets
     .testTarget(name: "VisePandaTests", dependencies: ["VisePanda"])
 ])
 ''')
-with (evidence / "behavior-final.log").open("w") as log:
+with (evidence / "p2-replay.log").open("w") as log:
     subprocess.run(["swift", "test", "--package-path", str(scratch)], stdout=log, stderr=subprocess.STDOUT, check=True)
 sdk = subprocess.check_output(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-path"], text=True).strip()
-with (evidence / "ios17-typecheck.log").open("w") as log:
+with (evidence / "p2-ios17-replay.log").open("w") as log:
     subprocess.run([
         "xcrun", "swiftc", "-typecheck", "-swift-version", "6",
         "-target", "arm64-apple-ios17.0-simulator", "-sdk", sdk,
         str(root / "ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift"),
         str(source / "NativeQAComposerAccess.swift"), str(source / "NativeQAComposer.swift"),
+        str(evidence / "CompletionCallsite.swift"),
     ], stdout=log, stderr=subprocess.STDOUT, check=True)
-print("PASS: 6 synthetic binding/action tests and actual iOS17 Swift6 source typecheck")
+print("PASS: synthetic binding/action tests and actual iOS17 Swift6 source + completion callsite typecheck")

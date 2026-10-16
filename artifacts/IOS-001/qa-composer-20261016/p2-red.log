@@ -1,0 +1,19 @@
+Building for debugging...
+[1 / 5]
+[3 / 7] VisePandaTests-product
+[5 / 9] VisePandaTests-product
+[11 / 13] VisePandaTests-product
+Build complete! (1.79秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAComposerTests started.
+◇ Test coalescedFastCompletionAllowsNextQuestion() started.
+✘ Test coalescedFastCompletionAllowsNextQuestion() recorded an issue at NativeQAComposerTests.swift:20:9: Expectation failed: raw == "second"
+↳ raw == "second" → false
+↳   raw → ""
+✘ Test coalescedFastCompletionAllowsNextQuestion() failed after 0.001 seconds with 1 issue.
+✘ Suite NativeQAComposerTests failed after 0.001 seconds with 1 issue.
+✘ Test run with 1 test in 1 suite failed after 0.001 seconds with 1 issue.
+Note: Some test targets reported failures:
+  - VisePandaTests (Swift Testing)
