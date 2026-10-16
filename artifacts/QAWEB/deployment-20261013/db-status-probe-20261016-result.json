@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-16T05:26:32.548127+00:00",
+  "recordedAt": "2026-10-16T05:27:34.989880+00:00",
+  "lease": "Main single same-target read_hosted_worker_status authentication read only",
+  "instance": "i-j6c7q3kftufyroypiqvu",
+  "bootId": "7ef6364a-f3a0-4fe7-8b7f-4431db4a7600",
+  "imageId": "sha256:1ec86928ef66bd78c24d7dd79b361582fde2f5d7cc97f1295a29b6b5282fd943",
+  "build": "12ada21db9840525c2c8fc94067846b487476fdc",
+  "publicProbeSourceSha256": "7b738ae46c8e836f2564b489449ceb050e39d8a61a1204aa97d4cc2520bd874d",
+  "functionAuthorityEvidence": {
+    "source": "Main fresh original Go2China connection READ ONLY catalog readback",
+    "bodyMd5": "e87eaa13ad4b5fc8f1d2af64878614b5",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPath": "empty",
+    "sameAsAppliedMigration": "20260923090000",
+    "bodyReadOnly": "SELECT control, capped heartbeat metadata, queue aggregates; no DML or user text",
+    "executeAcl": {
+      "service_role": true,
+      "anon": false,
+      "authenticated": false,
+      "PUBLIC": false
+    },
+    "thisTaskDidNotChangeAcl": true
+  },
+  "preflight": {
+    "dbKey": {
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0400",
+      "links": 1,
+      "nonlink": true,
+      "bytes": 219,
+      "tmpfs": true
+    },
+    "instanceMetadataMatch": true,
+    "candidateImageExists": true
+  },
+  "container": {
+    "name": "vp-qa-db-status-fb36545f0573",
+    "user": "1000:1000",
+    "entrypoint": "/usr/local/bin/node",
+    "workerEntrypointUsed": false,
+    "stdin": "public probe source only",
+    "network": "bridge",
+    "singleReadonlyBind": "/run/vp-worker-secrets/db.key",
+    "wholeKeyDirectoryMounted": false,
+    "qwenKeyMounted": false,
+    "hostJournalMounted": false,
+    "dockerSocketMounted": false,
+    "journalPath": "own ephemeral tmpfs",
+    "readOnlyRoot": true,
+    "capDrop": "ALL",
+    "noNewPrivileges": true,
+    "core": "0:0",
+    "memory": "256m",
+    "pids": 32,
+    "logDriver": "none",
+    "ports": 0,
+    "invocationEnvArgs": 0,
+    "pull": "never",
+    "removedSelf": true
+  },
+  "request": {
+    "attempts": 1,
+    "method": "POST",
+    "endpoint": "https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/read_hosted_worker_status",
+    "body": "{}",
+    "headersConstructedBy": "image /app/lib/server/jobs/supabase-worker-headers.ts supabaseWorkerHeaders",
+    "redirect": "manual",
+    "credentials": "omit",
+    "cache": "no-store",
+    "timeoutMs": 10000,
+    "streamingResponseByteCap": 262144,
+    "contentFreeReadOnlyRpc": true
+  },
+  "result": {
+    "httpStatus": 200,
+    "validContentType": true,
+    "kindIsStatus": true,
+    "enabled": false,
+    "probe": "PASS",
+    "exit": 0
+  },
+  "postflight": {
+    "selfContainerRemaining": false,
+    "dbKey": {
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0400",
+      "bytes": 219,
+      "links": 1,
+      "symlink": false
+    }
+  },
+  "dataHandling": {
+    "dbKeyRead": "one necessary in-memory read in isolated operator probe",
+    "qwenKeyRead": false,
+    "keyBytesOrHashPrintedPersisted": false,
+    "rawResponseOrHeadersOrErrorRetained": false,
+    "workerQueueReasonIdentifiersOutput": false,
+    "fullEnvOrProcessArgsRead": false,
+    "keyRewritten": false
+  },
+  "actions": {
+    "statusRpcReads": 1,
+    "heartbeatRequests": 0,
+    "claimOrDispatchRequests": 0,
+    "switchOrBudgetChanges": 0,
+    "otherDatabaseWrites": 0,
+    "providerRequests": 0,
+    "workerStarted": false,
+    "profileTargetInstalled": false,
+    "vercelChanges": false
+  },
+  "limits": {
+    "proves": "existing DB key accepted for the fixed-target read-only status RPC at observed time",
+    "workerReadiness": "UNRUN",
+    "qwenCredentialValidity": "UNRUN",
+    "userAuth": "UNRUN",
+    "realAnswerSessionPersistenceMultiRound": "UNRUN",
+    "stageAKeyZeroFactsRetainedAsHistory": true
+  },
+  "verification": [
+    "node --check public probe source PASS",
+    "actual single RPC + closed result shape PASS",
+    "no self container and unchanged key metadata PASS"
+  ]
+}
