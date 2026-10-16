@@ -20,7 +20,7 @@ Building for debugging...
 [110 / 126]
 [115 / 126] VisePandaTests-product
 /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-qa-composer-20261016/artifacts/IOS-001/qa-composer-20261016/.scratch/Tests/VisePandaTests/NativeQAComposerTests.swift:27:20: warning: 'generation' mutated after capture by sendable closure
- 20 | 
+ 20 |
  21 |     @Test func staleBindingHidesAndCannotOverwriteNewScope() {
  22 |         var generation = 1
     |             `- note: variable defined here
@@ -36,7 +36,7 @@ Building for debugging...
  29 |         let previousReads = reads
 
 /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-qa-composer-20261016/artifacts/IOS-001/qa-composer-20261016/.scratch/Tests/VisePandaTests/NativeQAComposerTests.swift:51:16: warning: 'active' mutated after capture by sendable closure
- 35 | 
+ 35 |
  36 |     @Test func inactiveAndPendingBindingsRejectWrites() {
  37 |         var active = true
     |             `- note: variable defined here
