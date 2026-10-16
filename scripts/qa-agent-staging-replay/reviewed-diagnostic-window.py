@@ -137,7 +137,10 @@ def validate_human_source(human):
         # Preserve the existing Main direct-reply record schema. If thread
         # metadata is supplied, it cannot contradict this exact direct source.
         require(human.get('sourceThreadId',MAIN_THREAD_ID)==MAIN_THREAD_ID
-                and human.get('relayTargetThreadId',MAIN_THREAD_ID)==MAIN_THREAD_ID,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT')
+                and human.get('relayTargetThreadId',MAIN_THREAD_ID)==MAIN_THREAD_ID
+                and human.get('authorizer','JT')=='JT' and human.get('relayIsAuthorization',False) is False
+                and 'relayThreadId' not in human and 'officialRelayEvidence' not in human,
+                'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT')
         return
     require(human.get('source')==BESTJ_RELAY_SOURCE and human.get('sourceThreadId')==BESTJ_THREAD_ID
             and human.get('relayThreadId')==MAC_RELAY_THREAD_ID and human.get('relayTargetThreadId')==MAIN_THREAD_ID

@@ -82,6 +82,19 @@ class DiagnosticWindow(unittest.TestCase):
         self.valid()
         human,evidence=self.bestj_record();self.pin_human_for_source_test(human);self.valid()
 
+    def test_main_direct_accepts_absent_or_consistent_optional_metadata(self):
+        self.valid()
+        human=json.loads(d.HUMAN_FILE.read_text())
+        human.update(authorizer='JT',relayIsAuthorization=False,sourceThreadId=d.MAIN_THREAD_ID,relayTargetThreadId=d.MAIN_THREAD_ID)
+        self.pin_human_for_source_test(human);self.valid()
+
+    def test_main_direct_rejects_explicit_authorizer_or_relay_contradictions(self):
+        human=json.loads(d.HUMAN_FILE.read_text())
+        for field,value in [('authorizer','BestJ'),('authorizer',None),('relayIsAuthorization',True),('relayIsAuthorization',0),('relayIsAuthorization','False'),('relayIsAuthorization',None),('relayThreadId',d.MAC_RELAY_THREAD_ID),('relayThreadId',d.MAIN_THREAD_ID),('relayThreadId',None),('officialRelayEvidence',[]),('officialRelayEvidence',None)]:
+            with self.subTest(field=field,value=value):
+                self.pin_human_for_source_test({**human,field:value})
+                with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT'):self.valid()
+
     def test_main_direct_source_metadata_cannot_claim_a_foreign_thread(self):
         original=json.loads(d.HUMAN_FILE.read_text())
         for field,value in [('sourceThreadId',d.MAC_RELAY_THREAD_ID),('sourceThreadId',d.BESTJ_THREAD_ID),('relayTargetThreadId',str(uuid.uuid4()))]:

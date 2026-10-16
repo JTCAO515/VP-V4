@@ -5,7 +5,7 @@
 ## 当前准备事实
 
 - 精确已合 QA：`4abeeb41e87f2ac36f0efdb9ba94780ce0049a13`。候选包含162份迁移，原捕获 baseline75，精确缺失87，targetOnly0。每份 Git blob/hash、顺序及事务边界已核对。
-- 候选 manifest SHA：`c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688`；当前未配置源码 code SHA：`b23f684021ff1c12ecd7898b60db08fa8c45f21eeefe278f14bf30cfadf4fd06`。新鲜官方 baseline/source 补件 SHA：`9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`。见[当前162候选证据](candidate162-delivery-20261016.json)。
+- 候选 manifest SHA：`c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688`；当前未配置源码 code SHA：`6a5b6341b6f5cfdbc83346887b6e00ce07b51d8d6e06f2e01cc0b871c4a1464e`。新鲜官方 baseline/source 补件 SHA：`9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`。见[当前162候选证据](candidate162-delivery-20261016.json)。
 - Main 已确认 FileVault ON、desktop-linux Docker29.8/API1.56 ready，缓存 PG17.6.1.155 linux/arm64 image ID 精确为 `sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b`。这是运行前置就绪，不是实际恢复或 managed-extension 验收。
 - Main 已只审原 metadata/receipt，核实7份旧证据私有0600、单hardlink及 claim/START/FAIL链；同一 identity 路径 SHA 为 `58aa1f73d84e1c265bf64beffe6718ebd1b981d22165ef133fbc1569816451d7`。未读取 identity 内容。新 human/identity/preserved 配置仍 None，未开新 window/slot/claim。
 
