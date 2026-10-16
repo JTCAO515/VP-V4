@@ -10,8 +10,8 @@ import type { QaCancellationReceipt } from "@/lib/qa-agent/cancellation-contract
 import styles from "./QaAgentWorkspace.module.css";
 
 const copy = {
-  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", reconciliation: "答复暂无法确认；为避免重复处理，这条问题不会自动重发。可稍后再次查看。", checkReply: "再次查看", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", readPaused: "自动读取已暂停，请点击“重新读取”检查原回复。", storageBlocked: "无法安全保存请求恢复标识，已暂停新发送。请重新读取。", restoredPending: "原请求尚未确认。仅保存了恢复标识，请继续检查原请求；不会发送替代请求。", refresh: "重新读取", stop: "停止这条问题", confirmStop: "确认停止", stopPrompt: "要停止这条问题吗？已保存的结果会保留。", back: "返回", stopped: "已停止。", stopEnded: "原问题已结束，已保存的结果会保留。", stopUnknown: "停止尚未确认，请查看原请求。", stopUnseen: "暂未查到停止结果，请继续查看原请求。", checkStop: "查看停止状态", readHistory: "查看原记录", stopReadOnly: "当前浏览器仅可查看原请求状态，暂不能安全提交停止。", stopStorage: "暂时无法保存停止请求的恢复标识，请先查看原请求。", signIn: "登录", limit: "本会话已达到上下文容量限制。请新建会话并缩短提问。", unsupportedPolicy: "当前会话尚未获得连续对话授权，暂时无法发送。", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
-  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", reconciliation: "The reply cannot be confirmed yet. To avoid duplicate processing, this question will not be resent automatically. You can check again later.", checkReply: "Check again", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", readPaused: "Automatic reading has paused. Click Reload to check the original reply.", storageBlocked: "Request recovery storage is unavailable. New sending is paused. Please click Reload.", restoredPending: "Original delivery is unconfirmed. Only its recovery ID was saved. Keep checking the original request; no replacement will be sent.", refresh: "Reload", stop: "Stop this question", confirmStop: "Confirm stop", stopPrompt: "Stop this question? Saved results will be kept.", back: "Back", stopped: "Stopped.", stopEnded: "The original question has ended. Saved results are kept.", stopUnknown: "Stopping is not confirmed. Check the original request.", stopUnseen: "No stop result was observed. Keep checking the original request.", checkStop: "Check stop status", readHistory: "Read original history", stopReadOnly: "This browser can only read the original request status. A stop cannot be submitted safely right now.", stopStorage: "Stop recovery storage is unavailable. Check the original request first.", signIn: "Sign in", limit: "This session has reached its context capacity limit. Please start a new session with a shorter question.", unsupportedPolicy: "This session is not yet authorized for ongoing conversation. Sending is unavailable.", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
+  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", serviceNotReady: "服务暂未就绪，本次仅检查服务，未发送新问题。请稍后重新读取。", serviceRecovery: "服务暂未就绪，暂时无法核对原请求。原恢复标识已保留；本次读取结果不表示原请求未提交。请稍后重新读取。", reconciliation: "答复暂无法确认；为避免重复处理，这条问题不会自动重发。可稍后再次查看。", checkReply: "再次查看", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", readPaused: "自动读取已暂停，请点击“重新读取”检查原回复。", storageBlocked: "无法安全保存请求恢复标识，已暂停新发送。请重新读取。", restoredPending: "原请求尚未确认。仅保存了恢复标识，请继续检查原请求；不会发送替代请求。", refresh: "重新读取", stop: "停止这条问题", confirmStop: "确认停止", stopPrompt: "要停止这条问题吗？已保存的结果会保留。", back: "返回", stopped: "已停止。", stopEnded: "原问题已结束，已保存的结果会保留。", stopUnknown: "停止尚未确认，请查看原请求。", stopUnseen: "暂未查到停止结果，请继续查看原请求。", checkStop: "查看停止状态", readHistory: "查看原记录", stopReadOnly: "当前浏览器仅可查看原请求状态，暂不能安全提交停止。", stopStorage: "暂时无法保存停止请求的恢复标识，请先查看原请求。", signIn: "登录", limit: "本会话已达到上下文容量限制。请新建会话并缩短提问。", unsupportedPolicy: "当前会话尚未获得连续对话授权，暂时无法发送。", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
+  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", serviceNotReady: "The service is not ready yet. This check did not send a new question. Please reload later.", serviceRecovery: "The service is not ready yet, so the original request cannot be checked. Its recovery ID is retained. This read does not establish whether the original request was submitted. Please reload later.", reconciliation: "The reply cannot be confirmed yet. To avoid duplicate processing, this question will not be resent automatically. You can check again later.", checkReply: "Check again", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", readPaused: "Automatic reading has paused. Click Reload to check the original reply.", storageBlocked: "Request recovery storage is unavailable. New sending is paused. Please click Reload.", restoredPending: "Original delivery is unconfirmed. Only its recovery ID was saved. Keep checking the original request; no replacement will be sent.", refresh: "Reload", stop: "Stop this question", confirmStop: "Confirm stop", stopPrompt: "Stop this question? Saved results will be kept.", back: "Back", stopped: "Stopped.", stopEnded: "The original question has ended. Saved results are kept.", stopUnknown: "Stopping is not confirmed. Check the original request.", stopUnseen: "No stop result was observed. Keep checking the original request.", checkStop: "Check stop status", readHistory: "Read original history", stopReadOnly: "This browser can only read the original request status. A stop cannot be submitted safely right now.", stopStorage: "Stop recovery storage is unavailable. Check the original request first.", signIn: "Sign in", limit: "This session has reached its context capacity limit. Please start a new session with a shorter question.", unsupportedPolicy: "This session is not yet authorized for ongoing conversation. Sending is unavailable.", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
 };
 type Pending = { requestId: string; text: string | null; retryAllowed: boolean };
 
@@ -57,6 +57,7 @@ function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "z
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [readinessError, setReadinessError] = useState<"fresh" | "recovery" | null>(null);
   const [pollPaused, setPollPaused] = useState(false);
   const [storageReady, setStorageReady] = useState(false);
   const [forbidden, setForbidden] = useState(false);
@@ -113,10 +114,10 @@ function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "z
   function scope() {
     current.current.controller.abort();
     current.current = { epoch: current.current.epoch + 1, controller: new AbortController(), busy: false };
-    setBusy(false); setPollPaused(false); setStopConfirmation(null); setStopViews({}); stopReads.current.clear();
+    setBusy(false); setPollPaused(false); setReadinessError(null); setStopConfirmation(null); setStopViews({}); stopReads.current.clear();
     return current.current;
   }
-  function fail(reason: unknown, token: typeof current.current) {
+  function fail(reason: unknown, token: typeof current.current, initialRead = false) {
     if (current.current !== token || token.controller.signal.aborted) return;
     if (reason instanceof ApiError && reason.status === 401) {
       // Revoke in-flight operations synchronously, before React paints sign-in.
@@ -128,6 +129,10 @@ function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "z
       stopIds.current.clear(); setStopTargets([]); setStopViews({}); setStopConfirmation(null);
       pendingBySession.current.clear(); limitedSessions.current.clear(); setLimitReached(false); setMessages([]); setSessions([]); setPolicy(null); setPending(null); setUnauthenticated(true);
     } else {
+      // Only bootstrap GET readiness failures get this copy. A GET ACK never
+      // establishes whether an earlier message POST was admitted.
+      setReadinessError(initialRead && reason instanceof ApiError && reason.status === 503 && reason.code === "PROVIDER_UNAVAILABLE"
+        ? pendingBySession.current.size || stopIds.current.size ? "recovery" : "fresh" : null);
       if (reason instanceof ApiError && (reason.status === 403 || reason.code === "DATA_POLICY_BLOCKED")) {
         // Protected history may require consent to the already-read notice.
         // Keep that notice/action available; denial never grants send readiness.
@@ -142,7 +147,7 @@ function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "z
     const token = scope(); hydratePending(); hydrateStops(null);
     void Promise.all([qaApi.sessions(token.controller.signal), qaApi.policy(token.controller.signal)])
       .then(([list, notice]) => { if (current.current === token && !token.controller.signal.aborted) { setSessions(list.sessions); setPolicy(notice); } })
-      .catch(reason => fail(reason, token)).finally(() => { if (!token.controller.signal.aborted) setLoading(false); });
+      .catch(reason => fail(reason, token, true)).finally(() => { if (!token.controller.signal.aborted) setLoading(false); });
     return () => { mounted.current = false; current.current.controller.abort(); };
   }, []);
   // A URL bookmark/back-forward change is a Session selection, not permission.
@@ -417,7 +422,7 @@ function Workspace({ locale, actorId, initialSession, signInHref }: { locale: "z
       <ul>{sessions.map(session => <li key={session.id}><button type="button" aria-current={selected === session.id ? "true" : undefined} onClick={() => void select(session.id)}>{(session.label && session.label !== "Session") ? session.label : `Session ${session.id}`}</button></li>)}</ul>
     </aside>
     <section className={styles.chat} aria-label="Agent QA">
-      {error || (!storageReady && !loading) ? <div role="alert"><p>{!storageReady ? c.storageBlocked : pollPaused ? c.readPaused : c.error}</p><button type="button" disabled={busy} onClick={() => { if (selected && policy) void select(selected); else window.location.reload(); }}>{c.refresh}</button></div> : null}
+      {error || (!storageReady && !loading) ? <div role="alert"><p>{!storageReady ? c.storageBlocked : pollPaused ? c.readPaused : readinessError === "fresh" ? c.serviceNotReady : readinessError === "recovery" ? c.serviceRecovery : c.error}</p><button type="button" disabled={busy} onClick={() => { if (selected && policy) void select(selected); else window.location.reload(); }}>{c.refresh}</button></div> : null}
       {loading ? <p role="status">{c.loading}</p> : null}
       <div className={styles.messages} role="log" aria-live="polite" aria-relevant="additions text">
         {!selected ? <p>{c.empty}</p> : null}

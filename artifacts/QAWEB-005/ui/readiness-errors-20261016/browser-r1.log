@@ -1,0 +1,53 @@
+(node:20402) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:20407) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:20419) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20419) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:20419) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px (467ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 390px (295ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:3429:1 › readiness503 fresh Chinese visit explains no new question was sent (131ms)
+  ✘  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:3456:1 › readiness503 after unknown POST preserves both original journals byte-for-byte and only checks original ID (473ms)
+(node:20432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20432) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:20432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:3560:1 › readiness copy does not overwrite a legacy Session history503 failure (304ms)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:3456:1 › readiness503 after unknown POST preserves both original journals byte-for-byte and only checks original ID
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      869 |  await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+      870 |  await page.getByLabel('Message',{exact:true}).fill('Original unknown input 原文');await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('button',{name:'Check original request',exact:true})).toBeVisible();
+    > 871 |  const before=await page.evaluate(keys=>keys.map(key=>sessionStorage.getItem(key)),[recoveryKey,cancellationKey]);expect(before.every(Boolean)).toBe(true);
+          |                                                                                                                                                 ^
+      872 |  unavailable=true;await page.reload();const alert=page.getByRole('main').getByRole('alert');await expect(alert).toContainText('Its recovery ID is retained. This read does not establish whether the original request was submitted.');
+      873 |  await expect(alert).not.toContainText('did not send a new question');await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+      874 |  await page.getByRole('button',{name:'Reload',exact:true}).click();await expect(alert).toContainText('Its recovery ID is retained.');
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:871:145
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-readiness503-aft-8b2d2-and-only-checks-original-ID/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-readiness503-aft-8b2d2-and-only-checks-original-ID/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-readiness503-aft-8b2d2-and-only-checks-original-ID/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:3456:1 › readiness503 after unknown POST preserves both original journals byte-for-byte and only checks original ID
+  4 passed (3.1s)
