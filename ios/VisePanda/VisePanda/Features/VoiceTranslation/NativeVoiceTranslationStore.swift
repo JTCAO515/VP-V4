@@ -18,12 +18,15 @@ final class NativeVoiceTranslationStore {
     private var resultPolicyID: String?
     private var resultNoticeHash: String?
 
-    var hasSubmission: Bool { turnID != nil }
+    private var hasUnresolvedSubmission: Bool {
+        translation.recoveryRecord != nil || (translation.scope == scope && translation.hasUnresolvedRecovery)
+    }
+    var hasSubmission: Bool { turnID != nil || hasUnresolvedSubmission }
     var canRecord: Bool { scope != nil && !translation.busy && !hasSubmission }
 
-    func bind(scope next: NativeDataScope?) {
-        guard scope != next else { return }
-        clear(); scope = next
+    func bind(scope next: NativeDataScope?, recovery: (any NativeTranslationRecoveryPersistence)? = nil) {
+        if scope != next { clear(); scope = next }
+        translation.configureRecovery(recovery)
     }
 
     func clear() {
@@ -53,32 +56,41 @@ final class NativeVoiceTranslationStore {
     func interruptCapture() { recordingID = nil }
 
     func resetDraft() {
-        guard !translation.busy, translation.pending == nil else { return }
+        guard !translation.busy, !hasUnresolvedSubmission else { return }
         generation = UUID(); recordingID = nil; finalTranscript = nil; measuredSeconds = nil; measuredASRCharacters = nil
         submittedText = nil; turnID = nil; result = nil; resultPolicyID = nil; resultNoticeHash = nil
     }
 
-    func refresh(request: NativeTranslationStore.Request) async {
+    func refresh(currentScope: NativeTranslationStore.CurrentScope? = nil, request: NativeTranslationStore.Request) async {
         guard let scope else { return }
         let own = generation
-        await translation.load(scope: scope, request: request)
+        result = nil
+        await translation.load(scope: scope, currentScope: { [self] in
+            generation == own && self.scope == scope && (currentScope == nil || currentScope?() == scope) ? scope : nil
+        }, request: request)
         guard own == generation else { return }
         synchronizeResult()
     }
 
-    func submitReviewed(text: String, sourceLocale: String, request: NativeTranslationStore.Request) async {
-        guard scope != nil, !translation.busy, translation.policy?.consentState == .accepted,
+    func submitReviewed(text: String, sourceLocale: String, currentScope: NativeTranslationStore.CurrentScope? = nil,
+                        request: NativeTranslationStore.Request) async {
+        guard let scope, !translation.busy, translation.policy?.consentState == .accepted,
               ["en", "zh"].contains(sourceLocale), text.utf16.count <= 600,
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let own = generation
-        // Unknown ACK resolves from the original server-read turn before any retry.
+        // Unknown ACK and recreated consumers only reconcile the retained original.
         if hasSubmission {
-            guard submittedText?.utf8.elementsEqual(text.utf8) == true, self.sourceLocale == sourceLocale else { return }
-            await refresh(request: request)
-            guard own == generation, result == nil, translation.pending != nil, translation.errorCode == nil else { return }
+            if let submittedText {
+                guard submittedText.utf8.elementsEqual(text.utf8), self.sourceLocale == sourceLocale else { return }
+            }
+            await refresh(currentScope: currentScope, request: request)
+            return
         }
-        await translation.submit(text: text, sourceLocale: sourceLocale) { [self] path, method, body in
-            guard generation == own, !Task.isCancelled else { throw CancellationError() }
+        await translation.submit(text: text, sourceLocale: sourceLocale, currentScope: { [self] in
+            generation == own && self.scope == scope && (currentScope == nil || currentScope?() == scope) ? scope : nil
+        }) { [self] path, method, body in
+            guard generation == own, self.scope == scope, !Task.isCancelled,
+                  currentScope == nil || currentScope?() == scope else { throw CancellationError() }
             if path == "api/translate", method == "POST", let body {
                 let fields = try JSONSerialization.jsonObject(with: body) as? [String: Any]
                 guard let id = fields?["turnId"] as? String, UUID(uuidString: id) != nil,
@@ -93,36 +105,53 @@ final class NativeVoiceTranslationStore {
         synchronizeResult()
     }
 
-    func consent(accept: Bool, request: NativeTranslationStore.Request) async {
+    func consent(accept: Bool, currentScope: NativeTranslationStore.CurrentScope? = nil, request: NativeTranslationStore.Request) async {
         if !accept {
             generation = UUID(); recordingID = nil; finalTranscript = nil
             measuredSeconds = nil; measuredASRCharacters = nil; submittedText = nil; turnID = nil; result = nil
             resultPolicyID = nil; resultNoticeHash = nil
         }
-        await translation.consent(accept: accept, request: request)
+        await translation.consent(accept: accept, currentScope: currentScope, request: request)
         synchronizeResult()
     }
 
-    func cancelTranslation(request: NativeTranslationStore.Request) async {
-        await translation.cancel(request: request)
+    func cancelTranslation(currentScope: NativeTranslationStore.CurrentScope? = nil, request: NativeTranslationStore.Request) async {
+        await translation.cancel(currentScope: currentScope, request: request)
         synchronizeResult()
     }
 
     func readableResult(scope current: NativeDataScope?) -> NativeTranslationPhrase? {
         guard current != nil, scope == current, translation.scope == current,
               translation.policy?.consentState == .accepted,
-              translation.policy?.id == resultPolicyID, translation.policy?.noticeHash == resultNoticeHash else { return nil }
+              translation.policy?.id == resultPolicyID, translation.policy?.noticeHash == resultNoticeHash,
+              !translation.busy, let result, translation.recoveredTurnID == result.id,
+              translation.phrases.contains(result) else { return nil }
         return result
     }
 
     private func synchronizeResult() {
         result = nil
-        guard let turnID, let submittedText, translation.scope == scope,
+        guard scope != nil, translation.scope == scope else { return }
+        // Metadata can lock/reset-fence a recreated consumer but can never supply a body.
+        if let original = translation.recoveryRecord {
+            guard turnID == nil || turnID == original.identity.turnId else { return }
+            turnID = original.identity.turnId; sourceLocale = original.identity.sourceLocale
+            resultPolicyID = original.identity.policyId; resultNoticeHash = original.identity.noticeHash
+        }
+        guard let recoveredID = translation.recoveredTurnID,
               translation.policy?.consentState == .accepted,
-              translation.policy?.id == resultPolicyID, translation.policy?.noticeHash == resultNoticeHash,
-              let phrase = translation.phrases.first(where: { $0.id == turnID }), phrase.valid,
-              phrase.original.utf8.elementsEqual(submittedText.utf8), phrase.sourceLocale == sourceLocale,
+              translation.policy?.valid == true,
+              let phrase = translation.phrases.first(where: { $0.id == recoveredID }), phrase.valid,
               phrase.state == "translated" else { return }
+        if let turnID {
+            guard turnID == phrase.id, translation.policy?.id == resultPolicyID,
+                  translation.policy?.noticeHash == resultNoticeHash else { return }
+        }
+        if let submittedText {
+            guard phrase.original.utf8.elementsEqual(submittedText.utf8), phrase.sourceLocale == sourceLocale else { return }
+        }
+        turnID = phrase.id; submittedText = phrase.original; sourceLocale = phrase.sourceLocale
+        resultPolicyID = translation.policy?.id; resultNoticeHash = translation.policy?.noticeHash
         result = phrase
     }
 }
