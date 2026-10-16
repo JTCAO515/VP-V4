@@ -1,84 +1,47 @@
-# 新诊断窗口候选：供 Main 审阅，当前未批准、不可执行
+# 新 A–D 诊断窗口审批包
 
-当前精确候选已更新为已合QA `4abeeb41e87f2ac36f0efdb9ba94780ce0049a13` 的162/75/87；下方161/86为保留的历史阶段。当前source/hash及验证见candidate162-delivery-20261016.json。
+**用途：复用已捕获副本，诊断并验证本地恢复保护；不是正式库升级或上线回滚批准。当前尚未批准、不可执行。** 实际 operator 仅 Main。原 Go2China `dzqdzetcctkhbrhlxxgn` 与 Production 同数据，普通业务读写继续。
 
-当前固定 Go2China `dzqdzetcctkhbrhlxxgn` 与 Production 同数据。旧 capture `f97d05db-c706-4ce9-82d8-579cbb0b9310` 的四 AGE 密文、manifest SHA `668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085`、同一 identity 及三份 consumed claims、两份 FAIL/cleanupPASS、原 START 原字节全部保留。旧 locale 失败与 post-data `RESTORE_PERMISSION_DENIED` 仍是历史实际失败；后者不是已确定的 PG 协议错误事实，具体 ACL/command 原因仍 UNKNOWN。未完成实际 owner/ACL/count 验证，不称恢复成功，不闭 #230/#683。
+## 当前准备事实
 
-## 拟向 JT 一次集中说明的动作（本文件不申请、不授权）
+- 精确已合 QA：`4abeeb41e87f2ac36f0efdb9ba94780ce0049a13`。候选包含162份迁移，原捕获 baseline75，精确缺失87，targetOnly0。每份 Git blob/hash、顺序及事务边界已核对。
+- 候选 manifest SHA：`c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688`；当前未配置源码 code SHA：`f1bcf8c94c3a265b61c703c7cba99d8e50d054d3c0cca4d6f9deb3d864ad94e4`。新鲜官方 baseline/source 补件 SHA：`9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`。见[当前162候选证据](candidate162-delivery-20261016.json)。
+- Main 已确认 FileVault ON、desktop-linux Docker29.8/API1.56 ready，缓存 PG17.6.1.155 linux/arm64 image ID 精确为 `sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b`。这是运行前置就绪，不是实际恢复或 managed-extension 验收。
+- Main 已只审原 metadata/receipt，核实7份旧证据私有0600、单hardlink及 claim/START/FAIL链；同一 identity 路径 SHA 为 `58aa1f73d84e1c265bf64beffe6718ebd1b981d22165ef133fbc1569816451d7`。未读取 identity 内容。新 human/identity/preserved 配置仍 None，未开新 window/slot/claim。
 
-- A：复用同一四密文、原 manifest 与 identity；验证完整性，仅在本机私有 FileVault 中读取、解密。包括原14 schema的真实用户数据，不是QA样例；不新capture/key，不把数据送模型或外部服务。
-- B：新的准备完成后60min维护窗口，普通DML继续；请真实确认该窗口无其他 planned DDL/role/ACL/Realtime/extension变更安排，由Main协调。不是全DML冻结或未来vendor保证；source仍只读，无新live GRANT。
-- C：最多两次独立消费slot、自有无网/无端口/无mount PG17.6.155恢复副本。先恢复及全部schema/ownerACL/roles/count/ledger/sequence验证，采集安全枚举诊断和独立连接caller布尔；仅全部PASS后，才在同一副本作固定候选75→161/86本地演练。结束销毁副本；失败也消费slot并保结果。第二次必须前次真正FAIL+cleanupPASS、无inflight、用新证据确认原因、修复的新code/source经Main固定review及必要tests通过。不能同源同错误重跑。
-- D：密文及identity沿原私有目录/0600/0700/FileVault，保留至2026-10-20 23:59:59+08。中断/未知cleanup/写claim或fsync失败保消费状态与active围栏；不自动回收旧marker/锁，不自动创建第三次、延时或新UUID。
+## 请求集中批准的 A–D 范围
 
-本新scope不含E/target升级、live restore/覆盖later writes、provider/模型/费用、部署、生产/TF、别的数据库或新权限。捕获点中的旧同意/角色不构成当前dispatch资格。当前C/E、实际cipher/identity/clone I/O继续STOP；实际operator仍只有Main。
+| 组 | 具体动作及影响 | 限界 |
+| --- | --- | --- |
+| **A：复用原保全材料** | 只复用 capture `f97d05db-c706-4ce9-82d8-579cbb0b9310` 的原四份 AGE 密文、原 manifest 和同一 identity。原 manifest SHA 为 `668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085`。验证完整性后在本机私有 FileVault 范围解密。材料包含原14 data schemas 的真实身份/会话/Trips/同意等数据，另有完整 schema/owner/ACL、无密码 globals，以及原 Realtime89账本补充。 | 不新 capture、不新 key、不扩大平台数据范围，不读取 vault secret；不向模型、外部服务或公共日志发送数据。这是旧捕获点，不作为今天上线或正式升级的回滚备份。 |
+| **B：一个新的60分钟窗口** | 准备和 Main 固定审阅完成后，由 Main 协调开始一个新窗口；需直接确认该窗口无其他 planned schema/migration、role/member、ACL/policy、Realtime/extension 变更安排。普通 DML 照常。 | 不是全DML冻结或对 vendor 非计划变化的保证；不新增 live GRANT。所有尝试共用同一个绝对结束时刻，不复活旧过期窗口、不延长、不另开60分钟。 |
+| **C：最多两个本地诊断副本** | 每次只建立一个自有 PG17.6.1.155 副本，无网络、端口或 mount。完成 schema/ownerACL/roles/count/ledger/sequence 恢复核验，采集安全诊断提示及独立连接 caller 布尔。只有 full restore PASS，才在同一副本完成固定87条本地演练和原全部 gates，再查询新 v3 readiness/v2 dispatch 的 catalog/ACL。结束销毁副本。 | 最多2次独立消费 slot，失败或取消也消费。每次启动至少剩30分钟，第二次仍须使用第一次相同结束时刻。第二次仅在第一次真实 FAIL、cleanupPASS、无 inflight、原因已由新证据确认、不同修复 code/source 经 Main 固定 review 和必要 tests 通过后可开始；不机械重跑。 |
+| **D：保密、保留与失败围栏** | 原密文和 identity 沿原私有目录0700/文件0600保留至 **2026-10-20 23:59:59+08**。保留旧三份 consumed claims、两份 FAIL、原 START 原字节及每次新结果。 | 不清旧 marker，不伪未使用；无第三次、自动换 UUID、自动解锁或自动 retry。UNKNOWN 必须保留消费状态、active围栏和证据，待 Main 处理。 |
 
-## 当前来源与兼容边界
+## 窗口、取消与 UNKNOWN 处置
 
-新文件 `candidate-replay-manifest-20261016.json` 固定QA `3d99a8af1805d714b71dce959b0811da468c24ea`，161源/75原版本/精确86差集/targetOnly0；与Main只读差集文件（sourceHead5e96）的161 migration hashes相同，非迁移源码变化不被混为SQL变化。每个Git blob/hash/顺序/原事务边界已离线核对。旧155/80 manifest原字节不变，旧CLI不能借旧授权送入新候选。
+同一 UTC windowEnd 与一次 monotonic 上界共同限时，取两者剩余预算的较小值；校验耗时不延长窗口，UTC 后跳也不增加运行时间。数据处理预留 **120秒清理预算**；子进程/SQL/replay 受原上限与共享剩余预算双重限制。在途等待每≤0.25秒复查，不重发命令、SQL 或 input。
 
-当前Docker只读检查没有server。新86与managed Auth/Storage/Realtime/vault权限兼容的物理恢复/重放未验；不启动daemon、不借别人的container/旧nonce/PG16、不加no-owner/no-acl或权限宽放。仅复用既有完整假数据成功证明的原scope；它不证明本轮161、真实角色或实际恢复PASS。实际post-data失败未独立复现为具体原因，本轮没有臆造ACL修复或supabase_vault兼容。
+取消不能只杀 Docker exec 客户端。只对本调用的 host children 和已核 nonce/owned-label 的容器处理，按观察到的不可变 container ID 停止、删除并确认消失；不借用或清理 existing stack、f4、Stage、系统 PG 或其他 owner 资源。必要自有 cleanup 可在窗口到期后继续，独立总预算60秒，不能重开数据预算。
 
-## 未配置门禁与 Main 真正缺项
+启动请求已提交但完成未知时，暂时 absent 不能证明没有副本；即使观察并删除了同 nonce ID，未确认 launch 仍保持 UNKNOWN。foreign-label/ID冲突、daemon错误、无法确认清理均不得释放 active或开始第二次。中断保留已完成恢复/验证、sourceGuardDiagnostics、已确认 migration 前缀；在途项标 UNKNOWN，不推断 rollback 或自动 retry。
 
-入口：`controlled-snapshot-restore.py --restore-diagnostic-window-from-direct-record <new-packet> <original-manifest> <same-identity> <candidate-plan>`。
+## 诊断与数据边界
 
-独立 `reviewed-diagnostic-window.py` 的 HUMAN_SHA256、QUESTION_ITEM_ID、IDENTITY_PATH_SHA256、PRESERVED_PINS 均故意None。真实新JT回复和Main pin/source review之前，在packet/manifest/identity/clone I/O之前拒绝；旧5637、旧维护回复、proposal或owner自写JSON不能开启。Main将新直接回复保存至自身私有 `diagnostic-window-human-authorization-20261016.json`；actual question item和原字节SHA只能事后真实绑定，不预填假答案。启用pin导致source/code hash变化，必须重新固定review，不能仅填JSON绕过。
+post-data 前仅采集独立 metadata 连接的公开角色类别 bootstrap/postgres/unknown、superuser/session匹配布尔；不读取配置值、对象名或用户行，且不冒称等于 pg_restore 中途或 SECURITY DEFINER caller。stderr-only SQLSTATE 始终 null，类别等仅为明确标注的非 PG 错误事实提示。
 
-Main需提供/保全以下具体字段与证据：
+新 port 只读 pg_catalog，确认存在、owner postgres、definer、empty search path、service EXECUTE，以及 anon/authenticated/public 无 EXECUTE。未查询不报告 PASS；不调用业务 port，不发 userwork/claim/provider，不新增 fixture 用户或预算。候选源码/单时点 catalog/合成门禁 PASS 均不能代替真实恢复、ownerACL 或服务链验收。
 
-1. 新直接human记录：source为当前Main async直接回复、完整问题和原回答、questionItemId、固定target/原capture/manifest/同identity路径SHA、独立新windowId、60min/最多2copies/普通DML继续/无其它planned DDL/复用原数据/无新capture-key-liveGrant-provider-E，含“只有full restore PASS才本地候选演练”的明确范围。
-2. 原7份证据路径+原字节SHA：capture claim、restore claim、retry1 claim、两个真实FAIL/cleanupPASS、两个原START。SOURCE pin后逐次检查，原failure.oneTimeRestoreClaim和START hash/old code/同UUID/window链必须一致。未知链拒绝，不改旧文件。
-3. 新私有START `diagnostic-window-main-start-20261016.json`：Main固定source commit、current code SHA、newHuman SHA、windowId/attempt、原bundle/identitySHA、同60min起止/maximumCopies2、固定actions、无其它actual attempt、原7证据digest及fresh locale SHA。每次启动须仍至少余30min；第二次起止必须等于第一次，不新开60min。
-4. 新packet：同START及原bundle/resolve identity路径，original manifest SHA、retention、candidateMode/hash、固定actions、parentFailure SHA、START真实SHA。attempt1 parent为原retry1 FAIL；attempt2 parent只能为此window slot1的不可覆写结果及matching used claim。
-5. 当前只读locale补件<=5min、原capture关联及基础facts一致；仅已验证en-US/ICU153.121/null rules，不猜版本。原FileVault/原restore完整性、sequence等门禁保留。
-6. slot2附Main diagnosis/test证据及hash：前次FAIL fingerprint、新因果证据、causeIdentified、独立review、修复commit/不同code SHA、必要tests精确匹配该修复。仅改doc/hash或重发相同code/source不行；前次PASS/cleanup非PASS/无结果/active均不行。
+## 明确不在本批准中
 
-每次在archive读取前O_EXCL创建独立window/attempt used；原capture全局active锁挡并发。result只写一次；只有记录完成且cleanupPASS才释放当前active锁，消费标记始终保留。无过期锁自动清理、无重试循环。
+**不包含 E、正式库或共享 target 升级、live restore/覆盖 later writes、新 capture/key、provider/模型调用或新增费用、部署/生产/TF、新数据库、权限宽放。** 捕获点中的旧同意/角色不赋予当前 dispatch 资格。后续 shared 升级如有需要，由 Main 对 fresh保全和最小必要源集另审，本包不自动申请或启用。
 
-post-data前caller仅新路径采集独立metadata连接的 roleClass=bootstrap/postgres/unknown、effectiveSuperuser/sessionUserIsBootstrap布尔。明确 `SEPARATE_PRE_POSTDATA_CONNECTION_NOT_PG_RESTORE_RUNTIME_CALLER`，不读配置值、对象名、用户行，不冒称观测pg_restore中途/SECURITY DEFINER caller。stderr诊断沿已交f31：SQLSTATE总是null，其它只是非PG事实的提示。
+## 执行前仍缺的真实条件
 
-## 当前可交付与未运行
+Main 集中取得本 A–D 的新直接 JT 回复及窗口无其他 planned DDL 的事实；保存完整问题、原回答、question ID与真实文件 SHA。然后绑定同一新 windowId、7份原证据和同 identity pins、精确 code/source/candidate hash、新 Main START、当前 slot/parent-failure 链及≤5分钟 locale补件。启用 source pins 后须重新固定 review/hash；proposal、旧5637授权或 owner 自写 JSON 不能开启执行。全部条件就绪前，实际 cipher/identity/clone I/O 和 C/E 继续 STOP。
 
-代码门禁/原子claim/负例与精确candidate source绑定可以审阅；真实新授权、真实窗口、slot/identity pins、fresh运行字段尚缺。新窗口/实际恢复/完整ownerACL/managed-extension新86重放均UNRUN，历史失败保留。Main完成review后统一向JT申请上述具体新动作；本owner不自行请求或执行。
+## 历史证据与当前未验
 
+原 locale FAIL、post-data `RESTORE_PERMISSION_DENIED` 历史失败及 cleanupPASS 不删除；具体失败命令/PG原因仍 UNKNOWN。参见[历史诊断及证据缺口](postdata-diagnosis.md)、[启动/中断围栏证据](window-launch-interrupt-delivery-20261016.json)、[journal已完成事实证据](replay-journal-delivery-20261016.json)、[catalog覆盖准备](new-window-catalog-coverage-20261016.json)。历史测试及初始 source pins 在[阶段化交付记录](future-diagnostic-window-delivery-20261016.json)中分列，不冒称当前162全矩阵重跑。
 
-## 新鲜catalog预填补件（只读，不是备份或稳定窗口）
-
-Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_user=postgres/read_only=on。只读文件SHA `a5e5efdb3d897357470628d913952edd71af9edcb3286f2370f394c0a7d31a49`，93650 bytes。20非系统schema、31roles、25memberships、119业务relation元数据、243function ACL、4platformrelation元数据、7event triggers、25default ACL，五extension版本/owner被现有supabase-17.6.1.155-five-extensions/1 classifier识别；14个原数据schema都存在。数据范围/原schema名及计数参见new-window-catalog-coverage-20261016.json。
-
-这些数字是catalog覆盖，不是119张表恢复/ACL正确、数据行计数、managed服务验收或整个60min无DDL的证明；没有vaultsecret/平台表行读取，没有新dump/密文/identity访问。未来依然full schema/ownerACL+无密码globals、14 data schemas+原已批准Realtime89账本；其余platformdata不自动扩展。实际前置还需Docker server可用且固定image/依赖真实验证、新直接JT新窗口范围及无其它planned DDL事实、新Main START/原证据及同identity pins、slot/fresh locale；当前全未因此转为可执行。
-
-维护独占仅由Main协调本已接受范围，普通DML照常；单时点健康/catalog不替代稳定窗口，也不宣称控制所有vendor非计划变化。本补件没有引入代码缺口，复用已交候选与47项focused证据，不增加wrapper、不重跑矩阵。新scope仍仅诊断恢复和获准的同copy本地候选验证，绝无E/target升级授权。
-
-
-## 新路径绝对deadline返修
-
-新诊断入口在首次授权校验后只创建一次monotonic窗口终点，不随阶段/命令/重试重置。数据处理截止预留120秒cleanup；secret/archive/hash/SQL/restore/replay子进程timeout取原上限与同一剩余预算的min，过期不发下一命令。在途子进程由timeout中断，取消/回收本调用创建的host children；不能把docker exec客户端被kill当容器已停，须验证本nonce/ownedlabel、按不可变containerID删除并确认消失。容器启动请求已发但created旗标未置真时也执行该fence。
-
-必要cleanup允许到期后继续、独立总预算60s，仅inspect/remove/reap自有对象，不恢复data预算。foreignlabel/daemon未知/无法确认清理则cleanupFAIL/UNKNOWN、消费和active围栏保留，不授权下一attempt。原严格base字节、旧路径默认行为、47项既有证据与parser不动；新的合成时钟RED/GREEN及10项focused负例见window-deadline-delivery-20261016.json，无真实copy或新窗口。新runtime-binding迁移仍未合QA，不假造hash；当前候选仍161/86，待Main给稳定source再由本manifest owner独立更新。
-
-
-### UTC/monotonic双上界闭合
-批准边界是原绝对UTC windowEnd，同时以一次monotonic end限制最长运行；check/timeout始终取两者剩余预算min（同预留120s）。monotonic anchor在wall取样/授权校验前捕获，校验延迟不增加时间。UTC前跳可使数据立即过期，后跳不能延长monotonic；过期后不重新开放。
-在途等待按<=0.25s切片复查两钟，只继续等待同一进程、不新spawn/重送SQL/input，原命令timeout总上限不重置。发现过期后中断tracked进程并沿原nonce/immutable-ID fence清理，unknown仍保active/consumed结果。新18项focused含旧742UTC-forward RED；未执行真实数据/新窗口/clone。
-
-
-### 启动未知与中断证据围栏
-run-issued与daemon完成返回immutableID分开记录。启动unknown时一次或多次absent都不能推无副本；即使观察到同nonce ID并停止删除、确认消失，未确认的launch仍UNKNOWN，保active/consumed/result，不自动slot2。confirmed launch的按name缺失还需记录ID的缺失确认；foreignlabel/ID冲突不删。结果保name/nonce/ID/launch确认/移除确认等自有资源链，无用户数据。
-
-KeyboardInterrupt/取消不丢已完成阶段。保completedRestoreResult、后续已过验证、诊断、completedIO列表和已ack的migration前缀；第N步在途结果UNKNOWN，不推rollback或自动retry。cleanupFAIL也持久化这些证据并保active。原23focused（含旧18）RED/GREEN见window-launch-interrupt-delivery-20261016.json。真实数据I/O仍STOP，新窗口未批准，无新capture/key/provider/E。
-
-
-### CLI协议及环境事实更新
-Main用独立无数据空sleep fixture证实Docker29.8的not-found可为小写 `error: no such object: <exactid>`。新识别只扩有限前缀，仍要求exit1、stdout空/[]、exact identifier，不能把daemon错误/别的id/其他exitcode当不存在。unknown launch仍UNKNOWN，绝不absent转PASS。25项focused含旧59小写协议RED。
-Main另只读确认desktop-linux daemon29.8/API1.56及原缓存strict镜像3866/linuxarm64可用（替代前述server不可用的单时点事实）；没有pull/tag改动/PG副本/真实数据操作。它不构成managed-ownerACL实际恢复证明或新增窗口授权。当前仍C/E STOP；新runtime-binding追加迁移未合QA，候选暂161/86，不虚填162/87的来源相等布尔。
-
-
-## PR731正式合QA后的162/87候选
-
-实际QA4abe Git对象新增且仅新增 `20261016040522_qa_runtime_binding.sql`，SHA `a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c`，原161全部hash不变。原155/80 manifest不动；新candidate mode明确75-to162。Main新鲜官方75 baseline逐项等于原capture75，全162 source map/87missing/targetOnly0补件实算SHA `9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`，sourceMetadataHead现在4abe；旧5e的161覆盖另保历史，不以它的“全相同”冒162证明。
-
-只有fullrestore PASS、同copy exact87完成且原v2/生命周期/开关全部门禁已过，candidate分支才查询两个新port的pg_catalog：qa_ready_groups_v3(integer,text,text,text,uuid,uuid,uuid,text)、qa_authorize_dispatch_v2(uuid,uuid,uuid,uuid,text,text,uuid,text)。返回/可选journal仅保观察到的布尔事实：exists/ownerIsPostgres/securityDefiner/emptySearchPath/serviceExecute true，anon/authenticated/publicExecute false。实际SQL不调用port、不发claim/userwork/provider、不创建fixture用户或预算，不吐角色名/配置值。缺失/ACL漂移/错误shape均FAIL；未查询不报告PASS。
-
-本轮4项manifest与5项port focusedcases（含多ACL负例）、旧89→新legacy返回/SQL序列golden PASS；原25+5证据复用，不重矩阵。真实保护副本、87重放与新port物理metadata查询仍UNRUN；全部新授权pins仍None，无新window/slot/claim/identity/AGE/host动作。Main仍soleactualoperator；实际C/E继续STOP，待集中具体新批准。
+当前新窗口未批准、未启动；真实保护副本、完整 ownerACL、87重放及新 port 物理查询均 **UNRUN**。旧真实恢复仍 **FAIL**，不称已恢复，不闭 #230/#683。
