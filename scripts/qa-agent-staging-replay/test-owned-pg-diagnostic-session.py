@@ -105,5 +105,83 @@ class OwnedSession(unittest.TestCase):
         finally:owner.identity=identity
         self.assertIs(owner.fence(binding)['backendStopped'],True)
 
+    def test_replaced_process_and_identity_reject_every_signal_entry(self):
+        owner=self.server()
+        class FakeProcess:
+            def __init__(self):self.signals=[]
+            def poll(self):return None
+            def send_signal(self,value):self.signals.append(value)
+            def wait(self,timeout):return 0
+        fake=FakeProcess();original=owner._process;identity=owner.identity
+        for change in ('process','identity','method'):
+            with self.subTest(change=change):
+                if change=='process':owner._process=fake
+                elif change=='identity':owner.identity={**identity,'systemId':'foreign'}
+                else:owner.verify=lambda *args:None
+                try:
+                    self.assertEqual(owner.fence(None)['backendStopped'],'UNKNOWN')
+                    for operation in (lambda:owner.close(),lambda:owner._construction_cleanup(),lambda:m.DiagnosticSession(owner),lambda:m.BoundProxy(owner,None,None)):
+                        with self.assertRaises(ValueError):operation()
+                    self.assertEqual(fake.signals,[])
+                    self.assertIsNone(original.poll())
+                finally:
+                    owner._process=original;owner.identity=identity
+                    owner.__dict__.pop('verify',None)
+
+    def test_registered_startup_failure_reclaims_original_child(self):
+        children=[];popen=m.subprocess.Popen
+        def track(*args,**kwargs):
+            child=popen(*args,**kwargs)
+            if str(m.PG/'postgres')==args[0][0] and args[0][1]=='-D':children.append((child,Path(args[0][2]).parent))
+            return child
+        with patch.object(m.subprocess,'Popen',side_effect=track),patch.object(m.OwnedSyntheticServer,'_read_identity',side_effect=ValueError('SYNTHETIC_STARTUP_FAILURE')):
+            with self.assertRaisesRegex(ValueError,'SYNTHETIC_STARTUP_FAILURE'):m.OwnedSyntheticServer()
+        self.assertEqual(len(children),1)
+        self.assertIsNotNone(children[0][0].poll());self.assertFalse(children[0][1].exists())
+
+
+class FactoryProvenance(unittest.TestCase):
+    def test_unregistered_subclass_never_signals_during_construction_cleanup(self):
+        class FakeProcess:
+            def __init__(self):self.signals=[]
+            def poll(self):return None
+            def send_signal(self,value):self.signals.append(value)
+            def wait(self,timeout):return 0
+        class Forged(m.OwnedSyntheticServer):
+            def __init__(self):pass
+            def verify(self,*args):pass
+        owner=Forged();fake=FakeProcess();owner._process=fake
+        with tempfile.TemporaryDirectory() as directory:
+            owner.tmp=tempfile.TemporaryDirectory(dir=directory)
+            try:m.OwnedSyntheticServer._construction_cleanup(owner)
+            except ValueError:pass
+        self.assertEqual(fake.signals,[])
+
+    def test_forged_exact_type_and_subclass_refuse_all_public_entries(self):
+        class Forged(m.OwnedSyntheticServer):
+            def __init__(self):pass
+            def verify(self,*args):pass
+            def matching_backend(self,*args):return {'state':'active'}
+        class FakeProcess:
+            def __init__(self):self.signals=[]
+            def poll(self):return None
+            def send_signal(self,value):self.signals.append(value)
+            def wait(self,timeout):return 0
+        for owner in (Forged(),object.__new__(m.OwnedSyntheticServer)):
+            owner.lifecycle_lock=threading.RLock();fake=FakeProcess();owner._process=fake
+            owner.tmp=tempfile.TemporaryDirectory();owner.closed=False
+            try:
+                self.assertEqual(m.OwnedSyntheticServer.fence(owner,None)['backendStopped'],'UNKNOWN')
+                for operation in (lambda:m.OwnedSyntheticServer.close(owner),lambda:m.OwnedSyntheticServer._construction_cleanup(owner),lambda:m.DiagnosticSession(owner),lambda:m.BoundProxy(owner,None,None)):
+                    with self.assertRaises(ValueError):operation()
+                self.assertEqual(fake.signals,[])
+            finally:owner.tmp.cleanup()
+
+    def test_subclass_cannot_acquire_receipt_by_calling_factory_initializer(self):
+        class Subclass(m.OwnedSyntheticServer):pass
+        with patch.object(m.subprocess,'Popen') as popen:
+            with self.assertRaisesRegex(ValueError,'OWN_FACTORY_EXACT_TYPE_REQUIRED'):Subclass()
+            popen.assert_not_called()
+
 
 if __name__=='__main__':unittest.main(verbosity=2)
