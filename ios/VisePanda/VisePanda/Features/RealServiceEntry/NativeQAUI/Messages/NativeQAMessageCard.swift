@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Main supplies a live gate that includes scope, selected session, consent and visibility.
-/// The timeline rechecks it on each content update. Keep the parent's observable
-/// scope/visibility guard: the system can reduce timeline cadence.
-/// No private payload is stored in view state.
+/// Main supplies a live gate that reads observable scope, selected session,
+/// consent and visibility in this body. Opaque non-observable authority changes
+/// must trigger a parent update; a closure alone cannot notify SwiftUI.
+/// No private payload is stored in view state, and no polling is scheduled.
 @MainActor
 struct NativeQAMessageCard: View {
     let message: NativeQAMessage
@@ -12,13 +12,11 @@ struct NativeQAMessageCard: View {
     let chinese: Bool
 
     var body: some View {
-        TimelineView(.animation) { _ in
-            if let presentation = NativeQAMessagePresentation.resolve(
-                message: message, expectedSessionID: expectedSessionID,
-                isCurrent: isCurrent, chinese: chinese
-            ) {
-                content(presentation)
-            }
+        if let presentation = NativeQAMessagePresentation.resolve(
+            message: message, expectedSessionID: expectedSessionID,
+            isCurrent: isCurrent, chinese: chinese
+        ) {
+            content(presentation)
         }
     }
 
