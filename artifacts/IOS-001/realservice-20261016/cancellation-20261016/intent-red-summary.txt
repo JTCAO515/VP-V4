@@ -1,0 +1,8 @@
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/nativeqa-cancellation-tests-figajj_t/Tests/CancellationTests/NativeQACancellationConsumerTests.swift:142: error: -[CancellationTests.NativeQACancellationConsumerTests testDisplayedCheckIntentQueuedBeforeRebindCannotReadSuccessor] : XCTAssertEqual failed: ("1") is not equal to ("0")
+Test Case '-[CancellationTests.NativeQACancellationConsumerTests testDisplayedCheckIntentQueuedBeforeRebindCannotReadSuccessor]' failed (0.064 seconds).
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/nativeqa-cancellation-tests-figajj_t/Tests/CancellationTests/NativeQACancellationConsumerTests.swift:131: error: -[CancellationTests.NativeQACancellationConsumerTests testDisplayedStopIntentQueuedBeforeRebindCannotCancelSuccessor] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/nativeqa-cancellation-tests-figajj_t/Tests/CancellationTests/NativeQACancellationConsumerTests.swift:133: error: -[CancellationTests.NativeQACancellationConsumerTests testDisplayedStopIntentQueuedBeforeRebindCannotCancelSuccessor] : XCTAssertTrue failed
+Test Case '-[CancellationTests.NativeQACancellationConsumerTests testDisplayedStopIntentQueuedBeforeRebindCannotCancelSuccessor]' failed (0.001 seconds).
+	 Executed 16 tests, with 3 failures (0 unexpected) in 0.072 (0.073) seconds
+	 Executed 16 tests, with 3 failures (0 unexpected) in 0.072 (0.073) seconds
+	 Executed 16 tests, with 3 failures (0 unexpected) in 0.072 (0.074) seconds
