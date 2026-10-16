@@ -11,86 +11,7 @@
     "targetOnly": 0
   },
   "legacyManifestUnchanged": "230500975ecbd08df8eb1663b073ae96a11c79f3f2806d611fc5ce2d0a2e2a2f",
-  "focusedTests": {
-    "future-diagnostic-window-contract-tests.log": 13,
-    "future-candidate-manifest-tests.log": 3,
-    "future-candidate-hook-tests.log": 6,
-    "future-legacy-authority-tests.log": 11,
-    "future-original-retry-contract-tests.log": 4,
-    "future-diagnostic-snapshot-gates.log": 10
-  },
-  "focusedTestsTotal": 47,
-  "syntax": "PASS",
-  "diffWhitespace": "PASS",
-  "sourceBeforeAfter": [
-    {
-      "path": "scripts/qa-agent-staging-replay/controlled-snapshot-restore.py",
-      "beforeSha256": "d23093136ec1da654a3846ba0549867e277b12d35ee3b01cab353ceda85b9043",
-      "afterSha256": "3cc50dd9ab6cd976da25deb028e15c136d343c127632d305fbc51aaf39854b53"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/owned-replay-hook.py",
-      "beforeSha256": "682357881e074e7ffc6ecf67dcb6aa36646cb449f34072d1b9705b4394ef23bd",
-      "afterSha256": "e55184dc887637f52bda2e759b7944a7c813d227a09bed7aeb4c47dd9a4e882f"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py",
-      "beforeSha256": null,
-      "afterSha256": "ed176cfc48df04c57b281af8a09606eeaaccbdb884994c9c6ed526a3bca5195d"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py",
-      "beforeSha256": null,
-      "afterSha256": "3c8dd7889b3e43d3f0044df0e77a7304ecead3f1f6c07356c383ac479880d990"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/test-candidate-migration-manifest.py",
-      "beforeSha256": null,
-      "afterSha256": "05438a1e0fe2bce08aa9f37fce4353db67a85b6e8ac2167b5e8a4df957dca98e"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/test-owned-replay-hook.py",
-      "beforeSha256": "796f8ab5de152d2a5e5d3efd5c120c51fce990ba69f609a3178bba665eb5a8ef",
-      "afterSha256": "6bfc52909bb5e5524432330afd1727ea587c86d1cc269557c0eae6b6cf13cca3"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/test-direct-human-authority.py",
-      "beforeSha256": "9bfd2fe05b0123baeb7da6d9c3b48576e48f0043452cb905ab2098a2f43f67d4",
-      "afterSha256": "e086480562ab9fb17d6ebaa82e5b363d41f2d8cc375cb136a9918038c7de0c64"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/controlled-backup.py",
-      "beforeSha256": "599c532dbf1c9043b4ae82da7a1975e59d97fb91ba2bc5df4c2c5d1c04ecaf7f",
-      "afterSha256": "599c532dbf1c9043b4ae82da7a1975e59d97fb91ba2bc5df4c2c5d1c04ecaf7f"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/controlled-restore.py",
-      "beforeSha256": "fccdfc77f7fdb05ee75e2623b452a016f23008f6e16a7dade3ef62216cb5e665",
-      "afterSha256": "fccdfc77f7fdb05ee75e2623b452a016f23008f6e16a7dade3ef62216cb5e665"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/direct-human-authority.py",
-      "beforeSha256": "a55923da42d7e691f2d9feed5089b4133d0edc8768fbdb267fa314cd68551861",
-      "afterSha256": "a55923da42d7e691f2d9feed5089b4133d0edc8768fbdb267fa314cd68551861"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/reviewed-restore-retry.py",
-      "beforeSha256": "80c7e524584918c9d4e65690cfbdcab1d8408a295af557369c6449b27d1777c0",
-      "afterSha256": "80c7e524584918c9d4e65690cfbdcab1d8408a295af557369c6449b27d1777c0"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/safe-restore-diagnostics.py",
-      "beforeSha256": "26cd12a568c03d738def451d1e5dbd8d326f65ec9d0a7b25b7ed10092b106b3c",
-      "afterSha256": "26cd12a568c03d738def451d1e5dbd8d326f65ec9d0a7b25b7ed10092b106b3c"
-    },
-    {
-      "path": "scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py",
-      "beforeSha256": "ee8560e9c61bde7341c29cca23c3cca1ff5c3a3ffda1842806a6bb84b0d020d6",
-      "afterSha256": "ee8560e9c61bde7341c29cca23c3cca1ff5c3a3ffda1842806a6bb84b0d020d6"
-    }
-  ],
   "newAuthorizationPins": "ALL_UNSET; early no packet/cipher/identity/clone IO",
-  "DockerManagedExtensionNew86Proof": "UNRUN server unavailable; daemon not started, no borrowed resources",
   "actualSharedRestore": "historical FAIL_LOCAL_RESTORE/schema post-data/RESTORE_PERMISSION_DENIED as unstructured historical category; specific cause UNKNOWN; cleanupPASS",
   "actualNewWindow": "UNAPPROVED/NOT_STARTED",
   "actualNewCaptureDecryptIdentityOrCloneIo": false,
@@ -135,5 +56,118 @@
     "delivery": "candidate162-delivery-20261016.json",
     "tests": 9,
     "actualRuntime": "UNRUN/STOP"
-  }
+  },
+  "historicalInitial47": {
+    "evidenceAsOfCommit": "3923a0b6c02a972f8cea59dbb43441d8c6c67bb6",
+    "focusedTests": {
+      "future-diagnostic-window-contract-tests.log": 13,
+      "future-candidate-manifest-tests.log": 3,
+      "future-candidate-hook-tests.log": 6,
+      "future-legacy-authority-tests.log": 11,
+      "future-original-retry-contract-tests.log": 4,
+      "future-diagnostic-snapshot-gates.log": 10
+    },
+    "focusedTestsTotal": 47,
+    "scope": "initial161/86 candidate only; not a47-test rerun against current162 source"
+  },
+  "sourcePinsAsOfInitialCommit": {
+    "evidenceAsOfCommit": "3923a0b6c02a972f8cea59dbb43441d8c6c67bb6",
+    "base": "f31e5ea8e98094f486814a6546d0ea14a950d7d8",
+    "restoreCodeSha256": "85500fe821db13652a768e8956020e6ea86a641042423427d722fbe20ec68d96",
+    "candidateManifestSha256": "65d4a11e2ac2ad2866733248b912a765fa1a660603463d4b6d9e894fe46caf65",
+    "candidateSource": "3d99a8af1805d714b71dce959b0811da468c24ea",
+    "counts": {
+      "baseline": 75,
+      "candidate": 161,
+      "missing": 86,
+      "targetOnly": 0
+    },
+    "sourceBeforeAfter": [
+      {
+        "path": "scripts/qa-agent-staging-replay/controlled-snapshot-restore.py",
+        "beforeSha256": "d23093136ec1da654a3846ba0549867e277b12d35ee3b01cab353ceda85b9043",
+        "afterSha256": "3cc50dd9ab6cd976da25deb028e15c136d343c127632d305fbc51aaf39854b53"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/owned-replay-hook.py",
+        "beforeSha256": "682357881e074e7ffc6ecf67dcb6aa36646cb449f34072d1b9705b4394ef23bd",
+        "afterSha256": "e55184dc887637f52bda2e759b7944a7c813d227a09bed7aeb4c47dd9a4e882f"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py",
+        "beforeSha256": null,
+        "afterSha256": "ed176cfc48df04c57b281af8a09606eeaaccbdb884994c9c6ed526a3bca5195d"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py",
+        "beforeSha256": null,
+        "afterSha256": "3c8dd7889b3e43d3f0044df0e77a7304ecead3f1f6c07356c383ac479880d990"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/test-candidate-migration-manifest.py",
+        "beforeSha256": null,
+        "afterSha256": "05438a1e0fe2bce08aa9f37fce4353db67a85b6e8ac2167b5e8a4df957dca98e"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/test-owned-replay-hook.py",
+        "beforeSha256": "796f8ab5de152d2a5e5d3efd5c120c51fce990ba69f609a3178bba665eb5a8ef",
+        "afterSha256": "6bfc52909bb5e5524432330afd1727ea587c86d1cc269557c0eae6b6cf13cca3"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/test-direct-human-authority.py",
+        "beforeSha256": "9bfd2fe05b0123baeb7da6d9c3b48576e48f0043452cb905ab2098a2f43f67d4",
+        "afterSha256": "e086480562ab9fb17d6ebaa82e5b363d41f2d8cc375cb136a9918038c7de0c64"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/controlled-backup.py",
+        "beforeSha256": "599c532dbf1c9043b4ae82da7a1975e59d97fb91ba2bc5df4c2c5d1c04ecaf7f",
+        "afterSha256": "599c532dbf1c9043b4ae82da7a1975e59d97fb91ba2bc5df4c2c5d1c04ecaf7f"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/controlled-restore.py",
+        "beforeSha256": "fccdfc77f7fdb05ee75e2623b452a016f23008f6e16a7dade3ef62216cb5e665",
+        "afterSha256": "fccdfc77f7fdb05ee75e2623b452a016f23008f6e16a7dade3ef62216cb5e665"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/direct-human-authority.py",
+        "beforeSha256": "a55923da42d7e691f2d9feed5089b4133d0edc8768fbdb267fa314cd68551861",
+        "afterSha256": "a55923da42d7e691f2d9feed5089b4133d0edc8768fbdb267fa314cd68551861"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/reviewed-restore-retry.py",
+        "beforeSha256": "80c7e524584918c9d4e65690cfbdcab1d8408a295af557369c6449b27d1777c0",
+        "afterSha256": "80c7e524584918c9d4e65690cfbdcab1d8408a295af557369c6449b27d1777c0"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/safe-restore-diagnostics.py",
+        "beforeSha256": "26cd12a568c03d738def451d1e5dbd8d326f65ec9d0a7b25b7ed10092b106b3c",
+        "afterSha256": "26cd12a568c03d738def451d1e5dbd8d326f65ec9d0a7b25b7ed10092b106b3c"
+      },
+      {
+        "path": "scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py",
+        "beforeSha256": "ee8560e9c61bde7341c29cca23c3cca1ff5c3a3ffda1842806a6bb84b0d020d6",
+        "afterSha256": "ee8560e9c61bde7341c29cca23c3cca1ff5c3a3ffda1842806a6bb84b0d020d6"
+      }
+    ],
+    "syntax": "PASS",
+    "diffWhitespace": "PASS"
+  },
+  "historicalDockerObservationAtInitialCandidate": "UNRUN server unavailable; daemon not started, no borrowed resources",
+  "currentRuntimePrerequisites": {
+    "source": "Main direct environment evidence",
+    "daemon": "READY29.8/API1.56 linuxarm64",
+    "cachedStrictImageIdMatches": true,
+    "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "pullTagOrPgCopyStartedByThisOwner": false,
+    "notManagedRestoreAcceptance": true,
+    "currentAsReportedByMain": true,
+    "physicalProtectedRestoreAndManagedExtension162Replay": "UNRUN; daemon/image readiness is not restore/ownerACL acceptance",
+    "currentCandidateCounts": {
+      "baseline": 75,
+      "candidate": 162,
+      "missing": 87,
+      "targetOnly": 0
+    }
+  },
+  "currentSourceValidation": "candidate162-delivery-20261016.json:9 focused candidate/source/port cases plus legacy golden; prior scoped tests reused, no current162 full47 rerun"
 }
