@@ -1,5 +1,5 @@
 {
-  "status": "CANDIDATE_ONLY_NOT_AUTHORIZATION_NOT_EXECUTED",
+  "status": "PROPOSAL_DISABLED_SINGLE_ATTEMPT_SCOPE_NOT_YET_REPRESENTABLE",
   "proposalOnly": true,
   "candidateProductHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
   "mode": "same-copy-typed-postdata/1",
@@ -26,8 +26,13 @@
       "data14.dump.age.partial",
       "platform-ledger.dump.age.partial"
     ],
-    "perFileCipherHashesAndBytes": "Must be read from and matched to original qualified manifest by the authorized operator; not reconstructed here",
-    "identity": "Reuse original approved identity; path hash/reference must be supplied by existing qualified owner. No new key or identity.",
+    "perFileCipherHashesAndBytes": "Accept only the four original files enumerated by manifest SHA256 668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085. After authorization, qualified preflight parses that exact manifest and matches each named file/hash/size and existing integrity checks. Missing/changed entries or bytes stop; no invented per-file values, substitute files, or re-capture.",
+    "identity": {
+      "pathReferenceSha256": "58aa1f73d84e1c265bf64beffe6718ebd1b981d22165ef133fbc1569816451d7",
+      "provenance": "Previously recorded non-sensitive reference supplied by Main; not recalculated in this artifact-only task",
+      "meaning": "Hash of path/reference, NOT key-content hash or proof that the key currently exists, matches recipient, is usable, or FileVault is currently enabled",
+      "use": "Reuse the original FileVault identity only; qualified operator checks reference/permissions/recipient/usability after new authorization; mismatch or missing evidence stops. No new identity/key."
+    },
     "existingFailureAndConsumedRecords": "Preserve original bytes and original one-time/attempt chain; no reset, overwrite or expiry extension"
   },
   "copy": {
@@ -43,11 +48,15 @@
     "windowStartUTC": null,
     "windowEndUTC": null,
     "durationMinutes": 60,
-    "unchangedMaximumCopies": 2,
     "thisSubmissionAttempt": 1,
     "automaticSecondAttempt": false,
     "originalCleanupReserveSeconds": 120,
-    "originalCleanupBudgetSeconds": 60
+    "originalCleanupBudgetSeconds": 60,
+    "proposedMaximumCopies": 1,
+    "proposedMaximumAttempts": 1,
+    "startRule": "Prepare and resolve all technical prerequisites first; generate actual UUID/UTC start/end at approved START, not during this proposal. Exactly60 minutes; original entry additionally requires at least30 minutes remaining and expiry before original retainUntil.",
+    "currentGuardMaximumCopies": 2,
+    "currentGuardCompatibility": "BLOCKED for literal1-copy authorization: validate() requires exact human scope maximumCopies=2, packet maximumCopies=2 and START maximumCopies=2. A narrative promise to use only one does not change this contract."
   },
   "outputPolicy": [
     "ErrorResponse.C allowlist and fixed stage; query/backend HMAC tokens only",
@@ -57,6 +66,7 @@
   ],
   "cleanup": "Original parent UTC+monotonic Budget controls all dispatch; conservative child snapshot only shortens; exact backend exit readback and factory-owned fallback; immutable-ID copy cleanup and absence readback; unknown identity/backend retains resources/results and active guard, no retry/release",
   "requiredBeforeActualUse": [
+    "Resolve and independently review current maximumCopies=2 versus proposed1-copy/1-attempt contract mismatch; refresh pins if source changes. Until then disabled.",
     "Independent final source/runtime review and final integrated QA source head qualification",
     "New genuine direct-human evidence and Main-start pins under original gate",
     "Concrete new window UUID/start/end and separately reviewed windowBindingSha256",
@@ -77,5 +87,68 @@
     "Historical window795 reuse or third attempt",
     "Shared/target DB write or grants",
     "External fees/accounts/production/release actions"
-  ]
+  ],
+  "disabled": true,
+  "staticSourceAudit": {
+    "readOnly": true,
+    "inspectedProductHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+    "originalCaptureReuse": "Supported in principle by the existing diagnostic design under a genuine new explicit authorization. check_preserved() requires the original capture used marker and consumed restore/retry chains; it does not consume or recreate capture approval. run() does not invoke the capture entry or legacy claim_restore_replay. No change to material identity/namespace is needed or permitted.",
+    "crossWindowGuard": "claim() uses diagnostic-parent-<original capture ID>.active.json across all window IDs plus exclusive per-window/per-attempt used markers. Changing UUID cannot bypass an existing active guard. finish() never deletes used markers and releases only the matching active guard after recorded completed PASS cleanup. Current guard state was NOT read.",
+    "singleAttemptMismatch": "Current validator hardcodes maximumCopies=2 in human scope, packet and Main START; attempt may be1 or2. The recommended maximumCopies=1 authorization is rejected before data IO. No source was changed.",
+    "sourceReferences": [
+      "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py::check_preserved (lines100-129)",
+      "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py::validate (lines220-256; second-attempt restrictions260-285)",
+      "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py::active_name/claim/finish (lines317-348)",
+      "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py::run (lines359-395)",
+      "scripts/qa-agent-staging-replay/controlled-restore.py::validate_approval (lines226-233)"
+    ],
+    "noLiveConclusion": "Source support is not permission, current guard-clean evidence, or proof that historical795 state permits a new run."
+  },
+  "preparationCategories": {
+    "fixedTechnicalPinsAndReferences": {
+      "productHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+      "sourceLockSha256": "7e54cf13d678ea98ac81fa99316c3b850b269f6430a091cf3cb0a2c657b9f421",
+      "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+      "captureId": "f97d05db-c706-4ce9-82d8-579cbb0b9310",
+      "manifestSha256": "668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085",
+      "identityPathReferenceSha256": "58aa1f73d84e1c265bf64beffe6718ebd1b981d22165ef133fbc1569816451d7",
+      "currentStatus": "Fixed recorded references only; actual material contents/state not inspected"
+    },
+    "onlyAfterNewAuthorizationPreflight": {
+      "status": "PENDING_NOT_VERIFIED",
+      "conditions": [
+        "Original four files exactly match the fixed manifest enumeration and full existing integrity checks",
+        "Original identity reference, ownership/mode, recipient/decryption capability and FileVault status match existing guards",
+        "Preserved capture/restore/retry/795 records match their already-qualified pins; no active copy/unknown cleanup exists across this capture",
+        "Fresh readonly locale supplement satisfies the existing <=5-minute bound and exact capture locale/profile; no target writes",
+        "Final integrated source and exact derived image/runtime capabilities match reviewed pins; unavailable or changed input stops"
+      ],
+      "failureRule": "Stop and retain original records/resources as required; no reset, substitute identity/material, automatic retry, new capture or namespace change"
+    },
+    "derivedAtApprovalAndStart": {
+      "status": "PENDING_NOT_APPROVED_NOT_STARTED",
+      "owner": "Main/qualified operator derives technical values under reviewed rules; human does not fill JSON",
+      "fields": {
+        "actualNewWindowUUID": "Generate only for the newly approved scope; bind human and START evidence; never reuse795 or evade capture-wide active guard",
+        "UTCStartAndEnd": "Set at approved START after preparation; end=start+60min and before existing retention deadline",
+        "windowBindingSha256": "Derive and fix from the reviewed new context using the accepted qualification procedure; missing/unreviewed derivation stops",
+        "reviewed_code_hash": "Compute reviewed_entry.reviewed_code_hash(core, final explicit configuration) after all source/image/config changes are fixed; must match approval/START/source pins",
+        "humanMessageAndMainStartHashes": "Derive from genuine actual human decision and actual Main START receipts; no invented hashes",
+        "finalIntegratedSourceHead": "Read from the protected integration result and qualify its exact source; not assumed from candidate owner head"
+      }
+    }
+  },
+  "technicalBlockerBeforeSubmittingExecutablePlan": {
+    "status": "BLOCKED_BY_SINGLE_ATTEMPT_CONTRACT_MISMATCH",
+    "owner": "Main engineering/scope coordination, not a request for JT to edit technical JSON",
+    "requiredResolution": "Keep the recommended60min/1copy/1attempt scope. Before seeking execution approval, Main must separately authorize and review an exact source contract change that truthfully supports that narrower cap, or keep the proposal disabled. This artifact-only task does not authorize or perform such a change. Any change refreshes affected source pins/code hash/review evidence.",
+    "forbiddenWorkarounds": [
+      "Do not populate maximumCopies=2 while presenting it as a1-copy authorization",
+      "Do not silently broaden human scope to2 copies",
+      "Do not change window IDs/namespaces to evade a preserved capture-wide active guard",
+      "Do not reset/remove/reuse historical795 or original used records"
+    ]
+  },
+  "humanDecisionOnly": "After Main resolves the1-attempt technical contract and prepares the exact reviewed package: choose whether to authorize one new60-minute scope, one owned offline copy and one attempt using the original capture/identity, to START only when ready; otherwise do not start. No automatic second attempt, new capture/key, target/E write, permission change, provider fees or Production action.",
+  "approvalSummaryZh": "拟申请：准备完成后START的新60分钟窗口，仅1个自有离线copy、1次尝试，复用固定capture/manifest及原FileVault身份引用；不新capture/key、不写target/E、不改权限、不产生provider费用或Prod动作。旧795两次FAIL/used永久保留。源码允许新明确授权窗口复用原capture，但跨窗口active guard必须在授权后核清，不能换ID绕过。当前门禁却硬性要求maximumCopies=2，不能表达仅1次授权，故本提案disabled；Main须先另行完成最小契约修订与复审，否则不START。技术JSON由Main派生，人类只选择是否批准上述单次scope。"
 }
