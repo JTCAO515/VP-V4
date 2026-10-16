@@ -261,7 +261,12 @@ extension NativeAssistantEventsTests {
         let store = NativeJournalDataStore(source: session.journalDataSource(), root: folder)
         store.load(current: actor)
         XCTAssertEqual(Set(store.rows.map { $0.record.source }), Set(NativeJournalDataSourceID.allCases))
-        XCTAssertEqual(store.rows.filter { $0.record.source != .assistantEventsCursor }.count, 29)
+        XCTAssertEqual(store.rows.filter { $0.record.source != .assistantEventsCursor }.count, 30)
+        let translation = try XCTUnwrap(store.rows.first { $0.record.source == .translationRecovery })
+        XCTAssertEqual(translation.record.kind, .metadataOnly)
+        XCTAssertEqual(translation.record.state, .absent)
+        XCTAssertNil(translation.record.originalOperationBytes)
+        XCTAssertNil(translation.record.objectID)
         let cache = store.rows.first { $0.record.source == .assistantEventsCursor }!
         XCTAssertEqual(cache.record.state, .projection); XCTAssertNil(cache.record.originalOperationBytes)
         XCTAssertEqual(cache.record.assistantEventsCursor?.afterSequence, 12)
