@@ -1,0 +1,12 @@
+test_bestj_human_source_rejects_foreign_thread_target_or_owner_authorization (cases.DiagnosticWindow) ... ok
+test_bestj_relay_evidence_requires_official_full_exact_original_reply (cases.DiagnosticWindow) ... ok
+test_bestj_relay_rejects_missing_reordered_or_changed_official_hop (cases.DiagnosticWindow) ... ok
+test_bestj_self_written_record_without_new_real_pins_cannot_enable (cases.DiagnosticWindow) ... ok
+test_human_sources_main_direct_and_fixed_bestj_official_relay (cases.DiagnosticWindow) ... ok
+test_main_direct_source_metadata_cannot_claim_a_foreign_thread (cases.DiagnosticWindow) ... ok
+test_unconfigured_entry_rejects_before_any_file_secret_or_clone_io (cases.DiagnosticWindow) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.053s
+
+OK

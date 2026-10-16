@@ -26,6 +26,11 @@ IDENTITY_PATH_SHA256=None
 PRESERVED_PINS=None
 PRESERVED_KEYS={'captureClaim','restoreClaim','retry1Claim','initialFailure','retry1Failure','originalStart','retry1Start'}
 ACTIONS=['reuse-original-four-ciphertexts','restore-one-owned-offline-copy','verify-schema-owner-acl-roles-counts','collect-diagnostic-hints-and-separate-caller-enums','destroy-owned-copy','local-candidate-rehearsal-only-after-full-restore-pass']
+MAIN_THREAD_ID='01a13311-9212-7db3-8c75-691eac0f03ea'
+BESTJ_THREAD_ID='01a1330e-5008-7061-909b-8abb26792003'
+MAC_RELAY_THREAD_ID='01a13313-19fd-77be-959c-9448bfab80ce'
+DIRECT_MAIN_SOURCE='Direct current Main conversation request_user_input_async reply'
+BESTJ_RELAY_SOURCE='Direct JT request_user_input_async reply in fixed BestJ main chat via official BestJ-to-Mac-to-Main relay'
 OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
 
@@ -122,14 +127,48 @@ def failure_fingerprint(result):
 def filename(window,attempt,suffix):return 'diagnostic-window-'+window+'.attempt-'+str(attempt)+'.'+suffix+'.json'
 
 
+def validate_human_source(human):
+    require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
+            and human.get('questionItemId')==QUESTION_ITEM_ID
+            and isinstance(human.get('humanQuestion'),str) and bool(human['humanQuestion'].strip())
+            and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'].strip())
+            and human.get('fileDoesNotSelfAuthorize') is True,'NEW_DIRECT_DIAGNOSTIC_HUMAN_RECORD_REQUIRED')
+    if human.get('source')==DIRECT_MAIN_SOURCE:
+        # Preserve the existing Main direct-reply record schema. If thread
+        # metadata is supplied, it cannot contradict this exact direct source.
+        require(human.get('sourceThreadId',MAIN_THREAD_ID)==MAIN_THREAD_ID
+                and human.get('relayTargetThreadId',MAIN_THREAD_ID)==MAIN_THREAD_ID,'DIAGNOSTIC_DIRECT_MAIN_SOURCE_CONFLICT')
+        return
+    require(human.get('source')==BESTJ_RELAY_SOURCE and human.get('sourceThreadId')==BESTJ_THREAD_ID
+            and human.get('relayThreadId')==MAC_RELAY_THREAD_ID and human.get('relayTargetThreadId')==MAIN_THREAD_ID
+            and human.get('authorizer')=='JT' and human.get('relayIsAuthorization') is False,
+            'DIAGNOSTIC_FIXED_BESTJ_HUMAN_SOURCE_REQUIRED')
+    receipts=human.get('officialRelayEvidence')
+    require(isinstance(receipts,list) and len(receipts)==2,'DIAGNOSTIC_OFFICIAL_RELAY_EVIDENCE_REQUIRED')
+    # These are Main's fixed actual official-message evidence records, not a
+    # platform signature/API. No tool-issued message ID is invented. Missing
+    # original reply evidence must leave real source pins unconfigured.
+    upstream=None
+    for receipt,(sender,target) in zip(receipts,((BESTJ_THREAD_ID,MAC_RELAY_THREAD_ID),(MAC_RELAY_THREAD_ID,MAIN_THREAD_ID))):
+        require(isinstance(receipt,dict) and set(receipt)=={'path','sha256'} and is_hash(receipt['sha256']),
+                'DIAGNOSTIC_OFFICIAL_RELAY_EVIDENCE_REQUIRED')
+        evidence=main_evidence(receipt['path'],receipt['sha256'])
+        require(evidence.get('origin')=='official_received_codex_delegation' and evidence.get('toolName')=='send_message_to_thread'
+                and evidence.get('sourceThreadId')==sender and evidence.get('targetThreadId')==target
+                and evidence.get('originalHumanSourceThreadId')==BESTJ_THREAD_ID
+                and evidence.get('originalQuestionItemId')==QUESTION_ITEM_ID
+                and evidence.get('originalHumanQuestion')==human['humanQuestion']
+                and evidence.get('originalHumanAnswer')==human['humanAnswer']
+                and evidence.get('authorizer')=='JT' and evidence.get('relayIsAuthorization') is False
+                and evidence.get('upstreamRelayEvidenceSha256')==upstream,
+                'DIAGNOSTIC_OFFICIAL_RELAY_FULL_HUMAN_REPLY_REQUIRED')
+        upstream=receipt['sha256']
+
+
 def validate(packet,code_hash,instant,stamp,locale_module,manifest=None):
     require_configured()
     human,_=read_private(HUMAN_FILE,HUMAN_SHA256)
-    require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
-            and human.get('source')=='Direct current Main conversation request_user_input_async reply'
-            and human.get('questionItemId')==QUESTION_ITEM_ID and isinstance(human.get('humanQuestion'),str)
-            and bool(human['humanQuestion']) and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'])
-            and human.get('fileDoesNotSelfAuthorize') is True,'NEW_DIRECT_DIAGNOSTIC_HUMAN_RECORD_REQUIRED')
+    validate_human_source(human)
     expected_scope={'minutes':60,'maximumCopies':2,'noOtherPlannedDdlChanges':True,'ordinaryDmlContinues':True,
                     'reuseOriginalCapture':True,'localRehearsalAfterFullRestorePass':True,'newCapture':False,'newIdentity':False,'newLiveGrants':False,'provider':False,'targetE':False}
     require(human.get('scope')==expected_scope and all(type(human['scope'][k]) is type(v) for k,v in expected_scope.items()) and human.get('target')==TARGET and human.get('parentCaptureId')==CAPTURE_ID
