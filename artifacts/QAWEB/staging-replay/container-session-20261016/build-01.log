@@ -1,0 +1,59 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 745B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#2 DONE 2.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 43.01kB done
+#4 DONE 0.0s
+
+#5 [1/4] FROM public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#5 resolve public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b done
+#5 DONE 0.1s
+
+#6 [2/4] RUN apk add --no-cache python3=3.12.15-r0  && mkdir -p /opt/homebrew/opt/postgresql@17 /private/tmp /opt/qaw  && ln -s /nix/var/nix/profiles/default/bin /opt/homebrew/opt/postgresql@17/bin  && chown postgres:postgres /private/tmp  && chmod 700 /private/tmp  && apk info -v | sort > /opt/qaw/runtime-packages.txt
+#6 1.260 ( 1/14) Installing libexpat (2.8.5-r0)
+#6 1.316 ( 2/14) Installing libbz2 (1.0.8-r6)
+#6 1.371 ( 3/14) Installing libffi (3.5.2-r0)
+#6 1.429 ( 4/14) Installing gdbm (1.26-r0)
+#6 1.489 ( 5/14) Installing xz-libs (5.8.4-r0)
+#6 1.552 ( 6/14) Installing libgcc (15.2.0-r2)
+#6 1.610 ( 7/14) Installing libstdc++ (15.2.0-r2)
+#6 1.688 ( 8/14) Installing mpdecimal (4.0.1-r0)
+#6 1.749 ( 9/14) Installing libpanelw (6.5_p20251123-r0)
+#6 1.803 (10/14) Installing sqlite-libs (3.53.4-r0)
+#6 1.886 (11/14) Installing python3 (3.12.15-r0)
+#6 2.132 (12/14) Installing python3-pycache-pyc0 (3.12.15-r0)
+#6 2.282 (13/14) Installing pyc (3.12.15-r0)
+#6 2.282 (14/14) Installing python3-pyc (3.12.15-r0)
+#6 2.282 Executing busybox-1.37.0-r30.trigger
+#6 2.286 OK: 65.1 MiB in 54 packages
+#6 2.307 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/main/aarch64/APKINDEX.tar.gz: No such file or directory
+#6 2.307 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/community/aarch64/APKINDEX.tar.gz: No such file or directory
+#6 DONE 2.4s
+
+#7 [3/4] COPY owned-pg-diagnostic-session.py typed-pg-diagnostic-proxy.py diagnostic-window-deadline.py /opt/qaw/
+#7 DONE 0.0s
+
+#8 [4/4] COPY container-diagnostic/service.py /opt/qaw/service.py
+#8 DONE 0.0s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 0.7s done
+#9 exporting manifest sha256:d5e65518202a3077ee7cbe7ba8b8df6b380c180f2577d8684ce3a177aab581f9 done
+#9 exporting config sha256:c9774061e3d61034b7217cc13713b7af278cdc2d859a0b7d466b95f471409fa8 done
+#9 exporting attestation manifest sha256:0f603dd097050ba55192e29370c1f0687b32e732cafb47831f39c3aba5e2edd1 done
+#9 exporting manifest list sha256:720ee85e61f6bb5717f6f7326b47796f0e8856babc31701bf5922ca479634965 done
+#9 naming to docker.io/library/qaw683-diagnostic:synthetic-d4 done
+#9 unpacking to docker.io/library/qaw683-diagnostic:synthetic-d4
+#9 unpacking to docker.io/library/qaw683-diagnostic:synthetic-d4 0.2s done
+#9 DONE 0.9s
