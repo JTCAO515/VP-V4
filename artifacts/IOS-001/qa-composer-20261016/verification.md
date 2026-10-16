@@ -61,7 +61,7 @@ its line range: [lineLimit](https://developer.apple.com/documentation/swiftui/vi
 - PASS: staged diff whitespace check; changes restricted to assigned new paths.
 - Initial behavioral run also passed 6/6 but emitted three test-only captured-var
   warnings; replaced mutable eligibility captures with a MainActor fixture object.
-  `behavior.log` retains that first run; final run has no warnings.
+  `behavior.log` retains that first run (trailing whitespace in compiler source excerpts removed); final run has no warnings. The first artifact diff check reported two trailing-space lines in that raw log; normalized those excerpts and rechecked.
 - UNRUN: full App build, simulated UI/keyboard/safeArea/Tab collision checks, large-text
   screenshots, VoiceOver, real Auth/provider/session, physical device and release.
   Main owns simulator 8F and centralized App/UI validation; this thread used no simulator.
