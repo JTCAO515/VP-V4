@@ -5,6 +5,7 @@ Only the original strict entry may invoke a copy. stdin never supplies paths/cod
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -18,6 +19,9 @@ entry=importlib.util.module_from_spec(spec);spec.loader.exec_module(entry)
 REPAIR_FILES=('host-permission-diagnostics.py','container-diagnostic/restore/bridge.py')
 MAX_COMMAND=1024
 MAX_DESCRIPTOR=32768
+
+class HoldCleanupExpired(ValueError):pass
+class HoldCleanupUnavailable(ValueError):pass
 
 
 def require(ok):
@@ -63,21 +67,42 @@ class Controller:
         self._lock_names=set(lock)
         self._frozen_inputs={name:digest((self._root/name).read_bytes()) for name in lock if name not in REPAIR_FILES}
         self.state='READY';self.invocations=0;self.cleanup='NOT_REQUIRED';self.last_outcome='NOT_RUN'
+        self._cleanup_cap=None;self._entry_cleanup_confirmed=False
+    def _cleanup_remaining(self):
+        end=self._budget.cleanup_end
+        if self._cleanup_cap is not None:require(end==self._cleanup_cap)
+        if end is None:return None
+        require(type(end) in (int,float) and math.isfinite(end))
+        if self._cleanup_cap is None:self._cleanup_cap=end
+        return end-self._budget.clock()
+    def _check_hold_cleanup(self):
+        remaining=self._cleanup_remaining()
+        if self.state=='HOLD':
+            if remaining is None:raise HoldCleanupUnavailable()
+            if remaining<=0:raise HoldCleanupExpired()
     def _check(self):
         require(os.getpid()==self._pid and self._budget is self._original)
+        self._check_hold_cleanup()
         self._entry.profile.provenance.verify_start_provenance(self._budget)
         require(self._core.code_hash()==self._core_hash)
         require(all(digest((HERE/name).read_bytes())==value for name,value in self._fixed.items()))
         require(all(digest((HERE.parent/self._selected_folder/name).read_bytes())==value for name,value in self._v2_fixed.items()))
         require(all(digest((self._root/name).read_bytes())==value for name,value in self._frozen_inputs.items()))
+        self._check_hold_cleanup()
     def snapshot(self):
         # No paths, error details, caller-provided strings or raw entry results.
-        return {'version':'live-controller/1','state':self.state,'entryInvocations':self.invocations,'controllerCleanup':self.cleanup,'lastEntryOutcome':self.last_outcome}
+        return {'version':'live-controller/2','state':self.state,'entryInvocations':self.invocations,'controllerCleanup':self.cleanup,'lastEntryOutcome':self.last_outcome}
     def _close(self,state):
         self.state=state
         if os.getpid()!=self._pid or self._budget is not self._original:
             self.cleanup='UNKNOWN_OWNER';return self.snapshot()
-        try:self.cleanup='PASS' if self._budget.cleanup_all() else 'UNKNOWN'
+        try:
+            remaining=self._cleanup_remaining()
+            # A matching completed entry already proved cleanup. Do not repeat
+            # IO after its original cleanup deadline merely to close HOLD.
+            if self._entry_cleanup_confirmed:self.cleanup='PASS'
+            elif remaining is not None and remaining<=0:self.cleanup='UNKNOWN'
+            else:self.cleanup='PASS' if self._budget.cleanup_all() else 'UNKNOWN'
         except BaseException:self.cleanup='UNKNOWN'
         if self.cleanup!='PASS':self.state='CLOSED_UNKNOWN'
         return self.snapshot()
@@ -111,7 +136,13 @@ class Controller:
         # source locks, window, original Budget, and all remaining gates.
         return [self._repair_packet,*self._args[1:]],cfg,profile
     def _invoke(self,args,config,profile):
-        self._check();self.invocations+=1;self.state='RUNNING'
+        self._check()
+        # The frozen Budget enforces data and cleanup deadlines separately.
+        # Once cleanup started, a new entry cannot be safely constrained by
+        # that residual cleanup cap. Do not reset it or launch work against it.
+        if self._cleanup_remaining() is not None:return self._close('CLEANUP_PHASE_REENTRY_INELIGIBLE')
+        self._entry_cleanup_confirmed=False
+        self.invocations+=1;self.state='RUNNING'
         try:
             result=self._entry.run(self._core,args,config,profile,start_budget=self._budget)
         except BaseException:
@@ -120,15 +151,18 @@ class Controller:
         if not isinstance(claim,dict) or claim.get('windowId')!=self._window or claim.get('attempt')!=self.invocations:
             return self._close('CLOSED_UNKNOWN')
         if result.get('cleanup')!='PASS':return self._close('CLOSED_UNKNOWN')
+        self._cleanup_remaining()
         status=result.get('status')
         if not isinstance(status,str) or not status.startswith(('PASS_','FAIL_')):return self._close('CLOSED_UNKNOWN')
+        self._entry_cleanup_confirmed=True
         self.last_outcome='FAIL' if status.startswith('FAIL_') else 'PASS'
         if self.invocations==1 and self.last_outcome=='FAIL':
-            self.state='HOLD';return self.snapshot()
+            self.state='HOLD';self._check_hold_cleanup();return self.snapshot()
         return self._close('COMPLETE')
     def handle(self,command):
         if self.state not in ('READY','HOLD'):return self.snapshot()
         try:
+            if type(command) is dict and command=={'action':'abort'}:return self._close('ABORTED')
             self._check()
             require(type(command) is dict and type(command.get('action')) is str)
             action=command['action']
@@ -138,9 +172,12 @@ class Controller:
                 require(all(digest((self._root/name).read_bytes())==pin for name,pin in self._repair_original.items()))
                 return self._invoke(self._args,self._configuration,self._profile)
             if action=='repair' and set(command)=={'action','sha256'} and self.state=='HOLD' and self.invocations==1:
+                if self._cleanup_remaining() is not None:return self._close('CLEANUP_PHASE_REENTRY_INELIGIBLE')
                 args,cfg,profile=self._repair(command['sha256']);self._check()
                 return self._invoke(args,cfg,profile)
             raise ValueError('CONTROLLER_COMMAND_REJECTED')
+        except HoldCleanupUnavailable:return self._close('HOLD_CLEANUP_UNAVAILABLE')
+        except HoldCleanupExpired:return self._close('HOLD_CLEANUP_EXPIRED')
         except self._core.diagnostic_deadline.WindowExpired:return self._close('EXPIRED')
         except BaseException:return self._close('REFUSED_OR_INTERRUPTED')
     def tick(self):return self.handle({'action':'status'})

@@ -2,7 +2,7 @@
   "container-diagnostic/restore/source-lock.json": "6d42ad649251452ba64ec55f00125846d70e0f57f8e52fc64174ac0cab1c628f",
   "directive-scope-v1/entry.py": "3cbb160607214dfd88de8b33aca11930f5f8d363ebc92512bdc78a92361f72b8",
   "directive-scope-v1/evidence-pins.json": "8e3151b060539e1ffc1b0c75c87b4e20e3a95e694708d3064310cc3d702da89c",
-  "directive-scope-v1/live-controller.py": "e4c14acb4c3580135b8c17d7ae2caf696fdb070cb8d2765a6b30013cda9da9db",
+  "directive-scope-v1/live-controller.py": "96e6266afb04bc464db4aeabc7d7e2dba700e7ade220ed25154e1f432016a5a6",
   "directive-scope-v1/profile.py": "ea0ae6b77934e5e614ac9c2aacf43f9343f6654b7967262cda7acca7e63f6ae8",
   "directive-scope-v1/start-provenance.py": "2719fca932cbae1619e22a72899fb161060bbe8aeb0ebb945990f644cf16f830"
 }

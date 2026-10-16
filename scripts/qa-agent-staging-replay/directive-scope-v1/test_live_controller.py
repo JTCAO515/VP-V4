@@ -34,7 +34,7 @@ class Fixture:
         for name in (*self.control._lock_names,'container-diagnostic/restore/source-lock.json'):
             target=self.root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((HERE.parent/name).read_bytes())
         self.control._root=self.root
-        self.seen=[];self.first_cleanup='PASS';self.interrupt=False
+        self.seen=[];self.first_cleanup='PASS';self.interrupt=False;self.start_cleanup=True
         self.mock=patch.object(c.entry,'run',side_effect=self.fake_entry);self.mock.start()
     def close(self):self.mock.stop();self.tmp.cleanup()
     def fake_entry(self,core,args,configuration,profile,start_budget=None):
@@ -46,6 +46,7 @@ class Fixture:
         if attempt==2:
             packet=json.loads((self.root/'second.json').read_text())
             if packet!={'syntheticCausalRepair':True,'windowId':self.window}:raise ValueError('SYNTHETIC_GATE_CAUSAL_OR_WINDOW_REFUSAL')
+        if self.start_cleanup:self.budget.cleanup_timeout(60)
         return {'status':'FAIL_SYNTHETIC_ONLY','cleanup':self.first_cleanup if attempt==1 else 'PASS','diagnosticWindowClaim':{'windowId':self.window,'attempt':attempt}}
     def repair(self,causal=True,wrong_window=False,wrong_scope=False):
         file=self.root/c.REPAIR_FILES[0];file.write_bytes(file.read_bytes()+b'\n# synthetic repair\n')
@@ -60,20 +61,18 @@ class Fixture:
 class ControllerTests(unittest.TestCase):
     def setUp(self):self.f=Fixture();self.addCleanup(self.f.close)
     def first(self):return self.f.control.handle({'action':'run_first'})
-    def test_first_hold_explicit_second_same_original_object_and_no_third(self):
+    def test_hold_is_not_second_admission_and_no_third_dispatch(self):
         self.assertEqual(self.first()['state'],'HOLD')
-        self.assertEqual(self.f.control.tick()['state'],'HOLD');self.assertEqual(len(self.f.seen),1)
-        self.assertEqual(self.f.control.handle(self.f.repair())['state'],'COMPLETE')
-        self.assertEqual(self.f.control.handle({'action':'run_first'})['entryInvocations'],2)
-        self.assertEqual(self.f.seen,[(self.f.pid,self.f.budget_id,1),(self.f.pid,self.f.budget_id,2)])
-    def test_missing_causal_is_left_to_strict_entry_and_refused(self):
-        self.first();result=self.f.control.handle(self.f.repair(causal=False))
-        self.assertEqual(result['state'],'REFUSED_OR_INTERRUPTED');self.assertEqual(result['entryInvocations'],2)
-    def test_wrong_window_refused_by_entry(self):
-        self.first();self.assertEqual(self.f.control.handle(self.f.repair(wrong_window=True))['state'],'REFUSED_OR_INTERRUPTED')
-    def test_wrong_scope_refused_before_entry(self):
-        self.first();result=self.f.control.handle(self.f.repair(wrong_scope=True))
-        self.assertEqual(result['state'],'REFUSED_OR_INTERRUPTED');self.assertEqual(len(self.f.seen),1)
+        self.assertEqual(self.f.control.tick()['state'],'HOLD')
+        self.assertEqual(self.f.control.handle(self.f.repair())['state'],'CLEANUP_PHASE_REENTRY_INELIGIBLE')
+        self.assertEqual(self.f.control.handle({'action':'run_first'})['entryInvocations'],1)
+        self.assertEqual(self.f.seen,[(self.f.pid,self.f.budget_id,1)])
+    def test_repair_rejection_precedes_causal_or_window_descriptor_read(self):
+        self.first()
+        with patch.object(self.f.control,'_repair') as read:
+            result=self.f.control.handle({'action':'repair','sha256':'0'*64})
+            self.assertEqual(result['state'],'CLEANUP_PHASE_REENTRY_INELIGIBLE');read.assert_not_called()
+        self.assertEqual(len(self.f.seen),1)
     def test_unknown_cleanup_never_holds_or_enters_second(self):
         self.f.first_cleanup='UNKNOWN';self.assertEqual(self.first()['state'],'CLOSED_UNKNOWN')
         self.f.control.handle(self.f.repair());self.assertEqual(len(self.f.seen),1)
@@ -100,7 +99,7 @@ class ControllerTests(unittest.TestCase):
         self.first();file=self.f.root/'diagnostic-window-deadline.py';file.write_bytes(file.read_bytes()+b'\n# forbidden\n')
         self.assertEqual(self.f.control.tick()['state'],'REFUSED_OR_INTERRUPTED');self.assertEqual(len(self.f.seen),1)
     def test_missing_descriptor_cannot_trigger_second_entry(self):
-        self.first();self.assertEqual(self.f.control.handle({'action':'repair','sha256':'0'*64})['state'],'REFUSED_OR_INTERRUPTED')
+        self.first();self.assertEqual(self.f.control.handle({'action':'repair','sha256':'0'*64})['state'],'CLEANUP_PHASE_REENTRY_INELIGIBLE')
         self.assertEqual(len(self.f.seen),1)
     def test_transport_eof_and_oversized_command_close_without_entry(self):
         read,write=os.pipe();os.write(write,b'x'*(c.MAX_COMMAND+1));os.close(write)
@@ -118,6 +117,58 @@ class ControllerTests(unittest.TestCase):
     def test_loaded_core_change_is_ineligible(self):
         self.first();self.f.core.code_hash=lambda:'7'*64
         self.assertEqual(self.f.control.tick()['state'],'REFUSED_OR_INTERRUPTED');self.assertEqual(len(self.f.seen),1)
+    def test_hold_cleanup_expiry_closes_without_late_cleanup_io(self):
+        d=self.f.core.diagnostic_deadline;clock=[1000.0]
+        with patch.object(d,'monotonic',lambda:clock[0]):
+            f=Fixture()
+            try:
+                self.assertEqual(f.control.handle({'action':'run_first'})['state'],'HOLD')
+                end=f.budget.cleanup_end;clock[0]=1061;f.budget.check()
+                with patch.object(f.budget,'cleanup_all') as cleanup:
+                    result=f.control.tick()
+                    self.assertEqual(result['state'],'HOLD_CLEANUP_EXPIRED')
+                    self.assertEqual(result['controllerCleanup'],'PASS');cleanup.assert_not_called()
+                self.assertEqual(f.budget.cleanup_end,end);self.assertEqual(len(f.seen),1)
+            finally:f.close()
+    def test_idle_transport_exits_at_original_cleanup_cap_and_keeps_marker(self):
+        d=self.f.core.diagnostic_deadline;clock=[1000.0]
+        with patch.object(d,'monotonic',lambda:clock[0]):
+            f=Fixture();read,write=os.pipe()
+            try:
+                f.control.handle({'action':'run_first'})
+                marker=f.root/'old-used.json';marker.write_bytes(b'preserve')
+                def elapsed(*args):clock[0]=1061;return [],[],[]
+                with patch.object(c.select,'select',side_effect=elapsed):c.serve(f.control,read,io.StringIO())
+                self.assertEqual(f.control.state,'HOLD_CLEANUP_EXPIRED')
+                self.assertEqual(marker.read_bytes(),b'preserve');self.assertEqual(len(f.seen),1)
+            finally:os.close(read);os.close(write);f.close()
+    def test_cleanup_phase_rejects_repair_before_descriptor_or_entry(self):
+        self.first();end=self.f.budget.cleanup_end
+        with patch.object(self.f.control,'_repair') as repair:
+            result=self.f.control.handle({'action':'repair','sha256':'0'*64})
+            self.assertEqual(result['state'],'CLEANUP_PHASE_REENTRY_INELIGIBLE');repair.assert_not_called()
+        self.assertEqual(self.f.budget.cleanup_end,end);self.assertEqual(len(self.f.seen),1)
+    def test_abort_after_data_expiry_remains_abort_and_uses_confirmed_cleanup(self):
+        self.first();self.f.budget.expired=True
+        with patch.object(self.f.budget,'cleanup_all') as cleanup:
+            result=self.f.control.handle({'action':'abort'})
+            self.assertEqual(result['state'],'ABORTED');cleanup.assert_not_called()
+    def test_unknown_expired_cleanup_does_not_start_another_cleanup_clock(self):
+        self.f.budget.cleanup_end=self.f.budget.clock()-1
+        with patch.object(self.f.budget,'cleanup_all') as cleanup:
+            result=self.f.control.handle({'action':'abort'})
+            self.assertEqual(result['state'],'CLOSED_UNKNOWN');cleanup.assert_not_called()
+    def test_missing_cleanup_cap_cannot_hold_or_dispatch_again(self):
+        self.f.start_cleanup=False
+        self.assertEqual(self.first()['state'],'HOLD_CLEANUP_UNAVAILABLE')
+        self.f.control.handle({'action':'repair','sha256':'0'*64})
+        self.assertEqual(len(self.f.seen),1)
+    def test_cleanup_deadline_reset_is_refused(self):
+        self.first();self.f.budget.cleanup_timeout(60);self.f.control.tick()
+        self.f.budget.cleanup_end=None
+        result=self.f.control.tick()
+        self.assertEqual(result['state'],'CLOSED_UNKNOWN');self.assertEqual(len(self.f.seen),1)
+
     def test_restart_does_not_adopt_consumed_second_slot(self):
         # A new interpreter cannot import the factory registry/original object.
         d=self.f.core.diagnostic_deadline
