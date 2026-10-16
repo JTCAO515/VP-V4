@@ -1,0 +1,15 @@
+{
+  "base": "f36ba13966c9b7490505981ef47584455e315070",
+  "product_first_commit": "cd95ebbe",
+  "report_sha256": "a495a5ea202e6d3628a465866f1b6d59514d87574e2059f1913145d184b11c08",
+  "source_sha256": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAServiceView.swift": "49f2da84c08c4bd881eb98e2f55542a8418f16d8aece154fc2002b31bb6a6068",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAWorkPresentation.swift": "5a82d9a7930e58b563645a4ae0acf868cc63579ab36375b7ee15532875c67602",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAWorkCard.swift": "51056747d3dd7eae6abffc2870839d11cb8de64af2f2126258b85caff7e3cca0",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "e42862ebf8b65e93d5f1f6d2a3649b140125989220e126b4f227b2a103548c44",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAStore.swift": "3ebfea2f2187458e7ccbbcd79abffb3886fd14d3acf5c7ecb5bea6a2966a4d86",
+    "ios/VisePanda/VisePandaTests/NativeQAConsumerTests.swift": "d9708cf83c470efec842f6f761a8bebe9c2eb35015a3c5b3230acc7c7fdcf544",
+    "tests/contract/ios-realservice/run_consumer.py": "98952cc4c21148007d82263b8a103e217a62d8c7e74a8189deb80d79d95051ca"
+  },
+  "contract_unchanged": true
+}

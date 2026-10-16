@@ -20,6 +20,9 @@ final class NativeQAStore {
     var scope: NativeDataScope? { transport.scope }
     var busy: Bool { work != nil }
     var hasReadableProjection: Bool { active && scope != nil && boundScope == scope }
+    var shouldPoll: Bool {
+        hasReadableProjection && state == .pending && !messages.contains { $0.status == .reconciliationRequired }
+    }
     var canSend: Bool {
         state == .ready && active && boundScope == scope && scope != nil && !busy && pending == nil && selectedID != nil
         && policy?.consentState == .accepted && !messages.contains { $0.status.waiting }

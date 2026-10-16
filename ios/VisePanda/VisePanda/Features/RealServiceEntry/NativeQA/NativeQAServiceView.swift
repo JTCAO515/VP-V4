@@ -103,7 +103,7 @@ struct NativeQAServiceView: View {
             while identity.visible, !Task.isCancelled, readIdentity == identity {
                 do { try await Task.sleep(for: .seconds(3)) } catch { return }
                 guard !Task.isCancelled, readIdentity == identity else { return }
-                if store.state == .pending { await store.refresh() }
+                if store.shouldPoll { await store.refresh() }
             }
         }
         .onDisappear { store.invalidate() }

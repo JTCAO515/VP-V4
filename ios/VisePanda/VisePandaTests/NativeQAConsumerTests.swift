@@ -91,7 +91,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         let port = NativeQAConsumerTestPort(); port.saved = true; port.messageStatus = "pending"
         let store = NativeQAStore(transport: port)
         await store.activate(true); await store.select(port.sessionID)
-        store.draft = "Should wait"; XCTAssertFalse(store.canSend); XCTAssertEqual(store.state, .pending)
+        store.draft = "Should wait"; XCTAssertFalse(store.canSend); XCTAssertEqual(store.state, .pending); XCTAssertTrue(store.shouldPoll)
         port.messageStatus = "answered"; port.messageCount = 8
         await store.refresh(); store.draft = "Ninth question"
         XCTAssertEqual(store.messages.count, 8); XCTAssertFalse(store.canSend); XCTAssertEqual(port.posts, 0)
@@ -179,7 +179,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         let reconPort = NativeQAConsumerTestPort(); reconPort.saved = true; reconPort.messageStatus = "reconciliation_required"
         let recon = NativeQAStore(transport: reconPort)
         await recon.activate(true); await recon.select(reconPort.sessionID)
-        XCTAssertEqual(recon.state, .pending)
+        XCTAssertEqual(recon.state, .pending); XCTAssertFalse(recon.shouldPoll)
         XCTAssertEqual(NativeQAWorkPresentation.current(store: recon, chinese: true, visible: true).action, .refresh)
         XCTAssertEqual(NativeQAWorkPresentation.current(store: recon, chinese: true, visible: true).title, "还没确认结果")
         XCTAssertEqual(port.posts, 1); XCTAssertEqual(reconPort.posts, 0)
