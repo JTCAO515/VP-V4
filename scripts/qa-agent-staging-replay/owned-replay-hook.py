@@ -142,6 +142,8 @@ def replay_owned(db,manifest_path):
     info=json.loads(db.docker(['inspect',db.name]))[0]
     require(db.created and info['Config']['Labels'].get('qaw.restore.owner')==db.nonce and info['HostConfig']['NetworkMode']=='none' and not info['Mounts'] and not info['HostConfig']['PortBindings'],'REPLAY_OWNED_OFFLINE_ONLY')
     m,sources=load_plan(manifest_path)
+    journal=getattr(db,'_window_replay_progress',None)
+    if journal is not None:journal.update(stage='REPLAY_PREFLIGHT',sourceHead=m.get('sourceHead'),manifestSha256=m.get('manifestSha256'),appliedVersions=[],inflightVersion=None,inflightOutcome='NONE',rollbackInferred=False,automaticRetryAllowed=False)
     require(versions(db)==m['baselineVersions'],'REPLAY_BASELINE_UNKNOWN_NEWER_OR_EXTRA')
     require(db.sql("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','turn_private') and p.proname like 'qa_%';")=='0','REPLAY_QA_ALREADY_PRESENT')
     rows=retained_data(db);before=fingerprints(db,rows)
@@ -152,7 +154,10 @@ def replay_owned(db,manifest_path):
             if item['version'] in m['reviewedMissing']:
                 failed=item['version'];diagnostic=source_guard_diagnostics(db,item)
                 if diagnostic is not None:diagnostics[item['version']]=diagnostic
+                if journal is not None:journal.update(stage='MIGRATION_EXECUTION',inflightVersion=item['version'],inflightOutcome='UNKNOWN')
                 db.sql(migration_transaction(item));applied.append(item['version'])
+                if journal is not None:journal.update(appliedVersions=list(applied),inflightVersion=None,inflightOutcome='NONE')
+        if journal is not None:journal['stage']='REPLAY_VERIFICATION'
         require(versions(db)==m['expectedVersions'],'REPLAY_LEDGER_NOT_EXACT_PINNED_SOURCE')
         after_data=fingerprints(db,rows)
         retention_diffs=[{'relation':key,'beforeCount':before[key]['count'],'afterCount':after_data.get(key,{}).get('count'),'beforeSha256':before[key]['sha256'],'afterSha256':after_data.get(key,{}).get('sha256')} for key in before if any(after_data.get(key,{}).get('digests',{}).get(digest,0)<count for digest,count in before[key]['digests'].items())]

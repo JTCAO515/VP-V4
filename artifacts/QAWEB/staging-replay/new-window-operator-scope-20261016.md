@@ -60,3 +60,9 @@ Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_u
 ### UTC/monotonic双上界闭合
 批准边界是原绝对UTC windowEnd，同时以一次monotonic end限制最长运行；check/timeout始终取两者剩余预算min（同预留120s）。monotonic anchor在wall取样/授权校验前捕获，校验延迟不增加时间。UTC前跳可使数据立即过期，后跳不能延长monotonic；过期后不重新开放。
 在途等待按<=0.25s切片复查两钟，只继续等待同一进程、不新spawn/重送SQL/input，原命令timeout总上限不重置。发现过期后中断tracked进程并沿原nonce/immutable-ID fence清理，unknown仍保active/consumed结果。新18项focused含旧742UTC-forward RED；未执行真实数据/新窗口/clone。
+
+
+### 启动未知与中断证据围栏
+run-issued与daemon完成返回immutableID分开记录。启动unknown时一次或多次absent都不能推无副本；即使观察到同nonce ID并停止删除、确认消失，未确认的launch仍UNKNOWN，保active/consumed/result，不自动slot2。confirmed launch的按name缺失还需记录ID的缺失确认；foreignlabel/ID冲突不删。结果保name/nonce/ID/launch确认/移除确认等自有资源链，无用户数据。
+
+KeyboardInterrupt/取消不丢已完成阶段。保completedRestoreResult、后续已过验证、诊断、completedIO列表和已ack的migration前缀；第N步在途结果UNKNOWN，不推rollback或自动retry。cleanupFAIL也持久化这些证据并保active。原23focused（含旧18）RED/GREEN见window-launch-interrupt-delivery-20261016.json。真实数据I/O仍STOP，新窗口未批准，无新capture/key/provider/E。
