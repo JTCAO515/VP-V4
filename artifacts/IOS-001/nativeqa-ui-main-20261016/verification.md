@@ -1,0 +1,41 @@
+# NativeQA UI integration
+
+Scope: IOS-001 #203 / VPV10-IOS-MUSE-UI-20261016. Integrator consumes Main's exact ServiceView/PBX lease; component owners retain their internals. No live account, HTTP provider, managed SQL, restore, deployment, device or release action is performed by these checks.
+
+## Custody
+
+- Original branch `codex/p0-nativeqa-ui-main-20261016`, head `e81f6983a5fe362c8cdf587641691c9a2f7c0840`.
+- Exactly two original dirty paths: NativeQAServiceView.swift and project.pbxproj. Full binary patch saved privately at `integration-executor/main-ui-before.patch`, SHA256 `97388cf9e35627f0d586a372b0f167dd4853d84f59cc67f72c0a4805ae9d7636`; no reset/stash/rebuild of the inherited work.
+- History owner fix `a118a7bde635b7be1ecb419ea78b3da1ab74dc28` integrated as `6a5b8b22205d302aaa5b6853e7ce5d6e5ef7458d`, original seven test bodies/assertions preserved.
+- Integration source `bd44d4c2ddfa4affdd74acaf3f31a3197f0581fa`: work card, bottom composer, scoped history sheet, message cards, eight production/three component-test PBX registrations. Send/select/create async actions recheck live scope and consent at execution; send also rechecks the expected selected session.
+- Exclusive simulator `8F6CA72C-73C0-45C0-8606-0543B1F725BD`, profile `v10-main-p0-realservice-20261016`, original Main DerivedData reused. session_show_defaults read before setting exact paths with persist=false. No xcodebuild/test was in flight at takeover; inherited log stream PID42451 preserved.
+
+## Actual checks
+
+All Xcode artifacts below are in `~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/`.
+
+- PASS: actual App five suites, 50 passed / 0 failed / 0 skipped, 16.668s. Consumer25, Composer6, History7, Message6, SessionTransport6. Build log `logs/test_sim_2026-10-16T08-54-10-348Z_pid30316_9da85ada.log`; result `result-bundles/test_sim_2026-10-16T08-54-10-348Z_pid30316_ac08c46a.xcresult`. Tested 6a5 plus inherited integration dirty; later async execution guards only tighten the integration seam.
+- PASS: actual NativeQARootUITests method, 1 passed / 0 failed / 0 skipped, 60.257s, en/zh loop at accessibility XXXL. Reads localhost configuration then opens sign-in; no credentials, consent or message submission. Log `logs/test_sim_2026-10-16T08-55-53-950Z_pid30316_ded6505b.log`; result `result-bundles/test_sim_2026-10-16T08-55-53-950Z_pid30316_21e6a9b8.xcresult`. This is entry navigation proof, not connected composer/history acceptance.
+- PASS: hosted production ServiceView and History, two methods / both en/zh at accessibility5, 2 passed / 0 failed / 0 skipped, 20.041s. In-memory synthetic transport only; no POST. Composer becomes first responder. Observable scope revocation removes composer and history search subtree without timer/frame polling. Log `logs/test_sim_2026-10-16T08-58-21-463Z_pid30316_6551a678.log`; result `result-bundles/test_sim_2026-10-16T08-58-21-463Z_pid30316_55e2d7e9.xcresult`; ten image attachments. Host explicitly supplies active scenePhase, so this does not test actual OS scene transition delivery. First-responder proof does not establish the complete system-keyboard geometry.
+- PASS: docs-check and diff whitespace check at integration source.
+
+## Retained failures and open findings
+
+- Inherited actual App compile FAIL in `test_sim_2026-10-16T08-46-33-995Z_pid2127_5ca95ce5.log`: History XCTest initializer actor isolation. Original owner's fix above removes this failure; original log retained.
+- New hosted test first compile FAIL: @Observable multi-variable declaration. Split test counters only; product unchanged. Log `08-57-30-889Z...db7b2d44`.
+- Hosted initial runtime FAIL: fixture lacked the required history read and host did not explicitly supply active scenePhase. Added synthetic history and explicit host phase; product unchanged. Log `08-57-39-520Z...d9197859`, result `1429ca65`.
+- Hosted expansion r3/r4: programmatic scroll-to-bottom of History within NavigationStack triggers UIKit.NavigationBarContentView Observation feedback loop. r3 full normal window/all-window drawing, r4 alert+1/own-window drawing both reproduce. r3 `08-59-45-297Z...3ef612cc`, r4 `09-01-55-287Z...e777e548`. Canceled only the owned test processes; previous PASS remains scoped. Exact r4 test source saved privately as `integration-executor/hosted-r4-feedback-source.swift`. Actual human gesture equivalence is UNKNOWN; routed to Main for original owner assessment. Do not count canceled runs as PASS or infer a verified product root cause.
+- Independent bd44 review reports a Composer fast-completion latch P2. Main routed repair to original Composer owner; UI merge remains held pending repair and independent closure review.
+- UNRUN: real Auth/provider/managed target persistence/device/VoiceOver, full human keyboard interaction and target acceptance. The terminated two restore attempts remain FAIL/cleanup PASS; no restart or identity read follows from this integration.
+
+- Final hosted r5 PASS: 2/2 methods, 0skip, 22.608s, both languages/accessibility5; full scene-size own-window snapshots and ServiceView vertical message scroll (no horizontal overflow). History programmatic scroll remains separately FAIL/UNKNOWN above; final test does not claim its acceptance. Log `logs/test_sim_2026-10-16T09-04-13-557Z_pid30316_7ede2bc0.log`; result `result-bundles/test_sim_2026-10-16T09-04-13-557Z_pid30316_4c8909f6.xcresult`. Private screenshot export `integration-executor/hosted-r5`.
+
+## Composer completion closure and final delivery
+
+Original owner repair `6eb579eb0b1e836d3e52efd17687a1505f24e627` + evidence `38c82c31c79eeb15881ac329a7c5d23812533a6a` integrated as `57609e08` / `3bad4802`. ServiceView `29f392c8d3310ca36c6b3735c5b201116b6e00d9` passes a local completion into its MainActor Task, with defer installed before live scope/session/consent guard. Every return/cancellation finishes only that local invocation; it never claims server success or clears pending custody. Independent source review routed by Main reports Standards0/Spec0 for component and actual callsite.
+
+Actual final affected App run: Composer11 + hosted2 = 13 passed / 0 failed / 0 skipped, 59.022s tool duration. Log `logs/test_sim_2026-10-16T09-06-19-249Z_pid30316_535b09dd.log`; result `result-bundles/test_sim_2026-10-16T09-06-19-249Z_pid30316_45474207.xcresult`. This includes owner fast/coalesced completion, matching-token late/duplicate completion, unknown and scope guards, plus actual hosted field focus/revocation. It does not claim an actual rendered Send tap.
+
+Additional actual hosted two-question attempt did not find the SwiftUI Send AX object through public UIKit container/automation traversal: three FAIL runs at 09-08-13 (`6aa4c34b`/`61916e54`), 09-08-39 (`bf50f513`/`55c0a5b0`), 09-09-43 (`16a46de2`/`66944633`). No send/POST was performed. A temporary manual harness waited for public simulator UI taps; snapshot_ui did not return a tree during the first 60-second window, so the first question timed out without a POST. Only its owned test process was interrupted; failure retained at 09-10-47 (`478c9a42`/`bf18ba71`). CUA Simulator by name and official app path both returned Invalid app. No private event API, new production fixture route, other simulator, or permission change was used. Temporary harness source SHA256 `e2eaea48766dbe5fb6a3707c0234163804a0952ea0a4f968ac34c72a2cf2aba8` is preserved privately at `integration-executor/manual-two-question-host.swift`; it is not an unattended CI test. Stable automatic test source was restored byte-for-byte. Actual rendered consecutive Send interaction remains UNRUN; helper tests are not substituted for that result.
+
+PR735 normal match-head squash merged into QA `9c1662602ed370cb64a123e3410c6958b59d001b`, tree `27bdab9b6f30b2bbe4babbb9d64f0e3bb5e00f1b`, identical to original baseline b217 tree. Merging that QA ancestry into the UI branch produced add/add conflicts in five originally added files; each incoming file was checked byte-identical to b217 and the integrated UI bytes retained. Before/after integration tree both `5d216caa2a1ebd46cc87bc4ebce9b1bdab65705c`; merge commit `9bfd8e056882b8361b025ce4b12a735039c19e2d` changes ancestry only. No test repetition is needed for identical source.

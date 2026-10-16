@@ -20,6 +20,9 @@ final class NativeQAStore {
     var scope: NativeDataScope? { transport.scope }
     var busy: Bool { work != nil }
     var hasReadableProjection: Bool { active && scope != nil && boundScope == scope }
+    var shouldPoll: Bool {
+        hasReadableProjection && state == .pending && !messages.contains { $0.status == .reconciliationRequired }
+    }
     var canSend: Bool {
         state == .ready && active && boundScope == scope && scope != nil && !busy && pending == nil && selectedID != nil
         && policy?.consentState == .accepted && !messages.contains { $0.status.waiting }
@@ -34,6 +37,12 @@ final class NativeQAStore {
         active = false; state = .inactive
     }
     func activate(_ visible: Bool) async {
+        // Re-entering the same live foreground is a read, not a new scene/identity.
+        // Never save/restore a draft around await: a later edit must remain newer.
+        if visible, active, boundScope == scope, scope != nil {
+            await refresh()
+            return
+        }
         let previous = boundScope
         invalidate()
         if previous != scope { selectedID = nil }

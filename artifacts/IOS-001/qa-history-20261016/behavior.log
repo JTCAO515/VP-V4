@@ -1,0 +1,18 @@
+Test Suite 'NativeQAHistoryPresentationTests' started at 2026-10-16 15:36:50.890.
+Test Case '-[main.NativeQAHistoryPresentationTests testLiveClosureReplacementAndForeignID]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testLiveClosureReplacementAndForeignID]' passed (0.001 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testLoadingIsNeverEmptyAndBlocksActions]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testLoadingIsNeverEmptyAndBlocksActions]' passed (0.000 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testMalformedOrDuplicateListAndOldDisplayedScopeFailClosed]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testMalformedOrDuplicateListAndOldDisplayedScopeFailClosed]' passed (0.000 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testRevokedScopeAndEpochGenerationChangesHideProjection]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testRevokedScopeAndEpochGenerationChangesHideProjection]' passed (0.000 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testScopeChangesInsideReadAreRejected]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testScopeChangesInsideReadAreRejected]' passed (0.000 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testSearchPreservesDTOAndDistinguishesNoMatches]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testSearchPreservesDTOAndDistinguishesNoMatches]' passed (0.000 seconds).
+Test Case '-[main.NativeQAHistoryPresentationTests testUnknownRestrictionStillReadsButCannotChangeSession]' started.
+Test Case '-[main.NativeQAHistoryPresentationTests testUnknownRestrictionStillReadsButCannotChangeSession]' passed (0.000 seconds).
+Test Suite 'NativeQAHistoryPresentationTests' passed at 2026-10-16 15:36:50.892.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+SYNTHETIC ONLY: 7 tests, 0 failures
