@@ -18,6 +18,16 @@ export function safeReturnTo(candidate: string | undefined): string {
   if (parsed.origin !== "https://visepanda.invalid" || parsed.hash) return "/visepanda";
   if (parsed.search) {
     const q = parsed.searchParams;
+    if (parsed.pathname === "/qa") {
+      if (q.size < 1 || q.size > 2 || [...q.keys()].some(key => key !== "session" && key !== "locale")
+        || [...new Set(q.keys())].length !== q.size
+        || (q.has("session") && !new RegExp(`^${UUID}$`, "i").test(q.get("session") ?? ""))
+        || (q.has("locale") && !["zh", "en"].includes(q.get("locale") ?? ""))) return "/visepanda";
+      const target = new URLSearchParams();
+      if (q.has("session")) target.set("session", q.get("session")!);
+      if (q.has("locale")) target.set("locale", q.get("locale")!);
+      return `/qa?${target.toString()}`;
+    }
     if (parsed.pathname !== "/ops/review" || (q.size !== 3 && !(q.size === 4 && q.has("wikiProposalIndex")))
       || !["wikiPageKey", "wikiRevisionId", "wikiVersion"].every(key => q.has(key))
       || (q.has("wikiProposalIndex") && !/^[0-4]$/.test(q.get("wikiProposalIndex") ?? ""))
