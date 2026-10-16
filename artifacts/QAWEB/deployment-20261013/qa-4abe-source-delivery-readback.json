@@ -1,0 +1,138 @@
+{
+  "observedAt": "2026-10-16T05:45:25.996713+00:00",
+  "identity": "jtcao515",
+  "project": {
+    "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "accountId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "rootDirectory": null,
+    "framework": "nextjs"
+  },
+  "currentDeployment": {
+    "id": "dpl_4Ebnjqu1WT8nztkGxKNCN2x9DnAo",
+    "url": "vp-v4-gpby55638-jtcao515s-projects.vercel.app",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "target": null,
+    "readyState": "READY",
+    "createdAt": 1792127544916,
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "currentAlias": {
+    "alias": "qatesting.go2china.space",
+    "uid": "29c830181b84b0a5b994626d98ed85158761d33ee77b09200315c7315eef10c4e1139c347b53aff792bafd2aa3391fee1945ddfd0baba84ece743fae05246f3a",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "deploymentId": "dpl_4Ebnjqu1WT8nztkGxKNCN2x9DnAo",
+    "deployment": {
+      "id": "dpl_4Ebnjqu1WT8nztkGxKNCN2x9DnAo",
+      "url": "vp-v4-gpby55638-jtcao515s-projects.vercel.app"
+    }
+  },
+  "domain": {
+    "name": "qatesting.go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "gitBranch": "codex/qaw005-independent-target-20261013",
+    "verified": true
+  },
+  "qaEnvironmentMetadata": [
+    {
+      "key": "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    }
+  ],
+  "plainTargetOriginMatch": {
+    "VISEPANDA_QA_SUPABASE_PROJECT_REF": true,
+    "VISEPANDA_QA_AGENT_ORIGIN": true
+  },
+  "qaEnableAbsent": true,
+  "rollbackDeployment": {
+    "id": "dpl_F9GFMNCULZ6ydNLSyf9bQbVZz85K",
+    "sha": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+    "source": "previous direct readback p0-runtime-20261016-readback.json; not reassigned"
+  },
+  "http": [
+    {
+      "path": "/",
+      "httpStatus": 307,
+      "contentType": "text/html; charset=utf-8",
+      "location": "/qa",
+      "requestId": "sin1::iad1::8xj2l-1792129521232-95d7ecda2c21"
+    },
+    {
+      "path": "/qa",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "requestId": "sin1::7rp9j-1792129522868-d94c10b004b4"
+    },
+    {
+      "path": "/qa/demo",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "requestId": "sin1::bmndm-1792129523317-14d37557e019",
+      "syntheticMarkerPresent": true
+    },
+    {
+      "path": "/auth/sign-in?returnTo=%2Fqa",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "requestId": "sin1::iad1::7rp9j-1792129524262-b9c6f0dbeba6",
+      "hiddenReturnToProbeApplicable": false,
+      "note": "Exact source passes sanitized returnTo as React prop and client router target; it does not render this hidden input. Login and navigation not executed."
+    },
+    {
+      "path": "/api/qa-agent/sessions",
+      "httpStatus": 503,
+      "contentType": "application/json",
+      "location": null,
+      "requestId": "sin1::iad1::q5pqz-1792129524998-378a24a4c538",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      }
+    },
+    {
+      "path": "/api/qa-agent/policy",
+      "httpStatus": 503,
+      "contentType": "application/json",
+      "location": null,
+      "requestId": "sin1::iad1::hnl56-1792129525700-ece9066cc35c",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      }
+    }
+  ],
+  "deploymentOrAliasWriteNeeded": false,
+  "resourceMutations": 0,
+  "manualCreateOrList403Retried": false,
+  "browserCookiesOrSessionsTouched": false,
+  "postRequestsFromThisTask": 0,
+  "realProviderOrUserMessage": "UNRUN",
+  "mcpAliasRead404RequestId": "sin1:sfo1::4m52f-1792129484720-64aa669aeeab",
+  "cliReadFallback": "same GET endpoint/project/team after MCP404; not a403fallback",
+  "aliasDeploymentMatchesExactSource": true,
+  "readOnlyVerificationOutcome": "PASS_EXACT_SOURCE_ALREADY_AUTOMATICALLY_DELIVERED",
+  "additionalDeployOrAliasMutationRequired": false
+}
