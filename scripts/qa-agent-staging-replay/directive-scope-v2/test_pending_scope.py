@@ -161,6 +161,9 @@ class Pending(unittest.TestCase):
             def visit_Call(self,node):
                 self.generic_visit(node)
                 if isinstance(node.func,ast.Name) and node.func.id=='_directive_profile':node.args=[]
+                # Default direct-human branches still use JT; delegated label
+                # selection is separately tested in delegated-scope-v1.
+                if isinstance(node.func,ast.Name) and node.func.id=='_approval_label':return ast.Constant(value='JT')
                 return node
         names=['validate','claim','finish','check_preserved','bindings','failure_fingerprint']
         for name in names:
