@@ -55,7 +55,7 @@ final class NativeQASessionTransport: NativeQATransport {
            pending.sessionID == sessionID, pending.requestID == requestID,
            let receipt = try? NativeQAWire.decode(NativeQAWire.Message.self, response: response),
            receipt.message.valid(sessionID: sessionID), receipt.message.requestId == requestID,
-           receipt.message.input == pending.originalText {
+           pending.matchesOriginalInputBytes(receipt.message.input) {
             _ = try current(expected)
             verifiedAdmission = (pending, expected)
         }

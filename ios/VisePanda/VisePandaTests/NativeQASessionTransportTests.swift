@@ -21,11 +21,11 @@ struct NativeQASessionTransportTests {
         #expect(session.dataScope != nil)
         return (session, session.makeNativeQATransport())
     }
-    private func pending(_ scope: NativeDataScope) throws -> NativeQAPending {
+    private func pending(_ scope: NativeDataScope, text: String = "  original QA request  ") throws -> NativeQAPending {
         let policy = NativeQAPolicy(id: policyID, noticeHash: String(repeating: "a", count: 64),
             noticeZh: "合成测试说明", noticeEn: "Synthetic notice", provider: "fixture", recipient: "fixture",
             consentState: .accepted, contextMode: "qa_session_history_v1", maxTurns: 8)
-        return try NativeQAPending(scope: scope, sessionID: thread, policy: policy, text: "  original QA request  ")
+        return try NativeQAPending(scope: scope, sessionID: thread, policy: policy, text: text)
     }
 
     @Test func installedQAEntryNeedsAnInstalledStagingTarget() {
@@ -109,6 +109,23 @@ struct NativeQASessionTransportTests {
         await session.logout()
         #expect(port.scope == nil)
         #expect(throws: NativeQAError.self) { try port.loadPending(scope: scope) }
+    }
+
+    @Test func canonicallyEquivalentReceiptCannotClearDifferentOriginalUTF8() async throws {
+        for (original, returned) in [("\u{00E9}", "e\u{0301}"), ("e\u{0301}", "\u{00E9}")] {
+            #expect(original == returned)
+            #expect(Data(original.utf8) != Data(returned.utf8))
+            let (_, port) = try await fixture()
+            let scope = try #require(port.scope)
+            let command = try pending(scope, text: original)
+            try port.retainPending(command, scope: scope)
+            NativeQAIntegrationProtocol.state.qa(status: 200, type: "application/json", body: ["version": "qa-agent/1", "message": [
+                "requestId": command.requestID, "turnId": command.requestID, "sessionId": thread,
+                "input": returned, "text": NSNull(), "status": "pending", "createdAt": "2026-10-16T00:00:00Z"]])
+            _ = try await port.request(.recover(sessionID: thread, requestID: command.requestID), scope: scope)
+            #expect(throws: NativeQAError.self) { try port.clearPending(command, scope: scope) }
+            #expect(try port.loadPending(scope: scope)?.body == command.body)
+        }
     }
 }
 
