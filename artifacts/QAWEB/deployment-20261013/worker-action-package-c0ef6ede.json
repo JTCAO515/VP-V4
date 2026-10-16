@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "stage": "OFFLINE_REVIEW_ONLY_NOT_EXECUTION_AUTHORITY",
+  "sourceSha": "c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+  "sourceTree": "5f910aa67131b8219a250ee7ab67f00127634bc1",
+  "libTree": "b696703c14e62f6bc1cc0a9cc59a5364da2f89d3",
+  "sourceFilesSha256": {
+    "deploy/hosted-worker/Dockerfile": "446c8c92185ec868bdb522cec04ecbf46f247206671685e723f9b62dac9e210e",
+    "deploy/hosted-worker/Dockerfile.dockerignore": "4406d527600882fafe4f417351863de9fe2636739fae250970496f130d4b36c4",
+    "deploy/hosted-worker/ecs-worker-files.sh": "8cfa236a42bdcde9132b3da5a812a962597672da3c78f66cdd15039f44a2dfa3",
+    "deploy/hosted-worker/validate-qa-profile.py": "851f41814b6bb46922dd7377a3ad87a62386b0c93abf0bb002c8d195d8a1d59a",
+    "deploy/hosted-worker/validate-qa-target.mjs": "e4e45e84022ca735f99cf573f2642940f62c6bf86582c600dcb32d141a01b1a0",
+    "deploy/hosted-worker/qa-target.md": "7b6ed85067330ebd1bf7c992ba08b3dce7f687fdf91e9f790695d7ac00125d4c",
+    "lib/server/qa-agent/hosted-profile.ts": "70958ae30f8dc17fa8bf21a20fdda45e7167e6d8e83e909732ec41667b1903f5",
+    "lib/server/qa-agent/target.ts": "4bd3d303a2d91881e41d19cfc44e04cd49ff8475fb418a540f5fe062a6756cf6",
+    "lib/server/qa-agent/worker.ts": "c34785aa897de3a36d315644b969c159ee447dbb8cdbdc43b7cbd0cd33287a4e",
+    "lib/server/jobs/hosted-text-worker.ts": "eec95793a5591563f225f0f9af815515aac9a9c27ddc30668611193697ac1a31",
+    "lib/server/jobs/run-hosted-text-worker.mjs": "1ecff7560372319f32658b55da996d61e653e5e5aac5ffddcc1fbf14e952add9",
+    "lib/server/jobs/hosted-worker-secrets.mjs": "bc4bdde59dac41b12abecf881887c594a77fa50040978d226385f42e1f21d91a",
+    "lib/server/model-gateway/adapters/provider-endpoints.ts": "778e0815a0e084ea91db847e38f278ba780d18b73e004c8bef7213d4b6f63dad"
+  },
+  "fixedHost": {
+    "instanceId": "i-j6c7q3kftufyroypiqvu",
+    "ip": "47.239.12.244",
+    "platform": "linux/amd64",
+    "existingCheckoutPreserve": "/opt/vp-v4",
+    "proposedIsolatedSourceDirectory": "/opt/vp-v4-qa/c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+    "mustRefuseExistingDestination": true
+  },
+  "buildId": "c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+  "proposedImageTag": "vp-hosted-text-worker:c0ef6edefcc2ac63ed665d14305cca1ad541504f",
+  "baseImage": {
+    "upstreamTagFromSource": "node:22-bookworm-slim",
+    "approvedLinuxAmd64ManifestDigest": null,
+    "mustNotBuildWithMutableTag": true,
+    "selectionNotYetPerformed": true
+  },
+  "builtImageId": null,
+  "registryDigest": null,
+  "profileVersion": "vpj07-hosted-text-worker/4",
+  "targetVersion": "qa-hosted-deployment-target/2",
+  "actualPolicyActorScopeNoticeTariff": null,
+  "requiredExternalInputs": [
+    "Main confirms final fixed-source review/CI gate for this worker package",
+    "Reviewed official node22-bookworm-slim linux/amd64 manifest digest and build source/provenance",
+    "Fresh approved shared-DB recovery/compatibility/RPC ACLs and write window; global switch impact",
+    "Actual approved actor/policy/scope/notice/consent plus configurationId/version/current tariff and bounded expense window",
+    "Original server owner delivers reviewed actual runtime actor/policy/scope guard; group uniqueness is supporting evidence only, never a substitute",
+    "Exact host prepare/image build/load/profile-target installation/disabled start/stop lease; provider enable separate"
+  ],
+  "resourceMutationsPerformed": 0,
+  "testsNotRerun": "No source implementation change; prior evidence reused without claiming exact-source runtime PASS",
+  "credentialsIncluded": false,
+  "activationBlockedByRuntimeBindingGap": true,
+  "sourceMustBeRevisedAfterGuardFix": true
+}
