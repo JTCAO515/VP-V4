@@ -2711,7 +2711,7 @@ final class NativeSession {
                     })
                 } catch { failureCode = "qaPendingCleanupRequired"; status = "storageError"; return false }
                 do {
-                    try NativeQACancellationJournal.erase(endpoint: boundEndpoint, owner: owner, vault: vault, authorized: {
+                    try eraseNativeQACancellationCustody(endpoint: boundEndpoint, owner: owner, authorized: {
                         let cleanupOwner = self.credential?.subject ?? self.defaults.string(forKey: self.storageKey)
                             ?? self.defaults.string(forKey: self.storageKey + ".pendingJournalCleanupOwner")
                             ?? self.defaults.string(forKey: self.storageKey + ".recoveryCleanupOwner")
@@ -2902,6 +2902,22 @@ extension NativeSession {
 
     func makeNativeQAPendingJournal() -> NativeQAPendingJournal {
         NativeQAPendingJournal(vault: vault, currentScope: { [weak self] in self?.dataScope })
+    }
+
+    private func eraseNativeQACancellationCustody(endpoint: String, owner: String, authorized: () -> Bool) throws {
+        if NativeQAWire.uuid(owner) {
+            try NativeQACancellationJournal.erase(endpoint: endpoint, owner: owner, vault: vault, authorized: authorized)
+            return
+        }
+        // Existing non-QA identities cannot retain this strict UUID-only namespace.
+        // Preserve their original cleanup contract only after qualified physical absence.
+        // Any unexpected bytes or unavailable storage stays blocked, never erased or ignored.
+        guard !endpoint.isEmpty, endpoint.utf8.count <= 2048, authorized() else { throw NativeQACancellationError.stale }
+        let first = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized() else { throw NativeQACancellationError.stale }
+        let second = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized(), first.0 == errSecItemNotFound, first.1 == nil,
+              second.0 == errSecItemNotFound, second.1 == nil else { throw NativeQACancellationError.storageUnavailable }
     }
 
     func makeNativeQACancellationJournal(currentScope: (() -> NativeDataScope?)? = nil) -> NativeQACancellationJournal {

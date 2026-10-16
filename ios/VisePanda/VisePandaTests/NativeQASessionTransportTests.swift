@@ -8,8 +8,8 @@ struct NativeQASessionTransportTests {
     private let owner = "11111111-1111-4111-8111-111111111111"
     private let thread = "22222222-2222-4222-8222-222222222222"
     private let policyID = "33333333-3333-4333-8333-333333333333"
-    private func fixture(vault: NativeQAIntegrationVault = NativeQAIntegrationVault()) async throws -> (NativeSession, NativeQASessionTransport) {
-        NativeQAIntegrationProtocol.state.reset(owner: owner)
+    private func fixture(vault: NativeQAIntegrationVault = NativeQAIntegrationVault(), subject: String? = nil) async throws -> (NativeSession, NativeQASessionTransport) {
+        NativeQAIntegrationProtocol.state.reset(owner: subject ?? owner)
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [NativeQAIntegrationProtocol.self]
         let defaults = try #require(UserDefaults(suiteName: "nativeqa.integration.\(UUID())"))
@@ -102,6 +102,35 @@ struct NativeQASessionTransportTests {
         #expect(session.dataScope == nil && port.scope == nil)
         #expect(vault.read(service: NativeQACancellationJournal.service(scope.endpoint), owner: scope.subject).0 == errSecItemNotFound)
         #expect(vault.read(service: NativeQAPendingJournal.service(scope.endpoint), owner: scope.subject).0 == errSecItemNotFound)
+    }
+
+    @Test func legacyIdentityCleanupRequiresPhysicalCancellationAbsence() async throws {
+        let (session, _) = try await fixture(subject: "legacy-synthetic-owner")
+        await session.logout()
+        #expect(session.status == "signedOut")
+        #expect(session.failureCode != "qaCancellationCleanupRequired")
+        #expect(session.dataScope == nil)
+    }
+
+    @Test func legacyIdentityUnexpectedCancellationBytesRemainFailClosed() async throws {
+        let vault = NativeQAIntegrationVault()
+        let (session, _) = try await fixture(vault: vault, subject: "legacy-synthetic-owner")
+        let scope = try #require(session.dataScope)
+        let service = NativeQACancellationJournal.service(scope.endpoint)
+        let original = Data("synthetic-unqualified-record".utf8)
+        #expect(vault.write(original, service: service, owner: scope.subject) == errSecSuccess)
+        await session.logout()
+        #expect(session.failureCode == "qaCancellationCleanupRequired")
+        #expect(vault.read(service: service, owner: scope.subject).1 == original)
+    }
+
+    @Test func legacyIdentityLockedCancellationNamespaceDoesNotBecomeAbsent() async throws {
+        let vault = NativeQAIntegrationVault()
+        let (session, _) = try await fixture(vault: vault, subject: "legacy-synthetic-owner")
+        let scope = try #require(session.dataScope)
+        vault.blockedService = NativeQACancellationJournal.service(scope.endpoint)
+        await session.logout()
+        #expect(session.failureCode == "qaCancellationCleanupRequired")
     }
 
     @Test func installedQAEntryNeedsAnInstalledStagingTarget() {
@@ -207,8 +236,10 @@ struct NativeQASessionTransportTests {
 
 @MainActor private final class NativeQAIntegrationVault: NativeCredentialVault {
     private var values: [String: Data] = [:]
+    var blockedService: String?
     private func key(_ service: String, _ owner: String) -> String { "\(service.utf8.count):\(service)\(owner)" }
     func read(service: String, owner: String) -> (OSStatus, Data?) {
+        if service == blockedService { return (errSecInteractionNotAllowed, nil) }
         guard let value = values[key(service, owner)] else { return (errSecItemNotFound, nil) }
         return (errSecSuccess, value)
     }
