@@ -1,0 +1,128 @@
+{
+  "sourceHead": "d8176175f5ed68a003b77557a3437c43098eede4",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE; evidence-only",
+  "branch": "codex/qaw683-live-controller-20261017",
+  "status": "SOURCE_COMPLETE_CANDIDATE_NOT_ACTIVATED_PENDING_INDEPENDENT_REVIEW",
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/directive-scope-v1/LIVE-CONTROLLER.md": "5afb05bf2dfed46befddf849578bcb1a0be3d6ca7a4c740db22d9af9664b9433",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/live-controller.py": "49d3764205b76d88fe1503fc3e8b6943110f5a9a7e46e42969240a35ac3cbbc9",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/profile.py": "ea0ae6b77934e5e614ac9c2aacf43f9343f6654b7967262cda7acca7e63f6ae8",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": "d5f7796e24ae5f0c9413496ccdc9ce32baa05aeb5f0d9ff5701f9b33ef0bd190",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/test_live_controller.py": "75641a30f55f594b321be2bd4a40d6d29663d9d444ca04837bcbd89c5f65be59"
+  },
+  "checks": {
+    "controller": 17,
+    "directiveProfile": 37,
+    "planQualification": 4,
+    "total": 58,
+    "negativeCases": [
+      "missing causal evidence refused by synthetic entry",
+      "wrong window",
+      "wrong scope",
+      "unknown cleanup",
+      "expired original budget",
+      "reconstruction",
+      "fork PID",
+      "third call",
+      "abort",
+      "interrupt",
+      "invalid command",
+      "missing descriptor",
+      "loaded core or runtime drift",
+      "EOF",
+      "oversize"
+    ],
+    "initialFailure": "Repeated fixed synthetic window ID collided with preserved ownership registry; fixture changed to unique synthetic IDs. No production gate weakened.",
+    "realPermissionGatesProven": false
+  },
+  "logs": [
+    {
+      "privateBasename": "controller-unit.log",
+      "sha256": "282103c6bbae574d8a07a1f1d080239dac307ed2632a343b6fdbc811ccfac63e",
+      "summary": [
+        "Ran 13 tests in 0.006s",
+        "FAILED (errors=12)"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "controller-unit2.log",
+      "sha256": "d476c7122c5582385d94cbfffcab7a18340f9c4d67dc7eb744e5eeed6c19ac92",
+      "summary": [
+        "Ran 13 tests in 0.020s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "controller-unit3.log",
+      "sha256": "3388bf78344cf0e2962229ca9bf4cbbba90a998c38a1ec15c15e9374ae6f4b22",
+      "summary": [
+        "Ran 15 tests in 0.061s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "controller-final.log",
+      "sha256": "97b07bdbb030c38ca9c71a826e2c4ab0e4fe5ce84c0c854a0d65aad704419ae8",
+      "summary": [
+        "Ran 17 tests in 0.069s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "controller-profile.log",
+      "sha256": "3bb5895f33f088b5181da6089c2b6006a649636ba2e65a7548b5ebabcfcf8bd2",
+      "summary": [
+        "Ran 37 tests in 0.353s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "controller-plan.log",
+      "sha256": "28f4a5be8bed5d54132f1e0c51c2e35722e0ad8aa7421fbce6bdf6a556673bcd",
+      "summary": [
+        "Ran 4 tests in 0.011s",
+        "OK"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "persistentToolSession": {
+    "file": "synthetic-tool-session.json",
+    "sha256": "9f0bf7512c31fb4188b2feb41f850e15f6fa5f906e2a93838c0d0f061d9eb6b3",
+    "toolSessionId": 91477,
+    "pid": 52285,
+    "originalBudgetObjectId": 4421462720,
+    "sequence": [
+      "run_first: synthetic FAIL cleanup PASS -> HOLD",
+      "status: HOLD no retry",
+      "explicit repair: second synthetic entry using same object",
+      "COMPLETE with lastEntryOutcome FAIL; process exit0"
+    ],
+    "rawToolResultsSaved": true,
+    "actualMaterialsOrPGUsed": false,
+    "testEntryPatchedOnlyInTestHarness": true
+  },
+  "supportedRepairScope": [
+    "host-permission-diagnostics.py",
+    "container-diagnostic/restore/bridge.py"
+  ],
+  "ineligible": [
+    "changed loaded core/entry/profile/provenance/controller/runtime inputs",
+    "new dependency set",
+    "process restart or lost original object/domain",
+    "scope/window mismatch",
+    "strict entry causal or claim or source or time guard refusal"
+  ],
+  "runtime": {
+    "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+    "all7InputsMatch": true,
+    "newImageOrPhysicalMatrix": false
+  },
+  "actualState": "No START/claim/window/material/identity/PG/Docker/target operation. Original bda first42501 causeUNKNOWN cleanupPASS secondUNRUN unchanged.",
+  "remaining": "Main independent review/integration, then product decision on new actual scope and exact reviewed operator/bootstrap/configuration. No actual configuration provisioned."
+}

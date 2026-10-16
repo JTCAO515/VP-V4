@@ -1,0 +1,20 @@
+{
+  "status": "PROPOSAL_ONLY_NO_AUTHORITY",
+  "supersedesCapabilityGapOnly": "Prior one-shot driver cannot resume after exit; live-controller library now demonstrates persistent process/object continuity with synthetic entry. Old driver remains frozen.",
+  "minutes": 60,
+  "maximumAttempts": 2,
+  "dataReserveSeconds": 120,
+  "cleanupSeconds": 60,
+  "automaticRetry": false,
+  "mechanism": "Original reviewed operator process calls serve(); exec session stdin carries only finite action plus prebound descriptor hash. No serialize/restart.",
+  "requiredBeforeActual": [
+    "New explicit scoped authorization and official source chain; original bda and already-used directive grant cannot qualify another window.",
+    "Exact reviewed operator bootstrap binds original factory Budget, authorized metadata paths/configuration and repair descriptor; current candidate has no actual bootstrap configuration.",
+    "Pinned retained material/identity, fresh permitted locale, source/image and all original strict-entry guards.",
+    "Second invocation only after first actual FAIL with cleanup PASS and independently reviewed causal repair in supported dynamic-host scope; original same-process Budget and remaining dual-clock cap must still pass.",
+    "Repair needing frozen module/domain/runtime change is INELIGIBLE in this controller; no fallback."
+  ],
+  "retentionEnd": "2026-10-20T23:59:59+08:00",
+  "currentActualRuns": 0,
+  "nextRouting": "Main submits the concrete scope proposal to product; no actual plan activation by this code or document."
+}
