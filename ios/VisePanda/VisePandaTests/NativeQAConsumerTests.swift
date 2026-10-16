@@ -140,6 +140,37 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         port.scope = nil
         XCTAssertFalse(store.hasReadableProjection); XCTAssertFalse(store.canSend)
     }
+    @MainActor func testCanonicallyEquivalentReceiptCannotClearDifferentOriginalUTF8Bytes() async throws {
+        for (original, receipt) in [("\u{00E9}", "e\u{0301}"), ("e\u{0301}", "\u{00E9}")] {
+            XCTAssertEqual(original, receipt) // Swift canonical equality is deliberately insufficient.
+            XCTAssertNotEqual(Data(original.utf8), Data(receipt.utf8))
+            let port = NativeQAConsumerTestPort(); port.receiptInput = receipt
+            let store = NativeQAStore(transport: port)
+            await store.activate(true); await store.select(port.sessionID)
+            store.draft = original; await store.send()
+            let posted = try XCTUnwrap(port.posted)
+            XCTAssertFalse(posted.matchesOriginalInputBytes(receipt))
+            XCTAssertEqual(store.state, .unknown)
+            XCTAssertEqual(port.clearCount, 0)
+            XCTAssertEqual(port.retained?.body, posted.body)
+            XCTAssertTrue(store.messages.isEmpty)
+            XCTAssertEqual(port.posts, 1)
+        }
+    }
+    @MainActor func testExactUnicodeReceiptBytesCanClearOriginalCommand() async throws {
+        for original in ["\u{00E9}", "e\u{0301}"] {
+            let port = NativeQAConsumerTestPort(); port.receiptInput = original
+            let store = NativeQAStore(transport: port)
+            await store.activate(true); await store.select(port.sessionID)
+            store.draft = original; await store.send()
+            let posted = try XCTUnwrap(port.posted)
+            XCTAssertTrue(posted.matchesOriginalInputBytes(original))
+            XCTAssertEqual(Data(try XCTUnwrap(posted.originalText).utf8), Data(original.utf8))
+            XCTAssertNil(port.retained); XCTAssertEqual(port.clearCount, 1)
+            XCTAssertEqual(store.state, .ready)
+            XCTAssertEqual(port.posts, 1)
+        }
+    }
     @MainActor func testLocalRequestPathsAndPendingIdentityAreClosed() throws {
         let port = NativeQAConsumerTestPort()
         let policy = try JSONDecoder().decode(NativeQAPolicy.self, from: JSONSerialization.data(withJSONObject: port.policy))
@@ -159,11 +190,12 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
     let policyID = "00000000-0000-4000-8000-000000000003"
     var retained: NativeQAPending?
     var posted: NativeQAPending?
-    var posts = 0, consents = 0, messageCount = 1
+    var posts = 0, consents = 0, messageCount = 1, clearCount = 0
     var failRetain = false, dropAck = false, hideReceipt = false, saved = false
     var changeActorOnHistory = false, foreignHistory = false
     var holdHistory = false, historyStarted = false, historyCancelled = false
     var foreignReceipt = false, failReadback = false
+    var receiptInput: String?
     var noticeHash = String(repeating: "a", count: 64)
     var consent = "accepted", messageStatus = "answered"
     var policy: [String: Any] {
@@ -190,7 +222,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
     }
     func clearPending(_ pending: NativeQAPending, scope: NativeDataScope) throws {
         guard pending == retained, pending.matches(scope) else { throw NativeQAError.stale }
-        retained = nil
+        clearCount += 1; retained = nil
     }
     func request(_ request: NativeQARequest, scope: NativeDataScope) async throws -> NativeQAHTTPResponse {
         var object: [String: Any]
@@ -210,6 +242,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
             if hideReceipt { throw NativeQAError.server(code: "PROVIDER_UNAVAILABLE", ack: "unknown") }
             guard var message = messages.first else { throw NativeQAError.invalidResponse }
             if foreignReceipt { message["input"] = "Foreign input" }
+            if let receiptInput { message["input"] = receiptInput }
             object = ["message": message]
         case .history:
             if holdHistory {

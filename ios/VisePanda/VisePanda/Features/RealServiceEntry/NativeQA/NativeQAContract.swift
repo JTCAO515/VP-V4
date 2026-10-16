@@ -73,6 +73,11 @@ struct NativeQAPending: Codable, Equatable {
     }
     private struct Submission: Codable { let requestId: String; let text: String }
     var originalText: String? { try? JSONDecoder().decode(Submission.self, from: body).text }
+    /// Receipt binding is byte-exact; Swift String equality permits canonical Unicode equivalence.
+    func matchesOriginalInputBytes(_ input: String) -> Bool {
+        guard let original = originalText else { return false }
+        return original.utf8.elementsEqual(input.utf8)
+    }
     var valid: Bool {
         guard schemaVersion == 1, mobileEpoch > 0, !endpoint.isEmpty, !subject.isEmpty,
               NativeQAWire.uuid(sessionID), NativeQAWire.uuid(requestID), NativeQAWire.uuid(policyID), NativeQAWire.hash(noticeHash),
