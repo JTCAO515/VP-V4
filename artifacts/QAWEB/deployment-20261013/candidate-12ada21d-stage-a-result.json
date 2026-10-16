@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-16T05:16:10.713477+00:00",
+  "stage": "A_CANDIDATE_IMAGE_ONLY_COMPLETE",
+  "instanceId": "i-j6c7q3kftufyroypiqvu",
+  "ip": "47.239.12.244",
+  "bootId": "7ef6364a-f3a0-4fe7-8b7f-4431db4a7600",
+  "arch": "x86_64",
+  "preflight": {
+    "freeBytes": 34885779456,
+    "gitVersion": "2.34.1",
+    "gitTarCurlDockerAvailable": true,
+    "containersEmpty": true,
+    "candidateTagAndSourceLeafAbsent": true,
+    "stagingRootOwned0700Nonlink": true,
+    "existingUploadedTar": false
+  },
+  "source": {
+    "origin": "https://github.com/JTCAO515/VP-V4.git",
+    "visibility": "PUBLIC verified by Main",
+    "fetchHead": "12ada21db9840525c2c8fc94067846b487476fdc",
+    "fetchDepth": 1,
+    "filter": "blob:none",
+    "explicitFetchAttempts": 1,
+    "gitSystemAndGlobalConfigDisabled": true,
+    "credentialHelperAndAskpassDisabled": true,
+    "terminalPromptDisabled": true,
+    "macLocalFileAccessUsed": false,
+    "libTree": "ae250ca0e6360bb4aaedc2743854b74e4b76efe3",
+    "workerDeployTree": "b88890b56d930ae34d1c9a9e746636e8e7df1aeb",
+    "sourceFileCount": 564,
+    "regularBlobModesOnly": [
+      "100644",
+      "100755"
+    ],
+    "noSymlinkHardlinkTraversalSubmodule": true,
+    "selectedTar": "/tmp/v10-qa-candidate-12ada21d/public-selected.tar",
+    "selectedTarSha256": "94af80a52433114dca1484c6ebd449837e409ddfe3126506ffbf8d4ba6df5342",
+    "selectedTarBytes": 4229120,
+    "sourceObtainedAt": "2026-10-16T05:11:27.298986+00:00",
+    "macGzipArchiveHashNotClaimedForNewTar": true
+  },
+  "mergedQaMapping": {
+    "reportedBy": "Main",
+    "qaSha": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+    "sourceBuildSha": "12ada21db9840525c2c8fc94067846b487476fdc",
+    "sameFullTree": "e9020393f64c533fc2c532830d92c335360abe12",
+    "sameLibAndDeployTrees": true,
+    "ciAndReview": "Main reports22checks+2statuses SUCCESS, formal5543150750, normalmatchhead squash05:12:21Z"
+  },
+  "isolatedSourceDirectory": "/opt/vp-v4-qa/12ada21db9840525c2c8fc94067846b487476fdc",
+  "derivedFiles": {
+    "Dockerfile.qa-pinned": {
+      "sha256": "dfe388a6484a981be254741f420809395e8800da4ffe67d6e10ff926286666f2",
+      "change": "onlyFROMline immutablebase"
+    },
+    "Dockerfile.qa-pinned.dockerignore": {
+      "sha256": "4406d527600882fafe4f417351863de9fe2636739fae250970496f130d4b36c4",
+      "change": "exactoriginalignorebytes"
+    }
+  },
+  "base": {
+    "reference": "docker.io/library/node:22-bookworm-slim@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562",
+    "pullAttempts": 1,
+    "pullExit": 0,
+    "pulledAt": "2026-10-16T05:13:05.519914+00:00",
+    "observedImageId": "sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562",
+    "os": "linux",
+    "architecture": "amd64",
+    "reportedRepoDigests": [
+      "node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562"
+    ]
+  },
+  "candidate": {
+    "tag": "vp-hosted-text-worker:12ada21db9840525c2c8fc94067846b487476fdc",
+    "buildId": "12ada21db9840525c2c8fc94067846b487476fdc",
+    "imageId": "sha256:1ec86928ef66bd78c24d7dd79b361582fde2f5d7cc97f1295a29b6b5282fd943",
+    "os": "linux",
+    "architecture": "amd64",
+    "buildAttempts": 1,
+    "buildExit": 0,
+    "builtAt": "2026-10-16T05:13:56.173491+00:00",
+    "buildNetwork": "none",
+    "pullDuringBuild": false,
+    "buildContextApproxBytes": 4226000,
+    "dockerBuilder": "existinglegacybuilder",
+    "reportedLocalRepoDigests": [
+      "vp-hosted-text-worker@sha256:1ec86928ef66bd78c24d7dd79b361582fde2f5d7cc97f1295a29b6b5282fd943"
+    ],
+    "pushedToRegistry": false,
+    "registryPublicationAttested": false
+  },
+  "smoke": {
+    "name": "vp-qa-smoke-12ada21d-e87ea3783630",
+    "utc": "2026-10-16T05:14:42.483653+00:00",
+    "imageId": "sha256:1ec86928ef66bd78c24d7dd79b361582fde2f5d7cc97f1295a29b6b5282fd943",
+    "attempts": 1,
+    "entrypoint": "image defaultCLI",
+    "invocationEnvArgs": 0,
+    "network": "none",
+    "readOnlyRoot": true,
+    "capDrop": "ALL",
+    "noNewPrivileges": true,
+    "coreLimit": "0:0",
+    "memory": "256m",
+    "pids": 32,
+    "logDriver": "none",
+    "hostBindMounts": 0,
+    "journal": "own ephemeral tmpfs only; original host journal not mounted",
+    "portsPublished": 0,
+    "autoRemoveSelfOnly": true,
+    "expectedExit": 1,
+    "actualExit": 1,
+    "stdout": "",
+    "stderr": "Hosted text worker unavailable. Retain its journal and unresolved budget holds.",
+    "expectedFailClosed": "PASS",
+    "selfContainerRemaining": false,
+    "allContainersAfter": []
+  },
+  "preserved": {
+    "oldCheckoutSha": "54c8da9a1996698115ae1b1696aae7f15f3f9df5",
+    "oldImageId": "sha256:9c9c51a07c8431da58ebfb8cc439bdbf9eec83d65175bb02bed4c76892925310",
+    "keyDirectoryUidGidMode": "1000:1000:0700",
+    "dbKeyUidGidModeSizeLinksNonlink": "1000:1000:0400:219:1:true",
+    "qwenKeyUidGidModeSizeLinksNonlink": "1000:1000:0400:115:1:true",
+    "journalUidGidMode": "1000:1000:0700",
+    "profileStillAbsent": true,
+    "targetStillAbsent": true
+  },
+  "runtime": {
+    "keyBytesRead": false,
+    "keyHashesComputed": false,
+    "actualHostJournalMountedOrWritten": false,
+    "databaseCalls": 0,
+    "providerCalls": 0,
+    "workerStarted": false,
+    "profileTargetInstalled": false,
+    "vercelOrEnvOrDomainChanged": false,
+    "workerReadiness": "UNRUN_NOT_ACTIVATED",
+    "profileTargetContainerValidator": "UNRUN_NO_PACKAGE",
+    "realLoginAnswerPersistenceMultiRound": "UNRUN"
+  },
+  "remoteArtifactsPreserved": [
+    "/tmp/v10-qa-candidate-12ada21d/public-git",
+    "/tmp/v10-qa-candidate-12ada21d/public-selected.tar",
+    "/tmp/v10-qa-candidate-12ada21d/public-source-result.json",
+    "/tmp/v10-qa-candidate-12ada21d/base-pull.log",
+    "/tmp/v10-qa-candidate-12ada21d/candidate-build.log",
+    "/tmp/v10-qa-candidate-12ada21d/candidate-build-result.json",
+    "/tmp/v10-qa-candidate-12ada21d/offline-smoke-result.json"
+  ],
+  "nextGate": "No further host/runtime/config action until Main exact profile/target validator/DB/actor/policy/budget execution lease; candidate may be reused only while immutable source/lib/deploy/image match."
+}
