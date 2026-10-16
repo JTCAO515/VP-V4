@@ -202,6 +202,37 @@ class DiagnosticWindow(unittest.TestCase):
         with patch.object(d,'ANSWER_MESSAGE_ID',None),patch.object(d,'read_private',side_effect=AssertionError('NO DATA IO')):
             with self.assertRaisesRegex(ValueError,'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED'):self.valid()
 
+    def test_actual_context_override_never_reaches_claim_or_late_base_guard(self):
+        core=load('controlled-snapshot-restore')
+        profile={'databaseFacts':{'encoding':'UTF8','collate':'en_US.UTF-8','ctype':'en_US.UTF-8','localeProvider':'i'},'icuLocale':'en-US','icuRules':None,'collationVersion':'153.121','actualCollationVersion':'153.121'}
+        manifest={'verification':{'databaseFacts':profile['databaseFacts']}}
+        mp=self.archives/'captured.json';mp.write_text('{}');mp.chmod(0o600)
+        self.packet.update(manifestPath=str(mp),replayMode=core.replay.CANDIDATE_MODE,replayManifestSha256=core.replay.CANDIDATE_MANIFEST_HASH)
+        ap=self.root/'packet.json';ap.write_text(json.dumps(self.packet));ap.chmod(0o600)
+        read=d.read_private
+        def read_metadata(path,expected=None,**kwargs):return (manifest,d.MANIFEST_SHA) if Path(path)==mp else read(path,expected,**kwargs)
+        def late_restore(*args,**kwargs):
+            # Original base guard, before any Docker command; actual regression
+            # was this rejection AFTER slot consumption, not a platform denial.
+            core.base.OwnCluster('supabase_admin').start()
+            raise AssertionError('must never reach Docker')
+        scope=SimpleNamespace(code_hash=lambda:self.code,base=core.base,locale_profile=core.locale_profile,verify_manifest=lambda manifest:None,replay=core.replay,restore_bundle=late_restore,diagnostic_deadline=core.diagnostic_deadline)
+        with patch.dict(d.os.environ,{'DOCKER_CONTEXT':'desktop-linux'}),patch.object(d,'validate',return_value=profile),patch.object(d,'read_private',side_effect=read_metadata),patch.object(core.base,'validate_approval'),patch.object(core.base,'run',return_value=b'FileVault is On.'),patch.object(core.replay,'load_plan',return_value=({'mode':core.replay.CANDIDATE_MODE},[])),patch.object(d,'claim',wraps=d.claim) as claim:
+            try:
+                with self.assertRaisesRegex(ValueError,'^DOCKER_OVERRIDE_REJECTED$'):d.run(scope,[str(ap),str(mp),self.identity,'candidate'])
+            finally:self.assertEqual(claim.call_count,0)
+
+    def test_docker_override_presence_rejected_before_input_and_claim(self):
+        for key in ('DOCKER_HOST','DOCKER_CONTEXT'):
+            for value in ('','desktop-linux' if key=='DOCKER_CONTEXT' else 'unix:///fake.sock'):
+                with self.subTest(key=key,value=value),patch.dict(d.os.environ,{key:value}),patch.object(d,'read_private',side_effect=AssertionError('NO INPUT IO')),patch.object(d,'claim',side_effect=AssertionError('NO CLAIM')):
+                    with self.assertRaisesRegex(ValueError,'^DOCKER_OVERRIDE_REJECTED$'):d.run(None,['not-read']*4)
+
+    def test_no_docker_override_preserves_unconfigured_early_rejection(self):
+        with patch.dict(d.os.environ),patch.object(d,'HUMAN_SHA256',None),patch.object(d,'read_private',side_effect=AssertionError('NO INPUT IO')),patch.object(d,'claim',side_effect=AssertionError('NO CLAIM')):
+            d.os.environ.pop('DOCKER_HOST',None);d.os.environ.pop('DOCKER_CONTEXT',None)
+            with self.assertRaisesRegex(ValueError,'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED'):d.run(None,['not-read']*4)
+
     def test_unconfigured_entry_rejects_before_any_file_secret_or_clone_io(self):
         core=load('controlled-snapshot-restore')
         with patch.object(core.diagnostic_window,'HUMAN_SHA256',None),patch.object(Path,'read_bytes',side_effect=AssertionError('NO IO')),patch.object(Path,'read_text',side_effect=AssertionError('NO IO')),patch.object(core,'restore_bundle',side_effect=AssertionError('NO CLONE')):

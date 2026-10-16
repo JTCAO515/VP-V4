@@ -357,6 +357,9 @@ def caller_snapshot(db):
 
 
 def run(core,args):
+    # Match strict OwnCluster.start exactly, before input/claim/secret IO.
+    # Do not strip overrides or trust even an apparently local context value.
+    require('DOCKER_HOST' not in os.environ and 'DOCKER_CONTEXT' not in os.environ,'DOCKER_OVERRIDE_REJECTED')
     require_configured() # before packet, manifest, identity metadata or any IO
     ap,mp,ip,plan=map(Path,args)
     require(ap.parent==ROOT and ap.suffix=='.json','DIAGNOSTIC_PACKET_METADATA_PATH_REQUIRED')

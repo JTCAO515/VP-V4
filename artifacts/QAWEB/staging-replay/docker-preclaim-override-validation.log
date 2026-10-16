@@ -1,0 +1,35 @@
+OLD ENTRY RED: configured synthetic driver override consumed fake slot before strict base rejection
+test_actual_context_override_never_reaches_claim_or_late_base_guard (cases.DiagnosticWindow) ... FAIL
+
+======================================================================
+FAIL: test_actual_context_override_never_reaches_claim_or_late_base_guard (cases.DiagnosticWindow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 222, in test_actual_context_override_never_reaches_claim_or_late_base_guard
+    with self.assertRaisesRegex(ValueError,'^DOCKER_OVERRIDE_REJECTED$'):d.run(scope,[str(ap),str(mp),self.identity,'candidate'])
+AssertionError: ValueError not raised
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-reviewed-diagnostic-window.py", line 223, in test_actual_context_override_never_reaches_claim_or_late_base_guard
+    finally:self.assertEqual(claim.call_count,0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.029s
+
+FAILED (failures=1)
+
+NEW ENTRY GREEN: same override-set presence checks before inputs or claim; no override retains old gate
+test_actual_context_override_never_reaches_claim_or_late_base_guard (cases.DiagnosticWindow) ... ok
+test_docker_override_presence_rejected_before_input_and_claim (cases.DiagnosticWindow) ... ok
+test_no_docker_override_preserves_unconfigured_early_rejection (cases.DiagnosticWindow) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.027s
+
+OK
+
+PUBLIC SOURCE CODE SHA 585fba017b04afac883c1757676c89c8520fa08158fb3a5e558181363581db4a
+Actual cipher/identity/clone I/O STOP; public pins allNone; synthetic records only
