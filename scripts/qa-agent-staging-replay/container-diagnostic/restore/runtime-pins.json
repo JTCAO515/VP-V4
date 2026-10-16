@@ -1,6 +1,6 @@
 {
   "baseImage": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
-  "imageId": "sha256:0a85908f0deca746a47fe0bd0dd11f55213876034bcce0ccffecef208c33ab68",
+  "imageId": "sha256:5abad441bc337ae4bd1d8348f562d8d4b453eb0ba3453b4f67b9eb3d67191723",
   "pythonVersion": "3.12.15",
   "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
   "helperCommit": "4a3879517d26d86126a1ce45076e090060fcc691",
@@ -8,7 +8,7 @@
   "sourceSha256": {
     "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
     "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
-    "diagnostic-window-deadline.py": "c05378dcd3e62d6470f3e6aabb9822d3b59694a5469d8bd7c72571c5290a658c",
+    "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
     "container-diagnostic/restore/Dockerfile": "bf6915f7c4db6c05c4a75c0ade6264d9d5cadf23cc6d00d8cf4d70f2aeb2021d",
     "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
     "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b"

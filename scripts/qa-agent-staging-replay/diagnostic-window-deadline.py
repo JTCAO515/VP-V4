@@ -144,9 +144,9 @@ class Budget:
     def register_diagnostic_copy(self,db,capability):
         registry=getattr(self,'diagnostic_copies',None)
         if registry is None:registry={};self.diagnostic_copies=registry
-        if db not in self.clusters or db in registry or getattr(db,'_deadline_cleanup_attempted',False):
+        if not any(item is db for item in self.clusters) or id(db) in registry or getattr(db,'_deadline_cleanup_attempted',False):
             raise ValueError('DIAGNOSTIC_COPY_REGISTRATION_CONFLICT')
-        registry[db]=capability
+        registry[id(db)]=(db,capability)
     def stop_process(self,p):
         try:
             if p.raw.poll() is None:p.kill()
@@ -157,9 +157,11 @@ class Budget:
             if not getattr(db,'_deadline_cleanup_pass',False):raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN')
             return
         db._deadline_cleanup_attempted=True
-        if db in getattr(self,'diagnostic_copies',{}):
+        registered=getattr(self,'diagnostic_copies',{}).get(id(db))
+        if registered is not None:
             try:
-                self.diagnostic_copies[db].cleanup(self);db._deadline_cleanup_pass=True
+                if registered[0] is not db:raise ValueError('DIAGNOSTIC_COPY_IDENTITY_CONFLICT')
+                registered[1].cleanup(self);db._deadline_cleanup_pass=True
             except Exception:
                 self.cleanup_ok=False;raise ValueError('OWNED_DIAGNOSTIC_CLEANUP_UNKNOWN') from None
             return

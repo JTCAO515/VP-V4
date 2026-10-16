@@ -30,9 +30,10 @@ def owned(seconds=20,**kw):
         class Copy(original):
             def __init__(self):super().__init__('supabase_admin');plan.new_copy(self)
             def docker(self,args,data=None):
-                if args and args[0]=='run':return plan.launch(self,args,lambda routed:super(Copy,self).docker(routed,data))
-                return super().docker(args,data)
-            def start(self):super().start();plan.ready(self)
+                if args and args[0]=='run':return plan.launch(self,args)
+                return plan.docker(self,args,data)
+            def command(self,program):return plan.command(self,program)
+            def start(self):plan.start(self);plan.ready(self)
         plan.bind_class(Copy);db=Copy();db.start()
         yield plan,db,b
     if not b.cleanup_ok:raise AssertionError('owned fixture cleanup failed')
@@ -52,6 +53,28 @@ class Admission(unittest.TestCase):
         with patch.object(core.diagnostic_window,'read_private') as reads,patch.object(core.base,'run') as io:
             with self.assertRaises(ValueError):core.main(['--restore-diagnostic-window-from-direct-record','OLD_795_NOT_READ','NO_MANIFEST','NO_IDENTITY','NO_PLAN'])
             reads.assert_not_called();io.assert_not_called()
+    def test_reviewed_opt_in_uses_original_gate_and_same_budget(self):
+        entry=load('reviewed_opt_in',HERE/'reviewed_entry.py');b=budget();config=configuration()
+        with patch.object(core.diagnostic_window,'read_private') as private:
+            with self.assertRaises(ValueError):entry.run(core,['OLD_795_NOT_READ']*4,config)
+            private.assert_not_called()
+        def original_gate(facade,args):
+            self.assertNotEqual(facade.code_hash(),core.code_hash())
+            return facade.restore_bundle('synthetic-directory','synthetic-key',{},window_budget=b)
+        with patch.object(core.diagnostic_window,'require_configured'),patch.object(core.diagnostic_window,'run',side_effect=original_gate) as gate,patch.object(core,'restore_bundle',return_value={'synthetic':True}) as restore:
+            self.assertEqual(entry.run(core,[],config),{'synthetic':True})
+            gate.assert_called_once();self.assertIs(restore.call_args.kwargs['window_budget'],b)
+            self.assertEqual(restore.call_args.kwargs['typed_diagnostic'],config)
+    def test_unavailable_image_refuses_before_archive_manifest_io(self):
+        def preflight(r,args,*a,**kw):
+            if args[-2:]==['context','show']:return b'local\n'
+            if 'context' in args:return b'[{"Endpoints":{"docker":{"Host":"unix:///synthetic"}}}]'
+            return b'[{"Id":"wrong"}]'
+        original=core.load
+        def loader(name,path):return bridge if name=='typed_restore_bridge' else original(name,path)
+        with patch.object(core,'load',side_effect=loader),patch.object(bridge,'_run',side_effect=preflight),patch.object(core,'verify_manifest') as manifest:
+            with self.assertRaisesRegex(ValueError,'TYPED_IMAGE_PREFLIGHT_FAILED'):core.restore_bundle('NEVER_READ','NEVER_READ',{},window_budget=budget(),typed_diagnostic=configuration())
+            manifest.assert_not_called()
     def test_clock_domain_delay_cannot_extend_original_deadline(self):
         clock=[500.0];wall=[datetime.now(timezone.utc)]
         b=core.diagnostic_deadline.Budget(670,clock=lambda:clock[0],wall_end=wall[0]+timedelta(seconds=170),wall_clock=lambda:wall[0])
@@ -71,7 +94,7 @@ class Admission(unittest.TestCase):
 class CopyContracts(unittest.TestCase):
     def test_wrong_copy_nonce_role_or_foreign_object_never_issues_control_or_signal(self):
         with owned() as (plan,db,b):
-            for field,value in [('name','foreign-copy'),('nonce','0'*32),('admin','foreign_role'),('locale','foreign_locale')]:
+            for field,value in [('name','foreign-copy'),('nonce','0'*32),('admin','foreign_role'),('locale','foreign_locale'),('context','foreign_context'),('_deadline_container_id','0'*64)]:
                 old=getattr(db,field);setattr(db,field,value)
                 try:
                     with patch.object(bridge,'_run') as io:
@@ -83,6 +106,22 @@ class CopyContracts(unittest.TestCase):
                 with self.assertRaises(ValueError):plan.ready(object())
                 io.assert_not_called()
             self.assertEqual(db.sql('select 1;'),'1')
+    def test_dispatch_is_rebuilt_from_receipt_not_mutable_consumer(self):
+        with owned() as (plan,db,b):
+            r=bridge._copy(plan,db)
+            good=db.command('pg_restore')+['--exit-on-error','--section=post-data']
+            self.assertEqual(good[:6],['docker','--host',r['endpoint'],'exec','-i',r['id']])
+            self.assertNotIn(db.name,good);self.assertNotIn('--context',good)
+            bad=list(good);bad[2]='unix:///FOREIGN_NOT_CONTACTED'
+            popen=subprocess.Popen
+            with patch.object(subprocess,'Popen',wraps=popen) as calls,patch.object(bridge,'_rpc') as rpc:
+                with self.assertRaisesRegex(ValueError,'TYPED_ORIGINAL_PG_RESTORE_REQUIRED'):plan.pipeline(db,['PROTECTED_PRODUCER_NEVER_STARTED'],bad,False,[])
+                rpc.assert_not_called()
+                dispatched=[call.args[0] for call in calls.call_args_list]
+                self.assertTrue(all('PROTECTED_PRODUCER_NEVER_STARTED' not in args and 'unix:///FOREIGN_NOT_CONTACTED' not in args for args in dispatched))
+            with patch.object(bridge,'_run',return_value=b'[{"Endpoints":{"docker":{"Host":"unix:///FOREIGN_NOT_CONTACTED"}}}]') as calls:
+                with self.assertRaisesRegex(ValueError,'TYPED_ENDPOINT_CONFLICT'):plan.command(db,'pg_restore')
+                self.assertEqual(calls.call_count,1)
     def test_wrong_runtime_container_identity_prevents_cleanup_signal(self):
         with owned() as (plan,db,b):
             actual=bridge._docker
@@ -98,9 +137,10 @@ class CopyContracts(unittest.TestCase):
     def test_parent_utc_jump_stops_before_open_and_cleanup_still_works(self):
         wall=[datetime.now(timezone.utc)]
         with owned(wall_clock=lambda:wall[0]) as (plan,db,b):
+            consumer=db.command('pg_restore')+['--exit-on-error','--section=post-data']
             wall[0]=b.wall_end+timedelta(seconds=1)
             with patch.object(bridge,'_run') as io:
-                with self.assertRaises(core.diagnostic_deadline.WindowExpired):plan.pipeline(db,['never'],db.command('pg_restore')+['--exit-on-error','--section=post-data'],False,[])
+                with self.assertRaises(core.diagnostic_deadline.WindowExpired):plan.pipeline(db,['never'],consumer,False,[])
                 io.assert_not_called()
             self.assertTrue(b.expired)
     def test_snapshot_change_and_open_finish_replays_are_refused(self):

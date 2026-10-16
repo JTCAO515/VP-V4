@@ -43,7 +43,7 @@ class StrictSyntheticRestore(unittest.TestCase):
         if mode!='normal':
             source.sql("alter database postgres set qaw.synthetic_source='yes';")
             body={'error':"raise exception using errcode='P0001',message='42501 SYNTHETIC_SECRET';",'timeout':'perform pg_sleep(60);return i;','resistant':'loop begin perform pg_sleep(60);exception when query_canceled then null;end;end loop;'}[mode]
-            source.sql("create function public.synthetic_guard(i int) returns int immutable language plpgsql as $$begin if current_setting('qaw.synthetic_source',true)='yes' then return i;end if;"+body+"end$$;create index synthetic_guard_idx on public.synthetic(public.synthetic_guard(id));")
+            source.sql("create function public.synthetic_guard(i int) returns int immutable language plpgsql as $$begin if current_setting('qaw.synthetic_source',true)='yes' then return i;end if;if session_user<>'supabase_admin' or current_setting('application_name')<>'pg_restore' then raise exception using errcode='42501',message='context changed';end if;"+body+"end$$;create index synthetic_guard_idx on public.synthetic(public.synthetic_guard(id));")
         temp=tempfile.TemporaryDirectory(prefix='qaw-core-synthetic-');self.addCleanup(temp.cleanup);directory=Path(temp.name)
         key=directory/'synthetic.agekey';r.run(['age-keygen','-o',str(key)]);key.chmod(0o600);recipient=r.run(['age-keygen','-y',str(key)]).decode().strip()
         exporter=protocol.PsqlSession(source.command('psql')+['-X','-q','-At','-v','ON_ERROR_STOP=1']).start()

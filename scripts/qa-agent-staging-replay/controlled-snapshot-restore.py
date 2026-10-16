@@ -73,11 +73,15 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             if typed_plan is not None:typed_plan.new_copy(self)
         def docker(self,args,data=None):
             if icu_profile is not None:args=locale_profile.patch_owned_run(args,icu_profile)
-            if typed_plan is not None and args and args[0]=='run':
-                return typed_plan.launch(self,args,lambda routed:super(VerifiedOwnedCopy,self).docker(routed,data))
+            if typed_plan is not None:
+                if args and args[0]=='run':return typed_plan.launch(self,args)
+                return typed_plan.docker(self,args,data)
             return super().docker(args,data)
+        def command(self,program):
+            return typed_plan.command(self,program) if typed_plan is not None else super().command(program)
         def start(self):
-            super().start()
+            if typed_plan is None:super().start()
+            else:typed_plan.start(self)
             if typed_plan is not None:typed_plan.ready(self)
             if icu_profile is not None:self.icuBootstrap=locale_profile.verify_owned(self,icu_profile)
         def close(self):
@@ -99,6 +103,9 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
         elif '--section=post-data' in consumer:stage='SCHEMA_POST_DATA'
         elif '--data-only' in consumer:stage='PLATFORM_LEDGER' if producer[-1].endswith(base.ledger.ARCHIVE) else 'SCOPED_DATA'
         if active_budget is not None:active_budget.progress['stage']=stage
+        if typed_plan is not None and stage!='SCHEMA_DEFINITION_READ':
+            if len(copies)!=1 or not copies[0].created:raise ValueError('TYPED_ORIGINAL_COPY_REQUIRED')
+            consumer=typed_plan.consumer(copies[0],consumer,stage)
         if typed_plan is not None and stage=='SCHEMA_POST_DATA':
             if len(copies)!=1 or not copies[0].created:raise ValueError('TYPED_ORIGINAL_COPY_REQUIRED')
             value=typed_plan.pipeline(copies[0],producer,consumer,collect,diagnostics)
