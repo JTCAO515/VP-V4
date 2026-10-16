@@ -282,6 +282,7 @@ def validate(packet,code_hash,instant,stamp,locale_module,manifest=None,source_p
             and start.get('windowStart')==packet['windowStart'] and start.get('windowEnd')==packet['windowEnd']
             and start.get('reviewedSourceCommit')==packet.get('reviewedSourceCommit')
             and re.fullmatch('[a-f0-9]{40}',packet.get('reviewedSourceCommit','')),'DIAGNOSTIC_MAIN_START_REQUIRED')
+    if source_profile is not None:require(start.get('windowStartMonotonic')==packet['windowStartMonotonic'],'DIRECTIVE_START_RECEIPT_CLOCK_CONFLICT')
     preserved=check_preserved(source_profile)
     require(begin>=stamp(preserved['originalStart']['validUntil']),'DIAGNOSTIC_MUST_BE_NEW_WINDOW')
     if packet['attempt']==1:
@@ -423,7 +424,8 @@ def _run_after_preflight(core,args,source_profile=None,lease=None):
     instant=core.base.capture.now()
     if source_profile is None:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
     else:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile,source_profile=source_profile)
-    budget=core.diagnostic_deadline.from_window(packet['windowEnd'],instant,core.base.capture.stamp,anchor=anchor)
+    if source_profile is None:budget=core.diagnostic_deadline.from_window(packet['windowEnd'],instant,core.base.capture.stamp,anchor=anchor)
+    else:budget=_directive_profile().lease_budget(lease,core,args,source_profile)
     manifest,digest=read_private(mp,MANIFEST_SHA,max_bytes=4*1024*1024)
     require(packet.get('manifestPath')==str(mp.resolve()) and packet.get('identityPath')==str(ip.resolve()),'DIAGNOSTIC_PATH_BINDING_REQUIRED')
     core.verify_manifest(manifest);candidate,_=core.replay.load_plan(plan)
