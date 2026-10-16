@@ -1,0 +1,4 @@
+Test Case '-[ConsumerTests.NativeQAConsumerTests testCanonicallyEquivalentReceiptCannotClearDifferentOriginalUTF8Bytes]' passed (0.001 seconds).
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.013 (0.018) seconds
