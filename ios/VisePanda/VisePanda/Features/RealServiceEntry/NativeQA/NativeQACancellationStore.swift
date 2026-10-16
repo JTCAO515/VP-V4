@@ -15,6 +15,11 @@ final class NativeQACancellationStore {
     private var active = false
     private var generation = UUID()
     private var work: Task<Void, Never>?
+    /// Ephemeral UI intent, never persisted or reconstructed from a current successor.
+    struct Intent: Equatable {
+        fileprivate let target: NativeQACancellationTarget
+        fileprivate let generation: UUID
+    }
     init(transport: any NativeQATransport, persistence: any NativeQACancellationPersistence,
          currentTarget: @escaping () -> NativeQACancellationTarget?) {
         self.transport = transport; self.persistence = persistence; self.currentTarget = currentTarget
@@ -26,6 +31,14 @@ final class NativeQACancellationStore {
         return target.valid && bound.sameRequest(as: target) && transport.scope == target.scope
     }
     var canRequestStop: Bool { hasCurrentProjection && !busy && state == .ready && command == nil && target?.canRequestStop == true }
+    func captureIntent() -> Intent? {
+        guard hasCurrentProjection, let target else { return nil }
+        return Intent(target: target, generation: generation)
+    }
+    func isCurrent(_ intent: Intent) -> Bool {
+        guard hasCurrentProjection, intent.generation == generation, let target else { return false }
+        return intent.target.sameRequest(as: target)
+    }
     func invalidate() {
         generation = UUID(); work?.cancel(); work = nil
         active = false; bound = nil; receipt = nil; command = nil; state = .inactive
@@ -41,8 +54,8 @@ final class NativeQACancellationStore {
             } else { self.state = .ready }
         }
     }
-    func requestStop() async {
-        guard canRequestStop else { return }
+    func requestStop(intent: Intent) async {
+        guard isCurrent(intent), canRequestStop else { return }
         await perform(reading: false) { captured, token in
             // Even a different instance may already have persisted this tuple. Never repeat its POST.
             if let record = try self.load(captured) {
@@ -65,8 +78,8 @@ final class NativeQACancellationStore {
             try self.accept(response, command: command, durable: true, target: captured, token: token)
         }
     }
-    func checkResult() async {
-        guard hasCurrentProjection, !busy else { return }
+    func checkResult(intent: Intent) async {
+        guard isCurrent(intent), !busy else { return }
         await perform(reading: true) { captured, token in
             let record = try self.load(captured)
             let command = try record?.command ?? NativeQACancellationPending(target: captured)
@@ -114,7 +127,11 @@ final class NativeQACancellationStore {
         let token = generation
         state = reading ? .checking : .requesting; receipt = nil
         let task = Task { @MainActor in
-            do { try await action(captured, token) }
+            do {
+                // The owned child task can also start after a rebind/invalidation.
+                try self.ensure(captured, token)
+                try await action(captured, token)
+            }
             catch {
                 guard self.generation == token, self.active else { return }
                 guard self.hasCurrentProjection else { self.invalidate(); return }
