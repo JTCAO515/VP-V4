@@ -77,6 +77,15 @@ final class NativeSession {
         let base = keychainService
         func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
         let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .qaSubmission: .init(service: NativeQAPendingJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.makeNativeQAPendingJournal().metadata(scope: actor.scope).map { pending in
+                    var record = metadata(.qaSubmission, operation: pending.requestID, action: "qa_submission",
+                                          boundary: "question_answer_body_and_credentials_excluded")
+                    record.objectID = pending.sessionID
+                    return record
+                }
+            }),
             .translationRecovery: .init(service: NativeTranslationRecoveryJournal.service, read: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 return try self.translationRecoveryPersistence().read(actor.scope).map { pending in
@@ -2682,6 +2691,18 @@ final class NativeSession {
             catch { failureCode="communitySafetyJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeCommunityJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
             catch { failureCode="communityJournalCleanupRequired"; status="storageError"; return false }
+            if !preservePendingJournals {
+                let boundEndpoint = endpoint?.absoluteString ?? "disabled"
+                do {
+                    try NativeQAPendingJournal.erase(endpoint: boundEndpoint, owner: owner, vault: vault, authorized: {
+                        let cleanupOwner = self.credential?.subject ?? self.defaults.string(forKey: self.storageKey)
+                            ?? self.defaults.string(forKey: self.storageKey + ".pendingJournalCleanupOwner")
+                            ?? self.defaults.string(forKey: self.storageKey + ".recoveryCleanupOwner")
+                        return cleanupOwner == owner && (self.endpoint?.absoluteString ?? "disabled") == boundEndpoint
+                            && !preservePendingJournals
+                    })
+                } catch { failureCode = "qaPendingCleanupRequired"; status = "storageError"; return false }
+            }
             if preservePendingJournals {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
@@ -2853,5 +2874,77 @@ struct NativeKeychainVault: NativeCredentialVault {
     }
     func remove(service: String, owner: String) -> OSStatus {
         SecItemDelete(query(service: service, owner: owner) as CFDictionary)
+    }
+}
+
+// QA uses its own finite wire while credentials stay in the original session.
+// The existing Ask transport, modes and pending-Ask journal are unchanged.
+@MainActor
+extension NativeSession {
+    var nativeQAProjectionGeneration: UUID { turnDataProjectionFence.generation }
+
+    func makeNativeQAPendingJournal() -> NativeQAPendingJournal {
+        NativeQAPendingJournal(vault: vault, currentScope: { [weak self] in self?.dataScope })
+    }
+
+    func makeNativeQATransport() -> NativeQASessionTransport {
+        NativeQASessionTransport(session: self, journal: makeNativeQAPendingJournal())
+    }
+
+    func nativeQARequest(_ command: NativeQARequest, scope expected: NativeDataScope) async throws -> NativeQAHTTPResponse {
+        guard !busy, dataScope == expected else { throw NativeQAError.stale }
+        let path = try command.path
+        let body = try command.body
+        if case .submit(let pending) = command {
+            guard pending.matches(expected) else { throw NativeQAError.stale }
+        }
+        guard body.map({ $0.count <= 32768 }) ?? true else { throw NativeQAError.invalidResponse }
+        let deletionGeneration = turnDataProjectionFence.generation
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        try Task.checkCancellation()
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration,
+              let credential, let endpoint else { throw NativeQAError.stale }
+        let url = endpoint.appendingPathComponent(path)
+        var request = URLRequest(url: url)
+        request.httpMethod = command.method
+        request.httpBody = body
+        request.httpShouldHandleCookies = false
+        request.timeoutInterval = 15
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if body != nil { request.setValue("application/json", forHTTPHeaderField: "Content-Type") }
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        let remaining = max(0, 15 - (ProcessInfo.processInfo.systemUptime - started))
+        let task = stream.task
+        let deadline = Task { try await Task.sleep(for: .seconds(remaining)); task.cancel() }
+        defer { deadline.cancel() }
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration,
+              let http = response as? HTTPURLResponse, http.url == url,
+              (200..<600).contains(http.statusCode), !(300..<400).contains(http.statusCode),
+              http.value(forHTTPHeaderField: "Content-Type")?.split(separator: ";").first?.trimmingCharacters(in: .whitespaces).lowercased() == "application/json",
+              http.expectedContentLength <= 1_000_000 else { throw NativeQAError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            try Task.checkCancellation()
+            guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
+            guard bytes.count < 1_000_000 else { throw NativeQAError.invalidResponse }
+            bytes.append(byte)
+        }
+        try Task.checkCancellation()
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
+        // Only the actual QA authentication denial invalidates the original session.
+        // A proxy HTML401, broken response or other status retains the pending request.
+        if http.statusCode == 401,
+           let envelope = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+           envelope["version"] as? String == "qa-agent/1",
+           let error = envelope["error"] as? [String: Any],
+           error["code"] as? String == "UNAUTHENTICATED",
+           ["not_submitted", "unknown"].contains(error["ack"] as? String ?? "") {
+            handle(SessionError.denied)
+            throw NativeDataError.sessionUnavailable
+        }
+        return NativeQAHTTPResponse(status: http.statusCode, body: bytes)
     }
 }

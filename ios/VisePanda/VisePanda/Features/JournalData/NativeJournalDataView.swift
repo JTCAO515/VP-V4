@@ -113,6 +113,7 @@ struct NativeJournalDataView: View {
             case .coverage: NativeDataCoverageView()
             case .ask: NativeAskView(isActive: actor != nil)
             case .translationRecovery: NativeTranslationView()
+            case .qaSubmission: NativeQAEntryView(chinese: chinese, isActive: actor != nil)
             case .community: NativeCommunitySubmissionView()
             case .communitySafety: NativeCommunitySafetyView()
             case .experience: NativeExperienceView(access: session.communityExperienceAccess)
@@ -252,6 +253,7 @@ extension NativeJournalDataSourceID {
         let names: [Self: (String, String)] = [
             .assistantEventsCursor: ("可恢复事件缓存", "Replay position cache"),
             .translationRecovery: ("翻译提交恢复", "Translation request recovery"),
+            .qaSubmission: ("问答提交恢复", "QA request recovery"),
             .coverage: ("覆盖操作", "Coverage operation"), .materialReference: ("材料引用清理", "Material-reference cleanup"),
             .profile: ("档案清理", "Profile cleanup"), .conversation: ("对话清理", "Conversation cleanup"),
             .serviceOperation: ("服务协作", "Service operation"), .turn: ("轮次清理", "Turn cleanup"),
