@@ -77,6 +77,14 @@ final class NativeSession {
         let base = keychainService
         func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
         let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .qaCancellation: .init(service: NativeQACancellationJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                let inventory = try self.makeNativeQACancellationJournal().inventory(scope: actor.scope)
+                guard inventory.totalRecords > 0 else { return nil }
+                var record = metadata(.qaCancellation, boundary: "cancellation_count_epoch_tuple_state_only_no_body_credentials_or_private_identity")
+                record.qaCancellation = inventory
+                return record
+            }),
             .qaSubmission: .init(service: NativeQAPendingJournal.service, read: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 return try self.makeNativeQAPendingJournal().metadata(scope: actor.scope).map { pending in
@@ -2702,6 +2710,15 @@ final class NativeSession {
                             && !preservePendingJournals
                     })
                 } catch { failureCode = "qaPendingCleanupRequired"; status = "storageError"; return false }
+                do {
+                    try eraseNativeQACancellationCustody(endpoint: boundEndpoint, owner: owner, authorized: {
+                        let cleanupOwner = self.credential?.subject ?? self.defaults.string(forKey: self.storageKey)
+                            ?? self.defaults.string(forKey: self.storageKey + ".pendingJournalCleanupOwner")
+                            ?? self.defaults.string(forKey: self.storageKey + ".recoveryCleanupOwner")
+                        return cleanupOwner == owner && (self.endpoint?.absoluteString ?? "disabled") == boundEndpoint
+                            && !preservePendingJournals
+                    })
+                } catch { failureCode = "qaCancellationCleanupRequired"; status = "storageError"; return false }
             }
             if preservePendingJournals {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
@@ -2887,6 +2904,26 @@ extension NativeSession {
         NativeQAPendingJournal(vault: vault, currentScope: { [weak self] in self?.dataScope })
     }
 
+    private func eraseNativeQACancellationCustody(endpoint: String, owner: String, authorized: () -> Bool) throws {
+        if NativeQAWire.uuid(owner) {
+            try NativeQACancellationJournal.erase(endpoint: endpoint, owner: owner, vault: vault, authorized: authorized)
+            return
+        }
+        // Existing non-QA identities cannot retain this strict UUID-only namespace.
+        // Preserve their original cleanup contract only after qualified physical absence.
+        // Any unexpected bytes or unavailable storage stays blocked, never erased or ignored.
+        guard !endpoint.isEmpty, endpoint.utf8.count <= 2048, authorized() else { throw NativeQACancellationError.stale }
+        let first = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized() else { throw NativeQACancellationError.stale }
+        let second = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized(), first.0 == errSecItemNotFound, first.1 == nil,
+              second.0 == errSecItemNotFound, second.1 == nil else { throw NativeQACancellationError.storageUnavailable }
+    }
+
+    func makeNativeQACancellationJournal(currentScope: (() -> NativeDataScope?)? = nil) -> NativeQACancellationJournal {
+        NativeQACancellationJournal(vault: vault, currentScope: currentScope ?? { [weak self] in self?.dataScope })
+    }
+
     func makeNativeQATransport() -> NativeQASessionTransport {
         NativeQASessionTransport(session: self, journal: makeNativeQAPendingJournal())
     }
@@ -2895,8 +2932,19 @@ extension NativeSession {
         guard !busy, dataScope == expected else { throw NativeQAError.stale }
         let path = try command.path
         let body = try command.body
+        let cancellationRequest: Bool
+        switch command {
+        case .requestCancellation, .readCancellation: cancellationRequest = true
+        default: cancellationRequest = false
+        }
+        let responseLimit = cancellationRequest ? 4096 : 1_000_000
         if case .submit(let pending) = command {
             guard pending.matches(expected) else { throw NativeQAError.stale }
+        }
+        if case .requestCancellation(let pending) = command {
+            let target = NativeQACancellationTarget(scope: expected, sessionID: pending.sessionID,
+                requestID: pending.requestID, canRequestStop: false)
+            guard pending.matches(target) else { throw NativeQAError.stale }
         }
         guard body.map({ $0.count <= 32768 }) ?? true else { throw NativeQAError.invalidResponse }
         let deletionGeneration = turnDataProjectionFence.generation
@@ -2924,19 +2972,19 @@ extension NativeSession {
               let http = response as? HTTPURLResponse, http.url == url,
               (200..<600).contains(http.statusCode), !(300..<400).contains(http.statusCode),
               http.value(forHTTPHeaderField: "Content-Type")?.split(separator: ";").first?.trimmingCharacters(in: .whitespaces).lowercased() == "application/json",
-              http.expectedContentLength <= 1_000_000 else { throw NativeQAError.invalidResponse }
+              http.expectedContentLength <= Int64(responseLimit) else { throw NativeQAError.invalidResponse }
         var bytes = Data()
         for try await byte in stream {
             try Task.checkCancellation()
             guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
-            guard bytes.count < 1_000_000 else { throw NativeQAError.invalidResponse }
+            guard bytes.count < responseLimit else { throw NativeQAError.invalidResponse }
             bytes.append(byte)
         }
         try Task.checkCancellation()
         guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
         // Only the actual QA authentication denial invalidates the original session.
         // A proxy HTML401, broken response or other status retains the pending request.
-        if http.statusCode == 401,
+        if !cancellationRequest, http.statusCode == 401,
            let envelope = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
            envelope["version"] as? String == "qa-agent/1",
            let error = envelope["error"] as? [String: Any],

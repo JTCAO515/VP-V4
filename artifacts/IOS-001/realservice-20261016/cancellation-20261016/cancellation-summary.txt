@@ -1,0 +1,9 @@
+Test Suite 'All tests' started at 2026-10-16 17:14:44.858.
+Test Suite 'CancellationTests.xctest' started at 2026-10-16 17:14:44.860.
+Test Suite 'NativeQACancellationConsumerTests' started at 2026-10-16 17:14:44.860.
+Test Suite 'NativeQACancellationConsumerTests' passed at 2026-10-16 17:14:44.872.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'CancellationTests.xctest' passed at 2026-10-16 17:14:44.872.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'All tests' passed at 2026-10-16 17:14:44.872.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.011 (0.014) seconds

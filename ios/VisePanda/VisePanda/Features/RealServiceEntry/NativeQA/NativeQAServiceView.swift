@@ -2,6 +2,8 @@ import SwiftUI
 
 struct NativeQAServiceView: View {
     let chinese: Bool
+    private let transport: any NativeQATransport
+    private let cancellationPersistence: (any NativeQACancellationPersistence)?
     var isActive: Bool
     var onSignIn: (() -> Void)?
     @Environment(\.scenePhase) private var scenePhase
@@ -10,8 +12,10 @@ struct NativeQAServiceView: View {
     @State private var historyPresented = false
     @State private var historyScope: NativeDataScope?
 
-    init(transport: any NativeQATransport, chinese: Bool, isActive: Bool = true, onSignIn: (() -> Void)? = nil) {
+    init(transport: any NativeQATransport, chinese: Bool, isActive: Bool = true, onSignIn: (() -> Void)? = nil,
+         cancellationPersistence: (any NativeQACancellationPersistence)? = nil) {
         self.chinese = chinese; self.isActive = isActive; self.onSignIn = onSignIn
+        self.transport = transport; self.cancellationPersistence = cancellationPersistence
         _store = State(initialValue: NativeQAStore(transport: transport))
     }
     private struct ReadIdentity: Hashable { let scope: NativeDataScope?; let visible: Bool }
@@ -53,6 +57,18 @@ struct NativeQAServiceView: View {
                             NativeQAMessageCard(message: message, expectedSessionID: expectedSession,
                                                 isCurrent: { payloadCurrent(scope: expectedScope, session: expectedSession) },
                                                 chinese: chinese)
+                            if let cancellationPersistence {
+                                NativeQACancellationView(transport: transport, persistence: cancellationPersistence,
+                                    currentTarget: {
+                                        guard payloadCurrent(scope: expectedScope, session: expectedSession) else { return nil }
+                                        return store.cancellationTarget(for: message.requestId)
+                                    }, chinese: chinese, isActive: readIdentity.visible,
+                                    onReadOriginalResult: { Task { @MainActor in
+                                        guard payloadCurrent(scope: expectedScope, session: expectedSession),
+                                              store.cancellationTarget(for: message.requestId) != nil else { return }
+                                        await store.refresh()
+                                    } })
+                            }
                         }
                     }
                     Color.clear.frame(height: 1).id("native.qa.end")

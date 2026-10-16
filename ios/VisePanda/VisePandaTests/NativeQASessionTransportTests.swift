@@ -8,14 +8,14 @@ struct NativeQASessionTransportTests {
     private let owner = "11111111-1111-4111-8111-111111111111"
     private let thread = "22222222-2222-4222-8222-222222222222"
     private let policyID = "33333333-3333-4333-8333-333333333333"
-    private func fixture() async throws -> (NativeSession, NativeQASessionTransport) {
-        NativeQAIntegrationProtocol.state.reset(owner: owner)
+    private func fixture(vault: NativeQAIntegrationVault = NativeQAIntegrationVault(), subject: String? = nil) async throws -> (NativeSession, NativeQASessionTransport) {
+        NativeQAIntegrationProtocol.state.reset(owner: subject ?? owner)
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [NativeQAIntegrationProtocol.self]
         let defaults = try #require(UserDefaults(suiteName: "nativeqa.integration.\(UUID())"))
         let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59991"],
                                     defaults: defaults, configuration: configuration, bundleConfiguration: [:],
-                                    vault: NativeQAIntegrationVault())
+                                    vault: vault)
         await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
         #expect(session.status == "active")
         #expect(session.dataScope != nil)
@@ -26,6 +26,111 @@ struct NativeQASessionTransportTests {
             noticeZh: "合成测试说明", noticeEn: "Synthetic notice", provider: "fixture", recipient: "fixture",
             consentState: .accepted, contextMode: "qa_session_history_v1", maxTurns: 8)
         return try NativeQAPending(scope: scope, sessionID: thread, policy: policy, text: text)
+    }
+
+    @Test func cancellationWireKeepsOriginalTupleBodyAndRawReceipt() async throws {
+        let (session, port) = try await fixture()
+        let scope = try #require(port.scope)
+        let generated = try pending(scope)
+        try port.retainPending(generated, scope: scope)
+        let target = NativeQACancellationTarget(scope: scope, sessionID: thread, requestID: generated.requestID, canRequestStop: true)
+        let stop = try NativeQACancellationPending(target: target)
+        let envelope: [String: Any] = ["version": "qa-cancellation/1", "sessionId": thread,
+            "requestId": generated.requestID, "state": "cancelled", "ack": "observed"]
+        NativeQAIntegrationProtocol.state.qa(status: 200, type: "application/json", body: envelope)
+        let response = try await port.request(.requestCancellation(stop), scope: scope)
+        let sent = try #require(NativeQAIntegrationProtocol.state.lastQA())
+        #expect(sent.url?.path == "/api/qa-agent/native/v1/sessions/\(thread)/messages/\(generated.requestID)/cancellation")
+        #expect(sent.httpMethod == "POST")
+        #expect(!sent.httpShouldHandleCookies && sent.value(forHTTPHeaderField: "Cookie") == nil)
+        #expect(NativeQAIntegrationProtocol.state.lastQABody() == Data("{}".utf8))
+        #expect(try NativeQACancellationReceipt.decode(response, command: stop).state == .cancelled)
+        #expect(throws: NativeQAError.self) { try port.clearPending(generated, scope: scope) }
+        #expect(try port.loadPending(scope: scope)?.body == generated.body)
+        _ = try await port.request(.readCancellation(sessionID: thread, requestID: generated.requestID), scope: scope)
+        #expect(NativeQAIntegrationProtocol.state.lastQA()?.httpMethod == "GET")
+        #expect(session.status == "active")
+    }
+
+    @Test func cancellationRejectsForeignOwnerAndEpochAndDoesNotUseAgentAuthDecoder() async throws {
+        let (session, port) = try await fixture()
+        let scope = try #require(port.scope)
+        let foreign = NativeDataScope(endpoint: scope.endpoint, subject: policyID, mobileEpoch: scope.mobileEpoch, generation: scope.generation)
+        let stale = try NativeQACancellationPending(target: .init(scope: foreign, sessionID: thread, requestID: policyID, canRequestStop: true))
+        await #expect(throws: Error.self) { try await port.request(.requestCancellation(stale), scope: scope) }
+        let nextEpoch = NativeDataScope(endpoint: scope.endpoint, subject: scope.subject, mobileEpoch: scope.mobileEpoch + 1, generation: scope.generation)
+        let wrongEpoch = try NativeQACancellationPending(target: .init(scope: nextEpoch, sessionID: thread, requestID: policyID, canRequestStop: true))
+        await #expect(throws: Error.self) { try await port.request(.requestCancellation(wrongEpoch), scope: scope) }
+        NativeQAIntegrationProtocol.state.qa(status: 401, type: "application/json", body: ["version": "qa-agent/1", "error": ["code": "UNAUTHENTICATED", "ack": "unknown"]])
+        let raw = try await port.request(.readCancellation(sessionID: thread, requestID: policyID), scope: scope)
+        #expect(raw.status == 401 && session.status == "active")
+        #expect(port.scope == scope)
+    }
+
+    @Test func cancellationJournalUsesPortLeaseAndExportsOnlyMetadata() async throws {
+        let (session, port) = try await fixture()
+        let scope = try #require(port.scope)
+        let target = NativeQACancellationTarget(scope: scope, sessionID: thread, requestID: policyID, canRequestStop: true)
+        let command = try NativeQACancellationPending(target: target)
+        let journal = port.cancellationJournal
+        #expect(journal === port.cancellationJournal)
+        try journal.retainCancellation(command, scope: scope)
+        #expect(try journal.loadCancellation(target: target)?.command == command)
+        let receipt = NativeQACancellationReceipt(version: "qa-cancellation/1", sessionId: thread, requestId: policyID, state: .cancelled, ack: .observed)
+        try journal.finishCancellation(command, receipt: receipt, scope: scope)
+        let actor = try session.communitySafetyActor()
+        let snapshot = try #require(try session.journalDataSource().snapshot(source: .qaCancellation, actor: actor))
+        #expect(snapshot.valid && snapshot.record.kind == .metadataOnly)
+        #expect(snapshot.record.qaCancellation?.totalRecords == 1)
+        #expect(snapshot.record.qaCancellation?.records.first?.mobileEpoch == scope.mobileEpoch)
+        #expect(snapshot.record.qaCancellation?.records.first?.observedState == .cancelled)
+        let encoded = String(decoding: try JSONEncoder().encode(snapshot.record), as: UTF8.self)
+        #expect(!encoded.contains("recordBytes") && !encoded.contains("\"identity\"") && !encoded.contains("\"body\""))
+        #expect(snapshot.record.originalOperationBytes == nil && snapshot.record.operationID == nil && snapshot.record.objectID == nil)
+    }
+
+    @Test func explicitLogoutErasesCancellationAndGenerationCustodyTogether() async throws {
+        let vault = NativeQAIntegrationVault()
+        let (session, port) = try await fixture(vault: vault)
+        let scope = try #require(port.scope)
+        let generated = try pending(scope)
+        try port.retainPending(generated, scope: scope)
+        let target = NativeQACancellationTarget(scope: scope, sessionID: thread, requestID: generated.requestID, canRequestStop: true)
+        try port.cancellationJournal.retainCancellation(.init(target: target), scope: scope)
+        #expect(vault.read(service: NativeQACancellationJournal.service(scope.endpoint), owner: scope.subject).0 == errSecSuccess)
+        await session.logout()
+        #expect(session.dataScope == nil && port.scope == nil)
+        #expect(vault.read(service: NativeQACancellationJournal.service(scope.endpoint), owner: scope.subject).0 == errSecItemNotFound)
+        #expect(vault.read(service: NativeQAPendingJournal.service(scope.endpoint), owner: scope.subject).0 == errSecItemNotFound)
+    }
+
+    @Test func legacyIdentityCleanupRequiresPhysicalCancellationAbsence() async throws {
+        let (session, _) = try await fixture(subject: "legacy-synthetic-owner")
+        await session.logout()
+        #expect(session.status == "signedOut")
+        #expect(session.failureCode != "qaCancellationCleanupRequired")
+        #expect(session.dataScope == nil)
+    }
+
+    @Test func legacyIdentityUnexpectedCancellationBytesRemainFailClosed() async throws {
+        let vault = NativeQAIntegrationVault()
+        let (session, _) = try await fixture(vault: vault, subject: "legacy-synthetic-owner")
+        let scope = try #require(session.dataScope)
+        let service = NativeQACancellationJournal.service(scope.endpoint)
+        let original = Data("synthetic-unqualified-record".utf8)
+        #expect(vault.write(original, service: service, owner: scope.subject) == errSecSuccess)
+        await session.logout()
+        #expect(session.failureCode == "qaCancellationCleanupRequired")
+        #expect(vault.read(service: service, owner: scope.subject).1 == original)
+    }
+
+    @Test func legacyIdentityLockedCancellationNamespaceDoesNotBecomeAbsent() async throws {
+        let vault = NativeQAIntegrationVault()
+        let (session, _) = try await fixture(vault: vault, subject: "legacy-synthetic-owner")
+        let scope = try #require(session.dataScope)
+        vault.blockedService = NativeQACancellationJournal.service(scope.endpoint)
+        await session.logout()
+        #expect(session.failureCode == "qaCancellationCleanupRequired")
     }
 
     @Test func installedQAEntryNeedsAnInstalledStagingTarget() {
@@ -131,8 +236,10 @@ struct NativeQASessionTransportTests {
 
 @MainActor private final class NativeQAIntegrationVault: NativeCredentialVault {
     private var values: [String: Data] = [:]
+    var blockedService: String?
     private func key(_ service: String, _ owner: String) -> String { "\(service.utf8.count):\(service)\(owner)" }
     func read(service: String, owner: String) -> (OSStatus, Data?) {
+        if service == blockedService { return (errSecInteractionNotAllowed, nil) }
         guard let value = values[key(service, owner)] else { return (errSecItemNotFound, nil) }
         return (errSecSuccess, value)
     }
@@ -159,7 +266,8 @@ nonisolated private final class NativeQAIntegrationState: @unchecked Sendable {
     private let lock = NSLock()
     private var owner = "", requests: [URLRequest] = []
     private var qaReply: (Int, String, Data) = (503, "application/json", Data())
-    func reset(owner: String) { lock.lock(); defer { lock.unlock() }; self.owner = owner; requests = [] }
+    private var qaBody: Data?
+    func reset(owner: String) { lock.lock(); defer { lock.unlock() }; self.owner = owner; requests = []; qaBody = nil }
     func qa(status: Int, type: String, body: [String: Any]) {
         lock.lock(); defer { lock.unlock() }
         qaReply = (status, type, try! JSONSerialization.data(withJSONObject: body))
@@ -168,9 +276,23 @@ nonisolated private final class NativeQAIntegrationState: @unchecked Sendable {
         lock.lock(); defer { lock.unlock() }
         return requests.last { $0.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true }
     }
+    func lastQABody() -> Data? { lock.lock(); defer { lock.unlock() }; return qaBody }
+    private func body(_ request: URLRequest) -> Data? {
+        if let bytes = request.httpBody { return bytes }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open(); defer { stream.close() }
+        var bytes = Data(), buffer = [UInt8](repeating: 0, count: 4096)
+        while bytes.count <= 65_536 {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            if count == 0 { return bytes }
+            guard count > 0 else { return nil }
+            bytes.append(contentsOf: buffer.prefix(count))
+        }
+        return nil
+    }
     func response(_ request: URLRequest) -> (Int, String, Data) {
         lock.lock(); defer { lock.unlock() }; requests.append(request)
-        if request.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true { return qaReply }
+        if request.url?.path.hasPrefix("/api/qa-agent/native/v1/") == true { qaBody = body(request); return qaReply }
         let sessionID = "44444444-4444-4444-8444-444444444444"
         let claims = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": sessionID]).base64EncodedString()
             .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
