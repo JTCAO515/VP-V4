@@ -532,6 +532,7 @@
         F5ECB1DA69B8AD65C2013152 = {isa = PBXBuildFile; fileRef = E1D7EB11C92A08D7A201494A; };
         DA16B0000000000000000001 = {isa = PBXBuildFile; fileRef = DA16A0000000000000000001; };
 		BDCE48B4CCFBCA273D935982 /* NativeRealServiceEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925AD465515CAC93D0391791; };
+		AFBE85D5B86722F68E13E490 /* NativeRealServiceDisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C390266BDC45198E3CCF4A93; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1070,6 +1071,7 @@
         E1D7EB11C92A08D7A201494A = {isa = PBXFileReference; lastKnownFileType = folder; path = "../../tests/contract/subscription-native/Fixtures"; sourceTree = SOURCE_ROOT; };
         DA16A0000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaUITests/NativeSubscriptionUITests.swift"; sourceTree = SOURCE_ROOT; };
 		925AD465515CAC93D0391791 /* NativeRealServiceEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeRealServiceEntryTests.swift; sourceTree = "<group>"; };
+		C390266BDC45198E3CCF4A93 /* NativeRealServiceDisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeRealServiceDisconnectedView.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1301,7 +1303,7 @@ F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
 		800000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (729C29D3BE766F4323D9846C, 53F4F2F2948144E6E7489CEC, 0348E1255BF2FCEB98A81278, 7367F2444AB4FC0A40C1FE20, 0E71B9DE04882AA146A73912, 3D86D8AE4CD7B52444E354C1, 396814A397F1728D9A29CC5A,
+			files = (AFBE85D5B86722F68E13E490, 729C29D3BE766F4323D9846C, 53F4F2F2948144E6E7489CEC, 0348E1255BF2FCEB98A81278, 7367F2444AB4FC0A40C1FE20, 0E71B9DE04882AA146A73912, 3D86D8AE4CD7B52444E354C1, 396814A397F1728D9A29CC5A,
 				E216C0000000000000000001 /* NativeTranslationRecoveryIdentity.swift in Sources */,
 				E216C0000000000000000002 /* NativeTranslationRecoveryJournal.swift in Sources */,
 				E216C0000000000000000003 /* NativeTranslationRecoveryReceipt.swift in Sources */,

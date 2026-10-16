@@ -168,13 +168,13 @@ struct TabRootView: View {
             .environment(frontendState)
         } else {
             switch tab {
-            case .vp: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+            case .vp: RealServiceAskEntry(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
             case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } }, onOpenGoal: onOpenGoal)
             case .library: NativeKnowledgeView(isActive: isActive)
             case .memory: NativeMemoryHomeView(isActive:isActive,onSwitchBlock:onSwitchBlock)
             case .tools: ToolsView()
             case .trip: TripView()
-            case .ask: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+            case .ask: RealServiceAskEntry(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
             case .explore: ExploreView(isActive: isActive)
             case .profile: ProfileView()
             }
@@ -233,13 +233,29 @@ enum NativeShellRollout {
 }
 
 @MainActor
+private struct RealServiceAskEntry: View {
+    var isActive = true
+    var goalEntry: Binding<NativeJourneyGoalEntry?> = .constant(nil)
+    var onSwitchBlock: ((Bool) -> Void)?
+    @Environment(AppSettings.self) private var settings
+
+    var body: some View {
+        if ProcessInfo.processInfo.arguments.contains("-V10RealServiceFrontend"), !settings.nativeSession.enabled {
+            NativeRealServiceDisconnectedView(chinese: settings.selectedLocale == .zh)
+        } else {
+            AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+        }
+    }
+}
+
+@MainActor
 struct AppEntryView: View {
     let entry: AppEntry
     var isActive = true
 
     @ViewBuilder var body: some View {
         switch entry {
-        case .ask: AskView(isActive: isActive)
+        case .ask: RealServiceAskEntry(isActive: isActive)
         case .trip: TripView()
         case .knowledge: NativeKnowledgeView(isActive: isActive)
         case .memory: NativeMemoryHomeView(isActive:isActive)
