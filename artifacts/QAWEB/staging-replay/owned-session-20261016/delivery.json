@@ -1,0 +1,39 @@
+{
+  "taskId": "683",
+  "status": "PASS_NEW_OWNED_SESSION_AND_BACKEND_FENCE_SYNTHETIC_ONLY",
+  "base": "f15676526b7fc48202c0670d59a68f8b15150ee4",
+  "newSourcePaths": [
+    "scripts/qa-agent-staging-replay/owned-pg-diagnostic-session.py",
+    "scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py"
+  ],
+  "tests": 10,
+  "log": "physical-tests-08.log",
+  "provenMechanisms": [
+    "socket close leaves actual pg_sleep backend running",
+    "PID+private CancelRequest key plus nonce/server epoch/backend-start binding cancels only the captured lifetime",
+    "query_canceled-resistant loop requires exclusive factory-owned postmaster fence, followed by backend PID absence",
+    "wrong nonce/server/lifetime/foreign capability refuses signals",
+    "timeout result remains INCOMPLETE_DEADLINE even if EOF wins a race",
+    "protocolC P0001 is not inferred from42501 message",
+    "role/application_name unchanged across proxy",
+    "UNKNOWN fence retains active session and prevents next session"
+  ],
+  "termination": "PASS in owned physical fixtures; direct backend PID-only kill never used; postmaster Popen lifetime held and serialized; absence verified; unknown cannot be promoted",
+  "cleanup": "each own fixture server/PID/dataDir cleaned and removal asserted; no shared/system PG/Docker reused",
+  "privacy": "cancel secret opaque/nonserializable; no raw SQL/object names/rows/credentials/secret output; nonce/server metadata internal; only safe bool/status/HMAC token emitted",
+  "actualIncidentRootCause": "UNKNOWN; no actual SQLSTATE/command/object recovered",
+  "actualDataIO": "STOP, no archive/identity/capture/restore/window/target/provider/ProdTF",
+  "containerReadiness": "cached strict17.6 image has no Python/Node/compiler/socat; BusyBoxnc lacksUnixsocket mode; own capability fixtures removed; container core integration UNRUN",
+  "currentPhysicalRuntime": "fresh nonce-private hostPG17 factory, noTCP listener/nohostmount; never attached to system/sharedPG; only static synthetic SQL",
+  "model": {
+    "threadId": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d",
+    "projectId": "4f2191db-3e04-4042-94b5-ec94ff67b427",
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN official list_threads did not expose model field",
+    "settingsChangedByOwner": false
+  },
+  "sourceSha256": {
+    "owned-pg-diagnostic-session.py": "5e550006009da1a8bb3e98f46beee1687629da9b49967be653bca5e977c023d4",
+    "test-owned-pg-diagnostic-session.py": "ca01f64b49b0845298f9a7bb96c8f9463bb37ae1db979062c5a1a15fe7288ea5"
+  }
+}
