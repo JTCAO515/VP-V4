@@ -38,7 +38,7 @@ post-data 前仅采集独立 metadata 连接的公开角色类别 bootstrap/post
 
 ## 执行前仍缺的真实条件
 
-Main 集中取得本 A–D 的新直接 JT 回复及窗口无其他 planned DDL 的事实；保存完整问题、原回答、question ID与真实文件 SHA。 来源仅支持原 Main 直接 async，或 JT 在固定 BestJ 主对话 `01a1330e-5008-7061-909b-8abb26792003` 的当前原始 async 问答，经官方 `send_message_to_thread` 两跳 `BestJ → Mac relay 01a13313-19fd-77be-959c-9448bfab80ce → 唯一 Main 01a13311-9212-7db3-8c75-691eac0f03ea` 完整传递，由 Main 按实际收到的官方消息保存两份私有原字节证据/各 SHA、上游 hash 链、原 question ID/完整问题/原回答并固定新 human SHA，不能把 relay/BestJ 自身意见当 JT 批准，未取得原证据则 pins 继续 None，且不冒称有平台签名或已读到原聊天人类 turns。然后绑定同一新 windowId、7份原证据和同 identity pins、精确 code/source/candidate hash、新 Main START、当前 slot/parent-failure 链及≤5分钟 locale补件。启用 source pins 后须重新固定 review/hash；proposal、旧5637授权或 owner 自写 JSON 不能开启执行。全部条件就绪前，实际 cipher/identity/clone I/O 和 C/E 继续 STOP。
+Main 集中取得本 A–D 的新直接 JT 回复及窗口无其他 planned DDL 的事实；保存完整问题、原回答、question ID与真实文件 SHA。 来源支持原 Main 直接 async，或 JT 在固定 BestJ 主对话 `01a1330e-5008-7061-909b-8abb26792003` 的原始 async 问答或下节固定普通消息问答（引用模式不可混用），经官方 `send_message_to_thread` 两跳 `BestJ → Mac relay 01a13313-19fd-77be-959c-9448bfab80ce → 唯一 Main 01a13311-9212-7db3-8c75-691eac0f03ea` 完整传递，由 Main 按实际收到的官方消息保存两份私有原字节证据/各 SHA、上游 hash 链、原 question ID/完整问题/原回答并固定新 human SHA，不能把 relay/BestJ 自身意见当 JT 批准，未取得原证据则 pins 继续 None，且不冒称有平台签名或已读到原聊天人类 turns。然后绑定同一新 windowId、7份原证据和同 identity pins、精确 code/source/candidate hash、新 Main START、当前 slot/parent-failure 链及≤5分钟 locale补件。启用 source pins 后须重新固定 review/hash；proposal、旧5637授权或 owner 自写 JSON 不能开启执行。全部条件就绪前，实际 cipher/identity/clone I/O 和 C/E 继续 STOP。
 
 ## 历史证据与当前未验
 
