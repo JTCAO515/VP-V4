@@ -1,0 +1,56 @@
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:20:25: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+18 |     func testLiveClosureReplacementAndForeignID() {
+19 |         MainActor.assumeIsolated {
+20 |             let scope = scope(); let first = session(); let second = session("2")
+   |                         |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                         `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+21 |             var live = snapshot(scope, sessions: [first]); var selected: [String] = []
+22 |             let source = NativeQAHistorySource(currentScope: { scope }, expectedScope: { scope }, read: { live }, onSelect: { selected.append($0) }, onCreate: {})
+
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:31:28: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+29 |     func testRevokedScopeAndEpochGenerationChangesHideProjection() {
+30 |         MainActor.assumeIsolated {
+31 |             let original = scope(); var current: NativeDataScope? = original; var expected: NativeDataScope? = original
+   |                            |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                            `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+32 |             let live = snapshot(original, sessions: [session()]); var calls = 0
+33 |             let source = NativeQAHistorySource(currentScope: { current }, expectedScope: { expected }, read: { live }, onSelect: { _ in calls += 1 }, onCreate: { calls += 1 })
+
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:46:28: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+44 |     func testScopeChangesInsideReadAreRejected() {
+45 |         MainActor.assumeIsolated {
+46 |             let original = scope(); var current: NativeDataScope? = original
+   |                            |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                            `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+47 |             let live = snapshot(original, sessions: [session()])
+48 |             let source = NativeQAHistorySource(currentScope: { current }, expectedScope: { original }, read: { current = nil; return live }, onSelect: { _ in XCTFail("stale callback") }, onCreate: { XCTFail("stale callback") })
+
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:54:25: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+52 |     func testUnknownRestrictionStillReadsButCannotChangeSession() {
+53 |         MainActor.assumeIsolated {
+54 |             let scope = scope(); let live = snapshot(scope, sessions: [session()], selectable: false, creatable: false)
+   |                         |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                         `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+55 |             let source = NativeQAHistorySource(currentScope: { scope }, expectedScope: { scope }, read: { live }, onSelect: { _ in XCTFail("restricted") }, onCreate: { XCTFail("restricted") })
+56 |             XCTAssertEqual(source.readable()?.sessions.count, 1)
+
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:63:25: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+61 |     func testLoadingIsNeverEmptyAndBlocksActions() {
+62 |         MainActor.assumeIsolated {
+63 |             let scope = scope(); var live = snapshot(scope, sessions: [], loading: true)
+   |                         |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                         `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+64 |             XCTAssertEqual(NativeQAHistoryPresentation.state(live, query: ""), .loading)
+65 |             live = snapshot(scope, sessions: [session()], loading: true)
+
+ios/VisePanda/VisePandaTests/NativeQAHistoryPresentationTests.swift:82:25: error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+80 |     func testMalformedOrDuplicateListAndOldDisplayedScopeFailClosed() {
+81 |         MainActor.assumeIsolated {
+82 |             let scope = scope(); var live = snapshot(scope, sessions: [session(), session()])
+   |                         |- error: sending 'self' risks causing data races [#RegionIsolation::SendingRisksDataRace]
+   |                         `- note: 'self' is captured by a main actor-isolated closure. main actor-isolated uses in closure may race against code in the current isolation context
+83 |             let source = NativeQAHistorySource(currentScope: { scope }, expectedScope: { scope }, read: { live }, onSelect: { _ in XCTFail("invalid") }, onCreate: { XCTFail("invalid") })
+84 |             XCTAssertNil(source.readable())
+
+[#RegionIsolation]: <https://docs.swift.org/compiler/documentation/diagnostics/region-isolation>
+[#SendingRisksDataRace]: <https://docs.swift.org/compiler/documentation/diagnostics/sending-risks-data-race>
