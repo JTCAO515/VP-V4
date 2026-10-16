@@ -5,7 +5,7 @@
 ## 当前准备事实
 
 - 精确已合 QA：`4abeeb41e87f2ac36f0efdb9ba94780ce0049a13`。候选包含162份迁移，原捕获 baseline75，精确缺失87，targetOnly0。每份 Git blob/hash、顺序及事务边界已核对。
-- 候选 manifest SHA：`c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688`；当前未配置源码 code SHA：`6a5b6341b6f5cfdbc83346887b6e00ce07b51d8d6e06f2e01cc0b871c4a1464e`。新鲜官方 baseline/source 补件 SHA：`9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`。见[当前162候选证据](candidate162-delivery-20261016.json)。
+- 候选 manifest SHA：`c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688`；当前未配置源码 code SHA：`e17f957e3a14f5011adaa863c1f561ff56d710a738d920711aeb694edccca59c`。新鲜官方 baseline/source 补件 SHA：`9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e`。见[当前162候选证据](candidate162-delivery-20261016.json)。
 - Main 已确认 FileVault ON、desktop-linux Docker29.8/API1.56 ready，缓存 PG17.6.1.155 linux/arm64 image ID 精确为 `sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b`。这是运行前置就绪，不是实际恢复或 managed-extension 验收。
 - Main 已只审原 metadata/receipt，核实7份旧证据私有0600、单hardlink及 claim/START/FAIL链；同一 identity 路径 SHA 为 `58aa1f73d84e1c265bf64beffe6718ebd1b981d22165ef133fbc1569816451d7`。未读取 identity 内容。新 human/identity/preserved 配置仍 None，未开新 window/slot/claim。
 
@@ -38,10 +38,24 @@ post-data 前仅采集独立 metadata 连接的公开角色类别 bootstrap/post
 
 ## 执行前仍缺的真实条件
 
-Main 集中取得本 A–D 的新直接 JT 回复及窗口无其他 planned DDL 的事实；保存完整问题、原回答、question ID与真实文件 SHA。 来源仅支持原 Main 直接 async，或 JT 在固定 BestJ 主对话 `01a1330e-5008-7061-909b-8abb26792003` 的当前原始 async 问答，经官方 `send_message_to_thread` 两跳 `BestJ → Mac relay 01a13313-19fd-77be-959c-9448bfab80ce → 唯一 Main 01a13311-9212-7db3-8c75-691eac0f03ea` 完整传递，由 Main 按实际收到的官方消息保存两份私有原字节证据/各 SHA、上游 hash 链、原 question ID/完整问题/原回答并固定新 human SHA，不能把 relay/BestJ 自身意见当 JT 批准，未取得原证据则 pins 继续 None，且不冒称有平台签名或已读到原聊天人类 turns。然后绑定同一新 windowId、7份原证据和同 identity pins、精确 code/source/candidate hash、新 Main START、当前 slot/parent-failure 链及≤5分钟 locale补件。启用 source pins 后须重新固定 review/hash；proposal、旧5637授权或 owner 自写 JSON 不能开启执行。全部条件就绪前，实际 cipher/identity/clone I/O 和 C/E 继续 STOP。
+Main 集中取得本 A–D 的新直接 JT 回复及窗口无其他 planned DDL 的事实；保存完整问题、原回答、question ID与真实文件 SHA。 来源支持原 Main 直接 async，或 JT 在固定 BestJ 主对话 `01a1330e-5008-7061-909b-8abb26792003` 的原始 async 问答或下节固定普通消息问答（引用模式不可混用），经官方 `send_message_to_thread` 两跳 `BestJ → Mac relay 01a13313-19fd-77be-959c-9448bfab80ce → 唯一 Main 01a13311-9212-7db3-8c75-691eac0f03ea` 完整传递，由 Main 按实际收到的官方消息保存两份私有原字节证据/各 SHA、上游 hash 链、原 question ID/完整问题/原回答并固定新 human SHA，不能把 relay/BestJ 自身意见当 JT 批准，未取得原证据则 pins 继续 None，且不冒称有平台签名或已读到原聊天人类 turns。然后绑定同一新 windowId、7份原证据和同 identity pins、精确 code/source/candidate hash、新 Main START、当前 slot/parent-failure 链及≤5分钟 locale补件。启用 source pins 后须重新固定 review/hash；proposal、旧5637授权或 owner 自写 JSON 不能开启执行。全部条件就绪前，实际 cipher/identity/clone I/O 和 C/E 继续 STOP。
 
 ## 历史证据与当前未验
 
 原 locale FAIL、post-data `RESTORE_PERMISSION_DENIED` 历史失败及 cleanupPASS 不删除；具体失败命令/PG原因仍 UNKNOWN。参见[历史诊断及证据缺口](postdata-diagnosis.md)、[启动/中断围栏证据](window-launch-interrupt-delivery-20261016.json)、[journal已完成事实证据](replay-journal-delivery-20261016.json)、[catalog覆盖准备](new-window-catalog-coverage-20261016.json)。历史测试及初始 source pins 在[阶段化交付记录](future-diagnostic-window-delivery-20261016.json)中分列，不冒称当前162全矩阵重跑。
 
 当前新窗口未批准、未启动；真实保护副本、完整 ownerACL、87重放及新 port 物理查询均 **UNRUN**。旧真实恢复仍 **FAIL**，不称已恢复，不闭 #230/#683。
+
+
+## 固定 BestJ 普通消息接收 schema（未有原答，不是批准）
+
+BestJ 已用 `user_message.send_message` 发出同一A–D问题：question message ID `Sentinel_90d9e98b22488191ac8a1eb87cff898e`、room `6acd9506863c81958e1176881961131c`、created_at `2026-10-16T06:27:09.115944+00:00`、status accepted。accepted只表示问题已接收，不是JT同意；没有questionItemId，不构造async、不重问。JT原答尚未有，所有真实pins继续None。
+
+普通分支human record沿原status/scope/window/identity/7旧链，来源字段最小新增为：
+
+- source精确为 `Direct JT reply to fixed BestJ user_message.send_message question via official BestJ-to-Mac-to-Main relay`。
+- questionMessageId=上述真实问题ID；answerMessageId=未来实际JT原答的不同Sentinel message ID；roomId=上述固定room；record不得含questionItemId/originalQuestionItemId。
+- sourceThreadId=固定BestJ主对话01a1330e，relayThreadId=Mac01a13313，relayTargetThreadId=Main01a13311；authorizer=JT，relayIsAuthorization=false；humanQuestion/humanAnswer分别为完整原问题/原答。
+- officialRelayEvidence沿原两份私有600记录的path/真实文件sha256；每份各有原sender/target链及originalHumanSourceThreadId、originalQuestionTransport=`user_message.send_message`、originalRoomId、originalQuestionMessageId、originalAnswerMessageId、originalHumanQuestion/Answer；第二份upstreamRelayEvidenceSha256绑定第一份原字节SHA，第一份upstream为null；不得伪造originalQuestionItemId。
+
+Main仅在实际官方两跳回传原问/原答与真实问答message IDs后核原字节并保存human记录，不生成平台签名、不冒称原turn已读；然后另作pin-only review：普通分支QUESTION_ITEM_ID保持None，QUESTION_MESSAGE_ID/ANSWER_MESSAGE_ID固定两个真实不同消息引用，HUMAN_SHA固定Main真实新记录，其余既有配置/门禁不变。当前这些配置均None，缺原答不能配置、创建window/claim或数据IO。旧Main async/BestJ async保留，但只能用QUESTION_ITEM_ID且两个message pins为None，不能混用普通消息引用。

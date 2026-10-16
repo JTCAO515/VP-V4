@@ -221,6 +221,9 @@ export const LANES = {
         env: { SUBSCRIPTION_LEDGER_PG: "1", SUBSCRIPTION_PG_BIN: process.env.VP_WIKI_PG_BIN,
           SUBSCRIPTION_PG_MODULE: process.env.VP_WIKI_PG_MODULE },
         files: ["tests/integration/subscription-ledger/postgres.test.mjs"] },
+      { name: "qa-native-session-native-17", concurrency: 1,
+        env: { QA_NATIVE_PG: "1", QA_NATIVE_PG_BIN: process.env.VP_WIKI_PG_BIN },
+        files: ["tests/integration/qa-agent-native/postgres.test.mjs"] },
     ],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.
