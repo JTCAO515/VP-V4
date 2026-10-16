@@ -1,0 +1,11 @@
+RED: original f36 product + three draft regressions
+Test Case '-[ConsumerTests.NativeQAConsumerTests testRepeatedForegroundActivationPreservesSameScopeUnsentDraft]' started.
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/nativeqa-tests-rewtctyz/Tests/ConsumerTests/NativeQAConsumerTests.swift:148: error: -[ConsumerTests.NativeQAConsumerTests testRepeatedForegroundActivationPreservesSameScopeUnsentDraft] : XCTAssertEqual failed: ("") is not equal to ("Unsent same-account thought")
+Test Case '-[ConsumerTests.NativeQAConsumerTests testRepeatedForegroundActivationPreservesSameScopeUnsentDraft]' failed (0.056 seconds).
+	 Executed 19 tests, with 1 failure (0 unexpected) in 0.064 (0.065) seconds
+	 Executed 19 tests, with 1 failure (0 unexpected) in 0.064 (0.065) seconds
+	 Executed 19 tests, with 1 failure (0 unexpected) in 0.064 (0.067) seconds
+GREEN: final own product, explicitly synthetic transport
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.010 (0.012) seconds
