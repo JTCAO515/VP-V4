@@ -22,6 +22,7 @@ locale_profile=load('owned_locale',HERE/'owned-locale-profile.py')
 retry_contract=load('reviewed_retry',HERE/'reviewed-restore-retry.py')
 safe_diagnostics=load('safe_diagnostics',HERE/'safe-restore-diagnostics.py')
 diagnostic_window=load('diagnostic_window',HERE/'reviewed-diagnostic-window.py')
+diagnostic_deadline=load('diagnostic_deadline',HERE/'diagnostic-window-deadline.py')
 MODE='shared-readonly-snapshot/1'
 RESTORE_CONTRACT='qaw-shared-snapshot-restoration/1'
 
@@ -42,7 +43,9 @@ def verify_manifest(manifest):
     return adapted,snapshot
 
 
-def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None,observe_caller=False):
+def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None,observe_caller=False,window_budget=None):
+    if window_budget is not None:
+        return window_budget.execute(lambda:restore_bundle(directory,identity,manifest,replay_manifest,icu_profile,observe_caller),base,replay,safe_diagnostics)
     adapted,snapshot=verify_manifest(manifest)
     if replay_manifest is not None:
         plan,_=replay.load_plan(replay_manifest)
@@ -96,6 +99,8 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
                 if outcome['status']!='PASS_OWNED_RESTORED_REPLAY_ONLY':
                     result.update(status='FAIL_LOCAL_RESTORE_REPLAY',failedStage='owned replay before cleanup',reason=outcome['reason'])
         result['captureMode']=MODE;result['dispatchAuthority']='NONE';result['liveRestoreAuthority']='NONE'
+        active_budget=getattr(base.subprocess,'window_deadline',None)
+        if active_budget is not None:active_budget.check()
     except Exception as e:
         result.update(status='FAIL_LOCAL_RESTORE',reason=str(e) if isinstance(e,ValueError) else 'RESTORE_ADAPTER_FAILED_DETAILS_SUPPRESSED')
     finally:
@@ -110,7 +115,7 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
 
 
 def code_hash():
-    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+(HERE/'safe-restore-diagnostics.py').read_bytes()+(HERE/'reviewed-diagnostic-window.py').read_bytes()+replay.MANIFEST_HASH.encode()+replay.CANDIDATE_MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
+    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+(HERE/'safe-restore-diagnostics.py').read_bytes()+(HERE/'reviewed-diagnostic-window.py').read_bytes()+(HERE/'diagnostic-window-deadline.py').read_bytes()+replay.MANIFEST_HASH.encode()+replay.CANDIDATE_MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
 
 
 def main(args):
@@ -118,7 +123,7 @@ def main(args):
     if len(args)==5 and args[0]=='--restore-diagnostic-window-from-direct-record':
         # New direct consent pins are mandatory before any input/secret IO.
         from types import SimpleNamespace
-        return diagnostic_window.run(SimpleNamespace(code_hash=code_hash,base=base,locale_profile=locale_profile,verify_manifest=verify_manifest,replay=replay,restore_bundle=restore_bundle),args[1:])
+        return diagnostic_window.run(SimpleNamespace(code_hash=code_hash,base=base,locale_profile=locale_profile,verify_manifest=verify_manifest,replay=replay,restore_bundle=restore_bundle,diagnostic_deadline=diagnostic_deadline),args[1:])
     retry_mode=len(args)==5 and args[0]=='--restore-replay-retry-from-direct-record'
     record_mode=retry_mode or (len(args)==5 and args[0]=='--restore-replay-from-direct-record')
     stage='restore-replay-retry' if retry_mode else 'restore-replay'

@@ -272,7 +272,9 @@ def run(core,args):
     require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
     read_private(HUMAN_FILE,HUMAN_SHA256)
     packet,packet_sha=read_private(ap)
-    validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile)
+    instant=core.base.capture.now()
+    validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
+    budget=core.diagnostic_deadline.from_window(packet['windowEnd'],instant,core.base.capture.stamp)
     manifest,digest=read_private(mp,MANIFEST_SHA,max_bytes=4*1024*1024)
     require(packet.get('manifestPath')==str(mp.resolve()) and packet.get('identityPath')==str(ip.resolve()),'DIAGNOSTIC_PATH_BINDING_REQUIRED')
     core.verify_manifest(manifest);candidate,_=core.replay.load_plan(plan)
@@ -286,10 +288,11 @@ def run(core,args):
     profile=validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile,manifest)
     read_private(ap,packet_sha)
     core.base.validate_approval(proxy,mp,ip)
+    budget.check()
     record=claim(packet,core.code_hash())
     # Failure, including a Python exception, consumes this attempt. Unknown
     # cleanup leaves active guard in place; never auto-start another copy.
-    try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True)
+    try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True,window_budget=budget)
     except Exception:outcome={'status':'FAIL_DIAGNOSTIC_EXCEPTION','cleanup':'UNKNOWN','reason':'DETAILS_SUPPRESSED'}
     finish(packet,core.code_hash(),outcome)
     return {**outcome,'diagnosticWindowClaim':record,'targetEAuthority':'NONE','newCaptureOrIdentityCreated':False}

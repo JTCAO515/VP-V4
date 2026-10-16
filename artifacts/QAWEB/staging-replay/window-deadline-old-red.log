@@ -1,0 +1,21 @@
+test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration) ... FAIL
+
+======================================================================
+FAIL: test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 55, in test_clock_crosses_window_between_decrypt_and_postdata_no_later_io
+    self.assertEqual(events,['synthetic-decrypt'])
+AssertionError: Lists differ: ['synthetic-decrypt', 'synthetic-postdata', 'synthetic-replay-sql'] != ['synthetic-decrypt']
+
+First list contains 2 additional elements.
+First extra element 1:
+'synthetic-postdata'
+
+- ['synthetic-decrypt', 'synthetic-postdata', 'synthetic-replay-sql']
++ ['synthetic-decrypt']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.054s
+
+FAILED (failures=1)

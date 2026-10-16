@@ -48,3 +48,10 @@ Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_u
 这些数字是catalog覆盖，不是119张表恢复/ACL正确、数据行计数、managed服务验收或整个60min无DDL的证明；没有vaultsecret/平台表行读取，没有新dump/密文/identity访问。未来依然full schema/ownerACL+无密码globals、14 data schemas+原已批准Realtime89账本；其余platformdata不自动扩展。实际前置还需Docker server可用且固定image/依赖真实验证、新直接JT新窗口范围及无其它planned DDL事实、新Main START/原证据及同identity pins、slot/fresh locale；当前全未因此转为可执行。
 
 维护独占仅由Main协调本已接受范围，普通DML照常；单时点健康/catalog不替代稳定窗口，也不宣称控制所有vendor非计划变化。本补件没有引入代码缺口，复用已交候选与47项focused证据，不增加wrapper、不重跑矩阵。新scope仍仅诊断恢复和获准的同copy本地候选验证，绝无E/target升级授权。
+
+
+## 新路径绝对deadline返修
+
+新诊断入口在首次授权校验后只创建一次monotonic窗口终点，不随阶段/命令/重试重置。数据处理截止预留120秒cleanup；secret/archive/hash/SQL/restore/replay子进程timeout取原上限与同一剩余预算的min，过期不发下一命令。在途子进程由timeout中断，取消/回收本调用创建的host children；不能把docker exec客户端被kill当容器已停，须验证本nonce/ownedlabel、按不可变containerID删除并确认消失。容器启动请求已发但created旗标未置真时也执行该fence。
+
+必要cleanup允许到期后继续、独立总预算60s，仅inspect/remove/reap自有对象，不恢复data预算。foreignlabel/daemon未知/无法确认清理则cleanupFAIL/UNKNOWN、消费和active围栏保留，不授权下一attempt。原严格base字节、旧路径默认行为、47项既有证据与parser不动；新的合成时钟RED/GREEN及10项focused负例见window-deadline-delivery-20261016.json，无真实copy或新窗口。新runtime-binding迁移仍未合QA，不假造hash；当前候选仍161/86，待Main给稳定source再由本manifest owner独立更新。

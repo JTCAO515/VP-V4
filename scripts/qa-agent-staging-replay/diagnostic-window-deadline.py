@@ -1,0 +1,169 @@
+"""One monotonic data deadline, only for the new diagnostic-window path.
+Private-module subprocess adapters; nonce-fenced owned cleanup survives expiry.
+"""
+from contextlib import contextmanager
+import json
+import re
+import subprocess
+import sys
+from time import monotonic
+
+DATA_CLEANUP_RESERVE_SECONDS=120
+CLEANUP_BUDGET_SECONDS=60
+
+
+class WindowExpired(ValueError):
+    def __init__(self):super().__init__('WINDOW_DATA_DEADLINE_EXPIRED')
+
+
+def from_window(end,instant,stamp):
+    return Budget(monotonic()+(stamp(end)-instant).total_seconds(),clock=monotonic)
+
+
+class Process:
+    def __init__(self,raw,budget):self.raw=raw;self.budget=budget;self.killed=False
+    def __getattr__(self,name):return getattr(self.raw,name)
+    def kill(self):self.killed=True;return self.raw.kill()
+    def wait(self,timeout=None):
+        if self.killed:return self.raw.wait(timeout=self.budget.cleanup_timeout(timeout or 5))
+        return self._call(self.raw.wait,timeout=timeout)
+    def communicate(self,input=None,timeout=None):return self._call(self.raw.communicate,input=input,timeout=timeout)
+    def _call(self,method,timeout=None,**kwargs):
+        cap=self.budget.timeout(timeout)
+        try:
+            value=method(timeout=cap,**kwargs)
+        except subprocess.TimeoutExpired:
+            self.budget.stop_process(self)
+            if timeout is None or cap<timeout:self.budget.expired=True
+            self.budget.check()
+            raise
+        self.budget.check()
+        return value
+
+
+class Subprocess:
+    def __init__(self,raw,budget):self.raw=raw;self.window_deadline=budget
+    def __getattr__(self,name):return getattr(self.raw,name)
+    def Popen(self,*args,**kwargs):
+        b=self.window_deadline;b.check()
+        p=Process(self.raw.Popen(*args,**kwargs),b);b.processes.append(p)
+        try:b.check()
+        except WindowExpired:b.stop_process(p);raise
+        return p
+    def run(self,args,input=None,timeout=None,check=False,**kwargs):
+        if input is not None:kwargs['stdin']=self.raw.PIPE
+        p=self.Popen(args,**kwargs)
+        try:
+            out,err=p.communicate(input=input,timeout=timeout)
+            if check and p.returncode:raise subprocess.CalledProcessError(p.returncode,args,out,err)
+            return subprocess.CompletedProcess(args,p.returncode,out,err)
+        finally:
+            if p.poll() is None:self.window_deadline.stop_process(p)
+
+
+class Budget:
+    def __init__(self,window_end,clock=monotonic,reserve=DATA_CLEANUP_RESERVE_SECONDS,cleanup_seconds=CLEANUP_BUDGET_SECONDS):
+        self.clock=clock;self.window_end=window_end;self.data_end=window_end-reserve
+        self.cleanup_seconds=cleanup_seconds;self.cleanup_end=None
+        self.processes=[];self.clusters=[];self.cleanup_ok=True;self.expired=False
+    def check(self):
+        if self.expired or self.clock()>=self.data_end:self.expired=True;raise WindowExpired()
+    def timeout(self,upper=None):
+        self.check();remaining=self.data_end-self.clock()
+        if remaining<=0:self.expired=True;raise WindowExpired()
+        return min(upper,remaining) if upper is not None else remaining
+    def cleanup_timeout(self,upper):
+        if self.cleanup_end is None:self.cleanup_end=self.clock()+self.cleanup_seconds
+        remaining=self.cleanup_end-self.clock()
+        if remaining<=0:raise ValueError('OWNED_CLEANUP_BUDGET_EXHAUSTED')
+        return min(upper,remaining)
+    def stop_process(self,p):
+        try:
+            if p.raw.poll() is None:p.kill()
+            p.raw.wait(timeout=self.cleanup_timeout(5))
+        except Exception:self.cleanup_ok=False
+    def cleanup_owned(self,db):
+        if getattr(db,'_deadline_cleanup_attempted',False):
+            if not getattr(db,'_deadline_cleanup_pass',False):raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN')
+            return
+        db._deadline_cleanup_attempted=True
+        if not getattr(db,'_deadline_run_issued',False) and not db.created:
+            db._deadline_cleanup_pass=True;return
+        try:
+            if not db.context:raise ValueError('OWNED_CLEANUP_CONTEXT_UNKNOWN')
+            prefix=['docker','--context',db.context]
+            def run(args):return self.raw_subprocess.run(prefix+args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=self.cleanup_timeout(15))
+            def absent(result,identifier):
+                errors=(result.stderr or b'').decode(errors='replace').strip()
+                return result.returncode!=0 and (result.stdout or b'').strip() in (b'',b'[]') and errors in (
+                    'Error: No such object: '+identifier,'Error: No such container: '+identifier,
+                    'Error response from daemon: No such container: '+identifier)
+            info=run(['inspect',db.name])
+            if absent(info,db.name):db.created=False;db._deadline_cleanup_pass=True;return
+            if info.returncode:raise ValueError('OWNED_CLEANUP_INSPECT_UNKNOWN')
+            data=json.loads(info.stdout)
+            if len(data)!=1:raise ValueError('OWNED_CLEANUP_INSPECT_UNKNOWN')
+            item=data[0];container_id=item.get('Id','')
+            if item.get('Name')!='/'+db.name or item.get('Config',{}).get('Labels',{}).get('qaw.restore.owner')!=db.nonce or not re.fullmatch('[a-f0-9]{64}',container_id):
+                raise ValueError('OWNED_CLEANUP_NONCE_CONFLICT')
+            # Remove by inspected immutable ID, not a potentially replaced name.
+            removed=run(['rm','-f',container_id])
+            if removed.returncode and not absent(removed,container_id):raise ValueError('OWNED_CLEANUP_REMOVE_UNKNOWN')
+            confirm=run(['inspect',container_id])
+            if not absent(confirm,container_id):raise ValueError('OWNED_CLEANUP_NOT_CONFIRMED')
+            db.created=False;db._deadline_cleanup_pass=True
+        except Exception:
+            self.cleanup_ok=False;raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN') from None
+    def cleanup_all(self):
+        for p in reversed(self.processes):
+            if p.raw.poll() is None:self.stop_process(p)
+        for db in reversed(self.clusters):
+            try:self.cleanup_owned(db)
+            except Exception:self.cleanup_ok=False
+        return self.cleanup_ok
+    @contextmanager
+    def bind(self,base,replay,diagnostics):
+        # Each is a private imported module, never mutate subprocess globally.
+        modules=[base,base.capture,replay,diagnostics];previous=[]
+        self.raw_subprocess=base.subprocess
+        original_cluster=base.OwnCluster;original_hash=base.file_hash;budget=self
+        class DeadlineOwned(original_cluster):
+            def __init__(self,*args,**kwargs):
+                super().__init__(*args,**kwargs);self._deadline_run_issued=False;budget.clusters.append(self)
+            def docker(self,args,data=None):
+                if args and args[0]=='run':
+                    if '--name' not in args or args[args.index('--name')+1]!=self.name or 'qaw.restore.owner='+self.nonce not in args:
+                        raise ValueError('DEADLINE_OWNED_LAUNCH_BINDING_REQUIRED')
+                    self._deadline_run_issued=True
+                return super().docker(args,data)
+            def close(self):return budget.cleanup_owned(self)
+        proxy=Subprocess(self.raw_subprocess,self)
+        def file_hash(path):
+            # Secret/archive file reads occur in a cancellable owned host child,
+            # rather than an uninterruptible Python hash between phase checks.
+            program="import hashlib,sys;h=hashlib.sha256();f=open(sys.argv[1],'rb');\nfor b in iter(lambda:f.read(1048576),b''):h.update(b)\nprint(h.hexdigest())"
+            result=proxy.run([sys.executable,'-c',program,str(path)],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=60)
+            digest=(result.stdout or b'').decode().strip()
+            if result.returncode or not re.fullmatch('[a-f0-9]{64}',digest):raise ValueError('WINDOW_ARCHIVE_HASH_FAILED')
+            return digest
+        try:
+            for module in modules:
+                previous.append((module,module.subprocess));module.subprocess=Subprocess(module.subprocess,self)
+            base.OwnCluster=DeadlineOwned;base.file_hash=file_hash
+            yield
+        finally:
+            self.cleanup_all()
+            base.OwnCluster=original_cluster;base.file_hash=original_hash
+            for module,raw in previous:module.subprocess=raw
+    def execute(self,operation,base,replay,diagnostics):
+        result=None
+        with self.bind(base,replay,diagnostics):
+            try:result=operation()
+            except Exception as e:
+                result={'status':'FAIL_LOCAL_RESTORE','cleanup':'UNKNOWN','reason':str(e) if isinstance(e,WindowExpired) else 'WINDOW_OPERATION_FAILED_DETAILS_SUPPRESSED'}
+        if not self.cleanup_ok:result.update(status='FAIL_LOCAL_RESTORE',cleanup='FAIL')
+        elif result.get('cleanup')=='UNKNOWN':result['cleanup']='PASS'
+        result['windowDeadline']={'clock':'ONE_MONOTONIC_ABSOLUTE_WINDOW','cleanupReserveSeconds':self.window_end-self.data_end,
+                                  'dataExpired':self.expired,'ownedCleanupFence':'PASS' if self.cleanup_ok else 'UNKNOWN',
+                                  'cleanupMayContinueAfterWindow':True}
+        return result
