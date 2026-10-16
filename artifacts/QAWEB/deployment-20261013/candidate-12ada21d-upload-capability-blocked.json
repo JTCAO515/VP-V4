@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-10-16T05:05:12.478714+00:00",
+  "sourceSha": "12ada21db9840525c2c8fc94067846b487476fdc",
+  "previousEvidence": "candidate-12ada21d-stage-a-blocked.json",
+  "officialRecovery": {
+    "method": "Original Workbench refresh then existing enabled passwordless root connection",
+    "sameInstance": "i-j6c7q3kftufyroypiqvu",
+    "sameAccountOrIdentity": true,
+    "newCredentialOrSecuritySettingChanged": false,
+    "fileManagerDirectoryListingRestored": true
+  },
+  "freshPreflight": {
+    "bootId": "7ef6364a-f3a0-4fe7-8b7f-4431db4a7600",
+    "freeBytes": 34885812224,
+    "rootX86_64InstanceMatch": true,
+    "containersEmpty": true,
+    "candidateTagAbsent": true,
+    "newLeafAndStagingAbsentBeforeCreation": true
+  },
+  "onlyRemoteMutation": {
+    "path": "/tmp/v10-qa-candidate-12ada21d",
+    "action": "mkdir new empty staging directory",
+    "requestedMode": "0700"
+  },
+  "upload": {
+    "interface": "official Workbench Upload file button and filechooser API",
+    "localArchiveSha256": "fa1fa36dfd55caf7309ae630f119f04d1dc1e5a9de36ffaefd3ca028aa1a25d1",
+    "fileChooserOpened": true,
+    "setFilesSucceeded": false,
+    "actualError": "To enable file upload, go to chrome://extensions in Google Chrome, click Details under the ChatGPT extension, and enable Allow access to file URLs.",
+    "archiveUploaded": false,
+    "extensionSettingChanged": false,
+    "alternateTransportAttempted": false
+  },
+  "candidateImageBuilt": false,
+  "basePull": "UNRUN",
+  "extraction": "UNRUN",
+  "offlineSmoke": "UNRUN",
+  "profileTargetKeyJournalOldSourceChanged": false,
+  "databaseProviderCalls": 0,
+  "nextRequiredAction": "Main/operator handles actual Chrome ChatGPT extension local-file URL access permission through official Details page if approved; do not change it autonomously or use another transport.",
+  "stagingReadback": {
+    "uid": 0,
+    "gid": 0,
+    "mode": "0700",
+    "symlink": false,
+    "entries": []
+  }
+}
