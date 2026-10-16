@@ -8,16 +8,21 @@ legacy keep their validators; the gate has one explicit v2 selection hook.
 This is one fixed follow-on local-only 60-minute/max2 scope for the same original
 capture, material references, image, actor and room. It is not a general approval
 framework. The only supported future evidence route is the pinned official
-user-read raw plus BestJ→Mac native first hop in an official Mac read, then
-Mac→Main native runtime arguments/result. First-hop text must link the user-read
-hash, event ID, fixed source thread and room; the second hop links first-hop hash
+user-read raw and separate delivery/context index, plus BestJ→Mac native first hop
+as one direct turn item in an official Mac read, then
+Mac→Main native runtime arguments/result. The complete outer `codex_delegation/source_thread_id` must be BestJ;
+quoted/nested/truncated envelopes and duplicate/non-direct receipts are refused.
+The input links the user-read hash and event ID. Human room comes from the pinned
+`full_context_two_hop_evidence_index.parentProvidedRoom`, with byte/hash links to
+the upstream raw, native receipt and Mac read. It remains parent-provided context,
+not an independently observed native room or a token quoted in input. The second hop links first-hop hash
 and event ID. Raw bytes, complete payload and actor/text/time must match pins.
 The actor is also checked against the fixed original raw source pin. We retain
 the parent-reported upstream-read evidence level; no signature/tool ID is invented.
 The future human message's meaning and requested scope require independent review
 when filling pins; hashes alone do not establish consent. No approved flag exists.
 
-Future event ID/text hash/actor hash/time and four exact source references are
+Future event ID/text hash/actor hash/time and five exact source references are
 null until real events exist. Old used event IDs are rejected. Grant key uses
 only fixed room/source-thread/capture and the actual event ID, never version,
 code, cwd, recordSetId or window UUID. It uses the existing diagnostic-authority

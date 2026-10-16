@@ -62,7 +62,7 @@ def require_binding():
     except Exception:raise ValueError('SCOPE_V2_REAL_TIME_REQUIRED') from None
     require(sent.tzinfo is not None and datetime.fromisoformat('2026-10-16T12:48:08.407846+00:00')<sent<=datetime.now(timezone.utc),'SCOPE_V2_REAL_TIME_REQUIRED')
     inputs=BINDING['pins']
-    require(type(inputs) is dict and set(inputs)=={'upstreamRead','macRead','firstHop','secondHop'},'SCOPE_V2_REAL_PINS_REQUIRED')
+    require(type(inputs) is dict and set(inputs)=={'upstreamRead','upstreamContext','macRead','firstHop','secondHop'},'SCOPE_V2_REAL_PINS_REQUIRED')
     for pin in inputs.values():
         require(type(pin) is dict and set(pin)=={'path','bytes','sha256'} and type(pin['path']) is str and Path(pin['path']).is_absolute() and type(pin['bytes']) is int and 0<pin['bytes']<=1048576 and is_hash(pin['sha256']),'SCOPE_V2_REAL_PIN_REQUIRED')
 
@@ -86,6 +86,32 @@ def read_sources():
         require(len(raw)==pin['bytes'] and sha(raw)==pin['sha256'],'DIRECTIVE_RAW_PIN_CONFLICT');result[key]=raw
     return result
 
+def native_first_input(first,snapshot,context,raw):
+    # Match the complete native envelope, not a quoted/nested occurrence. The
+    # sender lives in the outer source_thread_id; text inside input is payload.
+    text=first['output'].get('text')
+    require(type(text) is str,'SCOPE_V2_NATIVE_OUTER_REQUIRED')
+    match=re.fullmatch(r'\s*<codex_delegation>\s*<source_thread_id>\s*([0-9a-f-]{36})\s*</source_thread_id>\s*<input>([\s\S]*)</input>\s*</codex_delegation>\s*',text)
+    require(match is not None,'SCOPE_V2_NATIVE_OUTER_REQUIRED')
+    body=match[2]
+    require(not re.search(r'<\s*/?\s*(?:codex_delegation|source_thread_id|input)\b',body,re.I),'SCOPE_V2_NESTED_DELIVERY_REJECTED')
+    require(match[1]==BESTJ,'SCOPE_V2_NATIVE_SOURCE_THREAD_CONFLICT')
+    require(type(snapshot.get('thread')) is dict and snapshot['thread'].get('id')==MAC and snapshot['thread'].get('kind')=='codex' and type(snapshot.get('turns')) is list,'DIRECTIVE_FIRST_HOP_SOURCE_CONFLICT')
+    items=[]
+    for turn in snapshot['turns']:
+        require(type(turn) is dict and type(turn.get('items')) is list,'DIRECTIVE_FIRST_HOP_SOURCE_CONFLICT')
+        items.extend(turn['items'])
+    matches=[item for item in items if type(item) is dict and item.get('id')==first['id']]
+    require(len(matches)==1 and matches[0]==first,'DIRECTIVE_NATIVE_RECEIPT_NOT_DIRECT_ITEM')
+    # Human room is separate parent-provided context, not the Codex thread ID
+    # and not a token quoted in the message payload. Keep its evidence level.
+    require(type(context) is dict and context.get('record.kind')=='full_context_two_hop_evidence_index' and context.get('humanRawKind')=='parent_reported_official_user_message_read_raw' and context.get('parentProvidedRoom')==ROOM,'SCOPE_V2_ROOM_CONTEXT_CONFLICT')
+    files=context.get('files');require(type(files) is dict,'SCOPE_V2_CONTEXT_LINK_REQUIRED')
+    for label,key in (('parentProvidedApiRaw','upstreamRead'),('bestjMacRecord','firstHop'),('officialMacRead','macRead')):
+        ref=files.get(label)
+        require(type(ref) is dict and set(ref)=={'path','sha256','bytes'} and type(ref['path']) is str and ref['sha256']==sha(raw[key]) and type(ref['bytes']) is int and ref['bytes']==len(raw[key]),'SCOPE_V2_CONTEXT_LINK_REQUIRED')
+    return body
+
 def verify_sources(raw=None):
     require_binding();expected=pins();raw=read_sources() if raw is None else raw
     require(type(raw) is dict and set(raw)==set(expected),'DIRECTIVE_SOURCE_SET_REQUIRED')
@@ -102,10 +128,10 @@ def verify_sources(raw=None):
     require(message['message_id']==BINDING['directiveId'] and message['author']=='user' and sha(message['author_id'].encode())==BINDING['actorSha256'] and message['sent_at']==BINDING['sentAt'],'SCOPE_V2_ACTOR_EVENT_CONFLICT')
     require(sha(message['content']['text'].encode())==BINDING['directiveTextSha256'],'DIRECTIVE_TEXT_CONFLICT')
     first=parsed['firstHop'];snapshot=parsed['macRead']
+    require(type(first) is dict and set(first)=={'type','id','namespace','name','output'} and type(first.get('output')) is dict and set(first['output'])=={'text','truncated'},'DIRECTIVE_NATIVE_FIRST_HOP_REQUIRED')
     require(first.get('type')=='functionCallOutput' and first.get('namespace')=='cloud_threads' and first.get('name')=='send_message' and type(first.get('id')) is str and bool(first['id']) and first.get('output',{}).get('truncated') is False,'DIRECTIVE_NATIVE_FIRST_HOP_REQUIRED')
-    require(snapshot['thread']['id']==MAC and contains(snapshot,first),'DIRECTIVE_FIRST_HOP_SOURCE_CONFLICT')
-    text=first['output']['text']
-    require(all(value in text for value in (BESTJ,ROOM,BINDING['directiveId'],sha(raw['upstreamRead']))),'SCOPE_V2_FIRST_EVIDENCE_LINK_REQUIRED')
+    text=native_first_input(first,snapshot,parsed['upstreamContext'],raw)
+    require(all(value in text for value in (BINDING['directiveId'],sha(raw['upstreamRead']))),'SCOPE_V2_FIRST_EVIDENCE_LINK_REQUIRED')
     second=parsed['secondHop']
     require(second.get('record.kind')=='runtime_tool_arguments_and_result_capture' and second.get('tool')=='codex_app.send_message_to_thread' and second.get('sourceThreadId')==MAC,'DIRECTIVE_CONTEXT_SECOND_HOP_CONFLICT')
     require(second['arguments']['threadId']==MAIN and all(value in second['arguments']['prompt'] for value in (BINDING['directiveId'],sha(raw['firstHop']))),'DIRECTIVE_CONTEXT_TARGET_CONFLICT')

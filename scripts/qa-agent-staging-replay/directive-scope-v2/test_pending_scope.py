@@ -23,8 +23,10 @@ def fixture():
     def api(payload):return {'isError':False,'structuredContent':payload,'content':[{'type':'text','text':json.dumps(payload)}]}
     upstream=api({'partial':False,'before':[],'message':msg,'after':[]})
     raws={'upstreamRead':p.canonical(upstream)}
-    first={'type':'functionCallOutput','namespace':'cloud_threads','name':'send_message','id':'synthetic-native-id','output':{'truncated':False,'text':' '.join((p.BESTJ,p.ROOM,event,p.sha(raws['upstreamRead'])))}}
-    raws['firstHop']=p.canonical(first);raws['macRead']=p.canonical({'thread':{'id':p.MAC},'records':[first]})
+    body=' '.join((p.BESTJ,p.ROOM,event,p.sha(raws['upstreamRead'])))
+    first={'type':'functionCallOutput','namespace':'cloud_threads','name':'send_message','id':'synthetic-native-id','output':{'truncated':False,'text':'<codex_delegation><source_thread_id>'+p.BESTJ+'</source_thread_id><input>'+body+'</input></codex_delegation>'}}
+    raws['firstHop']=p.canonical(first);raws['macRead']=p.canonical({'schemaVersion':1,'thread':{'id':p.MAC,'kind':'codex'},'turns':[{'id':'synthetic-turn','items':[first]}]})
+    raws['upstreamContext']=p.canonical({'record.kind':'full_context_two_hop_evidence_index','humanRawKind':'parent_reported_official_user_message_read_raw','parentProvidedRoom':p.ROOM,'files':{label:{'path':'/synthetic/'+key,'sha256':p.sha(raws[key]),'bytes':len(raws[key])} for label,key in [('parentProvidedApiRaw','upstreamRead'),('bestjMacRecord','firstHop'),('officialMacRead','macRead')]}})
     raws['secondHop']=p.canonical({'record.kind':'runtime_tool_arguments_and_result_capture','tool':'codex_app.send_message_to_thread','sourceThreadId':p.MAC,'arguments':{'threadId':p.MAIN,'prompt':event+' '+p.sha(raws['firstHop'])},'result':{'isError':False,'content':[{'type':'text','text':json.dumps({'threadId':p.MAIN})}]}})
     old_ids=['Sentinel_9fd068e678a0819187991a0a17138244','Sentinel_e4ac0f273c108191a5dfc74e481efce9']
     old=[{'message_id':identifier,'author':'user','author_id':actor} for identifier in old_ids]
@@ -64,6 +66,44 @@ class Pending(unittest.TestCase):
             changed=json.loads(raw[key]);mutate(changed);newraw={**raw,key:p.canonical(changed)};new=copy.deepcopy(binding);new['pins'][key].update(bytes=len(newraw[key]),sha256=p.sha(newraw[key]))
             with patch.object(p,'BINDING',new),patch.object(p,'fixed_actor_pin',return_value=old):
                 with self.assertRaises(ValueError):p.verify_sources(newraw)
+    def test_native_sender_and_context_room_are_not_payload_tokens(self):
+        binding,raw,old=fixture();first=json.loads(raw['firstHop'])
+        first['output']['text']='<codex_delegation>\n<source_thread_id>'+p.BESTJ+'</source_thread_id>\n<input>'+binding['directiveId']+' '+p.sha(raw['upstreamRead'])+'</input>\n</codex_delegation>'
+        raw['firstHop']=p.canonical(first)
+        snapshot=json.loads(raw['macRead']);snapshot['turns'][0]['items']=[first];raw['macRead']=p.canonical(snapshot)
+        context=json.loads(raw['upstreamContext'])
+        for label,key in [('bestjMacRecord','firstHop'),('officialMacRead','macRead')]:context['files'][label].update(sha256=p.sha(raw[key]),bytes=len(raw[key]))
+        raw['upstreamContext']=p.canonical(context)
+        second=json.loads(raw['secondHop']);second['arguments']['prompt']=binding['directiveId']+' '+p.sha(raw['firstHop']);raw['secondHop']=p.canonical(second)
+        for key in binding['pins']:binding['pins'][key].update(bytes=len(raw[key]),sha256=p.sha(raw[key]))
+        with patch.object(p,'BINDING',binding),patch.object(p,'fixed_actor_pin',return_value=old):
+            self.assertEqual(p.verify_sources(raw)['room'],p.ROOM)
+
+    def test_repin_foreign_nested_truncated_and_wrong_room_delivery_refused(self):
+        for kind in ('foreign','selfDeclaredSender','quoted','nested','truncated','missingEnd','wrongMac','nestedReceipt','duplicateReceipt','wrongRoom'):
+            with self.subTest(kind=kind):
+                binding,raw,old=fixture();first=json.loads(raw['firstHop']);snapshot=json.loads(raw['macRead']);context=json.loads(raw['upstreamContext'])
+                native=first['output']['text']
+                if kind in ('foreign','selfDeclaredSender'):
+                    first['output']['text']=native.replace('<source_thread_id>'+p.BESTJ,'<source_thread_id>00000000-0000-4000-8000-000000000001',1)
+                    if kind=='selfDeclaredSender':first['source_sender']=p.BESTJ
+                elif kind=='quoted':first['output']['text']='quoted receipt: '+native
+                elif kind=='nested':first['output']['text']=native.replace('<input>','<input>'+native,1)
+                elif kind=='truncated':first['output']['truncated']=True
+                elif kind=='missingEnd':first['output']['text']=native.removesuffix('</codex_delegation>')
+                snapshot['turns'][0]['items']=[first]
+                if kind=='wrongMac':snapshot['thread']['id']='wrong-thread'
+                if kind=='nestedReceipt':snapshot['turns'][0]['items']=[{'type':'message','quoted':first}]
+                if kind=='duplicateReceipt':snapshot['turns'][0]['items']=[first,first]
+                if kind=='wrongRoom':context['parentProvidedRoom']='foreign-room'
+                raw['firstHop']=p.canonical(first);raw['macRead']=p.canonical(snapshot)
+                for label,key in [('parentProvidedApiRaw','upstreamRead'),('bestjMacRecord','firstHop'),('officialMacRead','macRead')]:context['files'][label].update(sha256=p.sha(raw[key]),bytes=len(raw[key]))
+                raw['upstreamContext']=p.canonical(context)
+                second=json.loads(raw['secondHop']);second['arguments']['prompt']=binding['directiveId']+' '+p.sha(raw['firstHop']);raw['secondHop']=p.canonical(second)
+                for key in binding['pins']:binding['pins'][key].update(bytes=len(raw[key]),sha256=p.sha(raw[key]))
+                with patch.object(p,'BINDING',binding),patch.object(p,'fixed_actor_pin',return_value=old):
+                    with self.assertRaises(ValueError):p.verify_sources(raw)
+
     def test_grant_key_stable_across_version_and_pins_and_window(self):
         binding,raw,old=fixture()
         with patch.object(p,'BINDING',binding):
