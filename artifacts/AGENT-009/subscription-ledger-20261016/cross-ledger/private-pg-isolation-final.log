@@ -1,0 +1,49 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ development candidate apply rollback leaves no schema, old table/functions/policy/data unchanged (11.92025ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (4.968291ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.833834ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.175625ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.725042ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.818833ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.702667ms)
+  ✔ distinct verified renewal creates one next descriptor; restore/refund never replenishes it (1.474458ms)
+  ✔ expiry is server time and unknown/future state never active (0.545833ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (1.936834ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.583875ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (6.261375ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (1.031791ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.650708ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (2.520334ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (0.900666ms)
+  ✔ freshness expiration and ambiguous active families conceal private period (0.958542ms)
+  ✔ READ COMMITTED concurrent family commit cannot mix count and selected period snapshots (14.54025ms)
+  ✔ private dump/restore retains erased family, revocation and epochs without adding role grants (71.3365ms)
+  ✔ owned PG restart preserves committed receipts and period identities (221.143708ms)
+  ✔ legacy fingerprint permits only pinned authored fence body; all other metadata/ACL/table/data unchanged (3.059958ms)
+✔ subscription private PG17 persistence and denial vectors (1082.676209ms)
+▶ cross-ledger pinned candidate and actual writer concurrency
+  ✔ candidate refuses unknown legacy body/owner/ACL/flags before any schema change (7.622667ms)
+  ✔ transactional candidate replacement rollback restores exact legacy definition owner ACL and flags (10.642833ms)
+  ✔ runtime definer with filtered FORCE-RLS visibility refuses the actual legacy RPC, rollback restores metadata (3.866875ms)
+  ✔ unsupported pinned transaction snapshots fail closed in both actual writers with no ledger row (27.187833ms)
+  ✔ legacy_first: same/foreign owner and active/revoked/erased retained identity all conflict (5.798ms)
+  ✔ subscription_first: same/foreign owner and active/revoked/erased retained identity all conflict (5.292417ms)
+  ✔ legacy real RPC preserves 720h queue/snapshot/refund/replay while distinct new period remains independent (1.283292ms)
+  ✔ actual concurrent legacy wins identity mutex (same owner) (13.613083ms)
+  ✔ actual concurrent legacy wins identity mutex (foreign owner) (13.160834ms)
+  ✔ actual concurrent subscription wins identity mutex (same owner) (13.580583ms)
+  ✔ actual concurrent subscription wins identity mutex (foreign owner) (14.519917ms)
+  ✔ legacy open writer does not block independent other-ledger transaction (9.618625ms)
+  ✔ subscription open writer does not block independent other-ledger transaction (9.278542ms)
+  ✔ legacy owner lock chain remains acyclic: old A -> old B identity -> new B (21.715875ms)
+  ✔ erase owner/family lock chain remains acyclic: erase -> new B identity -> old B (21.711583ms)
+  ✔ legacy/service boundaries and candidate default-deny remain exact after fence behavior (1.144542ms)
+✔ cross-ledger pinned candidate and actual writer concurrency (826.158667ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1949.680375

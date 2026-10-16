@@ -1,0 +1,81 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ development candidate apply rollback leaves no schema, old table/functions/policy/data unchanged (12.491209ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (5.338834ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.897333ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.086167ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.93575ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.800167ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.49175ms)
+  ✔ distinct verified renewal creates one next descriptor; restore/refund never replenishes it (1.610791ms)
+  ✔ expiry is server time and unknown/future state never active (0.79425ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (2.072375ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.63075ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (6.281041ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (1.04925ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.497958ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (2.88875ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (0.894209ms)
+  ✔ freshness expiration and ambiguous active families conceal private period (0.995042ms)
+  ✔ READ COMMITTED concurrent family commit cannot mix count and selected period snapshots (14.875542ms)
+  ✔ private dump/restore retains erased family, revocation and epochs without adding role grants (75.301417ms)
+  ✔ owned PG restart preserves committed receipts and period identities (221.34825ms)
+  ✔ legacy fingerprint permits only pinned authored fence body; all other metadata/ACL/table/data unchanged (2.926708ms)
+✔ subscription private PG17 persistence and denial vectors (1121.19175ms)
+▶ cross-ledger pinned candidate and actual writer concurrency
+  ✔ candidate refuses unknown legacy body/owner/ACL/flags before any schema change (7.249042ms)
+  ✔ transactional candidate replacement rollback restores exact legacy definition owner ACL and flags (10.211125ms)
+  ✔ runtime definer with filtered FORCE-RLS visibility refuses the actual legacy RPC, rollback restores metadata (3.75875ms)
+  ✖ unsupported pinned transaction snapshots fail closed in both actual writers with no ledger row (2.954167ms)
+  ✔ legacy_first: same/foreign owner and active/revoked/erased retained identity all conflict (6.605333ms)
+  ✔ subscription_first: same/foreign owner and active/revoked/erased retained identity all conflict (5.172625ms)
+  ✔ legacy real RPC preserves 720h queue/snapshot/refund/replay while distinct new period remains independent (1.382875ms)
+  ✔ actual concurrent legacy wins identity mutex (same owner) (13.153625ms)
+  ✔ actual concurrent legacy wins identity mutex (foreign owner) (13.427709ms)
+  ✔ actual concurrent subscription wins identity mutex (same owner) (13.561417ms)
+  ✔ actual concurrent subscription wins identity mutex (foreign owner) (13.413791ms)
+  ✔ legacy open writer does not block independent other-ledger transaction (9.37625ms)
+  ✔ subscription open writer does not block independent other-ledger transaction (8.801625ms)
+  ✔ legacy owner lock chain remains acyclic: old A -> old B identity -> new B (20.724375ms)
+  ✔ erase owner/family lock chain remains acyclic: erase -> new B identity -> old B (21.197166ms)
+  ✔ legacy/service boundaries and candidate default-deny remain exact after fence behavior (1.313625ms)
+✖ cross-ledger pinned candidate and actual writer concurrency (795.63525ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 37
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1959.671375
+
+✖ failing tests:
+
+test at tests/integration/subscription-ledger/cross-ledger-cases.mjs:94:11
+✖ unsupported pinned transaction snapshots fail closed in both actual writers with no ledger row (2.954167ms)
+  error: permission denied for table storekit_grants
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/cross-ledger-cases.mjs:99:6)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async runCrossLedger (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/cross-ledger-cases.mjs:94:3)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/postgres.test.mjs:9:66)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 103,
+    severity: 'ERROR',
+    code: '42501',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'aclchk.c',
+    line: '2845',
+    routine: 'aclcheck_error'
+  }

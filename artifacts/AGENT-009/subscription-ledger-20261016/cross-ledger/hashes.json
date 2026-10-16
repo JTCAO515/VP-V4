@@ -1,0 +1,51 @@
+{
+  "sourceHead": "1e2ede440c51b5538bd69ec35b319f24deea6247",
+  "base": "cbedf3e07b526d63785791111e040b7735fbafc7",
+  "branch": "codex/subscription-cross-ledger-20261016",
+  "previousBranchPreserved": "codex/subscription-ledger-20261016@a070f3d8",
+  "projectVerified": "4f2191db-3e04-4042-94b5-ec94ff67b427",
+  "sourceFiles": [
+    {
+      "path": "lib/server/entitlements/subscription-ledger/WIRE.md",
+      "sha256": "7a7da6dd266f9d35f9093ed31fb5dd043cfba1ccd6814421185fb896145292cb"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/cross-ledger-pins.json",
+      "sha256": "25860cafc2126a416436c5f987835b60d8390c47b30e8072f1292ee42fb9581e"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/development-schema.sql",
+      "sha256": "e15bf293b014bb1be7b07f8092da11ea75d9aea5a5bdcbaf0d816e97344ce325"
+    },
+    {
+      "path": "tests/contract/subscription-ledger/cross-ledger-pins.test.mjs",
+      "sha256": "878006e5cc01b109e6fa060885ba0cdba3f81224257bf7e4c21f01c8453a1182"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/cross-ledger-cases.mjs",
+      "sha256": "bd979cb7c22456be7943e5bc3d93951c451a37ab93803cb40278b09ff636cb08"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/legacy-pin.mjs",
+      "sha256": "f3c1f5b31243743cf5e1dc28efeb42d8d92236a35aa182f16dc3b85a0ca54d0e"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/postgres.test.mjs",
+      "sha256": "cce446761b5b3481d956ed81908896e54cd49304296e7ff6d0aa3134ca9c7df3"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/selected-cases.mjs",
+      "sha256": "4979354291a057fffd1c130353498e652685486e33d4d4d8df407ab9575ca43f"
+    }
+  ],
+  "beforeLegacyDefinitionSha256": "398e3c89c7f7563ffc05c39eed72f0030b83df79759f8c8079a3aa1a76cb54dc",
+  "afterLegacyDefinitionSha256": "73b75471bb22c0abc291d6c806c65820ff1e018473cad9b596afdd76b28e9151",
+  "legacyMetadataUnchanged": true,
+  "sharedApply": "NOT_APPLIED",
+  "runtimeCapacityEnabled": false,
+  "purchaseEnabled": false,
+  "ordinarySubscriptionAccess": "NOT_READY",
+  "wholeLegacySchemaGuards": "NOT_READY",
+  "localBidirectionalWriterFence": "PASS_PRIVATE_SYNTHETIC",
+  "effectiveModelAndTier": "NOT_EXPOSED_UNVERIFIED"
+}
