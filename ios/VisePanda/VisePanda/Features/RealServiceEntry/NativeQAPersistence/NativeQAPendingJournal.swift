@@ -89,15 +89,17 @@ final class NativeQAPendingJournal {
     }
 
     /// Explicit account erase can remove corrupt/old-epoch custody at this fixed key. No enumeration.
-    /// The live scope callback is mandatory so cleanup also fails closed on mid-operation changes.
+    /// Main's private Session validates the exact endpoint/owner and explicit non-preserve cleanup
+    /// intent in `authorized`, even after logout has fenced active dataScope to nil. Ordinary expiry,
+    /// 401, revocation, absence or cancellation must preserve custody and never grant this authority.
+    /// This does not synthesize an active scope, server undo or a successful completion receipt.
     static func erase(endpoint: String, owner: String, vault: any NativeCredentialVault,
-                      currentScope: () -> NativeDataScope?) throws {
-        guard !busy, let scope = currentScope(), scope.endpoint == endpoint, scope.subject == owner,
-              !endpoint.isEmpty, !owner.isEmpty, scope.mobileEpoch > 0 else { throw NativeQAError.stale }
+                      authorized: () -> Bool) throws {
+        guard !busy, !endpoint.isEmpty, !owner.isEmpty else { throw NativeQAError.stale }
         busy = true
         defer { busy = false }
         func check() throws {
-            guard currentScope() == scope else { throw NativeQAError.stale }
+            guard authorized() else { throw NativeQAError.stale }
         }
         let key = account(endpoint, owner)
         try check()
