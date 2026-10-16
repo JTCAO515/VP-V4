@@ -1,10 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { acquireH04TripInventory } from "../../../evals/harness/runtime-trip-inventory/index.ts";
+import { inventoryDigest } from "../../../lib/server/trip/inventory/contract.ts";
 import { boundary, snapshot, id } from "../../contract/trip-inventory/fixtures.ts";
 
 test("untrusted/partial/foreign before never dispatches Ask or admits a task", async () => {
-  for (const value of [null, {}, [], { ...snapshot(), complete: false }, { ...snapshot(), ownerId: id(20) }, { ...snapshot(), count: null }, { ...snapshot(), count: 0 }, { ...snapshot(), trips: [] }]) {
+  for (const value of [null, {}, [], { ...snapshot(), complete: false }, { ...snapshot(), ownerId: id(20), digest: inventoryDigest(id(20), snapshot().trips) }, { ...snapshot(), count: null }, { ...snapshot(), count: 0 }, { ...snapshot(), trips: [] }]) {
     const f = boundary(); let posts = 0;
     const r = await acquireH04TripInventory(f.run, async (q, s) => { if (q.port === "submit") posts++; return q.port === "inventory" ? Response.json(value) : f.transport(q, s); });
     assert.equal(r.state, "NOT_RUN"); assert.equal(r.tripCollectionUnchanged, "unknown"); assert.equal(posts, 0); assert.equal(r.ask, null);
@@ -38,7 +39,7 @@ test("abort/deadline fences hung and late transport without private disclosure",
       if (fault === "hang-body") return new Response(new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode('{"PRIVATE TRIP":')); } }), { headers: { "Content-Type": "application/json" } });
       return new Promise<Response>(() => {});
     }, c.signal);
-    assert.equal(r.tripCollectionUnchanged, "unknown"); assert.equal(r.submitDispatches, 0); assert.equal(r.before, null); assert.equal(r.after, null); assert.ok(!JSON.stringify(r).includes("PRIVATE TRIP"));
+    assert.equal(r.tripCollectionUnchanged, "unknown"); assert.equal(r.submitDispatches, 0); assert.equal(r.before, null); assert.equal(r.after, null); assert.equal(r.state, "NOT_RUN"); assert.ok(!JSON.stringify(r).includes("PRIVATE TRIP"));
   }
 });
 test("oversize/redirect/invalid UTF8 and byte budget are unknown with zero submit", async () => {

@@ -1,0 +1,18 @@
+▶ inventory actual HTTP / original SDK / PG17 RLS two-owner canonical read
+  ✔ ordinary SDK sees only owned RLS-visible canonical zero (125.683958ms)
+  ✔ exact zero comes from actual RLS/count/identity reads (25.583875ms)
+  ✔ consumer acquires actual HTTP snapshots and original Native session around controlled Ask (174.710333ms)
+  ✔ Cookie/Origin/query/POST/forged role fail without disclosure (2.984583ms)
+  ✔ missing exact count and truncated rows never return empty complete (28.729666ms)
+  ✔ set race and session replacement fail closed (60.549041ms)
+  ✔ original three-draft capacity and RLS remain enforced without fixture grants (90.38625ms)
+{"marker":"TRIP_INVENTORY_HTTP_SDK_PG17_RLS","migrations":161,"checkpoint":"441e51dc210b2a678fcd5f6d5f9aa638f0c5020b","database":{"tcp":"","permissions":"0700","version":"PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit"},"identity":"synthetic registered-token Auth/REST adapter; NOT managed Auth/PostgREST/target/provider","newGrants":0}
+✔ inventory actual HTTP / original SDK / PG17 RLS two-owner canonical read (3591.233125ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3734.705833

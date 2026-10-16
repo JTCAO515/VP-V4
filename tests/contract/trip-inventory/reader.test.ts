@@ -20,7 +20,7 @@ test("ordinary bound client uses exact count, stable id, canonical zero and two 
 test("only exact zero counts with non-null arrays can be empty complete", async () => {
   const f = fixture([{ data: [], count: 0 }, { data: [], count: 0 }]); const r = await f.read()(); assert.ok("data" in r); assert.equal(r.data.count, 0);
 });
-for (const [name, reply] of Object.entries({ nullCount: { data: [], count: null }, nullRows: { data: null, count: 0 }, truncatedZero: { data: [row], count: 0 }, missingPage: { data: [], count: 1 }, cap: { data: [row], count: 9 }, duplicate: { data: [row, row], count: 2 }, negative: { data: [], count: -1 }, badHead: { data: [{ ...row, head_version: -1 }], count: 1 } }))
+for (const [name, reply] of Object.entries({ nullCount: { data: [], count: null }, nullRows: { data: null, count: 0 }, truncatedZero: { data: [row], count: 0 }, missingPage: { data: [], count: 1 }, cap: { data: [row], count: 9 }, duplicate: { data: [row, row], count: 2 }, unordered: { data: [{ ...row, id: id(3) }, row], count: 2 }, negative: { data: [], count: -1 }, badHead: { data: [{ ...row, head_version: -1 }], count: 1 } }))
   test(name + " cannot publish any partial inventory", async () => { assert.deepEqual(await fixture([reply]).read()(), { error: "PROVIDER_UNAVAILABLE" }); });
 test("set, version, title, updatedAt changes and canonical mismatches fail closed", async () => {
   for (const patch of [{ head_version: 2 }, { title: "Changed" }, { updated_at: "2026-10-16T01:00:00Z" }, { id: id(3) }]) {
