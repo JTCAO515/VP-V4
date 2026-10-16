@@ -1,5 +1,17 @@
 # #217 UI integration wire — sole UI/integrator
 
+## IOS-005 consumer compatibility repair — 2026-10-16
+
+This bounded increment owns NativeVoiceTranslationStore.swift, NativeVoiceTranslationView.swift, NativeVoiceTranslationTests.swift and this wire only. Audio, shared TranslationStore, Session, journal/receipt, project and CI remain their original owners' files.
+
+Voice bind accepts the Session's existing NativeTranslationRecoveryPersistence and configures the original text Store. The View passes session.translationRecoveryPersistence() during scope binding. Missing persistence and failed physical retain/readback remain fail closed: zero generation POST. There is no separate Voice journal or in-memory production fallback.
+
+Once a submission or unresolved recovery exists, the same-text action reads original status and returns. It never attempts another admission POST. Recovery metadata fences recording/reset/new-input actions after backgrounding or reconstruction without inventing an original body. Only Root's current recoveredTurnID plus its qualified translated phrase may restore Voice's original, direction and result; ordinary latest-20 history cannot grant that qualification. Readability is checked against current scope, policy/notice and the live Root qualification, including while a fresh read is in flight.
+
+Scene/scope transitions hide transient review/result state and retain the physical journal. Late actor callbacks and verified Turn erasure discard private projections before read-only recovery. Recording and playback remain explicit and Audio is unchanged. No original text, translated text or audio is newly persisted.
+
+Old HTTP fixtures now inject the real NativeTranslationRecoveryJournal over synthetic NativeCredentialVault with canonical UUID scopes. Recovery fixtures validate the exact seven query fields plus original Turn, assert one total generation POST, and compare physical record bytes/identity across changed/same review and unknown GET. Cardinality is checked with throwing require before inspecting optional first body; an absent body reports a normal test failure instead of indexing an empty array. No real Keychain, HTTP, ASR, microphone, playback, account or provider is exercised by those fixtures.
+
 Worktree: vpj27-native-voice-translation-20261005, base fresh origin/main e2ea9334 (70a19fd was superseded by normal merged #656). Source repository dirty files preserved.
 
 First source write planned: NativeVoiceTranslationStore.swift:1 and NativeVoiceTranslationView.swift:1. Own nonAudio only. Audio owner branch vpj27-native-audio-core-20261005 owns all Audio/**.
