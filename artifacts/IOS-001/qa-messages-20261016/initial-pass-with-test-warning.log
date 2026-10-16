@@ -1,0 +1,61 @@
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[40 / 89]
+[45 / 89]
+[47 / 89]
+[52 / 89]
+[56 / 89]
+[59 / 89]
+[61 / 89]
+[62 / 89]
+[74 / 89] VisePanda
+[77 / 89] MessageTests-product
+[79 / 90] MessageTests-product
+[80 / 95]
+[84 / 95] MessageTests-product
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/qa-message-proof-j_q3qk7t/Tests/MessageTests/NativeQAMessagePresentationTests.swift:71:17: warning: 'current' mutated after capture by sendable closure
+66 |     @Test func liveGateIsNotCachedAcrossReadsAndRechecksBeforeReturning() {
+67 |         let value = message()
+68 |         var current = true
+   |             `- note: variable defined here
+69 |         let gate: @MainActor () -> Bool = { current }
+   |                                           | `- note: capturing use
+   |                                           `- note: variable captured by sendable closure
+70 |         #expect(NativeQAMessagePresentation.resolve(message: value, expectedSessionID: session, isCurrent: gate, chinese: true) != nil)
+71 |         current = false
+   |                 `- warning: 'current' mutated after capture by sendable closure
+72 |         #expect(NativeQAMessagePresentation.resolve(message: value, expectedSessionID: session, isCurrent: gate, chinese: true) == nil)
+73 |         var reads = 0
+[89 / 95] MessageTests-product
+[91 / 95] MessageTests-product
+Build complete! (4.54秒)
+Test Suite 'All tests' started at 2026-10-16 15:35:20.846.
+Test Suite 'All tests' passed at 2026-10-16 15:35:20.847.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAMessagePresentationTests started.
+◇ Test liveGateIsNotCachedAcrossReadsAndRechecksBeforeReturning() started.
+◇ Test allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test longChineseEnglishAndLiteralMarkupKeepOriginalUTF8Bytes() started.
+◇ Test blockedAndFailureCanHaveNoResponse() started.
+◇ Test invalidPayloadsNeverProjectEvenWithCurrentScope() started.
+◇ Test unknownWireStatusFailsDecodingInsteadOfInventingSuccess() started.
+◇ Test case passing 1 argument status → .pending to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .clarification to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .answered to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .reconciliationRequired to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .partial to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .technicalFailure to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+◇ Test case passing 1 argument status → .blocked to allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) started.
+✔ Test liveGateIsNotCachedAcrossReadsAndRechecksBeforeReturning() passed after 0.001 seconds.
+✔ Test longChineseEnglishAndLiteralMarkupKeepOriginalUTF8Bytes() passed after 0.001 seconds.
+✔ Test invalidPayloadsNeverProjectEvenWithCurrentScope() passed after 0.001 seconds.
+✔ Test blockedAndFailureCanHaveNoResponse() passed after 0.001 seconds.
+✔ Test unknownWireStatusFailsDecodingInsteadOfInventingSuccess() passed after 0.001 seconds.
+✔ Test allWireStatesHaveDistinctTruthfulBilingualPresentation(status:) with 7 test cases passed after 0.001 seconds.
+✔ Suite NativeQAMessagePresentationTests passed after 0.001 seconds.
+✔ Test run with 6 tests in 1 suite passed after 0.001 seconds.
