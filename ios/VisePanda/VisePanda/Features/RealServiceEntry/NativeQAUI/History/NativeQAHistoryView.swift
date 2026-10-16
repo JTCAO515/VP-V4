@@ -1,15 +1,17 @@
 import SwiftUI
 
 /// Embeddable sheet content. Main owns presentation, navigation and Store intents.
+/// The parent must drive updates through Observable Store/scope reads.
+/// Ordinary opaque closures do not notify SwiftUI when their captured values change.
 struct NativeQAHistoryView: View {
     let source: NativeQAHistorySource
     let chinese: Bool
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        // Re-read even when a closure's captured source changes without an observable notification.
+        // Recheck eligibility on each body render; no independent refresh loop.
         // Private rows and local search live only in the matching scope subtree.
-        TimelineView(.animation) { _ in
+        Group {
             if scenePhase == .active, let snapshot = source.readable() {
                 NativeQAHistoryContent(source: source, snapshot: snapshot, chinese: chinese)
                     .id(snapshot.scope)

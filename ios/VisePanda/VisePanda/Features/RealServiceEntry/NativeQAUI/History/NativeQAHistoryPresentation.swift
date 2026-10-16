@@ -11,6 +11,7 @@ struct NativeQAHistorySnapshot {
 }
 
 /// Main supplies live closures from the original Store and active/readable session gate.
+/// The parent must observe Store/scope changes; opaque closures provide no automatic UI notification.
 /// No snapshot, credentials, search text, or selected session is persisted here.
 @MainActor
 struct NativeQAHistorySource {
