@@ -17,23 +17,37 @@ struct NativeQACancellationView: View {
     private var identity: Identity { .init(target: store.target, visible: isActive && scenePhase == .active) }
     private func text(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     var body: some View {
+        let displayedIdentity = identity
+        let displayedIntent = store.captureIntent()
         Group {
-            if identity.visible, store.hasCurrentProjection {
+            if displayedIdentity.visible, store.hasCurrentProjection, let displayedIntent {
                 VStack(alignment: .leading, spacing: VPSpacing.standard) {
                     Text(title).font(.headline).accessibilityAddTraits(.isHeader)
                         .accessibilityIdentifier("native.qa.cancel.status")
                     Text(detail).font(.body).foregroundStyle(Color.vpSecondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                     if store.canRequestStop {
-                        Button(text("请求停止这次生成", "Request stopping this generation")) { Task { await store.requestStop() } }
+                        Button(text("请求停止这次生成", "Request stopping this generation")) {
+                            guard identity.visible, store.isCurrent(displayedIntent) else { return }
+                            Task {
+                                guard identity.visible, store.isCurrent(displayedIntent) else { return }
+                                await store.requestStop(intent: displayedIntent)
+                            }
+                        }
                             .frame(minHeight: 44).accessibilityIdentifier("native.qa.cancel.request")
                     } else if !store.busy {
-                        Button(text("核对停止结果", "Check stop result")) { Task { await store.checkResult() } }
+                        Button(text("核对停止结果", "Check stop result")) {
+                            guard identity.visible, store.isCurrent(displayedIntent) else { return }
+                            Task {
+                                guard identity.visible, store.isCurrent(displayedIntent) else { return }
+                                await store.checkResult(intent: displayedIntent)
+                            }
+                        }
                             .frame(minHeight: 44).accessibilityIdentifier("native.qa.cancel.check")
                     }
                     if [.cancelled, .alreadyTerminal].contains(store.state), let onReadOriginalResult {
                         Button(text("读取原请求结果", "Read original request result")) {
-                            guard identity.visible, store.hasCurrentProjection else { return }
+                            guard identity.visible, store.isCurrent(displayedIntent) else { return }
                             onReadOriginalResult()
                         }.frame(minHeight: 44).accessibilityIdentifier("native.qa.cancel.original-result")
                     }
@@ -43,7 +57,10 @@ struct NativeQACancellationView: View {
                 .accessibilityIdentifier("native.qa.cancel.card")
             }
         }
-        .task(id: identity) { await store.activate(identity.visible) }
+        .task(id: displayedIdentity) {
+            guard identity == displayedIdentity else { return }
+            await store.activate(displayedIdentity.visible)
+        }
         .onDisappear { store.invalidate() }
     }
     private var title: String {

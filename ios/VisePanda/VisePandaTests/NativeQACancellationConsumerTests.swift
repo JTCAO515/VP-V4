@@ -4,7 +4,7 @@ import XCTest
 nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
     @MainActor func testSingleStopRetainsExactBodyBeforePostAndSealsObservedTombstone() async throws {
         let f = CancellationFixture(); let store = f.makeStore()
-        await store.activate(true); await store.requestStop()
+        await store.activate(true); await store.requestStopForCurrentTestTarget()
         XCTAssertEqual(f.port.posts, 1); XCTAssertEqual(store.state, .cancelled)
         let record = try XCTUnwrap(f.persistence.records.values.first)
         XCTAssertEqual(record.command.body, Data("{}".utf8)); XCTAssertEqual(record.receipt?.state, .cancelled)
@@ -13,10 +13,10 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
     }
     @MainActor func testLostAckReopenOnlyReadsOriginalTupleWithoutRepeatingStopOrGeneration() async throws {
         let f = CancellationFixture(); f.port.dropAck = true
-        let first = f.makeStore(); await first.activate(true); await first.requestStop()
+        let first = f.makeStore(); await first.activate(true); await first.requestStopForCurrentTestTarget()
         XCTAssertEqual(first.state, .unknown)
         let original = try XCTUnwrap(f.persistence.records.values.first?.command)
-        let reopened = f.makeStore(); await reopened.activate(true); await reopened.requestStop()
+        let reopened = f.makeStore(); await reopened.activate(true); await reopened.requestStopForCurrentTestTarget()
         XCTAssertEqual(reopened.state, .cancelled)
         XCTAssertEqual(f.port.posts, 1); XCTAssertEqual(f.port.reads, 1)
         XCTAssertEqual(f.port.lastRead?.sessionID, original.sessionID)
@@ -27,17 +27,17 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
     @MainActor func testPendingAndNotObservedNeverConfirmStoppedAndRemainReadOnly() async {
         for result in ["pending", "not_observed"] {
             let f = CancellationFixture(); f.port.result = result
-            let store = f.makeStore(); await store.activate(true); await store.requestStop()
+            let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
             XCTAssertEqual(store.state, result == "pending" ? .pending : .unknown)
             XCTAssertFalse(store.canRequestStop); XCTAssertEqual(f.persistence.finishes, 0)
-            await store.requestStop(); await store.checkResult()
+            await store.requestStopForCurrentTestTarget(); await store.checkResultForCurrentTestTarget()
             XCTAssertEqual(f.port.posts, 1); XCTAssertEqual(f.port.reads, 1)
             XCTAssertNotNil(f.persistence.records.values.first); XCTAssertEqual(f.port.generationCalls, 0)
         }
     }
     @MainActor func testCompletionWinningRaceIsAlreadyTerminalNotStopOrAnswerSuccess() async {
         let f = CancellationFixture(); f.port.result = "terminal"
-        let store = f.makeStore(); await store.activate(true); await store.requestStop()
+        let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
         XCTAssertEqual(store.state, .alreadyTerminal); XCTAssertEqual(store.receipt?.state, .terminal)
         XCTAssertEqual(f.port.generationCalls, 0); XCTAssertEqual(f.port.generationClears, 0)
         XCTAssertEqual(f.persistence.records.values.first?.receipt?.state, .terminal)
@@ -45,38 +45,38 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
     @MainActor func testStorageFailureOrReadbackMismatchPreventsStopPost() async {
         for mismatch in [false, true] {
             let f = CancellationFixture(); f.persistence.failRetain = !mismatch; f.persistence.mismatchReadback = mismatch
-            let store = f.makeStore(); await store.activate(true); await store.requestStop()
+            let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
             XCTAssertEqual(f.port.posts, 0); XCTAssertEqual(f.persistence.finishes, 0)
             XCTAssertNotEqual(store.state, .cancelled); XCTAssertEqual(f.port.generationCalls, 0)
         }
     }
     @MainActor func testFinishReadbackFailureKeepsOriginalIntentAndDoesNotShowStopped() async {
         let f = CancellationFixture(); f.persistence.failFinish = true
-        let store = f.makeStore(); await store.activate(true); await store.requestStop()
+        let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
         XCTAssertEqual(store.state, .unknown); XCTAssertNil(store.receipt)
         XCTAssertNotNil(f.persistence.records.values.first?.command); XCTAssertEqual(f.port.posts, 1)
-        await store.checkResult(); XCTAssertEqual(f.port.posts, 1)
+        await store.checkResultForCurrentTestTarget(); XCTAssertEqual(f.port.posts, 1)
     }
     @MainActor func testMalformedForeignOrGenerationReceiptCannotSealCancellation() async {
         for mode in ["foreign", "wrongAck", "extra", "generation", "wrongRequest"] {
             let f = CancellationFixture(); f.port.replyMode = mode
-            let store = f.makeStore(); await store.activate(true); await store.requestStop()
+            let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
             XCTAssertEqual(store.state, .unknown, mode); XCTAssertNil(store.receipt, mode)
             XCTAssertEqual(f.persistence.finishes, 0, mode); XCTAssertNotNil(f.persistence.records.values.first, mode)
         }
     }
     @MainActor func testAuthorityDenialHidesReceiptAndRetainsIntentWithoutFreshConsent() async {
         let f = CancellationFixture(); f.port.status = 403
-        let store = f.makeStore(); await store.activate(true); await store.requestStop()
+        let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget()
         XCTAssertEqual(store.state, .blocked); XCTAssertNil(store.receipt)
         XCTAssertNotNil(f.persistence.records.values.first); XCTAssertEqual(f.persistence.finishes, 0)
         XCTAssertEqual(f.port.generationCalls, 0)
     }
     @MainActor func testBackgroundCancelsInFlightReadAndDoesNotExposeLateReceipt() async {
         let f = CancellationFixture(); let store = f.makeStore()
-        await store.activate(true); f.port.dropAck = true; await store.requestStop()
+        await store.activate(true); f.port.dropAck = true; await store.requestStopForCurrentTestTarget()
         f.port.dropAck = false; f.port.holdRead = true
-        let read = Task { await store.checkResult() }
+        let read = Task { await store.checkResultForCurrentTestTarget() }
         for _ in 0..<1000 { if f.port.readStarted { break }; await Task.yield() }
         XCTAssertTrue(f.port.readStarted)
         store.invalidate(); await read.value
@@ -94,20 +94,20 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
                                           generation: change == 3 ? 2 : original.generation)
             f.port.scope = changed; f.target = .init(scope: changed, sessionID: f.sessionID, requestID: f.requestID, canRequestStop: true)
             XCTAssertFalse(store.hasCurrentProjection)
-            await store.requestStop(); await store.checkResult()
+            await store.requestStopForCurrentTestTarget(); await store.checkResultForCurrentTestTarget()
             XCTAssertEqual(f.port.posts, 0); XCTAssertEqual(f.port.reads, 0)
         }
     }
     @MainActor func testLateResponseAfterSelectionChangeCannotFinishDifferentTuple() async {
         let f = CancellationFixture(); let store = f.makeStore(); await store.activate(true)
         f.port.onPost = { f.target = .init(scope: f.port.scope!, sessionID: f.sessionID, requestID: f.otherID, canRequestStop: true) }
-        await store.requestStop()
+        await store.requestStopForCurrentTestTarget()
         XCTAssertEqual(store.state, .inactive); XCTAssertNil(store.receipt)
         XCTAssertEqual(f.persistence.finishes, 0); XCTAssertEqual(f.port.posts, 1)
     }
     @MainActor func testObservedTombstoneSurvivesReopenAndPreventsAnotherPost() async {
-        let f = CancellationFixture(); let first = f.makeStore(); await first.activate(true); await first.requestStop()
-        let next = f.makeStore(); await next.activate(true); await next.requestStop(); await next.checkResult()
+        let f = CancellationFixture(); let first = f.makeStore(); await first.activate(true); await first.requestStopForCurrentTestTarget()
+        let next = f.makeStore(); await next.activate(true); await next.requestStopForCurrentTestTarget(); await next.checkResultForCurrentTestTarget()
         XCTAssertEqual(f.port.posts, 1); XCTAssertEqual(f.port.reads, 2)
         XCTAssertEqual(f.persistence.records.count, 1); XCTAssertEqual(next.state, .cancelled)
     }
@@ -122,10 +122,81 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
                        "api/qa-agent/native/v1/sessions/\(f.sessionID)/messages/\(f.requestID)/cancellation")
         XCTAssertNil(try NativeQARequest.readCancellation(sessionID: f.sessionID, requestID: f.requestID).body)
     }
+    @MainActor func testDisplayedStopIntentQueuedBeforeRebindCannotCancelSuccessor() async throws {
+        let f = CancellationFixture(); let store = f.makeStore(); await store.activate(true)
+        let displayedIntent = try XCTUnwrap(store.captureIntent())
+        let oldButtonTask: @MainActor () async -> Void = { await store.requestStop(intent: displayedIntent) }
+        f.target = .init(scope: f.port.scope!, sessionID: f.sessionID, requestID: f.otherID, canRequestStop: true)
+        await store.activate(true)
+        let loadsBefore = f.persistence.loads
+        await oldButtonTask()
+        XCTAssertEqual(f.persistence.loads, loadsBefore)
+        XCTAssertEqual(f.persistence.retains, 0)
+        XCTAssertEqual(f.port.posts, 0)
+        XCTAssertEqual(f.port.reads, 0)
+        XCTAssertTrue(f.persistence.records.isEmpty)
+    }
+    @MainActor func testDisplayedCheckIntentQueuedBeforeRebindCannotReadSuccessor() async throws {
+        let f = CancellationFixture(); let store = f.makeStore(); await store.activate(true)
+        let displayedIntent = try XCTUnwrap(store.captureIntent())
+        let oldButtonTask: @MainActor () async -> Void = { await store.checkResult(intent: displayedIntent) }
+        f.target = .init(scope: f.port.scope!, sessionID: f.sessionID, requestID: f.otherID, canRequestStop: true)
+        await store.activate(true)
+        let loadsBefore = f.persistence.loads
+        await oldButtonTask()
+        XCTAssertEqual(f.persistence.loads, loadsBefore)
+        XCTAssertEqual(f.persistence.retains, 0)
+        XCTAssertEqual(f.port.posts, 0)
+        XCTAssertEqual(f.port.reads, 0)
+        XCTAssertTrue(f.persistence.records.isEmpty)
+    }
+    @MainActor func testCurrentSuccessorIntentStopsOnlyBAndDuplicateTapDoesNotPostTwice() async throws {
+        let f = CancellationFixture(); let store = f.makeStore(); await store.activate(true)
+        f.target = .init(scope: f.port.scope!, sessionID: f.sessionID, requestID: f.otherID, canRequestStop: true)
+        await store.activate(true)
+        let currentIntent = try XCTUnwrap(store.captureIntent())
+        let first = Task { await store.requestStop(intent: currentIntent) }
+        let second = Task { await store.requestStop(intent: currentIntent) }
+        await first.value; await second.value
+        XCTAssertEqual(f.port.posts, 1); XCTAssertEqual(f.persistence.retains, 1)
+        XCTAssertEqual(f.persistence.records.values.first?.command.requestID, f.otherID)
+        XCTAssertEqual(store.state, .cancelled); XCTAssertEqual(f.port.generationCalls, 0)
+    }
+    @MainActor func testQueuedIntentCannotSurviveBackgroundOrChangedScopeReactivation() async throws {
+        for change in 0..<5 {
+            let f = CancellationFixture(); let store = f.makeStore(); await store.activate(true)
+            let displayedIntent = try XCTUnwrap(store.captureIntent())
+            await store.activate(false)
+            if change > 0 {
+                let old = f.port.scope!
+                let next = NativeDataScope(endpoint: change == 1 ? "https://new.invalid" : old.endpoint,
+                                           subject: change == 2 ? f.otherID : old.subject,
+                                           mobileEpoch: change == 3 ? old.mobileEpoch + 1 : old.mobileEpoch,
+                                           generation: change == 4 ? old.generation + 1 : old.generation)
+                f.port.scope = next
+                f.target = .init(scope: next, sessionID: f.sessionID, requestID: f.requestID, canRequestStop: true)
+            }
+            await store.activate(true)
+            let loadsBefore = f.persistence.loads
+            await store.requestStop(intent: displayedIntent); await store.checkResult(intent: displayedIntent)
+            XCTAssertFalse(store.isCurrent(displayedIntent))
+            XCTAssertEqual(f.port.posts, 0); XCTAssertEqual(f.port.reads, 0)
+            XCTAssertEqual(f.persistence.retains, 0); XCTAssertEqual(f.persistence.loads, loadsBefore)
+        }
+    }
+    @MainActor func testIntentFromAnotherStoreCannotAuthorizeEvenTheSameTuple() async throws {
+        let f = CancellationFixture(); let first = f.makeStore(); await first.activate(true)
+        let foreignIntent = try XCTUnwrap(first.captureIntent())
+        let second = f.makeStore(); await second.activate(true)
+        let loadsBefore = f.persistence.loads
+        await second.requestStop(intent: foreignIntent); await second.checkResult(intent: foreignIntent)
+        XCTAssertEqual(f.port.posts, 0); XCTAssertEqual(f.port.reads, 0)
+        XCTAssertEqual(f.persistence.retains, 0); XCTAssertEqual(f.persistence.loads, loadsBefore)
+    }
     @MainActor func testFreshStopIneligibleStillAllowsExplicitReadonlyReceiptCheck() async {
         let f = CancellationFixture(); f.target = .init(scope: f.port.scope!, sessionID: f.sessionID, requestID: f.requestID, canRequestStop: false)
         f.port.result = "terminal"
-        let store = f.makeStore(); await store.activate(true); await store.requestStop(); await store.checkResult()
+        let store = f.makeStore(); await store.activate(true); await store.requestStopForCurrentTestTarget(); await store.checkResultForCurrentTestTarget()
         XCTAssertEqual(f.port.posts, 0); XCTAssertEqual(f.port.reads, 1)
         XCTAssertEqual(store.state, .alreadyTerminal); XCTAssertTrue(f.persistence.records.isEmpty)
     }
@@ -150,17 +221,19 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
 @MainActor private final class CancellationPersistence: NativeQACancellationPersistence {
     var records: [String: NativeQACancellationRecord] = [:]
     var failRetain = false, mismatchReadback = false, failFinish = false
-    var finishes = 0
+    var finishes = 0, loads = 0, retains = 0
     func key(_ command: NativeQACancellationPending) -> String {
         [command.endpoint, command.subject, String(command.mobileEpoch), command.sessionID, command.requestID].joined(separator: "|")
     }
     func loadCancellation(target: NativeQACancellationTarget) throws -> NativeQACancellationRecord? {
+        loads += 1
         let command = try NativeQACancellationPending(target: target)
         guard let record = records[key(command)] else { return nil }
         if mismatchReadback { throw NativeQACancellationError.storageUnavailable }
         return record
     }
     func retainCancellation(_ command: NativeQACancellationPending, scope: NativeDataScope) throws {
+        retains += 1
         if failRetain { throw NativeQACancellationError.storageUnavailable }
         if let original = records[key(command)] { guard original.command == command else { throw NativeQACancellationError.storageUnavailable }; return }
         records[key(command)] = .init(command: command, receipt: nil)
@@ -207,4 +280,16 @@ nonisolated final class NativeQACancellationConsumerTests: XCTestCase {
     func loadPending(scope: NativeDataScope) throws -> NativeQAPending? { generationCalls += 1; throw NativeQAError.invalidResponse }
     func retainPending(_ pending: NativeQAPending, scope: NativeDataScope) throws { generationCalls += 1; throw NativeQAError.invalidResponse }
     func clearPending(_ pending: NativeQAPending, scope: NativeDataScope) throws { generationClears += 1; throw NativeQAError.invalidResponse }
+}
+
+// Existing cases intentionally capture a fresh current intent; queued cases above freeze it before rebind.
+@MainActor private extension NativeQACancellationStore {
+    func requestStopForCurrentTestTarget() async {
+        guard let intent = captureIntent() else { return }
+        await requestStop(intent: intent)
+    }
+    func checkResultForCurrentTestTarget() async {
+        guard let intent = captureIntent() else { return }
+        await checkResult(intent: intent)
+    }
 }
