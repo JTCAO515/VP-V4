@@ -1,5 +1,6 @@
+import { createProviderHttpTransport } from "../model-gateway/adapters/http-transport.ts";
 import { SHARED_QA_PROJECT_REF, type QaTarget } from "./target.ts";
-import { createQaWorker, type QaWorkerConfiguration } from "./worker.ts";
+import { validateQaWorkerJob, type QaWorkerConfiguration } from "./worker.ts";
 import { createStagingTextJob, createTextJobPrice } from "../jobs/staging-text-job.ts";
 import { validatedUsageReceipt, type ValidatedUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
 import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
@@ -14,9 +15,12 @@ export function auditQaUsage(config: QaWorkerConfiguration, rawReceipts: readonl
     createStagingTextJob({ schemaVersion: "vpj07-staging-text-job/1", ownerId: config.ownerId, policyId: config.policyId,
       budget: config.budget, provider: config.provider, pricing: config.pricing },
       { workerCredential: forbidden, providerCredential: forbidden, recordDestination: forbidden, qwenEndpoint: config.provider.endpoint });
-  } else createQaWorker(config, { workerCredential: forbidden, providerCredential: forbidden,
-    recordDestination: forbidden, recordUsage: forbidden, invokeContext: forbidden,
-    qwenEndpoint: config.provider.provider === "qwen" ? config.provider.endpoint : undefined }, compositionTarget);
+  } else {
+    validateQaWorkerJob(config, compositionTarget);
+    // Validate the original transport config without invoking it or reading keys.
+    createProviderHttpTransport(config.provider, { credential: forbidden, recordDestination: forbidden,
+      qwenEndpoint: config.provider.provider === "qwen" ? config.provider.endpoint : undefined });
+  }
   if (!Array.isArray(rawReceipts) || rawReceipts.length > 100) throw invalid();
   const price = createTextJobPrice(config.pricing), receipts = new Map<string, ValidatedUsageReceipt>();
   for (const raw of rawReceipts) {
