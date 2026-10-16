@@ -61,4 +61,3 @@ def verify_start_provenance(b):
         raise ValueError('DIRECTIVE_START_PROVENANCE_CONFLICT')
     b.check()
     return anchor,instant
-
