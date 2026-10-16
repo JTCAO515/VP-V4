@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "exitCode": 0,
+  "sourceHashes": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "e42862ebf8b65e93d5f1f6d2a3649b140125989220e126b4f227b2a103548c44",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQAPersistence/NativeQAPendingJournal.swift": "f1f06287f87d34e900a030483bf8b8e3f1d7cf0a17750d01a3bbf30b08ff02a1",
+    "ios/VisePanda/VisePandaTests/NativeQAPendingJournalTests.swift": "2b360782f0bd7f8c50ba3031616369a21823679662086e9295830b99c24fca80"
+  },
+  "extractedPrimitivesSHA256": "d9e7c425ef2574e51e87fb21e1d7270938110ab25af86380ca2b7daad509ab98",
+  "unrun": [
+    "real Keychain IO",
+    "iOS app/PBX integration",
+    "target/provider/auth",
+    "device"
+  ],
+  "sourceCommits": [
+    "b1f19bf2",
+    "61dac653"
+  ],
+  "swiftTestingFunctions": 20,
+  "result": "PASS"
+}

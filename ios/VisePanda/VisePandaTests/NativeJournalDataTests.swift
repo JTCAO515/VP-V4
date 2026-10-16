@@ -59,8 +59,8 @@ import Testing
             .experience, .placeAction, .scopedTrip, .result, .notification, .guide, .ask, .tripSupport, .deviceDelete, .readinessSave,
             .linkedTripDelete, .memoryDelete, .tripDelete]
         #expect(originalSources.count == 29)
-        #expect(Set(exported.rows.filter { $0.record.source != .assistantEventsCursor && $0.record.source != .translationRecovery }.map { $0.record.source }) == originalSources)
-        #expect(exported.rows.count == 31)
+        #expect(Set(exported.rows.filter { $0.record.source != .assistantEventsCursor && $0.record.source != .translationRecovery && $0.record.source != .qaSubmission }.map { $0.record.source }) == originalSources)
+        #expect(exported.rows.count == 32)
         let cursorRows = exported.rows.filter { $0.record.source == .assistantEventsCursor }
         #expect(cursorRows.count == 1)
         let cursorRow = try #require(cursorRows.first)

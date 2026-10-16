@@ -240,8 +240,10 @@ private struct RealServiceAskEntry: View {
     @Environment(AppSettings.self) private var settings
 
     var body: some View {
-        if ProcessInfo.processInfo.arguments.contains("-V10RealServiceFrontend"), !settings.nativeSession.enabled {
-            NativeRealServiceDisconnectedView(chinese: settings.selectedLocale == .zh)
+        if NativeQAEntryRollout.enabled() {
+            if settings.nativeSession.enabled {
+                NativeQAEntryView(chinese: settings.selectedLocale == .zh, isActive: isActive)
+            } else { NativeRealServiceDisconnectedView(chinese: settings.selectedLocale == .zh) }
         } else {
             AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
         }

@@ -5,7 +5,7 @@ struct AppShellView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var frontend = NativeFrontendState()
-    @State private var frontendEnabled = NativeFrontendRollout.enabled()
+    @State private var frontendEnabled = NativeFrontendRollout.enabled() && !NativeQAEntryRollout.enabled()
     @State private var frontendSheet: NativeFrontendSheet?
     @State private var assistantShell: Bool
     @State private var selectedTab: AppTab
@@ -18,7 +18,7 @@ struct AppShellView: View {
 #endif
 
     init(assistantShell: Bool = NativeShellRollout.enabled()) {
-        let useFourTabs = assistantShell || NativeFrontendRollout.enabled() || ProcessInfo.processInfo.arguments.contains("-V10RealServiceFrontend")
+        let useFourTabs = assistantShell || NativeFrontendRollout.enabled() || NativeQAEntryRollout.enabled()
         _assistantShell = State(initialValue: useFourTabs)
         _selectedTab = State(initialValue: useFourTabs ? .defaultSelection : .ask)
     }

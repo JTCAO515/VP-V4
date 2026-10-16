@@ -1,0 +1,24 @@
+{
+  "qa_source": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+  "working_head": "74a17a0b3877407a66b6bc73065464053562821f",
+  "source_sha256": {
+    "ios/VisePanda/VisePanda/Navigation/AppRoute.swift": "e2fb9bb032d75132c5eed4b5180779219ff7b0f91d615d784d206efcbab24b13",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "f8ed02995af76ee3436b620ebf07a3b18fae92017eb8e509bf60f0b3d25e5e00",
+    "ios/VisePanda/VisePanda/Features/Ask/AskView.swift": "a108227994b8e5841329c08b8a21c4a047b5d3c09d8d3911708b977c7a02ba58",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift": "73d036539b0742d683b05caa8edfc529f1e09560f9316d43778f37b2a4f388ec",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift": "58fa4520f063d73dd3acd7c086afd5b99d4340b1c9ea891fc1309a099a994841",
+    "lib/server/identity/native-config.ts": "3d772744c8e6c4563dc6a948c4c409c44c55c2a5d66f012af92288e4b79a8805",
+    "lib/server/identity/native-http.ts": "a5559110d8fb828dfe6bbe3bbdc7207f053e4df3afe6e8bd5adc586d88d20f9d",
+    "lib/server/identity/native-credentials.ts": "e10462967462e359914e7f4a4fb925911ce33b8017570d06993bcf403c95281e",
+    "lib/server/identity/user-data-adapter.ts": "dafef7adbac1c52ed90ff7713a7da17d8dd4145ee042ce1c200237d7341ac267",
+    "lib/server/qa-agent/http.ts": "c9d0097f121fa4bdf950b35a6e07e6f2a35592eca41882f63a186c724072a3f0",
+    "lib/server/qa-agent/browser-boundary.ts": "4cf69743e14e8d7dd149c72ab3cc13f398c1a9bd98c3644d35fc6627699e406b",
+    "lib/server/qa-agent/service.ts": "06a6cfb6114efe56f97cb96699355482662cf688db62490b1f1eb68e8f069000",
+    "lib/server/qa-agent/contract.ts": "989a73bb0bb54eebdc4bc8e3bdca975639f7a275cc74d86532e584606f2b9b99",
+    "lib/server/qa-agent/hosted-profile.ts": "b477ffe6fb23283d3e1a33cb55485f28949476ddcc2553b0bb82872449fc60a4",
+    "lib/server/jobs/hosted-text-worker.ts": "e72b88ec97018be49ee253434afcd63653ba22acb7bc4d1128296871284e2f31",
+    "app/api/chat/native/v2/turns/route.ts": "271a42bc0c75cd50ea0222e3d99668e12efdffb878ce5b7b59097e4b102f7cc7",
+    "artifacts/IOS-001/realservice-20261016/main-verification.md": "b5c7dcab2e8d62a35cf937382417e0019867a6dd396321511a7f3467a8640ba8"
+  },
+  "offline_boundary_assertions": 7
+}
