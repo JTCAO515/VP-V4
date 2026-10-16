@@ -34,3 +34,11 @@ test("closed parser rejects extra data, wrong hash/version, unsorted IDs and ove
   const trips = [{ ...good.trips[0], content: { days: [{ id: "d", date: "2026-10-16", items: Array.from({ length: 2000 }, (_, n) => ({ id: "i" + n, dayId: "d", title: "x".repeat(160) })) }] } }];
   assert.equal(parseInventory({ ...good, trips, digest: inventoryDigest(good.ownerId, trips) }), null);
 });
+test("canonical projection is detached before later async reads mutate its source", async () => {
+  const f = fixture(); let auth = 0;
+  const r = await f.read(async () => ({ data: f.canonical }), async () => {
+    if (++auth === 2) f.canonical.content.days.push({ id: "late" } as never);
+    return { data: id(1) };
+  })();
+  assert.ok("data" in r); assert.deepEqual(r.data.trips[0].content.days, []); assert.equal(f.canonical.content.days.length, 1);
+});
