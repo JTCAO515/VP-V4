@@ -34,6 +34,12 @@ final class NativeQAStore {
         active = false; state = .inactive
     }
     func activate(_ visible: Bool) async {
+        // Re-entering the same live foreground is a read, not a new scene/identity.
+        // Never save/restore a draft around await: a later edit must remain newer.
+        if visible, active, boundScope == scope, scope != nil {
+            await refresh()
+            return
+        }
         let previous = boundScope
         invalidate()
         if previous != scope { selectedID = nil }

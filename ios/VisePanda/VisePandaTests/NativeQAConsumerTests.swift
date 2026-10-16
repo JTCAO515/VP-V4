@@ -140,6 +140,88 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         port.scope = nil
         XCTAssertFalse(store.hasReadableProjection); XCTAssertFalse(store.canSend)
     }
+    @MainActor func testRepeatedForegroundActivationPreservesSameScopeUnsentDraft() async {
+        let port = NativeQAConsumerTestPort(); let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Unsent same-account thought"
+        await store.activate(true)
+        XCTAssertEqual(store.draft, "Unsent same-account thought")
+        XCTAssertEqual(port.posts, 0)
+    }
+    @MainActor func testManualRefreshPreservesSameScopeDraft() async {
+        let port = NativeQAConsumerTestPort(); let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Keep while checking service"
+        await store.refresh()
+        XCTAssertEqual(store.draft, "Keep while checking service")
+        XCTAssertEqual(port.posts, 0)
+    }
+    @MainActor func testChangedEpochOrGenerationDoesNotRestoreUnsentDraft() async {
+        let port = NativeQAConsumerTestPort(); let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Do not restore across scope"
+        let original = port.scope!
+        port.scope = .init(endpoint: original.endpoint, subject: original.subject, mobileEpoch: original.mobileEpoch, generation: original.generation + 1)
+        await store.activate(true)
+        XCTAssertTrue(store.draft.isEmpty); XCTAssertNil(store.selectedID)
+    }
+    @MainActor func testUnknownAndReconciliationOnlyOfferReadResultInBothLanguages() async {
+        let port = NativeQAConsumerTestPort(); port.hideReceipt = true
+        let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Keep original identity"; await store.send()
+        for chinese in [true, false] {
+            let card = NativeQAWorkPresentation.current(store: store, chinese: chinese, visible: true)
+            XCTAssertEqual(card.action, .refresh)
+            XCTAssertEqual(card.actionTitle, chinese ? "核对结果" : "Check result")
+            XCTAssertFalse(card.title.contains(chinese ? "已保存" : "saved"))
+        }
+        let reconPort = NativeQAConsumerTestPort(); reconPort.saved = true; reconPort.messageStatus = "reconciliation_required"
+        let recon = NativeQAStore(transport: reconPort)
+        await recon.activate(true); await recon.select(reconPort.sessionID)
+        XCTAssertEqual(recon.state, .pending)
+        XCTAssertEqual(NativeQAWorkPresentation.current(store: recon, chinese: true, visible: true).action, .refresh)
+        XCTAssertEqual(NativeQAWorkPresentation.current(store: recon, chinese: true, visible: true).title, "还没确认结果")
+        XCTAssertEqual(port.posts, 1); XCTAssertEqual(reconPort.posts, 0)
+    }
+    @MainActor func testWorkCardsDoNotCallPartialClarificationOrFailureSavedAnswers() async {
+        for status in NativeQAMessage.Status.allTestCases {
+            for chinese in [true, false] {
+                let card = NativeQAWorkPresentation.messageCard(status, chinese: chinese)
+                let saved = chinese ? "回答已保存" : "Answer saved"
+                XCTAssertEqual(card.title == saved, status == .answered)
+                XCTAssertFalse(card.detail.contains("%"))
+                XCTAssertFalse(card.detail.contains("分钟"))
+            }
+        }
+        let port = NativeQAConsumerTestPort(); let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        XCTAssertFalse(NativeQAWorkPresentation.current(store: store, chinese: true, visible: true).title.contains("已保存"))
+        port.saved = true; await store.refresh()
+        XCTAssertEqual(NativeQAWorkPresentation.current(store: store, chinese: true, visible: true).title, "回答已保存")
+        for status in ["blocked", "technical_failure"] {
+            port.messageStatus = status; await store.refresh()
+            XCTAssertEqual(NativeQAWorkPresentation.current(store: store, chinese: true, visible: true).action, .refresh)
+        }
+    }
+    @MainActor func testFirstNoticeAndWithdrawnConsentHaveSingleExplicitNextAction() async {
+        for consent in ["not_accepted", "withdrawn"] {
+            let port = NativeQAConsumerTestPort(); port.consent = consent
+            let store = NativeQAStore(transport: port); await store.activate(true)
+            let card = NativeQAWorkPresentation.current(store: store, chinese: true, visible: true)
+            XCTAssertEqual(card.action, .consent); XCTAssertEqual(port.consents, 0)
+            XCTAssertEqual(card.title, consent == "withdrawn" ? "服务同意已撤回" : "开始前，请阅读服务说明")
+        }
+    }
+    @MainActor func testCheckDoesNotRestoreSnapshotOverLaterDraftEdit() async {
+        let port = NativeQAConsumerTestPort(); let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Earlier edit"
+        port.onHistoryRead = { store.draft = "Later edit while reading" }
+        await store.activate(true)
+        XCTAssertEqual(store.draft, "Later edit while reading")
+        XCTAssertEqual(port.posts, 0)
+    }
     @MainActor func testLocalRequestPathsAndPendingIdentityAreClosed() throws {
         let port = NativeQAConsumerTestPort()
         let policy = try JSONDecoder().decode(NativeQAPolicy.self, from: JSONSerialization.data(withJSONObject: port.policy))
@@ -164,6 +246,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
     var changeActorOnHistory = false, foreignHistory = false
     var holdHistory = false, historyStarted = false, historyCancelled = false
     var foreignReceipt = false, failReadback = false
+    var onHistoryRead: (() -> Void)?
     var noticeHash = String(repeating: "a", count: 64)
     var consent = "accepted", messageStatus = "answered"
     var policy: [String: Any] {
@@ -174,7 +257,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         guard saved else { return [] }
         return (0..<messageCount).map { index in
             let id = index == 0 ? posted?.requestID ?? "00000000-0000-4000-8000-000000000004" : String(format: "00000000-0000-4000-8000-%012d", index + 10)
-            return ["requestId": id, "turnId": id, "sessionId": sessionID, "input": posted?.originalText ?? "Synthetic question", "text": messageStatus == "pending" ? NSNull() : "Synthetic persisted answer", "status": messageStatus, "createdAt": "2026-10-16T00:00:00Z"]
+            return ["requestId": id, "turnId": id, "sessionId": sessionID, "input": posted?.originalText ?? "Synthetic question", "text": ["pending", "reconciliation_required"].contains(messageStatus) ? NSNull() : "Synthetic persisted answer", "status": messageStatus, "createdAt": "2026-10-16T00:00:00Z"]
         }
     }
     func loadPending(scope: NativeDataScope) throws -> NativeQAPending? {
@@ -212,6 +295,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
             if foreignReceipt { message["input"] = "Foreign input" }
             object = ["message": message]
         case .history:
+            onHistoryRead?()
             if holdHistory {
                 historyStarted = true
                 do { try await Task.sleep(for: .seconds(20)) }
@@ -225,4 +309,8 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         object["version"] = "qa-agent/1"
         return .init(status: 200, body: try JSONSerialization.data(withJSONObject: object))
     }
+}
+
+private extension NativeQAMessage.Status {
+    static var allTestCases: [Self] { [.pending, .reconciliationRequired, .answered, .partial, .clarification, .blocked, .technicalFailure] }
 }
