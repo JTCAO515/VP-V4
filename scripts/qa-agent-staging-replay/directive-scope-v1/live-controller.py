@@ -32,9 +32,14 @@ class Controller:
     def __init__(self,core,budget,header,args,configuration,source_profile,repair_packet,repair_start,repair_descriptor):
         # Budget already exists from controlled START in this process. Never
         # deserialize a Budget, sample another START or register a new window.
-        entry.profile.provenance.verify_start_provenance(budget)
+        self._entry=entry
+        if isinstance(source_profile,dict) and source_profile.get('version')=='jt-next-bounded-scope/v2':
+            spec=importlib.util.spec_from_file_location('controller_scope_v2_entry',HERE.parent/'directive-scope-v2/entry.py')
+            selected=importlib.util.module_from_spec(spec);spec.loader.exec_module(selected)
+            selected.profile.require_binding();self._entry=selected
+        self._entry.profile.provenance.verify_start_provenance(budget)
         facade=SimpleNamespace(diagnostic_deadline=core.diagnostic_deadline,directiveStartBudget=budget,base=core.base)
-        entry.profile.start_budget(facade,header)
+        self._entry.profile.start_budget(facade,header)
         require(header.get('attempt')==1 and len(args)==4)
         self._core=core;self._budget=budget;self._original=budget;self._pid=os.getpid()
         self._window=header['windowId'];self._args=tuple(map(str,args))
@@ -49,6 +54,7 @@ class Controller:
         require(len({str(args[0]),self._repair_packet,self._repair_start,str(self._descriptor)})==4)
         self._core_hash=core.code_hash()
         self._fixed={name:digest((HERE/name).read_bytes()) for name in ('entry.py','profile.py','start-provenance.py','live-controller.py')}
+        self._v2_fixed={name:digest((HERE.parent/'directive-scope-v2'/name).read_bytes()) for name in ('entry.py','profile.py','bootstrap.py','pending-binding.json')} if self._entry is not entry else {}
         self._repair_original={name:digest((self._root/name).read_bytes()) for name in REPAIR_FILES}
         lock=json.loads((self._root/'container-diagnostic/restore/source-lock.json').read_text())
         require(type(lock) is dict and all(type(name) is str and not Path(name).is_absolute() and '..' not in Path(name).parts for name in lock))
@@ -57,9 +63,10 @@ class Controller:
         self.state='READY';self.invocations=0;self.cleanup='NOT_REQUIRED';self.last_outcome='NOT_RUN'
     def _check(self):
         require(os.getpid()==self._pid and self._budget is self._original)
-        entry.profile.provenance.verify_start_provenance(self._budget)
+        self._entry.profile.provenance.verify_start_provenance(self._budget)
         require(self._core.code_hash()==self._core_hash)
         require(all(digest((HERE/name).read_bytes())==value for name,value in self._fixed.items()))
+        require(all(digest((HERE.parent/'directive-scope-v2'/name).read_bytes())==value for name,value in self._v2_fixed.items()))
         require(all(digest((self._root/name).read_bytes())==value for name,value in self._frozen_inputs.items()))
     def snapshot(self):
         # No paths, error details, caller-provided strings or raw entry results.
@@ -104,7 +111,7 @@ class Controller:
     def _invoke(self,args,config,profile):
         self._check();self.invocations+=1;self.state='RUNNING'
         try:
-            result=entry.run(self._core,args,config,profile,start_budget=self._budget)
+            result=self._entry.run(self._core,args,config,profile,start_budget=self._budget)
         except BaseException:
             return self._close('REFUSED_OR_INTERRUPTED')
         claim=result.get('diagnosticWindowClaim') if isinstance(result,dict) else None

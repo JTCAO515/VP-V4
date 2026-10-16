@@ -1,0 +1,127 @@
+{
+  "sourceHead": "367031827899b524ef63ab2173a6d4692175ac0f",
+  "proofHead": "RESOLVE_EVIDENCE_ONLY_COMMIT_CONTAINING_THIS_FILE",
+  "review": "PENDING_FIXED_SOURCE_AND_PRIVATE_WRAPPER_REVIEW",
+  "state": "UNCONFIGURED_NO_NEW_SCOPE_AUTHORITY",
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/container-diagnostic/restore/source-lock.json": "51fe393dd0a3d8b6802faef701bc8711f1e3d9aec8208536acc76e7b779bf9ff",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/live-controller.py": "cc1f80c303e729df1cba9fb50b69ed24f07b6959f5513d391b56a54b190eb876",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": "81361cf9aa31ff64e9ef7782b62e40b9ca3c153ca3410fb73be87b0633034a7f",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/README.md": "589e4263f8822d0a3e0d0ef0d982dbb629689badeecd618dedfcdf45cc563799",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/bootstrap.py": "3801be547141844906b7052729f26a5207004c158590d5f7996c87b952b437f9",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/entry.py": "4b97b50ffb25a6862954a675eeb8b11269ee286ecd449784bffde2ced0de360f",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/lock-sources.py": "8d9c1b9953dc74fb4daa306b80352a0e9a98a7b13f48365ea8e5c5ed452c7680",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/pending-binding.json": "961ba05a48ed2483a88896259066abdc1ccab316f209ea81676d7221d2630db9",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/profile.py": "8d88c91536f284220d047123c36079e30b4d6ed79cba41a309d582226550bbd0",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/source-lock.json": "6387b913dc61f6260457ac1de733a9c499f5183401cba26a3ec98c2787fc6c70",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/test_pending_scope.py": "4df598bd3ddf7994dca4f3078aacc0c1c4aa0da9d71db3a0cf8a6122ffd48330",
+    "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py": "70012956dc2dfb9f09dcb03b4a5f59d4e6eb03a645304c041e468718e04e2d34"
+  },
+  "checks": {
+    "newV2AndBootstrap": 11,
+    "existingV1": 37,
+    "legacyGate": 26,
+    "controller": 17,
+    "planNoPG": 4,
+    "sourceTotal": 95,
+    "privateWrapper": 3,
+    "limits": "Synthetic new source/ledger and atomic file fixtures. Bootstrap assembly stubs preflight/qualified hash/controller constructor and proves same-object handoff only. Existing v1 suite includes its unchanged non-secret pinned-source checks; default v2 refusal tests show zero protected IO/factory/START. No actual material/PG/Docker/target operation.",
+    "history": "Initial atomic-write fixture used noncanonical macOS temp alias; correctly rejected, then fixture path resolved. Error retained; guard unchanged."
+  },
+  "logs": [
+    {
+      "privateBasename": "v2-first.log",
+      "sha256": "f76aaffb60864998db2be3de09e9a1946e5414c0eeacdb351dd87ca8efdca48b",
+      "summary": [
+        "Ran 8 tests in 0.007s",
+        "FAILED (errors=1)"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-second.log",
+      "sha256": "cfb59d82df742b0a27364f4cc9b8bf536c42fb0cfd9e4bcf88d079c21e6a641b",
+      "summary": [
+        "Ran 8 tests in 0.007s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-final11-fixed.log",
+      "sha256": "fd995d123f44b52b7c246d1fbfeee8008b0b9e193b8ac4a95078e6f127eaca16",
+      "summary": [
+        "Ran 11 tests in 0.034s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-v1.log",
+      "sha256": "8a67b23a307ae5262ff8fe38d94147846cafcac41d12e42f643c7e0f279ac42b",
+      "summary": [
+        "Ran 37 tests in 0.326s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-legacy.log",
+      "sha256": "0367d2239e6f1b16a8c35e23cadc1a4d545af99e2c5abadd8e57ebe6e8251f5a",
+      "summary": [
+        "Ran 26 tests in 0.166s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-controller.log",
+      "sha256": "ed53da5dc8e2e467d5ba80288359aa675377eb7447f165b7b36c0bfae2ca30bd",
+      "summary": [
+        "Ran 17 tests in 0.068s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-plan.log",
+      "sha256": "ed51c61f4629b5777642392c0f874b953c0674ecb0881e9c76ed003458bedf61",
+      "summary": [
+        "Ran 4 tests in 0.009s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-private-wrapper.log",
+      "sha256": "7e9a14b82c39a122be4fc253e391b575fb56bbb6be60622e6a417b07d7fbd1c0",
+      "summary": [
+        "PASS pending-template refuses before source-module load/factory/protected reads/START",
+        "PASS wrong-driver hash rejects before binding open",
+        "PASS AST finite hash interface; no eval/exec/FakeRunner",
+        "Ran 3 private-wrapper checks; PASS; no actual operation"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "privateCandidate": {
+    "basename": "operator-bootstrap-v2-candidate.py",
+    "sha256": "37da08d9262290477e84b5bec9694e33305a82fe59078a2fad9ac67bc859d69f",
+    "bindingTemplateBasename": "operator-bootstrap-v2-binding.template.json",
+    "bindingTemplateSha256": "6ffa7bc4ed3f0840bf98d2d8d1d1a20be76205336fc262405bb0c77d1753ab27",
+    "allTemplateFieldsNull": true,
+    "configured": false,
+    "activated": false
+  },
+  "pendingSourceBinding": {
+    "path": "scripts/qa-agent-staging-replay/directive-scope-v2/pending-binding.json",
+    "allFieldsNull": true
+  },
+  "authorityBoundary": "New actual human event must differ from old used IDs and match fixed actor/room/capture; native raw chain is pinned. Stable grant namespace excludes profile/code/cwd/window variation. No approved flag, old fallback, fabricated ID or platform signature.",
+  "runtime": {
+    "all7InputsUnchanged": true,
+    "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+    "newImageBuilt": false
+  },
+  "originalRecords": "Old c8/v4/bda and prior source commits retained unchanged; no actual START/claim/window written; old scope not extended."
+}
