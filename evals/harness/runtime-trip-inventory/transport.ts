@@ -10,10 +10,16 @@ export function createNativeInventoryTransport(options: Readonly<{ allowedOrigin
   if (!options || Object.keys(options).sort().join(",") !== "allowedOrigin,authorizedFetch" || typeof options.authorizedFetch !== "function") throw new RuntimeFailure("INVALID_INPUT");
   const ask = createNativeAskTransport({ appOrigin: options.allowedOrigin, authorizedFetch: options.authorizedFetch });
   const { allowedOrigin, authorizedFetch } = options;
-  return (request, signal) => {
-    if (request.port !== "inventory") return ask(request, signal);
+  const checkedResponse = (response: Response) => {
+    if (response.redirected || (response.url && new URL(response.url).origin !== allowedOrigin)) {
+      void response.body?.cancel().catch(() => {}); throw new RuntimeFailure("PROVIDER_UNAVAILABLE");
+    }
+    return response;
+  };
+  return async (request, signal) => {
+    if (request.port !== "inventory") return checkedResponse(await ask(request, signal));
     if (Object.keys(request).join(",") !== "port" || signal.aborted) throw new RuntimeFailure(signal.aborted ? "CANCELLED" : "INVALID_INPUT");
-    return authorizedFetch(allowedOrigin + "/api/trips/native/v2/inventory", { method: "GET", signal, redirect: "error", cache: "no-store" });
+    return checkedResponse(await authorizedFetch(allowedOrigin + "/api/trips/native/v2/inventory", { method: "GET", signal, redirect: "error", cache: "no-store" }));
   };
 }
 /** Shared, finite network accounting for both snapshots AND every original Ask request. */

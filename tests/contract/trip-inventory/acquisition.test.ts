@@ -26,3 +26,10 @@ test("Native transport is explicit allowed HTTPS GET with redirect error and no 
   assert.equal(requests[0][1]?.method, "GET"); assert.equal(requests[0][1]?.redirect, "error"); assert.equal(requests[0][1]?.cache, "no-store");
   for (const origin of ["http://example.invalid", "https://example.invalid/path", "https://user@example.invalid"]) assert.throws(() => createNativeInventoryTransport({ allowedOrigin: origin, authorizedFetch: fetch }));
 });
+test("Native transport rejects a redirected or cross-origin final response", async () => {
+  for (const key of ["url", "redirected"]) {
+    const reply = Response.json(snapshot()); Object.defineProperty(reply, key, { value: key === "url" ? "https://foreign.invalid/data" : true });
+    const transport = createNativeInventoryTransport({ allowedOrigin: "https://example.invalid", authorizedFetch: async () => reply });
+    await assert.rejects(transport({ port: "inventory" }, new AbortController().signal));
+  }
+});
