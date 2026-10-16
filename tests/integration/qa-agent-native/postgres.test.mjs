@@ -44,6 +44,8 @@ const native=(a,action,payload={},epoch=a.epoch)=>rpc('qa_native_session_v1',{p_
 const login=async a=>{const attempt=randomUUID();await rpc('native_prepare_v2',{p_owner:a.owner,p_session:a.session,p_attempt:attempt});const receipt=await rpc('native_session_v2',{p_action:'login',p_attempt:attempt},a);a.epoch=receipt.mobileEpoch;assert.equal(receipt.subject,a.owner);assert.equal(receipt.sessionId,a.session);return a;};
 const a=await fixture(),b=await fixture();
 await assert.rejects(native(a,'create',{},1),/UNAUTHENTICATED|SESSION_REPLACED/);await login(a);await login(b);
+const web={...a,session:randomUUID()};await db(`insert into auth.sessions(id,user_id) values('${web.session}','${web.owner}');`);
+assert.equal((await rpc('qa_read_policy_v1',{p_policy_id:a.policy},web)).kind,'policy');await assert.rejects(native(web,'create'),/SESSION_REPLACED/);pass('ordinary Web JWT remains valid for Web QA but cannot masquerade as active Native epoch');
 for(const role of ['anon','service_role'])await assert.rejects(db(`set role ${role};select public.qa_native_session_v1('create',1,'{}');`),/permission denied/);
 assert.equal((await native(a,'qa_read_policy_v1',{p_policy_id:a.policy})).policy.consentState,'not_accepted');
 assert.equal((await native(a,'qa_accept_policy_v1',{p_policy_id:a.policy,p_notice_hash:'a'.repeat(64)})).kind,'accepted');

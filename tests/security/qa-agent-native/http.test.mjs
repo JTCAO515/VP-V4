@@ -20,7 +20,7 @@ const stamp='2026-10-16T00:00:00Z',prefix='/api/qa-agent/native/v1';
 
 test('actual Native QA route exports + Bearer SDK + original service: persistent identity, unknown ACK, isolation and cancellation',async t=>{
  const browserFetch=globalThis.fetch,f=await nativeFixture(t,'http://127.0.0.1:58123'),authFetch=globalThis.fetch;
- const rows=[],calls=[];let task=null,accepted=false,epoch=1,replaced=false,replaceAfterPrecheck=false,lost=false,lostCancel=false,cancelled=false;
+ const rows=[],calls=[];let task=null,accepted=false,epoch=1,replaced=false,replaceAfterPrecheck=false,lost=false,lostCancel=false,cancelled=false,malformedSession=false,oversizedPolicy=false;
  const thread={id:sid,status:'active',createdAt:stamp,updatedAt:stamp};
  const server=createServer(async(req,res)=>{try{
   const parts=[];for await(const b of req)parts.push(b);const u=new URL(req.url,origin),pieces=u.pathname.slice(prefix.length).split('/').filter(Boolean);
@@ -41,7 +41,7 @@ test('actual Native QA route exports + Bearer SDK + original service: persistent
   const error=msg=>Response.json({message:msg,code:'P0001'},{status:400});
   if(name==='native_session_v2'){
    if(replaced)return error('SESSION_REPLACED');
-   const response=Response.json({version:2,subject,sessionId:authSession,mobileEpoch:epoch});if(replaceAfterPrecheck){replaceAfterPrecheck=false;replaced=true;}return response;
+   const response=Response.json({version:2,subject,sessionId:authSession,mobileEpoch:malformedSession?String(epoch):epoch});if(replaceAfterPrecheck){replaceAfterPrecheck=false;replaced=true;}return response;
   }
   assert.equal(name,'qa_native_session_v1','never ordinary unwrapped data or Native legacy submit');assert.equal(p.p_mobile_epoch,epoch);
   if(replaced)return error('SESSION_REPLACED');
@@ -49,7 +49,7 @@ test('actual Native QA route exports + Bearer SDK + original service: persistent
   if(a==='list')return Response.json({kind:'threads',threads:[thread]});
   if(a==='create')return Response.json({kind:'thread',thread});
   if(a==='read')return b.p_thread_id!==sid?error('FORBIDDEN'):Response.json({kind:'thread_read',thread,turns:rows.map(r=>({id:r.turnId,status:cancelled?'cancelled':r.output?'completed':'accepted',createdAt:stamp}))});
-  if(a==='qa_read_policy_v1')return Response.json({kind:'policy',policy:{id:pid,contextMode:'qa_session_history_v1',maxTurns:8,noticeHash:'a'.repeat(64),noticeZh:'合成许可',noticeEn:'Synthetic permission',provider:'qwen',recipient:'Synthetic',consentState:accepted?'accepted':'not_accepted'}});
+  if(a==='qa_read_policy_v1')return Response.json({kind:'policy',policy:{id:pid,contextMode:'qa_session_history_v1',maxTurns:8,noticeHash:'a'.repeat(64),noticeZh:'合成许可',noticeEn:oversizedPolicy?'x'.repeat(300000):'Synthetic permission',provider:'qwen',recipient:'Synthetic',consentState:accepted?'accepted':'not_accepted'}});
   if(a==='qa_accept_policy_v1'){accepted=true;return Response.json({kind:'accepted',policyId:pid});}
   if(a==='qa_list_sessions_v1')return Response.json({kind:'sessions',sessions:[{threadId:sid}]});
   if(a==='qa_read_session_v1')return Response.json({kind:'session',schemaVersion:'qa-session/1',threadId:sid,policyId:rows.length?pid:null,serviceTaskId:task,lastTurnId:rows.at(-1)?.turnId??null,messages:rows});
@@ -85,6 +85,10 @@ test('actual Native QA route exports + Bearer SDK + original service: persistent
  assert.equal((await qaAgentHTTP(new NextRequest(origin+'/api/qa-agent/policy',{headers:{Authorization:'Bearer '+f.token}}),'policy')).status,403);
  assert.equal((await call('/sessions/'+follow)).status,403);
  replaceAfterPrecheck=true;const denied=await call('/sessions','POST',{});assert.equal(denied.status,401);replaced=false;
+ const atomicCalls=()=>calls.filter(c=>c.name==='qa_native_session_v1').length;
+ const priorAtomic=atomicCalls();malformedSession=true;assert.equal((await call('/policy')).status,503);malformedSession=false;assert.equal(atomicCalls(),priorAtomic,'malformed epoch is never NativeActorContext');
+ const aborted=new AbortController();aborted.abort();const beforeAbort=calls.length;assert.equal((await nativeQaHTTP(new NextRequest(origin+prefix+'/policy',{headers:{Authorization:'Bearer '+f.token},signal:aborted.signal}),'policy')).status,503);assert.equal(calls.length,beforeAbort);
+ oversizedPolicy=true;assert.equal((await call('/policy')).status,503);oversizedPolicy=false;
  accepted=false;assert.equal((await call('/sessions/'+sid+'/messages','POST',{requestId:rid,text:original})).status,403);
  delete process.env.VISEPANDA_QA_AGENT;delete process.env.VISEPANDA_QA_AGENT_POLICY_ID;
  lostCancel=true;const stop=await call('/sessions/'+sid+'/messages/'+follow+'/cancellation','POST',{});assert.equal(stop.status,503);assert.equal(stop.body.error.ack,'unknown');
