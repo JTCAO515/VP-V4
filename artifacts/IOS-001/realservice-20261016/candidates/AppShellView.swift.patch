@@ -1,11 +1,5 @@
 --- a/ios/VisePanda/VisePanda/App/AppShellView.swift
 +++ b/ios/VisePanda/VisePanda/App/AppShellView.swift
-@@ -18,7 +18,7 @@
- #endif
- 
-     init(assistantShell: Bool = NativeShellRollout.enabled()) {
+@@ -21 +21 @@
 -        let useFourTabs = assistantShell || NativeFrontendRollout.enabled()
 +        let useFourTabs = assistantShell || NativeFrontendRollout.enabled() || ProcessInfo.processInfo.arguments.contains("-V10RealServiceFrontend")
-         _assistantShell = State(initialValue: useFourTabs)
-         _selectedTab = State(initialValue: useFourTabs ? .defaultSelection : .ask)
-     }

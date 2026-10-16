@@ -39,7 +39,7 @@ Conditional configuration example only, not a mode selection or activation; Main
 
 - PASS: worktree/branch/base/initial clean; namespace and NativeRealServiceEntryTests.swift absent.
 - PASS: candidate endpoint pure-source probe compiled with xcrun swiftc, 16 assertions; baseline rejects QA, candidate exact QA accepts, hostile host/credentials/path/query/fragment/port/nonstaging/remote launch overrides reject, existing staging/preview/loopback behaviors preserved. Probe makes no HTTP calls and uses no credentials.
-- PASS: git diff --check; changes limited to this artifact directory.
+- Initial full-range diff check found a unified-diff context blank line flagged as trailing whitespace in the patch artifact; regenerated patches with zero context (full before/after snapshots retained). Final full-range check PASS; changes limited to this artifact directory.
 - UNRUN: app build, XCTest, simulator, physical iPhone, VoiceOver, real Auth/RLS, provider answer, persistent same-session readback, worker and foreground runtime. App build/resources reserved to Main; no product source changed here.
 - Existing persistence tests were SOURCE INSPECTED, not executed or counted as current PASS. Current issue #203 and #681 were read live and remain OPEN.
 
