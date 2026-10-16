@@ -30,6 +30,15 @@ final class NativeQAStore {
         && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && draft.utf16.count <= 4000
     }
 
+    /// Cancellation targets come only from the original current protected message projection.
+    /// Terminal messages remain eligible for receipt GET; only waiting messages permit a fresh stop.
+    func cancellationTarget(for requestID: String) -> NativeQACancellationTarget? {
+        guard hasReadableProjection, let scope, let selectedID,
+              let message = messages.first(where: { $0.requestId == requestID }),
+              message.valid(sessionID: selectedID) else { return nil }
+        return .init(scope: scope, sessionID: selectedID, requestID: message.requestId, canRequestStop: message.status.waiting)
+    }
+
     /// Cancels local IO/projections; persisted unknown commands are not erased or reauthorized.
     func invalidate() {
         generation = UUID(); work?.cancel(); work = nil
