@@ -100,6 +100,8 @@ begin
  -- An empty FORCE-RLS scan is not proof of absence. Fail closed on visibility drift.
  if current_user<>'postgres' or not exists(select 1 from pg_roles where rolname=current_user and (rolsuper or rolbypassrls))
  then raise exception 'ENTITLEMENT_VISIBILITY_UNAVAILABLE'; end if;
+ -- Conflict checks require a fresh post-mutex command snapshot; never use a pinned RR snapshot.
+ if current_setting('transaction_isolation')<>'read committed' then raise exception 'ENTITLEMENT_ISOLATION_UNAVAILABLE'; end if;
  -- Shared identity mutex precedes any owner/family/row lock in both actual writers.
  -- No legacy table SHARE lock: old INSERT RowExclusive must not invert this graph.
  perform pg_advisory_xact_lock(hashtextextended('entitlement-transaction:Sandbox:'||tx,226));
@@ -232,6 +234,7 @@ begin
     or nullif(p_input->>'policyVersion','') is null then raise exception 'INVALID_INPUT'; end if;
 
   -- Candidate cross-domain fence: identity mutex precedes every owner/row lock.
+  if current_setting('transaction_isolation')<>'read committed' then raise exception 'ENTITLEMENT_ISOLATION_UNAVAILABLE'; end if;
   perform pg_advisory_xact_lock(hashtextextended('entitlement-transaction:'||v_env||':'||v_tx,226));
   if exists(select 1 from subscription_development.periods where environment=v_env and transaction_id=v_tx)
   then raise exception 'ENTITLEMENT_TRANSACTION_CONFLICT'; end if;
@@ -269,8 +272,8 @@ do $cross_ledger_after$
 begin
  if not exists(select 1 from pg_proc p join pg_language l on l.oid=p.prolang
   where p.oid=to_regprocedure('public.storekit_apply_verified_v1(jsonb)')
-   and encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')='958209af4650641aeb864bce01fb2cca783c7089fc0fccc477ef478691bcc95d'
-   and encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')='b03152ef41247b0d22955651cfdbc7794c22d09fc33c79e8feca9e8b2d0d40e2'
+   and encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')='ff72abab5ac6de7af75686b9767358293cef82136acf9f273f2c4a8cb71207d6'
+   and encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')='73b75471bb22c0abc291d6c806c65820ff1e018473cad9b596afdd76b28e9151'
    and jsonb_build_object('owner',pg_get_userbyid(p.proowner),'acl',p.proacl::text,'language',l.lanname,'kind',p.prokind,'volatility',p.provolatile,'parallel',p.proparallel,'securityDefiner',p.prosecdef,'strict',p.proisstrict,'leakproof',p.proleakproof,'returnsSet',p.proretset,'result',pg_get_function_result(p.oid),'arguments',pg_get_function_arguments(p.oid),'identity',pg_get_function_identity_arguments(p.oid),'config',p.proconfig,'cost',p.procost,'rows',p.prorows,'support',p.prosupport::text,'binary',p.probin,'sqlBody',p.prosqlbody::text)='{"acl":"{postgres=X/postgres,service_role=X/postgres}","cost":100,"kind":"f","rows":0,"owner":"postgres","binary":null,"config":["search_path=\"\""],"result":"jsonb","strict":false,"sqlBody":null,"support":"-","identity":"p_input jsonb","language":"plpgsql","parallel":"u","arguments":"p_input jsonb","leakproof":false,"returnsSet":false,"volatility":"v","securityDefiner":true}'::jsonb
    and exists(select 1 from pg_roles owner_role where owner_role.oid=p.proowner and (owner_role.rolsuper or owner_role.rolbypassrls)))
  then raise exception 'CROSS_LEDGER_AFTER_MISMATCH'; end if;

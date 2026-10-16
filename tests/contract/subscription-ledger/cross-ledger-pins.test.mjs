@@ -10,6 +10,7 @@ test('fixed legacy pins preserve metadata and permit only authored visibility an
   then raise exception 'ENTITLEMENT_VISIBILITY_UNAVAILABLE'; end if;
 `;
  const fence=`  -- Candidate cross-domain fence: identity mutex precedes every owner/row lock.
+  if current_setting('transaction_isolation')<>'read committed' then raise exception 'ENTITLEMENT_ISOLATION_UNAVAILABLE'; end if;
   perform pg_advisory_xact_lock(hashtextextended('entitlement-transaction:'||v_env||':'||v_tx,226));
   if exists(select 1 from subscription_development.periods where environment=v_env and transaction_id=v_tx)
   then raise exception 'ENTITLEMENT_TRANSACTION_CONFLICT'; end if;
