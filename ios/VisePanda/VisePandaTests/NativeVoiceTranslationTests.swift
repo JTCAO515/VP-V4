@@ -378,4 +378,21 @@ import Testing
         #expect(try f.journal.read(f.scope)?.bytes == original.bytes)
         #expect(f.posts.count == 1 && f.vault.removes == 0)
     }
+
+    @Test func restoringOriginalNeverOverwritesAnUnsubmittedLocalDraft() async throws {
+        let f = VoiceTranslationFixture(), first = f.boundStore()
+        await f.send(first)
+        first.clear()
+        let reopened = f.boundStore()
+        let localDraft = "My own unsent e\u{301} draft."
+        reopened.updateReview(localDraft, scope: f.scope) // Before the retained reference has been loaded.
+        f.state = "translated"; f.includePhrase = true
+        await reopened.refresh(request: f.request)
+        try #require(reopened.reviewText(scope: f.scope) == f.original)
+        f.noticeHash = String(repeating: "b", count: 64)
+        await reopened.refresh(request: f.request)
+        #expect(reopened.submittedText == nil && reopened.result == nil)
+        #expect(reopened.reviewText(scope: f.scope).utf8.elementsEqual(localDraft.utf8))
+        #expect(reopened.reviewText(scope: nil).isEmpty && f.posts.count == 1)
+    }
 }
