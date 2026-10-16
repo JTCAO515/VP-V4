@@ -3,6 +3,7 @@ from pathlib import Path
 import hashlib
 import json
 import subprocess
+import sys
 
 here = Path(__file__).resolve().parent
 repo = here.parents[2]
@@ -41,11 +42,12 @@ let package = Package(name: "NativeQAJournalVerification", platforms: [.macOS(.v
     products: [.library(name: "VisePanda", targets: ["VisePanda"])],
     targets: [.target(name: "VisePanda"), .testTarget(name: "VisePandaTests", dependencies: ["VisePanda"])])
 ''')
-result = subprocess.run(['swift', 'test', '--package-path', str(package), '--jobs', '2'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-(here / 'swift-test.log').write_text(result.stdout)
+result = subprocess.run(['swift', 'test', '--package-path', str(package), '--jobs', '2'] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+log_name = 'swift-test-affected.log' if sys.argv[1:] else 'swift-test.log'
+(here / log_name).write_text(result.stdout)
 print(result.stdout)
 (here / 'verification.json').write_text(json.dumps({
-    'synthetic': True, 'exitCode': result.returncode,
+    'synthetic': True, 'exitCode': result.returncode, 'arguments': sys.argv[1:], 'log': log_name,
     'sourceHashes': {str(p.relative_to(repo)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
     'extractedPrimitivesSHA256': hashlib.sha256(extracted.encode()).hexdigest(),
     'unrun': ['real Keychain IO', 'iOS app/PBX integration', 'target/provider/auth', 'device']
