@@ -1,0 +1,15 @@
+{
+  "container-diagnostic/restore/Dockerfile": "e96965cbfca8cc6a3465c71588e19a790ae7b9f7b2504e28794e87ccd7394d17",
+  "container-diagnostic/restore/bridge.py": "9dbd573f69d12be83eea9f4042486e239d325edc4b80fccd16ed6ac0d9a42952",
+  "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b",
+  "container-diagnostic/restore/locale-launcher.sh": "ca15a6e3e35e50ebdebd75f7623f310ccfdf06027a15a924c4c75f4ef93bdf28",
+  "container-diagnostic/restore/reviewed_entry.py": "319a9cd7035757ae7e5b0602146b7d2a82b320b42a1b290554e5a362624c3f18",
+  "container-diagnostic/restore/runtime-pins.json": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+  "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
+  "controlled-snapshot-restore.py": "68affbb99568cdb42b5b37f025a7ae01693b50ad759eb64f10441c4ca218ac70",
+  "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
+  "owned-locale-profile.py": "bbfc39dbd9fb28153953802e300d5aec02449ba4134fc870a32185ad5d6520ec",
+  "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+  "reviewed-diagnostic-window.py": "b284ab78f64e3dd4d80a2c322489e1a235d4794c690630c2ba81e381b6ba5141",
+  "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e"
+}

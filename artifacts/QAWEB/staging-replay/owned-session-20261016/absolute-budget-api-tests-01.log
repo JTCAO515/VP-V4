@@ -1,0 +1,27 @@
+test_forged_exact_type_and_subclass_refuse_all_public_entries (__main__.FactoryProvenance) ... ok
+test_subclass_cannot_acquire_receipt_by_calling_factory_initializer (__main__.FactoryProvenance) ... ok
+test_unregistered_subclass_never_signals_during_construction_cleanup (__main__.FactoryProvenance) ... /Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/tempfile.py:817: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/tmpjricau2c/tmp94kv2l3m'>
+  _warnings.warn(warn_message, ResourceWarning)
+ok
+test_bad_factory_settings_cannot_create_process (__main__.OwnedSession) ... ok
+test_cancel_resistant_backend_requires_exclusive_owned_postmaster_fence (__main__.OwnedSession) ... ok
+test_control_identity_mismatch_preserves_unknown_without_process_kill (__main__.OwnedSession) ... ok
+test_explicit_factory_bootstrap_and_absolute_budget_reused (__main__.OwnedSession) ... ok
+test_foreign_nonce_server_epoch_or_backend_lifetime_never_signals (__main__.OwnedSession) ... ok
+test_foreign_server_binding_never_cancels_or_stops_either_server (__main__.OwnedSession) ... ok
+test_gc_of_registered_owner_never_recursively_deletes_directory (__main__.OwnedSession) ... ok
+test_no_shared_socket_or_parallel_session_attachment (__main__.OwnedSession) ... ok
+test_orchestrated_timeout_confirms_backend_stop_without_fabricated_error (__main__.OwnedSession) ... ok
+test_original_role_and_application_name_not_rewritten (__main__.OwnedSession) ... ok
+test_registered_startup_failure_reclaims_original_child (__main__.OwnedSession) ... ok
+test_replaced_process_and_identity_reject_every_signal_entry (__main__.OwnedSession) ... ok
+test_socket_close_does_not_stop_backend_but_bound_cancel_confirms_exit (__main__.OwnedSession) ... ok
+test_stopped_child_wrong_nonce_or_replaced_root_cannot_authorize_removal (__main__.OwnedSession) ... ok
+test_typed_failure_preserves_protocol_provenance_and_no_secret_output (__main__.OwnedSession) ... ok
+test_unknown_fence_preserves_active_session_and_blocks_next_session (__main__.OwnedSession) ... ok
+test_writable_closed_flag_cannot_authorize_live_directory_removal (__main__.OwnedSession) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 12.189s
+
+OK

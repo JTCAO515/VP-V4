@@ -1,0 +1,11 @@
+test_clock_domain_delay_cannot_extend_original_deadline (__main__.Admission) ... ok
+test_missing_expired_or_fake_original_budget_rejects_before_input_io (__main__.Admission) ... ok
+test_missing_or_changed_pin_set_fails_before_manifest (__main__.Admission) ... ok
+test_old_window_entry_stays_unconfigured_before_private_reads (__main__.Admission) ... ok
+test_reviewed_opt_in_uses_original_gate_and_same_budget (__main__.Admission) ... ok
+test_unavailable_image_refuses_before_archive_manifest_io (__main__.Admission) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.019s
+
+OK

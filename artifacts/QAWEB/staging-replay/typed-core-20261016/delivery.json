@@ -1,0 +1,132 @@
+{
+  "taskId": "683",
+  "status": "SOURCE_COMPLETE_SAME_COPY_TYPED_CORE_SYNTHETIC_VALIDATED",
+  "productHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+  "branch": "codex/qaw683-typed-core-20261016",
+  "sourceLockSha256": "7e54cf13d678ea98ac81fa99316c3b850b269f6430a091cf3cb0a2c657b9f421",
+  "sourcePins": {
+    "container-diagnostic/restore/Dockerfile": "e96965cbfca8cc6a3465c71588e19a790ae7b9f7b2504e28794e87ccd7394d17",
+    "container-diagnostic/restore/bridge.py": "9dbd573f69d12be83eea9f4042486e239d325edc4b80fccd16ed6ac0d9a42952",
+    "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b",
+    "container-diagnostic/restore/locale-launcher.sh": "ca15a6e3e35e50ebdebd75f7623f310ccfdf06027a15a924c4c75f4ef93bdf28",
+    "container-diagnostic/restore/reviewed_entry.py": "e1cdc7cf07a59563904dc85a95347a99efad0e77bb73e5239bbbad7e7bfe8fc6",
+    "container-diagnostic/restore/runtime-pins.json": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+    "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
+    "controlled-snapshot-restore.py": "68affbb99568cdb42b5b37f025a7ae01693b50ad759eb64f10441c4ca218ac70",
+    "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
+    "owned-locale-profile.py": "bbfc39dbd9fb28153953802e300d5aec02449ba4134fc870a32185ad5d6520ec",
+    "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+    "reviewed-diagnostic-window.py": "67aa93b6fd97524e775f4c889baf5c3b15e622fea2979efda1d97feda7a5b492",
+    "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e"
+  },
+  "runtime": {
+    "baseImage": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+    "pythonVersion": "3.12.15",
+    "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+    "helperCommit": "4a3879517d26d86126a1ce45076e090060fcc691",
+    "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+    "sourceSha256": {
+      "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+      "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
+      "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
+      "container-diagnostic/restore/Dockerfile": "e96965cbfca8cc6a3465c71588e19a790ae7b9f7b2504e28794e87ccd7394d17",
+      "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
+      "container-diagnostic/restore/client.py": "10958e889a7f0297542b76e7e3d25dd02ae69563c9676a294cc592c5303b743b",
+      "container-diagnostic/restore/locale-launcher.sh": "ca15a6e3e35e50ebdebd75f7623f310ccfdf06027a15a924c4c75f4ef93bdf28"
+    },
+    "packagesSha256": "33f7e2396de3e24861f07c0aeac87eb050a075c0f8e23c3b03507d6d39ee4957",
+    "apkTrustKeyHashes": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub\nd11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub",
+    "officialPackageSource": "https://dl-cdn.alpinelinux.org/alpine/v3.23/main",
+    "packageSignaturePolicy": "apk default trusted keys, no allow-untrusted; exact versions in Dockerfile and packages.lock.json"
+  },
+  "suites": [
+    {
+      "name": "full strict synthetic restore",
+      "log": "final-image-core.log",
+      "cases": 5,
+      "status": "PASS",
+      "sourceHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+      "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451"
+    },
+    {
+      "name": "admission clock replay route ICU contracts",
+      "log": "final-image-contracts.log",
+      "cases": 13,
+      "status": "PASS",
+      "sourceHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+      "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451"
+    },
+    {
+      "name": "original deadline guards including unhashable legacy fixtures",
+      "log": "deadline-regression-fixed.log",
+      "cases": 25,
+      "status": "PASS_REUSED_EXACT_DEADLINE_SOURCE",
+      "sourceBasis": "same deadline file bytes as5128 and current"
+    },
+    {
+      "name": "original diagnostic-window guards",
+      "log": "test-reviewed-diagnostic-window.log",
+      "cases": 29,
+      "status": "PASS_REUSED_UNCHANGED_GATE_SOURCE"
+    },
+    {
+      "name": "snapshot guard cases",
+      "log": "test-snapshot-mode.log",
+      "cases": 10,
+      "status": "PASS_REUSED_UNCHANGED_QUALIFICATION_WITH_FINAL_NORMAL_PATH_PHYSICAL_PASS"
+    },
+    {
+      "name": "original strict restore guards",
+      "log": "test-controlled-restore.log",
+      "cases": 7,
+      "status": "PASS_REUSED_UNCHANGED_STRICT_SOURCE"
+    }
+  ],
+  "currentNewImageCases": 18,
+  "reusedGuardCases": 71,
+  "cleanup": {
+    "currentOwnedContainerResidualCount": 0,
+    "physicalCases": "PASS explicit factory/backend cleanup and exact-ID removal readback",
+    "temporarySyntheticMaterials": "test-owned temporary age identities and ciphertexts cleaned; no protected originals read",
+    "scope": "Current container/core fixtures only. Earlier separately documented stopped-host-fixture retention is not recast as global cleanup."
+  },
+  "checks": [
+    "Python AST PASS",
+    "source-lock and all runtime source hashes PASS",
+    "exact cached image ID PASS",
+    "original Budget constructor/remaining/check/timeout/cleanup_timeout/stop_process/from_window/Process/Subprocess AST unchanged PASS",
+    "original strict/parser/window/direct-human authority bytes unchanged PASS"
+  ],
+  "review": {
+    "through5128": "Main reported independent Standards0/Spec0",
+    "latestDelta": "Main reported independent fixed23e3 Standards0/Spec0; prior5128 full core and route closure reused. Final current image5+13 actual PASS."
+  },
+  "history": "All initial FAIL logs preserved: unhashable legacy registry, foreign-object error type, before-IO mock check, ICU locale environment. Intermediate5 PASS and later5 PASS tied to their prior images are retained, not substituted for final-image proof. Fixed00d context RED uses fake handles only and no foreign daemon.",
+  "scope": [
+    "controlled-snapshot-restore.py approved Budget loader plus restore_bundle/private_pipeline optional diagnostic factory/routing/cleanup hunks",
+    "diagnostic-window-deadline.py shared class identity, original-bound snapshot and diagnostic cleanup registration; original timing/claim algorithms unchanged",
+    "owned-pg-diagnostic-session.py prior reviewed factory/bootstrap/caller-Budget interface at4a, unchanged in finalcore",
+    "container-diagnostic/restore new runtime bridge/qualified opt-in/launcher/tests/pins",
+    "own artifacts"
+  ],
+  "nextRealProposal": "next-real-diagnostic-candidate.json; proposalOnly, no valid window/identity/authority values fabricated",
+  "unrun": [
+    "actual protected archive restore and actual incident rootcause (UNKNOWN)",
+    "managed Auth/Storage/vault roles/ACL and full extension equivalence",
+    "ICU archive restore (only initialization/readback tested)",
+    "new direct-human/Main window/source qualification and actual run",
+    "targetE/Native163/provider/Prod/TestFlight"
+  ],
+  "owner": {
+    "threadId": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d",
+    "sourceLease": "retained; no successor or transfer",
+    "handoffState": "STOP after evidence commit; no inflight/planned writes"
+  },
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  },
+  "actualActions": "NONE: no old window795 reuse/reset/third attempt, actual key/identity/cipher/capture/restore, target/shared DB write, fees or release",
+  "evidenceOnlyClosure": true
+}
