@@ -1,0 +1,13 @@
+{
+  "files": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "e42862ebf8b65e93d5f1f6d2a3649b140125989220e126b4f227b2a103548c44",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQAUI/Messages/NativeQAMessagePresentation.swift": "d2d1fcb7fd66d3a1fbb78e72dbb04b0cda189a49811b9391c3d30caebf7df295",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQAUI/Messages/NativeQAMessageCard.swift": "cf81f05941542debe1784af74b2df69a1f28f03c5659c282eb4890ec6f926d9f",
+    "ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift": "3b9a21b8a3e6da9e2a6097e64a48355b386c2600218ca7048f95fd02e7617db6",
+    "ios/VisePanda/VisePandaTests/NativeQAMessagePresentationTests.swift": "a07a799c71d6cba35b1e5f8d345960f74c85cd6298be2c4e969e73aefebfeb4a"
+  },
+  "scopeExtractSHA256": "eae5d7a15648eb7fb074119363d2a376c4b32384bdfba56edb69aba956b62227",
+  "target": "arm64-apple-ios17.0",
+  "swiftLanguageMode": "6",
+  "synthetic": true
+}
