@@ -140,3 +140,120 @@ Output SHA-256: `6ef37bbdf6456c5d59627a6d18ba7bc78abdc2b026c8ef90e0b5bf6945ea553
 VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
 AI Core and VPJ documentation baseline passed.
 ```
+
+## Main P1 review: protect the edit-field recovery body
+
+Source commits: `c1d19d862ff0c7e44d8b57fe74e1e2ff94724473` then `df28dedac85578468ddf9f77ab8eb08a70e4f66f`. Both are based on the original owner branch fce0ba5c; Main's separate SSE counting change is not cherry-picked or modified.
+
+Main found that a recreated Voice consumer's qualified original was copied into View State review. Later Root qualification loss hid resultView but left that unguarded TextField copy. The View no longer has a review State or a submittedText-to-review observer. Its actual TextField Binding reads Store.reviewText(scope:) at render/access time, checks the render-bound actor/scene scope and uses only Root's currently qualified original for recovered content. Old bindings cannot write a former actor's text into a new actor's draft. The confirm action also rechecks render scope and reads current projected text rather than a captured recovered body.
+
+The Store distinguishes local typed/accepted-final draft from server-recovered review. It never writes a recovered original into the local draft. Starting a new recovery read removes the protected submittedText/result copy, and failed synchronization leaves the protected copy nil without clearing Turn identity or physical journal. Even before notification callbacks run, current actor/scene/Root mismatch rejects the recovered body through the read port. A genuinely unsent local draft is preserved byte-for-byte: if it existed before an old request was recovered, it remains distinct and is available after that recovered body's qualification ends. Explicit withdrawal/reset retains the previous user-commanded clearing semantics.
+
+The original 12 tests, including the original four, remain. Five new tests cover four remote invalidation variants (withdrawal, changed notice, permission rejection, unrelated history), immediate actor/scene/Root rejection through the actual read port before callbacks, preservation of an unsent local draft on failed refresh, preservation of unknown physical identity on permission rejection, and restoration not overwriting a preexisting unsent draft. Fixture arguments and metadata retain exact identity/hash/bytes and one generation POST. Ordinary history cannot supply recovered-review qualification.
+
+PASS: 17 tests in the complete Voice suite, Swift 6 actual-source/FakeVault harness. PASS: final actual full Voice View/Store + unchanged Root/journal scoped iOS SDK typecheck, documentation baseline and diff check. Source boundary check from fce0ba5c shows exactly the four allowed Voice paths, no Root/Session/Audio/SSE/PBX/CI changes. No mirror-string or source-layout tests were added.
+
+Main previously reported 64 actual iOS-host passes for the earlier delivered source; that historical result is not claimed as validation of these new P1 commits. Current App/iOS-host/UI/provider/device acceptance remains Main-owned and UNRUN here. No Simulator/App/audio/network action was taken. No additional shared interface is required.
+
+### Updated source SHA-256
+
+- `ios/VisePanda/VisePanda/Features/VoiceTranslation/NativeVoiceTranslationStore.swift`: `b7b6f6d994101c0497ef4505f4107008a7d37f0950bd947fbc8260c597dcf228`
+- `ios/VisePanda/VisePanda/Features/VoiceTranslation/NativeVoiceTranslationView.swift`: `c472305f196b5010743dad6d8d78c82711ab87422a279b15ba69ae34db881378`
+- `ios/VisePanda/VisePanda/Features/VoiceTranslation/WIRE.md`: `a4affc32377ad596f2627d6a141ce4c9e9a3a36a2f961e00bcad2c5a5f387451`
+- `ios/VisePanda/VisePandaTests/NativeVoiceTranslationTests.swift`: `ef1535e48215b2b98ae953db51801b43650cd5abc88053c215c60a83cffa7739`
+
+### 17-test Voice suite
+
+Command: `python3 /private/tmp/ios005-voice-regression-check-20261016.py`
+
+Output SHA-256: `5b3fff6f1151fe6476a0c91f73600c2398b354df6eb1630d55b4aef3243fab34`
+
+```text
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[40 / 95]
+[46 / 95]
+[48 / 95]
+[53 / 95]
+[57 / 95]
+[61 / 95]
+[63 / 95]
+[64 / 95]
+[72 / 95] VisePanda
+[80 / 95] VisePanda
+[85 / 96] VisePandaTests-product
+[86 / 101]
+[90 / 101] VisePandaTests-product
+[95 / 101] VisePandaTests-product
+[97 / 101] VisePandaTests-product
+Build complete! (5.95秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeVoiceTranslationTests started.
+◇ Test failedRefreshDoesNotEraseUnsubmittedLocalReview() started.
+◇ Test pendingRetryKeepsExactBytesAndNeverUsesUnrelatedHistory() started.
+◇ Test liveActorChangeAndWithdrawalDuringGETCannotPublishOrComplete() started.
+◇ Test newReadWithoutRecoveryQualificationHidesPreviouslyVerifiedVoiceResult() started.
+◇ Test lateRecoveryAfterActorSwitchCannotPublishOriginal() started.
+◇ Test unconfiguredPersistenceRemainsClosedWithoutTrapping() started.
+◇ Test recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) started.
+◇ Test rejectedRecoveryReadKeepsUnknownPhysicalIdentityWithoutReviewBody() started.
+◇ Test policyWithdrawalAndLateResponseHideScopedResult() started.
+◇ Test recoveredReviewReadPortRejectsActorSceneAndRootInvalidationImmediately() started.
+◇ Test journalSaveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test canonicallyEqualEditedReviewCannotChangeOriginalUTF8OrKey() started.
+◇ Test unknownACKReadbackFindsOriginalTurnWithoutSecondGenerate() started.
+◇ Test recreatedVoiceConsumerRestoresOnlyVerifiedOriginalAndDirection() started.
+◇ Test cancellationUnknownPreservesPhysicalIdentityAndDoesNotUnlockNewPhrase() started.
+◇ Test restoringOriginalNeverOverwritesAnUnsubmittedLocalDraft() started.
+◇ Test lateAndDuplicateFinalsCannotReplaceReviewedTextOrCrossAccount() started.
+◇ Test case passing 1 argument reason → "notice" to recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) started.
+◇ Test case passing 1 argument afterWrite → true to journalSaveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test case passing 1 argument afterWrite → false to journalSaveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test case passing 1 argument reason → "permission" to recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) started.
+◇ Test case passing 1 argument reason → "unrelated-history" to recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) started.
+◇ Test case passing 1 argument reason → "withdraw" to recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) started.
+✔ Test failedRefreshDoesNotEraseUnsubmittedLocalReview() passed after 0.001 seconds.
+✔ Test newReadWithoutRecoveryQualificationHidesPreviouslyVerifiedVoiceResult() passed after 0.005 seconds.
+✔ Test lateRecoveryAfterActorSwitchCannotPublishOriginal() passed after 0.006 seconds.
+✔ Test pendingRetryKeepsExactBytesAndNeverUsesUnrelatedHistory() passed after 0.007 seconds.
+✔ Test policyWithdrawalAndLateResponseHideScopedResult() passed after 0.008 seconds.
+✔ Test recoveredReviewReadPortRejectsActorSceneAndRootInvalidationImmediately() passed after 0.009 seconds.
+✔ Test canonicallyEqualEditedReviewCannotChangeOriginalUTF8OrKey() passed after 0.010 seconds.
+✔ Test liveActorChangeAndWithdrawalDuringGETCannotPublishOrComplete() passed after 0.011 seconds.
+✔ Test recreatedVoiceConsumerRestoresOnlyVerifiedOriginalAndDirection() passed after 0.013 seconds.
+✔ Test rejectedRecoveryReadKeepsUnknownPhysicalIdentityWithoutReviewBody() passed after 0.014 seconds.
+✔ Test unconfiguredPersistenceRemainsClosedWithoutTrapping() passed after 0.014 seconds.
+✔ Test journalSaveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) with 2 test cases passed after 0.016 seconds.
+✔ Test restoringOriginalNeverOverwritesAnUnsubmittedLocalDraft() passed after 0.019 seconds.
+✔ Test cancellationUnknownPreservesPhysicalIdentityAndDoesNotUnlockNewPhrase() passed after 0.020 seconds.
+✔ Test unknownACKReadbackFindsOriginalTurnWithoutSecondGenerate() passed after 0.021 seconds.
+✔ Test recreatedRecoveredReviewExpiresWithCurrentQualification(reason:) with 4 test cases passed after 0.023 seconds.
+✔ Test lateAndDuplicateFinalsCannotReplaceReviewedTextOrCrossAccount() passed after 0.023 seconds.
+✔ Suite NativeVoiceTranslationTests passed after 0.023 seconds.
+✔ Test run with 17 tests in 1 suite passed after 0.023 seconds.
+```
+
+### Final scoped SDK check
+
+Command: `python3 /private/tmp/ios005-voice-regression-check-20261016.py --sdk-only`
+
+Output SHA-256: `c4273160ad3a6af8db198590c7b606e654eb005accaa75e74f6796f1faab3f97`
+
+```text
+PASS: actual full Voice View/Store, unchanged Root Store and journal iOS SDK typecheck; neighboring app interfaces unavailable stubs only
+```
+
+### Documentation baseline
+
+Command: `node scripts/docs-check.mjs`
+
+Output SHA-256: `6ef37bbdf6456c5d59627a6d18ba7bc78abdc2b026c8ef90e0b5bf6945ea553b`
+
+```text
+VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
+AI Core and VPJ documentation baseline passed.
+```
