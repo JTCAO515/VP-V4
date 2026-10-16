@@ -1,0 +1,30 @@
+[
+  {
+    "chunk_id": "288567",
+    "wall_time_seconds": 1.001341083,
+    "session_id": 91477,
+    "original_token_count": 85,
+    "output": "{\"syntheticOnly\": true, \"pid\": 52285, \"originalBudgetObjectId\": 4421462720, \"repairCommand\": {\"action\": \"repair\", \"sha256\": \"4115cb3a623a093dbaa2228b46430998d0ebcbc27d3e520141aa92076cf233cf\"}}\r\n{\"version\": \"live-controller/1\", \"state\": \"READY\", \"entryInvocations\": 0, \"controllerCleanup\": \"NOT_REQUIRED\", \"lastEntryOutcome\": \"NOT_RUN\"}\r\n"
+  },
+  {
+    "chunk_id": "6f8647",
+    "wall_time_seconds": 1.003365792,
+    "session_id": 91477,
+    "original_token_count": 41,
+    "output": "{\"action\":\"run_first\"}\r\n{\"version\": \"live-controller/1\", \"state\": \"HOLD\", \"entryInvocations\": 1, \"controllerCleanup\": \"NOT_REQUIRED\", \"lastEntryOutcome\": \"FAIL\"}\r\n"
+  },
+  {
+    "chunk_id": "c97f7d",
+    "wall_time_seconds": 1.001552667,
+    "session_id": 91477,
+    "original_token_count": 40,
+    "output": "{\"action\":\"status\"}\r\n{\"version\": \"live-controller/1\", \"state\": \"HOLD\", \"entryInvocations\": 1, \"controllerCleanup\": \"NOT_REQUIRED\", \"lastEntryOutcome\": \"FAIL\"}\r\n"
+  },
+  {
+    "chunk_id": "bf39c6",
+    "wall_time_seconds": 0.000025333,
+    "exit_code": 0,
+    "original_token_count": 142,
+    "output": "{\"action\":\"repair\",\"sha256\":\"4115cb3a623a093dbaa2228b46430998d0ebcbc27d3e520141aa92076cf233cf\"}\r\n{\"version\": \"live-controller/1\", \"state\": \"COMPLETE\", \"entryInvocations\": 2, \"controllerCleanup\": \"PASS\", \"lastEntryOutcome\": \"FAIL\"}\r\n{\"syntheticOnly\": true, \"observedCalls\": [{\"pid\": 52285, \"budgetObjectId\": 4421462720, \"attempt\": 1}, {\"pid\": 52285, \"budgetObjectId\": 4421462720, \"attempt\": 2}], \"sameOriginalObject\": true, \"final\": {\"version\": \"live-controller/1\", \"state\": \"COMPLETE\", \"entryInvocations\": 2, \"controllerCleanup\": \"PASS\", \"lastEntryOutcome\": \"FAIL\"}}\r\n"
+  }
+]
