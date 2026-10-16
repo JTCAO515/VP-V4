@@ -1,5 +1,6 @@
 import { planCanonicalPlaceHostedJob, createCanonicalPlaceGroupPoll } from "../knowledge/place-ask/hosted-scheduling.ts";
 import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
+import { requireQaRuntimeBinding, type QaRuntimeBinding } from "../qa-agent/runtime-binding.ts";
 import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
 import { setTimeout as delay } from "node:timers/promises";
@@ -273,6 +274,7 @@ export type HostedJournal = Readonly<{
 export type HostedWorkerDependencies = Readonly<{
   /** Operator composition binding; never read from discovery/job payloads. */
   qaProjectRef?: string;
+  qaBinding?: QaRuntimeBinding;
   workerId: string;
   build: string;
   startedAt: string;
@@ -302,6 +304,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   profile = parseHostedWorkerProfile(profile);
   const databaseUrl = getHostedWorkerDatabaseTarget(profile, dependencies.qaProjectRef);
   const qaTarget = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? requireQaProfileTarget(profile, dependencies.qaProjectRef) : undefined;
+  const qaBinding = qaTarget ? requireQaRuntimeBinding(dependencies.qaBinding, qaTarget.projectRef) : undefined;
   if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
     || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
@@ -345,7 +348,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   const fetcher = dependencies.fetch ?? globalThis.fetch;
   const journaled = new Set<string>();
   const pollPlaceGroup = createCanonicalPlaceGroupPoll(profile.groupLimit);
-  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v2" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
+  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v3" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
     if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
     const secret = await dependencies.workerCredential(timeout);
@@ -377,9 +380,11 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       // SQL qualifies the exact provider binding and unique matching scope
       // before LIMIT; an unexecutable group cannot occupy the sole QA slot.
       const qa = profile.schemaVersion === "vpj07-hosted-text-worker/4";
-      const discovery = qa ? "qa_ready_groups_v2" : "hosted_worker_ready_groups";
+      const discovery = qa ? "qa_ready_groups_v3" : "hosted_worker_ready_groups";
       const parameters = qa ? { p_limit: profile.groupLimit, p_model: PROTOCOL_MODELS.qwen,
-        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint } : { p_limit: profile.groupLimit };
+        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint,
+        p_owner_id: qaBinding!.ownerId, p_policy_id: qaBinding!.policyId, p_scope_id: qaBinding!.scopeId,
+        p_notice_hash: qaBinding!.noticeHash } : { p_limit: profile.groupLimit };
       const value = await rpc(discovery, parameters, stop);
       if (record(value) && value.kind === "disabled") return "disabled";
       if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
@@ -390,10 +395,11 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     workerFor: group => {
       if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
       if (profile.schemaVersion === "vpj07-hosted-text-worker/4") {
-        const job = planQaGroup(profile, group, dependencies.qwenEndpoint);
+        const job = planQaGroup(profile, group, dependencies.qwenEndpoint, qaBinding);
         if (!job) return null;
         const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
         const poll = createQaWorker(job, {
+          qaBinding,
           workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
           qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
           recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),

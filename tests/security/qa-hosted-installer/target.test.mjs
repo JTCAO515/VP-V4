@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
@@ -32,6 +32,7 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
     const runtime=spawnSync(process.execPath,['--experimental-strip-types',checker,...paths,s.build,'--emit-runtime'],{env,encoding:'utf8'});
     assert.equal(runtime.status,imageBuild===s.build?0:1,'runtime image build must match');
     if(runtime.status!==0)assert.equal(runtime.stdout,'');
+    else assert.deepEqual(JSON.parse(runtime.stdout.split('\n')[2]),{schemaVersion:'qa-runtime-binding/1',projectRef:s.projectRef,ownerId:s.ownerId,policyId:s.policyId,scopeId:s.scopeId,noticeHash:s.noticeHash});
   }
   await writeFile(paths[0],bundle.profileJson.replace('"groupLimit":1','"groupLimit":2'));
   assert.equal(node(paths).status,1,'profile hash mismatch');
@@ -118,4 +119,18 @@ mv /etc/visepanda/qa/qa-target.json /etc/visepanda/qa/saved; ln -s saved /etc/vi
     'node:22-bookworm-slim','bash','-c',script],{encoding:'utf8',timeout:60000});
   assert.equal(result.status,0,result.stderr+result.stdout);
   assert.ok(!result.stdout.includes('SYNTHETIC_CANARY'));assert.ok(!result.stderr.includes('SYNTHETIC_CANARY'));
+});
+
+test('actual QA installer parsing carries the validated closed tuple as one nonsecret env value',async()=>{
+  const s=target(),p=profile(),prepared=node(['--prepare'],JSON.stringify({profile:p,target:s}));assert.equal(prepared.status,0);
+  const binding={schemaVersion:'qa-runtime-binding/1',projectRef:s.projectRef,ownerId:s.ownerId,policyId:s.policyId,scopeId:s.scopeId,noticeHash:s.noticeHash};
+  const source=await readFile(resolve('deploy/hosted-worker/ecs-worker-files.sh'),'utf8');
+  const begin=source.indexOf('      profile_json=${validated%%',source.indexOf('qa_image=$(docker image inspect'));
+  const end=source.indexOf('\n    fi',begin);assert.ok(begin>0&&end>begin);
+  const hunk=source.slice(begin,end);
+  const run=validated=>spawnSync('bash',['-c',"set -eu; fail(){ exit 23; };"+hunk+"\nprintf '%s\\n' \"${extra_env[@]}\""],{env:{...process.env,validated,qa_project_ref:s.projectRef},encoding:'utf8'});
+  const good=run(JSON.stringify(p)+'\n'+endpoint+'\n'+JSON.stringify(binding));assert.equal(good.status,0,good.stderr);
+  const values=good.stdout.trim().split('\n');assert.equal(values.filter(x=>x.startsWith('VISEPANDA_QA_RUNTIME_BINDING=')).length,1);
+  assert.deepEqual(JSON.parse(values.find(x=>x.startsWith('VISEPANDA_QA_RUNTIME_BINDING=')).split('=').slice(1).join('=')),binding);
+  for(const bad of [JSON.stringify(p)+'\n'+endpoint,JSON.stringify(p)+'\n'+endpoint+'\n',JSON.stringify(p)+'\n'+endpoint+'\n'+JSON.stringify(binding)+'\nextra'])assert.equal(run(bad).status,23);
 });
