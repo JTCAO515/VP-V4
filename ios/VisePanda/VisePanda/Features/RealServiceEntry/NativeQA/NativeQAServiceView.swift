@@ -67,7 +67,8 @@ struct NativeQAServiceView: View {
                     NativeQAComposer(draft: $store.draft, canSend: store.canSend, isBusy: store.busy,
                                      hasUnconfirmedRequest: hasUnconfirmedRequest, chinese: chinese,
                                      isCurrent: { payloadCurrent(scope: expectedScope, session: expectedSession) },
-                                     onSend: { Task {
+                                     onSend: { completion in Task { @MainActor in
+                                         defer { completion() }
                                          guard payloadCurrent(scope: expectedScope, session: expectedSession) else { return }
                                          await store.send()
                                      } })
