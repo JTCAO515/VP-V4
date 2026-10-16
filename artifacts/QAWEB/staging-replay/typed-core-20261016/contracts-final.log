@@ -1,0 +1,14 @@
+test_clock_domain_delay_cannot_extend_original_deadline (__main__.Admission) ... ok
+test_missing_expired_or_fake_original_budget_rejects_before_input_io (__main__.Admission) ... ok
+test_missing_or_changed_pin_set_fails_before_manifest (__main__.Admission) ... ok
+test_old_window_entry_stays_unconfigured_before_private_reads (__main__.Admission) ... ok
+test_late_snapshot_is_refused_inside_container_even_without_parent_transport (__main__.CopyContracts) ... ok
+test_parent_utc_jump_stops_before_open_and_cleanup_still_works (__main__.CopyContracts) ... ok
+test_snapshot_change_and_open_finish_replays_are_refused (__main__.CopyContracts) ... ok
+test_wrong_copy_nonce_role_or_foreign_object_never_issues_control_or_signal (__main__.CopyContracts) ... ok
+test_wrong_runtime_container_identity_prevents_cleanup_signal (__main__.CopyContracts) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 10.128s
+
+OK

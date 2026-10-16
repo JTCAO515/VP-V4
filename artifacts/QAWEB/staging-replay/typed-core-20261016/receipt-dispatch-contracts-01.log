@@ -1,0 +1,32 @@
+test_clock_domain_delay_cannot_extend_original_deadline (__main__.Admission) ... ok
+test_missing_expired_or_fake_original_budget_rejects_before_input_io (__main__.Admission) ... ok
+test_missing_or_changed_pin_set_fails_before_manifest (__main__.Admission) ... ok
+test_old_window_entry_stays_unconfigured_before_private_reads (__main__.Admission) ... ok
+test_reviewed_opt_in_uses_original_gate_and_same_budget (__main__.Admission) ... ok
+test_unavailable_image_refuses_before_archive_manifest_io (__main__.Admission) ... ok
+test_late_snapshot_is_refused_inside_container_even_without_parent_transport (__main__.CopyContracts) ... ok
+test_parent_utc_jump_stops_before_open_and_cleanup_still_works (__main__.CopyContracts) ... ERROR
+test_snapshot_change_and_open_finish_replays_are_refused (__main__.CopyContracts) ... ok
+test_wrong_copy_nonce_role_or_foreign_object_never_issues_control_or_signal (__main__.CopyContracts) ... ok
+test_wrong_runtime_container_identity_prevents_cleanup_signal (__main__.CopyContracts) ... ok
+
+======================================================================
+ERROR: test_parent_utc_jump_stops_before_open_and_cleanup_still_works (__main__.CopyContracts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/test_contracts.py", line 127, in test_parent_utc_jump_stops_before_open_and_cleanup_still_works
+    with self.assertRaises(core.diagnostic_deadline.WindowExpired):plan.pipeline(db,['never'],consumer,False,[])
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 201, in pipeline
+    consumer=self.consumer(db,consumer,'SCHEMA_POST_DATA')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 158, in consumer
+    r=_copy(self,db);_verify(r)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/restore/bridge.py", line 62, in _verify
+    endpoint=json.loads(_run(r,['docker','context','inspect',r['context']],cleanup=cleanup))[0]['Endpoints']['docker']['Host']
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py", line 339, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not MagicMock
+
+----------------------------------------------------------------------
+Ran 11 tests in 9.390s
+
+FAILED (errors=1)

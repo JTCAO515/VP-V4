@@ -3,8 +3,13 @@ Private-module subprocess adapters; nonce-fenced owned cleanup survives expiry.
 """
 from contextlib import contextmanager
 import copy
+import hashlib
+import importlib.util
+from pathlib import Path
+import threading
 from datetime import datetime,timezone
 import json
+import math
 import re
 import subprocess
 import sys
@@ -13,6 +18,26 @@ from time import monotonic
 DATA_CLEANUP_RESERVE_SECONDS=120
 CLEANUP_BUDGET_SECONDS=60
 INFLIGHT_CLOCK_CHECK_SECONDS=0.25
+
+
+def shared_runtime():
+    """One exact Budget class for this source path/digest, no source fallback."""
+    path=Path(__file__).resolve();digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    key='_qaw_absolute_budget_'+hashlib.sha256(str(path).encode()).hexdigest()
+    spec=importlib.util.spec_from_file_location(key,path)
+    candidate=importlib.util.module_from_spec(spec)
+    candidate._qaw_source_digest=digest;candidate._qaw_load_lock=threading.RLock();candidate._qaw_ready=False
+    module=sys.modules.setdefault(key,candidate)
+    if (getattr(getattr(module,'__spec__',None),'origin',None)!=str(path)
+            or getattr(module,'_qaw_source_digest',None)!=digest):
+        raise ValueError('ABSOLUTE_BUDGET_SOURCE_IDENTITY_CONFLICT')
+    with module._qaw_load_lock:
+        if not module._qaw_ready:
+            try:spec.loader.exec_module(module);module._qaw_ready=True
+            except BaseException:
+                if sys.modules.get(key) is module:del sys.modules[key]
+                raise
+    return module
 
 
 def utc_now():return datetime.now(timezone.utc)
@@ -105,6 +130,23 @@ class Budget:
         remaining=self.cleanup_end-self.clock()
         if remaining<=0:raise ValueError('OWNED_CLEANUP_BUDGET_EXHAUSTED')
         return min(upper,remaining)
+    def export_for_remote(self,remote_stamp,local_received):
+        self.check()
+        if self.wall_end is None or self.wall_end.tzinfo is None or not all(type(x) in (int,float) and math.isfinite(x) for x in (remote_stamp,local_received)) or local_received>self.clock():raise ValueError('ABSOLUTE_REMOTE_ANCHOR_REQUIRED')
+        # Remote sample preceded local receipt. This lower-bound clock offset
+        # can shorten, never extend, the original host monotonic deadline.
+        return {'clock':'ORIGINAL_ABSOLUTE_BUDGET','windowEnd':remote_stamp+self.window_end-local_received,
+                'wallEnd':self.wall_end.isoformat(),'reserve':self.reserve,'cleanupSeconds':self.cleanup_seconds}
+    def export_cleanup_for_remote(self,remote_stamp,local_received):
+        if not all(type(x) in (int,float) and math.isfinite(x) for x in (remote_stamp,local_received)) or local_received>self.clock():raise ValueError('ABSOLUTE_REMOTE_ANCHOR_REQUIRED')
+        self.cleanup_timeout(self.cleanup_seconds)
+        return remote_stamp+self.cleanup_end-local_received
+    def register_diagnostic_copy(self,db,capability):
+        registry=getattr(self,'diagnostic_copies',None)
+        if registry is None:registry={};self.diagnostic_copies=registry
+        if not any(item is db for item in self.clusters) or id(db) in registry or getattr(db,'_deadline_cleanup_attempted',False):
+            raise ValueError('DIAGNOSTIC_COPY_REGISTRATION_CONFLICT')
+        registry[id(db)]=(db,capability)
     def stop_process(self,p):
         try:
             if p.raw.poll() is None:p.kill()
@@ -115,6 +157,14 @@ class Budget:
             if not getattr(db,'_deadline_cleanup_pass',False):raise ValueError('OWNED_DEADLINE_CLEANUP_UNKNOWN')
             return
         db._deadline_cleanup_attempted=True
+        registered=getattr(self,'diagnostic_copies',{}).get(id(db))
+        if registered is not None:
+            try:
+                if registered[0] is not db:raise ValueError('DIAGNOSTIC_COPY_IDENTITY_CONFLICT')
+                registered[1].cleanup(self);db._deadline_cleanup_pass=True
+            except Exception:
+                self.cleanup_ok=False;raise ValueError('OWNED_DIAGNOSTIC_CLEANUP_UNKNOWN') from None
+            return
         if not getattr(db,'_deadline_run_issued',False) and not db.created:
             db._deadline_cleanup_pass=True;return
         try:
