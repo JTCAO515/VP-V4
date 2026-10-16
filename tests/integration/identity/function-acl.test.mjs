@@ -66,6 +66,7 @@ const AUTHENTICATED = [
   "public.qa_accept_policy_v1(uuid,text)",
   "public.qa_cancellation_v1(text,uuid,uuid)",
   "public.qa_list_sessions_v1(integer)",
+  "public.qa_native_session_v1(text,bigint,jsonb)",
   "public.qa_read_message_v1(uuid,uuid)",
   "public.qa_read_policy_v1(uuid)",
   "public.qa_read_session_v1(uuid)",

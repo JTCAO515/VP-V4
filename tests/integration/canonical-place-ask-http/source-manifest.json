@@ -1,8 +1,8 @@
 {
   "schemaVersion": "canonical-place-http-sql-input/1",
   "acceptedBaseline": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
-  "reviewedSQLCheckpoint": "5b82f71665f3ef59b976e1f2a1d0f15740ed7aec",
-  "integratedCheckout": "fb7370f6e4ff81191e05e7eb5db872636b06f739",
+  "reviewedSQLCheckpoint": "f22150e6dba9818ba554d4bb09f2689aa289261d",
+  "integratedCheckout": "8c8fa111afba3483d8f2458c779cbb62e4ee3cf3",
   "files": {
     "supabase/migrations/20260824101500_v4_baseline.sql": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78",
     "supabase/migrations/20260824104424_plat_conf_connection_probes.sql": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb",
@@ -168,7 +168,8 @@
     "supabase/migrations/20261016040522_qa_runtime_binding.sql": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
     "tests/integration/turn/fixtures/durable-work-schema.sql": "a06fd58e9d599178d20dfe84d10418f839597448c6ae8634f993e0526a4363a4",
     "tests/integration/canonical-place-ask-sql/fixtures.mjs": "dd78e9a2d952b6597a7e3cede8fe496bda496662f6321a39889267aaa6d08283",
-    "tests/integration/canonical-place-ask-sql/db.mjs": "001d9dffdebde3665af0a2c8de13841018bdb3a123a74770d5739c120bbc9acc"
+    "tests/integration/canonical-place-ask-sql/db.mjs": "001d9dffdebde3665af0a2c8de13841018bdb3a123a74770d5739c120bbc9acc",
+    "supabase/migrations/20261016060000_qa_native_session.sql": "a70fbf6581668df6e1515e02267891fb2183dda13a543e7dc420a7affc0c4033"
   },
   "migrations": [
     "supabase/migrations/20260824101500_v4_baseline.sql",
@@ -332,6 +333,7 @@
     "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql",
     "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
     "supabase/migrations/20261015161024_ios004_online_user_address.sql",
-    "supabase/migrations/20261016040522_qa_runtime_binding.sql"
+    "supabase/migrations/20261016040522_qa_runtime_binding.sql",
+    "supabase/migrations/20261016060000_qa_native_session.sql"
   ]
 }
