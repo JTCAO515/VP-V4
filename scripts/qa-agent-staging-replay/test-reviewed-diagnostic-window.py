@@ -139,6 +139,69 @@ class DiagnosticWindow(unittest.TestCase):
         with patch.object(d,'HUMAN_SHA256',d.OLD_HUMAN_SHA):
             with self.assertRaisesRegex(ValueError,'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED'):self.valid()
 
+    def ordinary_bestj_record(self):
+        human,evidence=self.bestj_record()
+        question='Sentinel_90d9e98b22488191ac8a1eb87cff898e';answer='Sentinel_'+'a'*32;room='6acd9506863c81958e1176881961131c'
+        self.stack.enter_context(patch.object(d,'QUESTION_ITEM_ID',None))
+        self.stack.enter_context(patch.object(d,'QUESTION_MESSAGE_ID',question,create=True))
+        self.stack.enter_context(patch.object(d,'ANSWER_MESSAGE_ID',answer,create=True))
+        receipts=[];upstream=None
+        for i,record in enumerate(evidence):
+            record.pop('originalQuestionItemId')
+            record.update(originalQuestionMessageId=question,originalAnswerMessageId=answer,originalRoomId=room,originalQuestionTransport='user_message.send_message',upstreamRelayEvidenceSha256=upstream)
+            path,digest=self.write('ordinary-relay-'+str(i)+'.json',record)
+            receipts.append({'path':path,'sha256':digest});upstream=digest
+        human.pop('questionItemId')
+        human.update(source=getattr(d,'BESTJ_MESSAGE_SOURCE','Direct JT reply to fixed BestJ user_message.send_message question via official BestJ-to-Mac-to-Main relay'),questionMessageId=question,answerMessageId=answer,roomId=room,officialRelayEvidence=receipts)
+        return human,evidence
+
+    def test_ordinary_bestj_message_shape_accepts_no_async_question_item(self):
+        human,evidence=self.ordinary_bestj_record();self.assertNotIn('questionItemId',human)
+        self.pin_human_for_source_test(human);self.valid()
+
+    def test_ordinary_message_rejects_foreign_refs_missing_answer_and_fake_async(self):
+        original,_=self.ordinary_bestj_record()
+        for field,value in [('roomId','foreign-room'),('sourceThreadId',d.MAC_RELAY_THREAD_ID),('relayThreadId',str(uuid.uuid4())),('relayTargetThreadId',str(uuid.uuid4())),('questionMessageId','Sentinel_'+'b'*32),('answerMessageId',None),('answerMessageId',original['questionMessageId']),('humanQuestion',''),('humanAnswer',''),('authorizer','BestJ'),('relayIsAuthorization',True),('questionItemId',None),('questionItemId',['request_user_input_async','invented',0])]:
+            with self.subTest(field=field,value=value):
+                self.pin_human_for_source_test({**original,field:value})
+                with self.assertRaises(ValueError):self.valid()
+
+    def test_ordinary_receipts_require_both_original_messages_room_and_complete_reply(self):
+        human,original=self.ordinary_bestj_record()
+        for hop in (0,1):
+            for field,value in [('originalQuestionMessageId','Sentinel_'+'b'*32),('originalAnswerMessageId',None),('originalAnswerMessageId',human['questionMessageId']),('originalRoomId','foreign-room'),('originalQuestionTransport','request_user_input_async'),('originalHumanQuestion','summary'),('originalHumanAnswer','BestJ opinion'),('originalHumanSourceThreadId',d.MAC_RELAY_THREAD_ID),('targetThreadId',str(uuid.uuid4())),('toolName','owner-relay'),('upstreamRelayEvidenceSha256','0'*64),('originalQuestionItemId',None)]:
+                with self.subTest(hop=hop,field=field):
+                    receipts=copy.deepcopy(human['officialRelayEvidence'])
+                    path,digest=self.write('ordinary-relay-'+str(hop)+'.json',{**original[hop],field:value});receipts[hop]={'path':path,'sha256':digest}
+                    self.pin_human_for_source_test({**human,'officialRelayEvidence':receipts})
+                    with self.assertRaises(ValueError):self.valid()
+                    self.write('ordinary-relay-'+str(hop)+'.json',original[hop])
+        for receipts in [human['officialRelayEvidence'][:1],list(reversed(human['officialRelayEvidence']))]:
+            self.pin_human_for_source_test({**human,'officialRelayEvidence':receipts})
+            with self.assertRaises(ValueError):self.valid()
+        self.pin_human_for_source_test(human)
+        p=Path(human['officialRelayEvidence'][0]['path']);p.write_text(p.read_text()+' ')
+        with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_EVIDENCE_SHA_CHANGED'):self.valid()
+
+    def test_ordinary_pins_are_distinct_and_cannot_enable_async_or_old_auth(self):
+        human,_=self.ordinary_bestj_record()
+        for source in [d.DIRECT_MAIN_SOURCE,d.BESTJ_RELAY_SOURCE]:
+            self.pin_human_for_source_test({**human,'source':source,'questionItemId':['request_user_input_async','invented',0]})
+            with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_ASYNC_REFERENCES_REQUIRED'):self.valid()
+        self.pin_human_for_source_test(human)
+        for answer in [None,human['questionMessageId'],'not-a-real-Sentinel-reference']:
+            with patch.object(d,'ANSWER_MESSAGE_ID',answer),self.assertRaisesRegex(ValueError,'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED'):self.valid()
+        with patch.object(d,'QUESTION_ITEM_ID',['request_user_input_async','invented',0]),self.assertRaises(ValueError):self.valid()
+        with patch.object(d,'HUMAN_SHA256',d.OLD_HUMAN_SHA),self.assertRaises(ValueError):self.valid()
+
+    def test_ordinary_owner_written_record_needs_real_pins_and_accepted_not_approval(self):
+        human,_=self.ordinary_bestj_record();self.write('new-human.json',human)
+        with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_EVIDENCE_SHA_CHANGED'):self.valid()
+        self.pin_human_for_source_test({**human,'status':'accepted'})
+        with self.assertRaises(ValueError):self.valid()
+        with patch.object(d,'ANSWER_MESSAGE_ID',None),patch.object(d,'read_private',side_effect=AssertionError('NO DATA IO')):
+            with self.assertRaisesRegex(ValueError,'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED'):self.valid()
+
     def test_unconfigured_entry_rejects_before_any_file_secret_or_clone_io(self):
         core=load('controlled-snapshot-restore')
         with patch.object(core.diagnostic_window,'HUMAN_SHA256',None),patch.object(Path,'read_bytes',side_effect=AssertionError('NO IO')),patch.object(Path,'read_text',side_effect=AssertionError('NO IO')),patch.object(core,'restore_bundle',side_effect=AssertionError('NO CLONE')):

@@ -22,6 +22,8 @@ RETAIN='2026-10-20T23:59:59+08:00'
 # configure these; no proposal, old5637 approval or owner-generated JSON enables.
 HUMAN_SHA256=None
 QUESTION_ITEM_ID=None
+QUESTION_MESSAGE_ID=None
+ANSWER_MESSAGE_ID=None
 IDENTITY_PATH_SHA256=None
 PRESERVED_PINS=None
 PRESERVED_KEYS={'captureClaim','restoreClaim','retry1Claim','initialFailure','retry1Failure','originalStart','retry1Start'}
@@ -30,6 +32,9 @@ MAIN_THREAD_ID='01a13311-9212-7db3-8c75-691eac0f03ea'
 BESTJ_THREAD_ID='01a1330e-5008-7061-909b-8abb26792003'
 MAC_RELAY_THREAD_ID='01a13313-19fd-77be-959c-9448bfab80ce'
 DIRECT_MAIN_SOURCE='Direct current Main conversation request_user_input_async reply'
+BESTJ_ROOM_ID='6acd9506863c81958e1176881961131c'
+BESTJ_QUESTION_MESSAGE_ID='Sentinel_90d9e98b22488191ac8a1eb87cff898e'
+BESTJ_MESSAGE_SOURCE='Direct JT reply to fixed BestJ user_message.send_message question via official BestJ-to-Mac-to-Main relay'
 BESTJ_RELAY_SOURCE='Direct JT request_user_input_async reply in fixed BestJ main chat via official BestJ-to-Mac-to-Main relay'
 OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
@@ -51,12 +56,23 @@ def canonical_uuid(value):
     return value
 
 
-def require_configured():
-    require(is_hash(HUMAN_SHA256) and HUMAN_SHA256!=OLD_HUMAN_SHA
+def async_reference_configured():
+    return (QUESTION_MESSAGE_ID is None and ANSWER_MESSAGE_ID is None
             and isinstance(QUESTION_ITEM_ID,list) and len(QUESTION_ITEM_ID)==3
             and QUESTION_ITEM_ID[0]=='request_user_input_async' and isinstance(QUESTION_ITEM_ID[1],str)
-            and QUESTION_ITEM_ID[1] and QUESTION_ITEM_ID[1]!='call_xeZ1HzPXM8vRQalSkY7wGJHz'
-            and type(QUESTION_ITEM_ID[2]) is int and QUESTION_ITEM_ID[2]==0 and is_hash(IDENTITY_PATH_SHA256)
+            and bool(QUESTION_ITEM_ID[1]) and QUESTION_ITEM_ID[1]!='call_xeZ1HzPXM8vRQalSkY7wGJHz'
+            and type(QUESTION_ITEM_ID[2]) is int and QUESTION_ITEM_ID[2]==0)
+
+
+def message_reference_configured():
+    return (QUESTION_ITEM_ID is None and QUESTION_MESSAGE_ID==BESTJ_QUESTION_MESSAGE_ID
+            and isinstance(ANSWER_MESSAGE_ID,str) and re.fullmatch(r'Sentinel_[a-f0-9]{32}',ANSWER_MESSAGE_ID) is not None
+            and ANSWER_MESSAGE_ID!=QUESTION_MESSAGE_ID)
+
+
+def require_configured():
+    require(is_hash(HUMAN_SHA256) and HUMAN_SHA256!=OLD_HUMAN_SHA
+            and (async_reference_configured() or message_reference_configured()) and is_hash(IDENTITY_PATH_SHA256)
             and isinstance(PRESERVED_PINS,dict) and set(PRESERVED_PINS)==PRESERVED_KEYS,
             'NEW_DIAGNOSTIC_HUMAN_PINS_UNCONFIGURED')
     for pin in PRESERVED_PINS.values():
@@ -127,12 +143,45 @@ def failure_fingerprint(result):
 def filename(window,attempt,suffix):return 'diagnostic-window-'+window+'.attempt-'+str(attempt)+'.'+suffix+'.json'
 
 
+def validate_bestj_message_source(human):
+    require(message_reference_configured() and 'questionItemId' not in human and 'originalQuestionItemId' not in human
+            and human.get('questionMessageId')==QUESTION_MESSAGE_ID and human.get('answerMessageId')==ANSWER_MESSAGE_ID
+            and human.get('roomId')==BESTJ_ROOM_ID,'DIAGNOSTIC_BESTJ_MESSAGE_REFERENCES_REQUIRED')
+    require(human.get('sourceThreadId')==BESTJ_THREAD_ID and human.get('relayThreadId')==MAC_RELAY_THREAD_ID
+            and human.get('relayTargetThreadId')==MAIN_THREAD_ID and human.get('authorizer')=='JT'
+            and human.get('relayIsAuthorization') is False,'DIAGNOSTIC_FIXED_BESTJ_HUMAN_SOURCE_REQUIRED')
+    receipts=human.get('officialRelayEvidence')
+    require(isinstance(receipts,list) and len(receipts)==2,'DIAGNOSTIC_OFFICIAL_RELAY_EVIDENCE_REQUIRED')
+    upstream=None
+    for receipt,(sender,target) in zip(receipts,((BESTJ_THREAD_ID,MAC_RELAY_THREAD_ID),(MAC_RELAY_THREAD_ID,MAIN_THREAD_ID))):
+        require(isinstance(receipt,dict) and set(receipt)=={'path','sha256'} and is_hash(receipt['sha256']),
+                'DIAGNOSTIC_OFFICIAL_RELAY_EVIDENCE_REQUIRED')
+        evidence=main_evidence(receipt['path'],receipt['sha256'])
+        require('questionItemId' not in evidence and 'originalQuestionItemId' not in evidence
+                and evidence.get('origin')=='official_received_codex_delegation' and evidence.get('toolName')=='send_message_to_thread'
+                and evidence.get('sourceThreadId')==sender and evidence.get('targetThreadId')==target
+                and evidence.get('originalHumanSourceThreadId')==BESTJ_THREAD_ID
+                and evidence.get('originalQuestionTransport')=='user_message.send_message'
+                and evidence.get('originalRoomId')==BESTJ_ROOM_ID
+                and evidence.get('originalQuestionMessageId')==QUESTION_MESSAGE_ID
+                and evidence.get('originalAnswerMessageId')==ANSWER_MESSAGE_ID
+                and evidence.get('originalHumanQuestion')==human['humanQuestion']
+                and evidence.get('originalHumanAnswer')==human['humanAnswer']
+                and evidence.get('authorizer')=='JT' and evidence.get('relayIsAuthorization') is False
+                and evidence.get('upstreamRelayEvidenceSha256')==upstream,
+                'DIAGNOSTIC_OFFICIAL_RELAY_FULL_HUMAN_REPLY_REQUIRED')
+        upstream=receipt['sha256']
+
+
 def validate_human_source(human):
     require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
-            and human.get('questionItemId')==QUESTION_ITEM_ID
             and isinstance(human.get('humanQuestion'),str) and bool(human['humanQuestion'].strip())
             and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'].strip())
             and human.get('fileDoesNotSelfAuthorize') is True,'NEW_DIRECT_DIAGNOSTIC_HUMAN_RECORD_REQUIRED')
+    if human.get('source')==BESTJ_MESSAGE_SOURCE:
+        validate_bestj_message_source(human)
+        return
+    require(async_reference_configured() and human.get('questionItemId')==QUESTION_ITEM_ID,'DIAGNOSTIC_ASYNC_REFERENCES_REQUIRED')
     if human.get('source')==DIRECT_MAIN_SOURCE:
         # Preserve the existing Main direct-reply record schema. If thread
         # metadata is supplied, it cannot contradict this exact direct source.
