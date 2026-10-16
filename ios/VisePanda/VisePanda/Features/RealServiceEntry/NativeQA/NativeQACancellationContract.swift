@@ -31,7 +31,7 @@ struct NativeQACancellationPending: Codable, Equatable {
         guard valid else { throw NativeQACancellationError.invalidResponse }
     }
     var valid: Bool {
-        schemaVersion == 1 && !endpoint.isEmpty && NativeQAWire.uuid(subject) && mobileEpoch > 0
+        schemaVersion == 1 && !endpoint.isEmpty && endpoint.utf8.count <= 2048 && NativeQAWire.uuid(subject) && mobileEpoch > 0 && mobileEpoch <= 9_007_199_254_740_991
         && NativeQAWire.uuid(sessionID) && NativeQAWire.uuid(requestID)
         && sessionID == sessionID.lowercased() && requestID == requestID.lowercased() && body == Data("{}".utf8)
     }
@@ -82,6 +82,8 @@ struct NativeQACancellationReceipt: Codable, Equatable {
 /// Finishing seals a cancellation-only tombstone; it must not erase the immutable command.
 /// Keeping the tuple prevents stale UI/reopen from making another stop POST after observation.
 struct NativeQACancellationRecord: Codable, Equatable {
+    static let maximumRecordsPerActor = 32
+    static let maximumRecordBytes = 4096
     let command: NativeQACancellationPending
     let receipt: NativeQACancellationReceipt?
     var valid: Bool { command.valid && (receipt.map { $0.observed && $0.matches(command) } ?? true) }
@@ -92,6 +94,10 @@ protocol NativeQACancellationPersistence {
     /// Exact endpoint/subject/epoch/session/request key only. Missing != stopped or not submitted.
     func loadCancellation(target: NativeQACancellationTarget) throws -> NativeQACancellationRecord?
     /// Atomic retain/CAS + physical readback; never overwrite a different command/tuple.
+    /// Bound all epochs for this endpoint+subject to maximumRecordsPerActor and each
+    /// encoded record to maximumRecordBytes. At capacity reject a new tuple; never
+    /// evict unknown OR observed tombstones, age-reset them, or retry a POST.
+    /// Implement the capacity check atomically with retain in the original vault owner.
     func retainCancellation(_ command: NativeQACancellationPending, scope: NativeDataScope) throws
     /// Only a validated observed receipt may seal this exact command, with physical readback.
     /// Never clears or acknowledges NativeQA generation pending, refunds or changes budget state.
