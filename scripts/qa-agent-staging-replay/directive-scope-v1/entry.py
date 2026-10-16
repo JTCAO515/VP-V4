@@ -1,0 +1,32 @@
+"""Explicit v1 directive entry. No runtime patching of legacy globals/validators."""
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+from types import SimpleNamespace
+
+HERE=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location('directive_v1_profile',HERE/'profile.py');profile=importlib.util.module_from_spec(spec);spec.loader.exec_module(profile)
+
+def qualified_hash(core,configuration,source_profile):
+    profile.require_configured(source_profile,core.diagnostic_window.ROOT,core.diagnostic_window.PRESERVED_KEYS)
+    return profile.qualified_code_hash(core.code_hash(),configuration,source_profile)
+
+
+def run(core,args,configuration,source_profile):
+    if 'DOCKER_HOST' in os.environ or 'DOCKER_CONTEXT' in os.environ:raise ValueError('DOCKER_OVERRIDE_REJECTED')
+    config=json.loads(json.dumps(configuration));binding=json.loads(json.dumps(source_profile))
+    fixed=qualified_hash(core,config,binding)
+    # The gate itself owns the single mandatory run preflight.
+    def code_hash():
+        if qualified_hash(core,config,binding)!=fixed:raise ValueError('DIRECTIVE_QUALIFIED_SOURCE_CHANGED')
+        return fixed
+    def restore(*values,**options):
+        if 'typed_diagnostic' in options:raise ValueError('DIRECTIVE_MODE_OVERRIDE_FORBIDDEN')
+        b=options.get('window_budget')
+        if type(b) is not core.diagnostic_deadline.Budget:raise ValueError('DIRECTIVE_ORIGINAL_BUDGET_REQUIRED')
+        b.check();code_hash()
+        return core.restore_bundle(*values,**options,typed_diagnostic=config)
+    facade=SimpleNamespace(code_hash=code_hash,base=core.base,locale_profile=core.locale_profile,verify_manifest=core.verify_manifest,replay=core.replay,restore_bundle=restore,diagnostic_deadline=core.diagnostic_deadline,directiveSourceFingerprint=profile.fingerprint(binding),directiveBaseCodeHash=core.code_hash(),directiveTypedConfiguration=config)
+    return core.diagnostic_window.run(facade,args,source_profile=binding)

@@ -2,6 +2,8 @@
 No old authorization/retry/marker mutation, target writes, capture or key creation.
 """
 import hashlib
+import importlib.util
+from types import SimpleNamespace
 import json
 import os
 from pathlib import Path
@@ -39,6 +41,25 @@ BESTJ_RELAY_SOURCE='Direct JT request_user_input_async reply in fixed BestJ main
 OLD_HUMAN_SHA='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
 
+_DIRECTIVE_PROFILE=None
+
+def _directive_profile():
+    global _DIRECTIVE_PROFILE
+    if _DIRECTIVE_PROFILE is None:
+        path=Path(__file__).resolve().parent/'directive-scope-v1/profile.py'
+        spec=importlib.util.spec_from_file_location('strict_directive_scope_v1',path)
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        _DIRECTIVE_PROFILE=module
+    return _DIRECTIVE_PROFILE
+
+def _source_binding(source_profile,name):
+    if source_profile is None:return globals()[name]
+    return _directive_profile().binding(source_profile,name,ROOT,PRESERVED_KEYS)
+
+def _claim_environment():
+    return SimpleNamespace(ARCHIVES=ARCHIVES,read_private=read_private,exclusive=exclusive)
+
+
 def require(ok,reason):
     if not ok:raise ValueError(reason)
 
@@ -70,7 +91,9 @@ def message_reference_configured():
             and ANSWER_MESSAGE_ID!=QUESTION_MESSAGE_ID)
 
 
-def require_configured():
+def require_configured(source_profile=None):
+    if source_profile is not None:
+        _directive_profile().require_configured(source_profile,ROOT,PRESERVED_KEYS);return
     require(is_hash(HUMAN_SHA256) and HUMAN_SHA256!=OLD_HUMAN_SHA
             and (async_reference_configured() or message_reference_configured()) and is_hash(IDENTITY_PATH_SHA256)
             and isinstance(PRESERVED_PINS,dict) and set(PRESERVED_PINS)==PRESERVED_KEYS,
@@ -94,10 +117,11 @@ def main_evidence(path,digest):
     return read_private(path,digest)[0]
 
 
-def preserved_digest():return sha(json.dumps(PRESERVED_PINS,sort_keys=True,separators=(',',':')).encode())
+def preserved_digest(source_profile=None):return sha(json.dumps(_source_binding(source_profile,'PRESERVED_PINS'),sort_keys=True,separators=(',',':')).encode())
 
 
-def check_preserved():
+def check_preserved(source_profile=None):
+    PRESERVED_PINS=_source_binding(source_profile,'PRESERVED_PINS')
     data={}
     for key,pin in PRESERVED_PINS.items():
         p=Path(pin['path'])
@@ -128,7 +152,9 @@ def check_preserved():
     return data
 
 
-def bindings(packet,code_hash):
+def bindings(packet,code_hash,source_profile=None):
+    IDENTITY_PATH_SHA256=_source_binding(source_profile,'IDENTITY_PATH_SHA256')
+    HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
     return {'windowId':packet['windowId'],'windowStart':packet['windowStart'],'windowEnd':packet['windowEnd'],'attempt':packet['attempt'],'parentCaptureId':CAPTURE_ID,
             'manifestSha256':MANIFEST_SHA,'identityPathSha256':IDENTITY_PATH_SHA256,
             'codeSha256':code_hash,'reviewedSourceCommit':packet['reviewedSourceCommit'],
@@ -173,7 +199,9 @@ def validate_bestj_message_source(human):
         upstream=receipt['sha256']
 
 
-def validate_human_source(human):
+def validate_human_source(human,source_profile=None):
+    if source_profile is not None:
+        _directive_profile().validate_record(human,source_profile);return
     require(human.get('status')=='DIRECT_HUMAN_DIAGNOSTIC_WINDOW_APPROVED_NOT_EXECUTED'
             and isinstance(human.get('humanQuestion'),str) and bool(human['humanQuestion'].strip())
             and isinstance(human.get('humanAnswer'),str) and bool(human['humanAnswer'].strip())
@@ -217,10 +245,14 @@ def validate_human_source(human):
         upstream=receipt['sha256']
 
 
-def validate(packet,code_hash,instant,stamp,locale_module,manifest=None):
-    require_configured()
+def validate(packet,code_hash,instant,stamp,locale_module,manifest=None,source_profile=None):
+    require_configured(source_profile)
+    HUMAN_FILE=_source_binding(source_profile,'HUMAN_FILE');HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
+    START_FILE=_source_binding(source_profile,'START_FILE');IDENTITY_PATH_SHA256=_source_binding(source_profile,'IDENTITY_PATH_SHA256')
+    PRESERVED_PINS=_source_binding(source_profile,'PRESERVED_PINS')
+    if source_profile is not None:_directive_profile().check_packet(source_profile,packet,code_hash,instant,stamp,sha(packet.get('identityPath','').encode()))
     human,_=read_private(HUMAN_FILE,HUMAN_SHA256)
-    validate_human_source(human)
+    validate_human_source(human,source_profile)
     expected_scope={'minutes':60,'maximumCopies':2,'noOtherPlannedDdlChanges':True,'ordinaryDmlContinues':True,
                     'reuseOriginalCapture':True,'localRehearsalAfterFullRestorePass':True,'newCapture':False,'newIdentity':False,'newLiveGrants':False,'provider':False,'targetE':False}
     require(human.get('scope')==expected_scope and all(type(human['scope'][k]) is type(v) for k,v in expected_scope.items()) and human.get('target')==TARGET and human.get('parentCaptureId')==CAPTURE_ID
@@ -246,11 +278,11 @@ def validate(packet,code_hash,instant,stamp,locale_module,manifest=None):
             and start.get('codeSha256')==code_hash and start.get('parentCaptureId')==CAPTURE_ID
             and start.get('manifestSha256')==MANIFEST_SHA and start.get('identityPathSha256')==IDENTITY_PATH_SHA256
             and start.get('maximumCopies')==2 and start.get('actions')==ACTIONS and start.get('noActualAttemptInFlight') is True
-            and start.get('preservedEvidenceDigest')==preserved_digest()
+            and start.get('preservedEvidenceDigest')==preserved_digest(source_profile)
             and start.get('windowStart')==packet['windowStart'] and start.get('windowEnd')==packet['windowEnd']
             and start.get('reviewedSourceCommit')==packet.get('reviewedSourceCommit')
             and re.fullmatch('[a-f0-9]{40}',packet.get('reviewedSourceCommit','')),'DIAGNOSTIC_MAIN_START_REQUIRED')
-    preserved=check_preserved()
+    preserved=check_preserved(source_profile)
     require(begin>=stamp(preserved['originalStart']['validUntil']),'DIAGNOSTIC_MUST_BE_NEW_WINDOW')
     if packet['attempt']==1:
         require(packet.get('parentFailureSha256')==PRESERVED_PINS['retry1Failure']['sha256'],'DIAGNOSTIC_PARENT_FAILURE_REQUIRED')
@@ -263,7 +295,7 @@ def validate(packet,code_hash,instant,stamp,locale_module,manifest=None):
                 and prior.get('outcome',{}).get('cleanup')=='PASS'
                 and prior['outcome'].get('status','').startswith('FAIL_'),'DIAGNOSTIC_SECOND_REQUIRES_REAL_FAILED_CLEANUP')
         prior_claim,_=read_private(ARCHIVES/filename(window,1,'used'))
-        require(prior_claim=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**{key:prior.get(key) for key in bindings(packet,code_hash)}},
+        require(prior_claim=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**{key:prior.get(key) for key in bindings(packet,code_hash,source_profile)}},
                 'DIAGNOSTIC_PRIOR_CONSUMPTION_CHAIN_REQUIRED')
         require(prior.get('codeSha256')!=code_hash and prior.get('reviewedSourceCommit')!=packet['reviewedSourceCommit'],
                 'DIAGNOSTIC_SAME_SOURCE_REPEAT_FORBIDDEN')
@@ -317,27 +349,34 @@ def exclusive(fd,name,record):
 def active_name():return 'diagnostic-parent-'+CAPTURE_ID+'.active.json'
 
 
-def claim(packet,code_hash):
-    require_configured();fd=open_root()
+def claim(packet,code_hash,source_profile=None):
+    require_configured(source_profile)
+    if source_profile is not None:
+        canonical_uuid(packet.get('windowId'))
+        _directive_profile().preclaim(source_profile,packet,code_hash,sha(packet.get('identityPath','').encode()))
+    fd=open_root()
     try:
         window=canonical_uuid(packet['windowId']);attempt=packet['attempt']
         require(type(attempt) is int and attempt in (1,2),'DIAGNOSTIC_COPY_CAP_REQUIRED')
         require(not os.path.lexists(ARCHIVES/filename(window,attempt,'used')),'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
-        record={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash)}
+        if source_profile is not None:_directive_profile().check_authority_claim(_claim_environment(),source_profile,packet)
+        record={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash,source_profile)}
         # One active copy across this original capture, including different
         # window IDs. Crash/write failure retains lock and claim; no stale reset.
         exclusive(fd,active_name(),record)
+        if source_profile is not None:_directive_profile().bind_authority_claim(_claim_environment(),source_profile,packet,fd)
         exclusive(fd,filename(window,attempt,'used'),record)
         return record
     finally:os.close(fd)
 
 
-def finish(packet,code_hash,outcome):
+def finish(packet,code_hash,outcome,source_profile=None):
+    if source_profile is not None:require_configured(source_profile)
     fd=open_root()
     try:
         active,_=read_private(ARCHIVES/active_name())
-        require(active=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash)},'DIAGNOSTIC_ACTIVE_BINDING_CHANGED')
-        record={'status':'ATTEMPT_FINISHED',**bindings(packet,code_hash),'outcome':outcome}
+        require(active=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**bindings(packet,code_hash,source_profile)},'DIAGNOSTIC_ACTIVE_BINDING_CHANGED')
+        record={'status':'ATTEMPT_FINISHED',**bindings(packet,code_hash,source_profile),'outcome':outcome}
         exclusive(fd,filename(packet['windowId'],packet['attempt'],'result'),record)
         # Never delete a consumption marker. Only the current active-copy guard
         # may be released after a recorded, completed PASS cleanup.
@@ -356,16 +395,34 @@ def caller_snapshot(db):
     return {'scope':'SEPARATE_PRE_POSTDATA_CONNECTION_NOT_PG_RESTORE_RUNTIME_CALLER',**value}
 
 
-def run(core,args):
-    require_configured() # before packet, manifest, identity metadata or any IO
+def run(core,args,source_profile=None):
+    if source_profile is None:return _run_after_preflight(core,args)
+    environment=SimpleNamespace(ROOT=ROOT,ARCHIVES=ARCHIVES,RETAIN=RETAIN,ACTIONS=ACTIONS,PRESERVED_KEYS=PRESERVED_KEYS,read_private=read_private,open_root=open_root,active_name=active_name,filename=filename,canonical_uuid=canonical_uuid,binding_keys=bindings)
+    with _directive_profile().run_preflight(environment,core,args,source_profile) as lease:
+        return _run_after_preflight(core,args,source_profile,lease)
+
+
+def _run_after_preflight(core,args,source_profile=None,lease=None):
+    require_configured(source_profile)
+    header=None
+    if source_profile is not None:header=_directive_profile().lease_header(lease,core,args,source_profile)
+    HUMAN_FILE=_source_binding(source_profile,'HUMAN_FILE');HUMAN_SHA256=_source_binding(source_profile,'HUMAN_SHA256')
+    # All private input reads remain after profile qualification.
     ap,mp,ip,plan=map(Path,args)
     require(ap.parent==ROOT and ap.suffix=='.json','DIAGNOSTIC_PACKET_METADATA_PATH_REQUIRED')
-    require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
-    read_private(HUMAN_FILE,HUMAN_SHA256)
-    packet,packet_sha=read_private(ap)
+    if source_profile is None:
+        require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
+        read_private(HUMAN_FILE,HUMAN_SHA256)
+        packet,packet_sha=read_private(ap)
+    else:
+        packet,packet_sha=read_private(ap,header['packetSha256'])
+        _directive_profile().bind_header(header,packet,packet_sha,sha(packet.get('identityPath','').encode()),args)
+        require(mp.suffix=='.json' and mp.resolve().is_relative_to(ARCHIVES),'DIAGNOSTIC_MANIFEST_METADATA_PATH_REQUIRED')
+        read_private(HUMAN_FILE,HUMAN_SHA256)
     anchor=core.diagnostic_deadline.monotonic()
     instant=core.base.capture.now()
-    validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
+    if source_profile is None:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile)
+    else:validate(packet,core.code_hash(),instant,core.base.capture.stamp,core.locale_profile,source_profile=source_profile)
     budget=core.diagnostic_deadline.from_window(packet['windowEnd'],instant,core.base.capture.stamp,anchor=anchor)
     manifest,digest=read_private(mp,MANIFEST_SHA,max_bytes=4*1024*1024)
     require(packet.get('manifestPath')==str(mp.resolve()) and packet.get('identityPath')==str(ip.resolve()),'DIAGNOSTIC_PATH_BINDING_REQUIRED')
@@ -377,14 +434,16 @@ def run(core,args):
     proxy={**packet,'codeSha256':core.base.code_hash(),'actions':['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy','restore-realtime-schema-migrations-ledger']}
     core.base.validate_approval(proxy,mp,ip)
     require('FileVault is On.' in core.base.run(['fdesetup','status']).decode(),'FILEVAULT_REQUIRED')
-    profile=validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile,manifest)
+    if source_profile is None:profile=validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile,manifest)
+    else:profile=validate(packet,core.code_hash(),core.base.capture.now(),core.base.capture.stamp,core.locale_profile,manifest,source_profile)
     read_private(ap,packet_sha)
     core.base.validate_approval(proxy,mp,ip)
     budget.check()
-    record=claim(packet,core.code_hash())
+    record=claim(packet,core.code_hash(),source_profile)
+    if source_profile is not None:_directive_profile().release_preflight(lease)
     # Failure, including a Python exception, consumes this attempt. Unknown
     # cleanup leaves active guard in place; never auto-start another copy.
     try:outcome=core.restore_bundle(mp.parent,ip,manifest,plan,profile,observe_caller=True,window_budget=budget)
     except Exception:outcome={'status':'FAIL_DIAGNOSTIC_EXCEPTION','cleanup':'UNKNOWN','reason':'DETAILS_SUPPRESSED'}
-    finish(packet,core.code_hash(),outcome)
+    finish(packet,core.code_hash(),outcome,source_profile)
     return {**outcome,'diagnosticWindowClaim':record,'targetEAuthority':'NONE','newCaptureOrIdentityCreated':False}

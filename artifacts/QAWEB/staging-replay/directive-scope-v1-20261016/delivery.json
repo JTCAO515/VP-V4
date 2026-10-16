@@ -1,0 +1,75 @@
+{
+  "task": "683-STRICT-DIRECTIVE-SCOPE-V1",
+  "base": "f26b636f22ece43e37530b2707ab21cf2a3fdfeb",
+  "productHead": "2a7b74c3c0962df8f2d02bca247156e39a95a4d4",
+  "branch": "codex/qaw683-directive-scope-v1-20261016",
+  "status": "SOURCE_ONLY_IMPLEMENTED_LOCAL_VALIDATION_PASS_PENDING_FIXED_SAFETY_REVIEW",
+  "profileVersion": "jt-directives-20261016/v1",
+  "baseSourceLockSha256": "8ca36886ba2d008d821775a4e675c5864042eda26f4f63ac1f8dae07b7406178",
+  "profileSourceLockSha256": "a2416c6d5fddaaa348beffd901a88466619cdbd6d399606a4326c29d87a2d0d3",
+  "evidenceDescriptorSha256": "8e3151b060539e1ffc1b0c75c87b4e20e3a95e694708d3064310cc3d702da89c",
+  "sourceFilesSha256": {
+    "reviewed-diagnostic-window.py": "7ef1d05a00e835b031b68f247198f0537f02ea97dd00ba7875eed93eb6d32fe1",
+    "directive-scope-v1/entry.py": "18803f9da835605f6b039368b3e3ae89bf732afb0446c4f89887defef34748c3",
+    "directive-scope-v1/lock-sources.py": "8271ab4aa3e6950010af301b09b8f3b6a67f60dfa3c51961c3eb970817bb4cb8",
+    "directive-scope-v1/profile.py": "680db6cd68c66ff0d1a999b13be64726511224055d0cae0d8eda0b71d2479d27",
+    "directive-scope-v1/test_profile.py": "b8ab9259f8e9017ca79112ecb63e1c310053c11c9617898cdb7a9b0f7718748a",
+    "directive-scope-v1/evidence-pins.json": "8e3151b060539e1ffc1b0c75c87b4e20e3a95e694708d3064310cc3d702da89c",
+    "directive-scope-v1/source-lock.json": "a2416c6d5fddaaa348beffd901a88466619cdbd6d399606a4326c29d87a2d0d3"
+  },
+  "sourceMeaning": "Only current two actual directives and contexts/room/actor bound by exact supplied full raw record; original5 returned messages remain hash-bound. Parent-reported upstream read level explicit. Actual native first/second names and record kinds retained; semanticProjection is not a fake native tool. No approval question/keyword or explicit reply fabricated.",
+  "newGate": "Optional explicit v1 selection/data bindings; default legacy90d/async/ordinary contract preserved. No legacy global monkeypatch or fallback. Entry/gate independently require the profile/configuration/source-bound code hash.",
+  "authorizationConsumption": "Stable authorization key from actual directive IDs/room/source/capture (not version/source/relay/window) permits only one actual window; additional O_EXCL authority marker retained forever. Original capture-wide active and per-attempt consumed/result/second-repair/clock/cleanup rules remain.",
+  "tests": {
+    "profile-tests-final.log": 20,
+    "final-test-reviewed-diagnostic-window.log": 26,
+    "final-test-diagnostic-window-deadline.log": 25,
+    "final-test-snapshot-mode.log": 10,
+    "final-test-controlled-restore.log": 7
+  },
+  "totalLocalCases": 88,
+  "legacyProof": [
+    "10 unchanged function ASTs including90d/ordinary source verifier",
+    "All original require predicates retained after optional-profile argument normalization",
+    "Original Budget/source runtime files unchanged"
+  ],
+  "negativeCoverage": [
+    "nativeName/actor/room/text/ID/raw hop tampering",
+    "old90d/old-model directive substituted into new scope",
+    "null rewritten as explicit reply",
+    "wrong capture/identity/source/image/count or missing profile before operator reads",
+    "unsalted old code hash cannot invoke new gate",
+    "duplicate/concurrent START and same authorization different window rejected",
+    "existing historical consumed slot untouched",
+    "unknown cleanup retains active guard",
+    "second attempt still needs original causal repair/independent review",
+    "expired/changed window binding rejected"
+  ],
+  "testLimits": "Actual supplied non-secret source bytes verified; synthetic metadata roots and one explicitly stubbed synthetic identity reference used for gate/claim tests. No actual identity/key/cipher/START/claim/root copy. On other hosts absence of private source evidence is explicitly skipped, never invented.",
+  "history": "Initial profile-tests-03 recorded a wrong expected rejection label after the earlier window-binding guard; corrected fixture constructs a genuinely consistent second-window candidate, which reaches and fails the permanent authority guard. No production guard weakened.",
+  "runtime": {
+    "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+    "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+    "allImageInputsUnchanged": true,
+    "rebuild": "NOT_NEEDED_NOT_RUN",
+    "physicalMatrix": "Prior final5/13 evidence reused; not rerun and not relabeled as real recovery"
+  },
+  "historicalMetadata": "All7 original-C metadata/schema/hash links now checked under explicit narrow lease; private summaries only, no original changes. Four names assigned by schema/linkage, not filenames; no795 records substituted.",
+  "snapshotTestScope": "The fixed-QA177 whole-file byte snapshot test is historical, not claimed unchanged after this explicitly authorized optional hook. Legacy behavioral suites and unchanged AST/predicates are the current compatibility proof; old fixtures not edited.",
+  "activationPolicy": "Local use requires clean fixed checkout, independent fixed-source safety review0/0, complete relevant local tests and every original source/image/material/evidence/START guard. CI/protected merge remains engineering-delivery policy, not an added local-offline gate. No actual configuration or START done.",
+  "remaining": [
+    "Independent fixed-source safety review",
+    "Truthful actual qualification/configuration records and actual tool-time START, Main issuer vs owner executor explicit",
+    "Original material/identity/recipient/fresh locale/current guard preflight after qualification"
+  ],
+  "unrun": [
+    "Any actual cipher/key read or restore",
+    "Any target/shared DB write/E/provider fee/Production/TestFlight",
+    "Actual recovery cause remainsUNKNOWN"
+  ],
+  "owner": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d; sole source/prep owner; no successor",
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  }
+}

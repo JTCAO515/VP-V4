@@ -1,0 +1,50 @@
+{
+  "task": "683-DIRECTIVE-RUN-PREFLIGHT-P2",
+  "base": "2a7b74c3c0962df8f2d02bca247156e39a95a4d4",
+  "productHead": "e67114835f6eae682f0c33cd6150a43f46362338",
+  "status": "SOURCE_FIXED_LOCAL_SUITE_PASS_PENDING_DELTA_SAFETY_REVIEW",
+  "red": "run-preflight-red.log: correct qualified facade/bad raw reached3 operator reads; same grant/new UUID reached operator read before rejection on old source. Only synthetic metadata, no actual material.",
+  "tests": {
+    "run-preflight-final-source.log": 31,
+    "preflight-test-reviewed-diagnostic-window.log": 26,
+    "preflight-test-diagnostic-window-deadline.log": 25,
+    "preflight-test-snapshot-mode.log": 10,
+    "preflight-test-controlled-restore.log": 7
+  },
+  "total": 99,
+  "fixes": [
+    "Authoritative gate.run owns one mandatory real-source preflight; entry no longer supplies a trusted verified assertion",
+    "Exact minimal non-secret execution header read after actual source verification; grant/active/slot/window/expiry and attempt2 first-result eligibility checked before operator/material reads",
+    "Actual packet byte hash and exact projected fields/argument bindings checked immediately after early gates",
+    "Opaque registered preflight lease binds args/profile/code/header, rejects forged internal continuation",
+    "Nonblocking capture-wide empty file lock held only across preflight to original atomic claim; release before data plane, no START/claim/authorization consumption or rollback by lock",
+    "Original O_EXCL permanent grant/active/used/result and complete causal second-attempt checks remain"
+  ],
+  "coverage": [
+    "correctHash+badRaw gives0 read_private/0 claim",
+    "new UUID under used grant, active duplicate, expired/closed window and old used slot give0 operator/material reads",
+    "header packet tamper refuses before human/material",
+    "eligible same-window attempt2 reaches original causal-repair refusal before manifest/identity",
+    "valid mocked run retains original Budget and releases coordination lock only after atomic claim",
+    "concurrent preflight busy refuses without consuming authority; forged lease rejected"
+  ],
+  "testLimits": "Source proof uses actually supplied non-secret records. Operator/ledger tests use isolated synthetic metadata; positive data-plane/manifest calls are stubs, not real material acceptance. Original records unchanged.",
+  "history": "run-preflight-tests-03 retained a missing verification field in the new positive manifest stub; test fixture completed, production guards unchanged. All earlier source/FAIL logs preserved.",
+  "pins": {
+    "baseSourceLockSha256": "0438741f0ec3cabe44352fa6902122d44c8aeef01a69dc94c18f6cb928a0d697",
+    "profileSourceLockSha256": "3048132987e9580fd892f2539eced1424c6f160a94a33c6c4033850f7cb93066",
+    "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+    "imageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+    "allRuntimeInputsUnchanged": true
+  },
+  "physicalValidation": "Unchanged5/13 reused; no PG/image rebuild/retest.",
+  "actualConfiguration": "Separate prep-only templates required; no actual qualification/START/packet/header created or activated. Existing prep directory is not proof all execution fields are complete.",
+  "activation": "Fixed clean candidate + independent safety review0/0 + local suites + original source/image/material/evidence/START guards; no additional merge/CI prerequisite for local offline use.",
+  "START": false,
+  "cipherOrIdentityContentRead": false,
+  "actualDataClaimsCreated": false,
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  }
+}
