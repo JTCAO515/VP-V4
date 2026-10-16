@@ -42,7 +42,11 @@ try{
     const {profileSha256,...selected}=target;
     const canonical=prepare(JSON.parse(profileJson),selected);
     if(profileJson!==canonical.profileJson||targetJson!==canonical.targetJson||build!==undefined&&target.build!==build)throw Error('package');
-    if(emit==='--emit'||emit==='--emit-runtime')process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
+    if(emit==='--emit'||emit==='--emit-runtime'){
+      process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
+      if(emit==='--emit-runtime')process.stdout.write('\n'+JSON.stringify({schemaVersion:'qa-runtime-binding/1',
+        projectRef:target.projectRef,ownerId:target.ownerId,policyId:target.policyId,scopeId:target.scopeId,noticeHash:target.noticeHash}));
+    }
   }
 }catch{
   console.error('QA deployment package unavailable.');process.exitCode=1;

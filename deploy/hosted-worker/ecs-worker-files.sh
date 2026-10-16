@@ -127,8 +127,12 @@ PYBUILD
       /qa/profile.json /qa/target.json "$qa_build" --emit-runtime) || fail 'QA package is unavailable'
     if [[ $action == start ]]; then
       profile_json=${validated%%$'\n'*}
-      endpoint=${validated#*$'\n'}
-      extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint" --env "VISEPANDA_QA_SUPABASE_PROJECT_REF=$qa_project_ref")
+      qa_runtime=${validated#*$'\n'}
+      [[ $qa_runtime == *$'\n'* ]] || fail 'QA runtime binding is unavailable'
+      endpoint=${qa_runtime%%$'\n'*}
+      qa_binding=${qa_runtime#*$'\n'}
+      [[ -n $qa_binding && $qa_binding != *$'\n'* ]] || fail 'QA runtime binding is unavailable'
+      extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint" --env "VISEPANDA_QA_SUPABASE_PROJECT_REF=$qa_project_ref" --env "VISEPANDA_QA_RUNTIME_BINDING=$qa_binding")
     fi
   else
     profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'
