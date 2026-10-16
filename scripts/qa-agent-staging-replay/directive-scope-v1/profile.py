@@ -2,6 +2,7 @@
 Original raw records remain private. No original human ID/author is fabricated.
 """
 import hashlib
+import importlib.util
 import math
 import copy
 from contextlib import contextmanager
@@ -17,6 +18,9 @@ import stat
 import uuid
 
 HERE=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location('directive_start_provenance',HERE/'start-provenance.py')
+provenance=importlib.util.module_from_spec(spec);spec.loader.exec_module(provenance)
+provenance=provenance.shared_runtime()
 VERSION='jt-directives-20261016/v1'
 BESTJ='01a1330e-5008-7061-909b-8abb26792003'
 MAC='01a13313-19fd-77be-959c-9448bfab80ce'
@@ -101,7 +105,7 @@ def verify_sources(raw=None):
     def view(m,kind):return {'messageId':m['message_id'],'kind':kind,'authorRole':m['author'],'textSha256':sha(m['content']['text'].encode()),'sentAt':m['sent_at'],'replyTo':m['reply_to_id'],'replyRoot':m['reply_root_message_id']}
     return {'version':VERSION,'upstreamReadProvenance':'parent_reported_official_user_message_read_raw_not_mac_or_owner_independent_read','authorizationDigest':AUTHORIZATION,'room':ROOM,'actorBinding':'exact full API raw pin; private actor id is not emitted','apiRawSha256':sha(raw['context.parentProvidedApiRaw']),'allReturnedMessagesBound':len(messages),'directives':[view(first,'user_directive_explicit_report_reply'),view(last,'user_directive_no_explicit_reply')],'contexts':[view(by_id[CONTEXTS[0]],'progress_report_not_approval_question'),view(by_id[CONTEXTS[1]],'assistant_acknowledgement')],'nativeFirstHops':first_hops,'nativeSecondHops':[{'nativeName':'codex_app.send_message_to_thread','recordKind':'mcpToolCall','rawSha256':sha(raw['scope.outgoing']),'resultPayloadExposed':False},{'nativeName':'codex_app.send_message_to_thread','recordKind':'runtime_tool_arguments_and_result_capture','rawSha256':sha(raw['context.secondHopRuntimeCapture']),'nativeCallIdStatus':'NOT_EXPOSED','resultPayloadExposed':True}],'sourceBundleSha256':sha(canonical({k:sha(v) for k,v in raw.items()}))}
 
-PROFILE_FILES=('directive-scope-v1/profile.py','directive-scope-v1/entry.py','directive-scope-v1/evidence-pins.json','container-diagnostic/restore/source-lock.json')
+PROFILE_FILES=('directive-scope-v1/start-provenance.py','directive-scope-v1/profile.py','directive-scope-v1/entry.py','directive-scope-v1/evidence-pins.json','container-diagnostic/restore/source-lock.json')
 
 def verify_locks(profile):
     base=HERE.parent
@@ -229,7 +233,7 @@ def start_budget(core,header,expected_object=None):
     require(type(anchor) in (int,float) and math.isfinite(anchor) and anchor<=d.monotonic(),'DIRECTIVE_START_MONOTONIC_CONFLICT')
     require(b.clock is d.monotonic and b.wall_clock is d.utc_now,'DIRECTIVE_START_CLOCK_CONFLICT')
     require(b.window_end==anchor+3600 and b.data_end==b.window_end-d.DATA_CLEANUP_RESERVE_SECONDS and b.reserve==d.DATA_CLEANUP_RESERVE_SECONDS and b.cleanup_seconds==d.CLEANUP_BUDGET_SECONDS and b.wall_end==core.base.capture.stamp(header['windowEnd']),'DIRECTIVE_START_DEADLINE_CONFLICT')
-    original_anchor,original_instant=d.verify_start_provenance(b)
+    original_anchor,original_instant=provenance.verify_start_provenance(b)
     require(anchor==original_anchor and header.get('windowStart')==original_instant.isoformat(),'DIRECTIVE_START_ORIGIN_BINDING_CONFLICT')
     window=header.get('windowId');attempt=header.get('attempt')
     require(type(window) is str and attempt in (1,2),'DIRECTIVE_CLOCK_WINDOW_REQUIRED')
@@ -269,7 +273,7 @@ def run_preflight(gate,core,args,profile):
     # not assert source verification: real pinned source validation is mandatory.
     require('DOCKER_HOST' not in os.environ and 'DOCKER_CONTEXT' not in os.environ,'DOCKER_OVERRIDE_REJECTED')
     require(getattr(core,'diagnostic_deadline',None) is not None,'DIRECTIVE_START_PROVENANCE_REQUIRED')
-    core.diagnostic_deadline.verify_start_provenance(getattr(core,'directiveStartBudget',None))
+    provenance.verify_start_provenance(getattr(core,'directiveStartBudget',None))
     require_configured(profile,gate.ROOT,gate.PRESERVED_KEYS)
     require(getattr(core,'directiveSourceFingerprint',None)==fingerprint(profile),'DIRECTIVE_QUALIFIED_ENTRY_REQUIRED')
     expected=qualified_code_hash(getattr(core,'directiveBaseCodeHash',None),getattr(core,'directiveTypedConfiguration',None),profile)

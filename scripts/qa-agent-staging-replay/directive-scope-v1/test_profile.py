@@ -78,7 +78,7 @@ class SyntheticGate(ActualSources):
         self.fx=legacy.DiagnosticWindow('runTest');self.fx.setUp();self.addCleanup(self.fx.doCleanups)
         self.g=legacy.d;self.code=self.fx.code
         deadline=load('fixture_start',ROOT/'diagnostic-window-deadline.py').shared_runtime()
-        self.original_budget,anchor,instant=deadline.new_start_budget()
+        self.original_budget,anchor,instant=p.provenance.new_start_budget()
         self.fx.t=instant
         self.fx.packet.update(windowStartMonotonic=anchor,windowStart=instant.isoformat(),windowEnd=self.original_budget.wall_end.isoformat())
         self.fx.start.update(windowStart=instant.isoformat(),windowEnd=self.original_budget.wall_end.isoformat())
@@ -188,7 +188,7 @@ class SyntheticGate(ActualSources):
 
     def test_new_factory_cannot_rebind_old_start_header(self):
         facade,args=self.run_inputs();header=json.loads(p.header_path(args[0]).read_text())
-        facade.directiveStartBudget,_,_=facade.diagnostic_deadline.new_start_budget()
+        facade.directiveStartBudget,_,_=p.provenance.new_start_budget()
         with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(DEADLINE_CONFLICT|ORIGIN_BINDING_CONFLICT)'):
             p.start_budget(facade,header)
 
@@ -200,7 +200,7 @@ class SyntheticGate(ActualSources):
         for kind in ('rebuilt','fork'):
             with self.subTest(kind=kind):
                 facade.directiveStartBudget=rebuilt if kind=='rebuilt' else original
-                with patch.object(d.os,'getpid',return_value=-1 if kind=='fork' else d.os.getpid()),patch.object(module,'verify_sources') as sources,patch.object(module,'require_configured') as configured,patch.object(module,'_read_header') as header,patch.object(self.g,'read_private') as private,patch.object(self.g,'open_root') as opened,patch.object(self.g,'claim') as claim:
+                with patch.object(p.provenance.os,'getpid',return_value=-1 if kind=='fork' else p.provenance.os.getpid()),patch.object(module,'verify_sources') as sources,patch.object(module,'require_configured') as configured,patch.object(module,'_read_header') as header,patch.object(self.g,'read_private') as private,patch.object(self.g,'open_root') as opened,patch.object(self.g,'claim') as claim:
                     with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(PROVENANCE_REQUIRED|CREATOR_PROCESS_CONFLICT)'):
                         self.g.run(facade,args,source_profile=self.cfg)
                     for spy in (sources,configured,header,private,opened,claim):spy.assert_not_called()
@@ -208,7 +208,7 @@ class SyntheticGate(ActualSources):
                 with patch.object(entry,'qualified_hash') as qualified:
                     with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_(PROVENANCE_REQUIRED|CREATOR_PROCESS_CONFLICT)'):
                         if kind=='fork':
-                            with patch.object(d.os,'getpid',return_value=-1):entry.run(core,[],{}, {},start_budget=original)
+                            with patch.object(p.provenance.os,'getpid',return_value=-1):entry.run(core,[],{}, {},start_budget=original)
                         else:entry.run(core,[],{}, {},start_budget=rebuilt)
                     qualified.assert_not_called()
 
@@ -217,7 +217,7 @@ class SyntheticGate(ActualSources):
         wall0=datetime.now(timezone.utc);mono=[1000.0];wall=[wall0]
         clock=lambda:mono[0];utc_now=lambda:wall[0]
         with patch.object(d,'monotonic',clock),patch.object(d,'utc_now',utc_now):
-            b,anchor,instant=d.new_start_budget()
+            b,anchor,instant=p.provenance.new_start_budget()
             facade=SimpleNamespace(diagnostic_deadline=d,directiveStartBudget=b,base=SimpleNamespace(capture=SimpleNamespace(stamp=datetime.fromisoformat)))
             header={'windowId':str(uuid.uuid4()),'attempt':1,'windowStartMonotonic':anchor,'windowStart':instant.isoformat(),'windowEnd':b.wall_end.isoformat()}
             for elapsed,utc_advance in ((10,5),(120,120),(120,20)):

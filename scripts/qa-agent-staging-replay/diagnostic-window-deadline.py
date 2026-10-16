@@ -7,11 +7,9 @@ import hashlib
 import importlib.util
 from pathlib import Path
 import threading
-from datetime import datetime,timezone,timedelta
+from datetime import datetime,timezone
 import json
 import math
-import os
-import weakref
 import re
 import subprocess
 import sys
@@ -54,36 +52,6 @@ def from_window(end,instant,stamp,anchor=None):
     # time to the already approved absolute window.
     origin=monotonic() if anchor is None else anchor
     return Budget(origin+(stamp(end)-instant).total_seconds(),clock=monotonic,wall_end=stamp(end),wall_clock=utc_now)
-
-
-_START_PROVENANCE=weakref.WeakKeyDictionary()
-_START_PROVENANCE_LOCK=threading.RLock()
-
-
-def new_start_budget():
-    """Sample START here; never import caller-supplied historical clock values."""
-    anchor=monotonic();instant=utc_now();end=instant+timedelta(seconds=3600)
-    b=Budget(anchor+3600,clock=monotonic,wall_end=end,wall_clock=utc_now)
-    with _START_PROVENANCE_LOCK:
-        _START_PROVENANCE[b]=(os.getpid(),anchor,instant,end,b.clock,b.wall_clock)
-    return b,anchor,instant
-
-
-def verify_start_provenance(b):
-    # Validate before any entry metadata reads, including on the first attempt.
-    # Fork inherits the object/registry but never the creator PID.
-    with _START_PROVENANCE_LOCK:origin=_START_PROVENANCE.get(b) if type(b) is Budget else None
-    if origin is None:raise ValueError('DIRECTIVE_START_PROVENANCE_REQUIRED')
-    pid,anchor,instant,end,clock,wall_clock=origin
-    if pid!=os.getpid():raise ValueError('DIRECTIVE_START_CREATOR_PROCESS_CONFLICT')
-    if (b.clock is not clock or b.wall_clock is not wall_clock or
-            clock is not monotonic or wall_clock is not utc_now or
-            b.window_end!=anchor+3600 or b.data_end!=anchor+3600-DATA_CLEANUP_RESERVE_SECONDS or
-            b.wall_end!=end or b.reserve!=DATA_CLEANUP_RESERVE_SECONDS or
-            b.cleanup_seconds!=CLEANUP_BUDGET_SECONDS):
-        raise ValueError('DIRECTIVE_START_PROVENANCE_CONFLICT')
-    b.check()
-    return anchor,instant
 
 
 class Process:

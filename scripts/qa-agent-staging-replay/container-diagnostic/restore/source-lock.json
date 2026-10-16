@@ -7,7 +7,7 @@
   "container-diagnostic/restore/runtime-pins.json": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
   "container-diagnostic/restore/runtime.py": "3b7767c65c682910fcc869dfb1be934c705e61555d2befd0986b3cef62d4837c",
   "controlled-snapshot-restore.py": "68affbb99568cdb42b5b37f025a7ae01693b50ad759eb64f10441c4ca218ac70",
-  "diagnostic-window-deadline.py": "dc26c91be66c8203068ea155199ef93bfa09f011928ac0216bd8b9dd98664447",
+  "diagnostic-window-deadline.py": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb",
   "owned-locale-profile.py": "bbfc39dbd9fb28153953802e300d5aec02449ba4134fc870a32185ad5d6520ec",
   "owned-pg-diagnostic-session.py": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
   "reviewed-diagnostic-window.py": "f68852d6e69d847c87480f2c0c145e1bb17d6c79cf889f80e2cde7b18d85f500",
