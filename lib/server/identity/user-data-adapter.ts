@@ -1,3 +1,4 @@
+import { createTripInventoryReader } from "../trip/inventory/reader.ts";
 import { readOnlineItemAddress, type OnlineItemAddressRead } from "../trip/address/read.ts";
 import { readUserProvidedAddress, type UserProvidedChineseAddress } from "../../trip-user-address.ts";
 import { nativeFetch } from "./native-fetch.ts";
@@ -244,7 +245,8 @@ export async function createNativeTripDataAdapter(request: Pick<NextRequest, "he
       ? { data: credentials.subject } : { error: "UNAUTHENTICATED" };
   };
   const operations = createDataOperations(credentials.client, authenticated, response => response, true);
-  return { ...tripArchiveOperations(credentials.client, authenticated), authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
+  const getTripInventory = createTripInventoryReader(credentials.client, authenticated, operations.getTrip);
+  return { getTripInventory, ...tripArchiveOperations(credentials.client, authenticated), authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
     getTrip: operations.getTrip, getPendingProposal: operations.getPendingProposal, getUserProfile: operations.getUserProfile,
     createPendingProposal: operations.createPendingProposal, revisePendingProposalPatch: operations.revisePendingProposalPatch,
     rejectPendingProposal: operations.rejectPendingProposal, confirm: operations.confirm };
