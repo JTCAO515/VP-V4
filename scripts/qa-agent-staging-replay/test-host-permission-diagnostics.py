@@ -36,6 +36,32 @@ class HostHints(unittest.TestCase):
             value=h.summarize(raw,True,False,TYPED)
             self.assertEqual(value['clientHintStatus'],'UNKNOWN_FRAME')
             self.assertIsNone(value['objectClass']);self.assertNotIn(CANARY,json.dumps(value))
+    def test_valid_permission_frame_without_toc_keeps_finite_hint(self):
+        raw=('pg_restore: error: could not execute query: ERROR: permission denied for schema '+CANARY+'\nCommand was: ALTER TABLE '+CANARY+';\n').encode()
+        value=h.summarize(raw,True,False,TYPED)
+        self.assertEqual(value['clientHintStatus'],'CLIENT_FRAME_HINT_AVAILABLE_NO_TOC')
+        self.assertEqual(value['clientFrameClass'],'VALID_ERROR_WITHOUT_TOC')
+        self.assertEqual(value['clientErrorCategory'],'RESTORE_PERMISSION_DENIED')
+        self.assertEqual(value['permissionObjectClass'],'SCHEMA');self.assertIsNone(value['tocEntryId'])
+        self.assertFalse(value['clientHintsCorrelatedToTypedError']);self.assertNotIn(CANARY,json.dumps(value))
+    def test_empty_rejected_and_unclassified_frames_are_distinct_unknowns(self):
+        unclassified=('pg_restore: error: could not execute query: ERROR: '+CANARY+'\n').encode()
+        for raw,expected in ((b'','EMPTY'),(FRAME+FRAME,'REJECTED'),(unclassified,'VALID_ERROR_WITHOUT_TOC')):
+            value=h.summarize(raw,True,False,TYPED)
+            self.assertEqual(value['clientFrameClass'],expected)
+            self.assertIsNone(value['permissionObjectClass']);self.assertNotIn(CANARY,json.dumps(value))
+    def test_invalid_encoding_never_yields_partial_hints(self):
+        value=h.summarize(FRAME+b'\xff',True,False,TYPED)
+        self.assertEqual(value['clientFrameClass'],'INVALID_ENCODING');self.assertIsNone(value['objectClass'])
+    def test_no_toc_client_hint_cannot_spoof_typed_permission(self):
+        raw=('pg_restore: error: could not execute query: ERROR: permission denied for schema '+CANARY+'\n').encode()
+        value=h.summarize(raw,True,False,{**TYPED,'sqlstate':'P0001'})
+        self.assertEqual(value['typedPermissionClass'],'UNKNOWN')
+        self.assertEqual(value['permissionObjectClass'],'SCHEMA')
+        self.assertFalse(value['clientHintsCorrelatedToTypedError'])
+        self.assertEqual(value['failurePrivilegeContext'],'UNKNOWN_NOT_OBSERVED_AT_FAILURE')
+        self.assertEqual(value['version'],'host-permission-hints/2')
+
     def test_nonfailed_client_does_not_publish_forged_frame_hint(self):
         value=h.summarize(FRAME,True,False,None,client_failed=False)
         self.assertEqual(value['clientHintStatus'],'NOT_FAILED_NO_CLIENT_HINT')
@@ -45,6 +71,16 @@ class HostHints(unittest.TestCase):
         for raw,complete,overflow,status in [(FRAME,False,False,'UNKNOWN_INCOMPLETE'),(FRAME,True,True,'UNKNOWN_TRUNCATED'),(b'x'*(h.LIMIT+1),True,False,'UNKNOWN_TRUNCATED')]:
             value=h.summarize(raw,complete,overflow,TYPED)
             self.assertEqual(value['clientHintStatus'],status);self.assertIsNone(value['tocEntryId'])
+    def test_live_data_deadline_does_not_prove_cleanup_deadline_live(self):
+        # Read-only proof of an existing shared-Budget limitation; no reset/fix.
+        clock=[1000.0]
+        budget=b.deadline.Budget(4600,clock=lambda:clock[0])
+        self.assertEqual(budget.cleanup_timeout(60),60)
+        clock[0]=1061
+        budget.check()
+        with self.assertRaisesRegex(ValueError,'OWNED_CLEANUP_BUDGET_EXHAUSTED'):
+            budget.cleanup_timeout(60)
+
     def test_pipe_drain_is_bounded_no_disk_and_erases_after_finish(self):
         proc=subprocess.Popen([sys.executable,'-c','import sys;sys.stderr.buffer.write(b"x"*200000)'],stderr=subprocess.PIPE)
         reader=h.BoundedStderr(proc.stderr);proc.wait(timeout=5)

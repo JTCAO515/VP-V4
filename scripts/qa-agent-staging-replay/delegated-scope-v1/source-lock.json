@@ -1,5 +1,5 @@
 {
-  "container-diagnostic/restore/source-lock.json": "131f252fa7814f1bc7962d3c7c2f059e63d9cf076d72b0628586c9a744f23b15",
+  "container-diagnostic/restore/source-lock.json": "6d42ad649251452ba64ec55f00125846d70e0f57f8e52fc64174ac0cab1c628f",
   "delegated-scope-v1/bootstrap.py": "f5ccd88357cbd94eb82a0bce241ef4c36617dac92ff4dbffb539aaa98e107e7e",
   "delegated-scope-v1/entry.py": "a37d8aca0308dc93047e6cc343cad6ca1c45c6e00059358a347b6da221dc6ba9",
   "delegated-scope-v1/pending-binding.json": "6058e9c1753cf71f242d19feb4af0b77652cb12c620c7c972efafed0c3f6e9e7",
