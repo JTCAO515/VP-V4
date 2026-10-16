@@ -1,0 +1,14 @@
+test_cancel_resistant_backend_requires_exclusive_owned_postmaster_fence (__main__.OwnedSession) ... ok
+test_control_identity_mismatch_preserves_unknown_without_process_kill (__main__.OwnedSession) ... ok
+test_foreign_nonce_server_epoch_or_backend_lifetime_never_signals (__main__.OwnedSession) ... ok
+test_foreign_server_binding_never_cancels_or_stops_either_server (__main__.OwnedSession) ... ok
+test_no_shared_socket_or_parallel_session_attachment (__main__.OwnedSession) ... ok
+test_orchestrated_timeout_confirms_backend_stop_without_fabricated_error (__main__.OwnedSession) ... ok
+test_original_role_and_application_name_not_rewritten (__main__.OwnedSession) ... ok
+test_socket_close_does_not_stop_backend_but_bound_cancel_confirms_exit (__main__.OwnedSession) ... ok
+test_typed_failure_preserves_protocol_provenance_and_no_secret_output (__main__.OwnedSession) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 8.566s
+
+OK
