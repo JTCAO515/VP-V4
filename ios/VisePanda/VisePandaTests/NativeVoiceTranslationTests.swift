@@ -9,6 +9,7 @@ import Testing
     var failWrite = false
     var failReadAfterWrite = false
     var blockRead = false
+    var removes = 0
     func write(_ data: Data, service: String, owner: String) -> OSStatus {
         guard !failWrite else { return errSecNotAvailable }
         items[service + "|" + owner] = data
@@ -20,14 +21,15 @@ import Testing
         return items[service + "|" + owner].map { (errSecSuccess, $0) } ?? (errSecItemNotFound, nil)
     }
     func remove(service: String, owner: String) -> OSStatus {
-        items.removeValue(forKey: service + "|" + owner) == nil ? errSecItemNotFound : errSecSuccess
+        removes += 1
+        return items.removeValue(forKey: service + "|" + owner) == nil ? errSecItemNotFound : errSecSuccess
     }
 }
 
 @MainActor private final class VoiceTranslationFixture {
     let scope = NativeDataScope(endpoint: "http://127.0.0.1", subject: "22222222-2222-4222-8222-222222222222", mobileEpoch: 1, generation: 1)
     let policyID = "11111111-1111-4111-8111-111111111111"
-    let noticeHash = String(repeating: "a", count: 64)
+    var noticeHash = String(repeating: "a", count: 64)
     let vault = VoiceTranslationTestVault()
     var journal: NativeTranslationRecoveryJournal { .init(vault: vault) }
     var original = "No peanuts."
@@ -42,6 +44,7 @@ import Testing
     var recoveryQueries: [NativeTranslationRecoveryIdentity] = []
     var cancels = 0
     var physicalBeforePOST = false
+    var denyRead = false
 
     func boundStore() -> NativeVoiceTranslationStore {
         let store = NativeVoiceTranslationStore()
@@ -61,7 +64,10 @@ import Testing
          "backTranslation": state == "translated" ? original as Any : NSNull()]
     }
     func request(_ path: String, _ method: String, _ body: Data?) throws -> Data {
-        if path == "api/translate/policy" { return try policy() }
+        if path == "api/translate/policy" {
+            if denyRead { throw NativeDataError.server(code: "FORBIDDEN") }
+            return try policy()
+        }
         if path == "api/translate/consent" {
             #expect(method == "DELETE" || method == "POST")
             return Data("{}".utf8)
@@ -121,6 +127,7 @@ import Testing
         #expect(store.acceptFinal(recordingID: second, scope: f.scope, text: f.original, seconds: 1.5, characters: f.original.utf16.count))
         #expect(!store.acceptFinal(recordingID: second, scope: f.scope, text: "Another", seconds: 1.5, characters: 7))
         #expect(store.finalTranscript == f.original && store.measuredSeconds == 1.5)
+        #expect(store.reviewText(scope: f.scope) == f.original)
         store.bind(scope: .init(endpoint: f.scope.endpoint, subject: "33333333-3333-4333-8333-333333333333", mobileEpoch: 2, generation: 2), recovery: f.journal)
         #expect(store.finalTranscript == nil && store.measuredSeconds == nil)
         #expect(!store.acceptFinal(recordingID: second, scope: f.scope, text: f.original, seconds: 1.5, characters: f.original.utf16.count))
@@ -294,5 +301,81 @@ import Testing
         #expect(store.translation.phrases.contains(where: { $0.id == previous.id }))
         #expect(store.translation.recoveredTurnID == nil && store.readableResult(scope: f.scope) == nil && store.result == nil)
         #expect(f.posts.count == 1)
+    }
+
+    @Test(arguments: ["withdraw", "notice", "permission", "unrelated-history"])
+    func recreatedRecoveredReviewExpiresWithCurrentQualification(reason: String) async throws {
+        let f = VoiceTranslationFixture(), first = f.boundStore()
+        await f.send(first)
+        let original = try #require(try f.journal.read(f.scope))
+        first.clear()
+        let reopened = f.boundStore()
+        f.state = "translated"; f.includePhrase = true
+        await reopened.refresh(request: f.request)
+        try #require(reopened.reviewText(scope: f.scope) == f.original)
+        try #require(reopened.submittedText == f.original)
+        #expect(reopened.finalTranscript == nil && reopened.turnID == original.identity.turnId)
+        let storage = f.vault.items, removals = f.vault.removes
+        if reason == "withdraw" { f.accepted = false }
+        if reason == "notice" { f.noticeHash = String(repeating: "b", count: 64) }
+        if reason == "permission" { f.denyRead = true }
+        if reason == "unrelated-history" { f.historyTurn = "44444444-4444-4444-8444-444444444444" }
+        await reopened.refresh { path, method, body in
+            // This is the same read port as the TextField Binding, during the read,
+            // before a View onChange could consume a notification.
+            #expect(reopened.reviewText(scope: f.scope).isEmpty && reopened.submittedText == nil)
+            return try f.request(path, method, body)
+        }
+        #expect(reopened.reviewText(scope: f.scope).isEmpty && reopened.submittedText == nil && reopened.result == nil)
+        #expect(reopened.turnID == original.identity.turnId && reopened.hasSubmission)
+        #expect(f.vault.items == storage && f.vault.removes == removals && f.posts.count == 1)
+        if reason == "unrelated-history" { #expect(reopened.translation.phrases.contains(where: { $0.id == f.historyTurn })) }
+    }
+
+    @Test func recoveredReviewReadPortRejectsActorSceneAndRootInvalidationImmediately() async throws {
+        let f = VoiceTranslationFixture(), first = f.boundStore()
+        await f.send(first)
+        first.clear()
+        let reopened = f.boundStore()
+        f.state = "translated"; f.includePhrase = true
+        await reopened.refresh(request: f.request)
+        try #require(reopened.reviewText(scope: f.scope) == f.original)
+        let other = NativeDataScope(endpoint: f.scope.endpoint, subject: "33333333-3333-4333-8333-333333333333", mobileEpoch: 2, generation: 2)
+        #expect(reopened.reviewText(scope: nil).isEmpty && reopened.reviewText(scope: other).isEmpty)
+        reopened.updateReview(f.original, scope: other) // Cannot promote a protected body to a local draft.
+        #expect(reopened.reviewText(scope: other).isEmpty)
+        reopened.translation.clear() // No Voice/View notification has been consumed yet.
+        #expect(reopened.submittedText == f.original)
+        #expect(reopened.reviewText(scope: f.scope).isEmpty)
+        await reopened.refresh(request: f.request)
+        #expect(reopened.submittedText == nil && reopened.reviewText(scope: f.scope).isEmpty)
+        #expect(f.posts.count == 1)
+    }
+
+    @Test func failedRefreshDoesNotEraseUnsubmittedLocalReview() async throws {
+        let f = VoiceTranslationFixture(), store = f.boundStore()
+        await store.refresh(request: f.request)
+        let draft = "Local e\u{301}\nKeep exact bytes."
+        store.updateReview(draft, scope: f.scope)
+        f.denyRead = true
+        await store.refresh(request: f.request)
+        #expect(store.reviewText(scope: f.scope).utf8.elementsEqual(draft.utf8))
+        #expect(store.reviewText(scope: nil).isEmpty && store.submittedText == nil)
+        #expect(f.posts.isEmpty && f.vault.items.isEmpty)
+    }
+
+    @Test func rejectedRecoveryReadKeepsUnknownPhysicalIdentityWithoutReviewBody() async throws {
+        let f = VoiceTranslationFixture(), first = f.boundStore()
+        await f.send(first)
+        let original = try #require(try f.journal.read(f.scope))
+        first.clear()
+        let reopened = f.boundStore()
+        await reopened.refresh(request: f.request)
+        f.denyRead = true
+        await reopened.refresh(request: f.request)
+        #expect(reopened.reviewText(scope: f.scope).isEmpty && reopened.submittedText == nil)
+        #expect(reopened.hasSubmission && reopened.turnID == original.identity.turnId)
+        #expect(try f.journal.read(f.scope)?.bytes == original.bytes)
+        #expect(f.posts.count == 1 && f.vault.removes == 0)
     }
 }

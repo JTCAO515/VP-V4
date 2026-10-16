@@ -17,6 +17,8 @@ final class NativeVoiceTranslationStore {
     private var generation = UUID()
     private var resultPolicyID: String?
     private var resultNoticeHash: String?
+    private var localReview = ""
+    private var reviewIsRecovered = false
 
     private var hasUnresolvedSubmission: Bool {
         translation.recoveryRecord != nil || (translation.scope == scope && translation.hasUnresolvedRecovery)
@@ -33,6 +35,7 @@ final class NativeVoiceTranslationStore {
         generation = UUID(); scope = nil; translation.clear()
         finalTranscript = nil; recordingID = nil; measuredSeconds = nil; measuredASRCharacters = nil
         submittedText = nil; turnID = nil; result = nil; resultPolicyID = nil; resultNoticeHash = nil
+        localReview = ""; reviewIsRecovered = false
     }
 
     func beginReview(recordingID: UUID, sourceLocale: String) -> Bool {
@@ -49,6 +52,7 @@ final class NativeVoiceTranslationStore {
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, text.utf16.count <= 600,
               finalTranscript == nil else { return false }
         finalTranscript = text; measuredSeconds = seconds; measuredASRCharacters = characters
+        localReview = text; reviewIsRecovered = false
         return true
     }
 
@@ -59,12 +63,26 @@ final class NativeVoiceTranslationStore {
         guard !translation.busy, !hasUnresolvedSubmission else { return }
         generation = UUID(); recordingID = nil; finalTranscript = nil; measuredSeconds = nil; measuredASRCharacters = nil
         submittedText = nil; turnID = nil; result = nil; resultPolicyID = nil; resultNoticeHash = nil
+        localReview = ""; reviewIsRecovered = false
+    }
+
+    /// The View's actual edit-field read port. Recovered bodies never become local drafts.
+    func reviewText(scope current: NativeDataScope?) -> String {
+        guard current != nil, scope == current else { return "" }
+        if reviewIsRecovered { return readableResult(scope: current)?.original ?? "" }
+        return localReview
+    }
+
+    func updateReview(_ text: String, scope current: NativeDataScope?) {
+        guard current != nil, scope == current, !hasSubmission, !translation.busy else { return }
+        localReview = text; reviewIsRecovered = false
     }
 
     func refresh(currentScope: NativeTranslationStore.CurrentScope? = nil, request: NativeTranslationStore.Request) async {
         guard let scope else { return }
         let own = generation
         result = nil
+        if reviewIsRecovered { submittedText = nil }
         await translation.load(scope: scope, currentScope: { [self] in
             generation == own && self.scope == scope && (currentScope == nil || currentScope?() == scope) ? scope : nil
         }, request: request)
@@ -97,6 +115,7 @@ final class NativeVoiceTranslationStore {
                       let original = fields?["text"] as? String, original.utf8.elementsEqual(text.utf8),
                       turnID == nil || turnID == id else { throw NativeDataError.invalidResponse }
                 turnID = id; submittedText = original; self.sourceLocale = sourceLocale
+                localReview = original; reviewIsRecovered = false
                 resultPolicyID = translation.policy?.id; resultNoticeHash = translation.policy?.noticeHash
             }
             return try await request(path, method, body)
@@ -110,6 +129,7 @@ final class NativeVoiceTranslationStore {
             generation = UUID(); recordingID = nil; finalTranscript = nil
             measuredSeconds = nil; measuredASRCharacters = nil; submittedText = nil; turnID = nil; result = nil
             resultPolicyID = nil; resultNoticeHash = nil
+            localReview = ""; reviewIsRecovered = false
         }
         await translation.consent(accept: accept, currentScope: currentScope, request: request)
         synchronizeResult()
@@ -131,6 +151,7 @@ final class NativeVoiceTranslationStore {
 
     private func synchronizeResult() {
         result = nil
+        defer { if reviewIsRecovered && result == nil { submittedText = nil } }
         guard scope != nil, translation.scope == scope else { return }
         // Metadata can lock/reset-fence a recreated consumer but can never supply a body.
         if let original = translation.recoveryRecord {
@@ -150,6 +171,7 @@ final class NativeVoiceTranslationStore {
         if let submittedText {
             guard phrase.original.utf8.elementsEqual(submittedText.utf8), phrase.sourceLocale == sourceLocale else { return }
         }
+        if submittedText == nil { reviewIsRecovered = true; localReview = "" }
         turnID = phrase.id; submittedText = phrase.original; sourceLocale = phrase.sourceLocale
         resultPolicyID = translation.policy?.id; resultNoticeHash = translation.policy?.noticeHash
         result = phrase
