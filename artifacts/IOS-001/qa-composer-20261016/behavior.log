@@ -1,0 +1,103 @@
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[39 / 119]
+[49 / 119]
+[52 / 119]
+[58 / 119]
+[61 / 119]
+[69 / 119]
+[71 / 119]
+[74 / 119]
+[75 / 119]
+[87 / 119]
+[91 / 119]
+[93 / 119]
+[96 / 119] VisePanda
+[104 / 119] VisePanda
+[109 / 120] VisePandaTests-product
+[110 / 126]
+[115 / 126] VisePandaTests-product
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-qa-composer-20261016/artifacts/IOS-001/qa-composer-20261016/.scratch/Tests/VisePandaTests/NativeQAComposerTests.swift:27:20: warning: 'generation' mutated after capture by sendable closure
+ 20 | 
+ 21 |     @Test func staleBindingHidesAndCannotOverwriteNewScope() {
+ 22 |         var generation = 1
+    |             `- note: variable defined here
+ 23 |         var raw = "private A"
+ 24 |         var reads = 0
+ 25 |         let draft = Binding(get: { reads += 1; return raw }, set: { raw = $0 })
+ 26 |         let old = NativeQAComposerAccess.protectedDraft(draft, isCurrent: { generation == 1 }, canEdit: { true })
+    |                                                                           | `- note: capturing use
+    |                                                                           `- note: variable captured by sendable closure
+ 27 |         generation = 2
+    |                    `- warning: 'generation' mutated after capture by sendable closure
+ 28 |         raw = "new B edit"
+ 29 |         let previousReads = reads
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-qa-composer-20261016/artifacts/IOS-001/qa-composer-20261016/.scratch/Tests/VisePandaTests/NativeQAComposerTests.swift:51:16: warning: 'active' mutated after capture by sendable closure
+ 35 | 
+ 36 |     @Test func inactiveAndPendingBindingsRejectWrites() {
+ 37 |         var active = true
+    |             `- note: variable defined here
+ 38 |         var blocked = false
+ 39 |         var raw = "retained draft"
+ 40 |         let guarded = NativeQAComposerAccess.protectedDraft(
+ 41 |             Binding(get: { raw }, set: { raw = $0 }),
+ 42 |             isCurrent: { active }, canEdit: { !blocked }
+    |                        | `- note: capturing use
+    |                        `- note: variable captured by sendable closure
+ 43 |         )
+ 44 |         blocked = true
+    :
+ 49 |         guarded.wrappedValue = "background mutation"
+ 50 |         #expect(raw == "retained draft")
+ 51 |         active = true
+    |                `- warning: 'active' mutated after capture by sendable closure
+ 52 |         blocked = false
+ 53 |         guarded.wrappedValue = "fresh edit"
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-qa-composer-20261016/artifacts/IOS-001/qa-composer-20261016/.scratch/Tests/VisePandaTests/NativeQAComposerTests.swift:52:17: warning: 'blocked' mutated after capture by sendable closure
+ 36 |     @Test func inactiveAndPendingBindingsRejectWrites() {
+ 37 |         var active = true
+ 38 |         var blocked = false
+    |             `- note: variable defined here
+ 39 |         var raw = "retained draft"
+ 40 |         let guarded = NativeQAComposerAccess.protectedDraft(
+ 41 |             Binding(get: { raw }, set: { raw = $0 }),
+ 42 |             isCurrent: { active }, canEdit: { !blocked }
+    |                                             |  `- note: capturing use
+    |                                             `- note: variable captured by sendable closure
+ 43 |         )
+ 44 |         blocked = true
+    :
+ 50 |         #expect(raw == "retained draft")
+ 51 |         active = true
+ 52 |         blocked = false
+    |                 `- warning: 'blocked' mutated after capture by sendable closure
+ 53 |         guarded.wrappedValue = "fresh edit"
+ 54 |         #expect(raw == "fresh edit")
+[120 / 126] VisePandaTests-product
+[122 / 126] VisePandaTests-product
+Build complete! (6.40秒)
+Test Suite 'All tests' started at 2026-10-16 15:35:17.940.
+Test Suite 'All tests' passed at 2026-10-16 15:35:17.941.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAComposerTests started.
+◇ Test staleSendAndAllDenialsDoNotCallOwner() started.
+◇ Test staleBindingHidesAndCannotOverwriteNewScope() started.
+◇ Test inactiveAndPendingBindingsRejectWrites() started.
+◇ Test preservesOriginalBytesAndOverLimitEdits() started.
+◇ Test utf16AndWhitespaceBoundaries() started.
+◇ Test sendsOnceWithoutClearingOrChangingBytes() started.
+✔ Test staleSendAndAllDenialsDoNotCallOwner() passed after 0.001 seconds.
+✔ Test preservesOriginalBytesAndOverLimitEdits() passed after 0.001 seconds.
+✔ Test staleBindingHidesAndCannotOverwriteNewScope() passed after 0.001 seconds.
+✔ Test inactiveAndPendingBindingsRejectWrites() passed after 0.001 seconds.
+✔ Test utf16AndWhitespaceBoundaries() passed after 0.001 seconds.
+✔ Test sendsOnceWithoutClearingOrChangingBytes() passed after 0.001 seconds.
+✔ Suite NativeQAComposerTests passed after 0.001 seconds.
+✔ Test run with 6 tests in 1 suite passed after 0.001 seconds.
