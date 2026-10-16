@@ -156,14 +156,14 @@ struct NativeQAPendingJournalTests {
     @Test func eraseCorruptCustodyChecksScopeAndFixedKeyAndAbsence() throws {
         let vault = SyntheticQAVault()
         vault.bytes = Data("corrupt synthetic".utf8)
-        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, currentScope: { scope })
+        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, authorized: { true })
         #expect(vault.bytes == nil)
         #expect(vault.removes == 1)
         #expect(vault.events == ["read", "read", "remove", "read"])
-        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, currentScope: { scope })
+        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, authorized: { true })
         #expect(vault.removes == 1)
         #expect(throws: (any Error).self) {
-            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: "other", vault: vault, currentScope: { scope })
+            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: "other", vault: vault, authorized: { false })
         }
     }
 
@@ -177,7 +177,7 @@ struct NativeQAPendingJournalTests {
         #expect(throws: (any Error).self) { try journal.metadata(scope: scope) }
         live.value = scope
         #expect(throws: (any Error).self) {
-            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, currentScope: { live.value })
+            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, authorized: { live.value == scope })
         }
         #expect(vault.removes == 0)
     }
@@ -242,7 +242,7 @@ struct NativeQAPendingJournalTests {
         if mode == "replacement" { vault.onRead = { vault.bytes = Data("replacement synthetic".utf8) } }
         if mode == "scopeOnRemove" { vault.onRemove = { live.value = nil } }
         #expect(throws: (any Error).self) {
-            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, currentScope: { live.value })
+            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault, authorized: { live.value == scope })
         }
     }
 
@@ -253,6 +253,45 @@ struct NativeQAPendingJournalTests {
         try journal.retain(command, scope: scope)
         vault.onRemove = { live.value = nil }
         #expect(throws: (any Error).self) { try journal.clearExact(command, scope: scope) }
+    }
+
+    @Test func explicitCleanupAfterLogoutNeedsIndependentAuthority() throws {
+        let vault = SyntheticQAVault(), live = SyntheticQAScope(scope)
+        let journal = NativeQAPendingJournal(vault: vault, currentScope: { live.value })
+        let command = try pending(scope)
+        try journal.retain(command, scope: scope)
+        live.value = nil // Real Session fences its scope before explicit account cleanup.
+        let cleanup = SyntheticQACleanup(endpoint: scope.endpoint, owner: scope.subject)
+        #expect(throws: (any Error).self) { try journal.load(scope: scope) }
+        #expect(throws: (any Error).self) {
+            try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault,
+                authorized: { cleanup.allows(endpoint: scope.endpoint, owner: scope.subject) })
+        }
+        #expect(vault.bytes != nil) // Expiry/401 preserve=true never erases.
+        cleanup.explicit = true
+        cleanup.preserve = false
+        #expect(!cleanup.allows(endpoint: scope.endpoint, owner: "different"))
+        #expect(!cleanup.allows(endpoint: "https://other.invalid", owner: scope.subject))
+        try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault,
+            authorized: { cleanup.allows(endpoint: scope.endpoint, owner: scope.subject) })
+        #expect(vault.bytes == nil)
+    }
+
+    @Test func cleanupAuthorityRevokedAfterReadOrRemoveFailsClosed() throws {
+        for revokeAtRemove in [false, true] {
+            let vault = SyntheticQAVault()
+            vault.bytes = Data("synthetic".utf8)
+            let cleanup = SyntheticQACleanup(endpoint: scope.endpoint, owner: scope.subject)
+            cleanup.explicit = true
+            cleanup.preserve = false
+            let revoke = { cleanup.explicit = false }
+            if revokeAtRemove { vault.onRemove = revoke } else { vault.onRead = revoke }
+            #expect(throws: (any Error).self) {
+                try NativeQAPendingJournal.erase(endpoint: scope.endpoint, owner: scope.subject, vault: vault,
+                    authorized: { cleanup.allows(endpoint: scope.endpoint, owner: scope.subject) })
+            }
+            #expect(vault.removes == (revokeAtRemove ? 1 : 0))
+        }
     }
 
     private func changedScope(_ field: String) -> NativeDataScope? {
@@ -300,4 +339,16 @@ struct NativeQAPendingJournalTests {
 @MainActor private final class SyntheticQAScope {
     var value: NativeDataScope?
     init(_ value: NativeDataScope) { self.value = value }
+}
+
+/// Synthetic stand-in for Main's private explicit-account cleanup authority, never dispatch eligibility.
+@MainActor private final class SyntheticQACleanup {
+    let endpoint: String
+    let owner: String
+    var explicit = false
+    var preserve = true
+    init(endpoint: String, owner: String) { self.endpoint = endpoint; self.owner = owner }
+    func allows(endpoint: String, owner: String) -> Bool {
+        explicit && !preserve && self.endpoint == endpoint && self.owner == owner
+    }
 }
