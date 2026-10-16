@@ -1,0 +1,31 @@
+{
+  "status": "PASS_OWN_SYNTHETIC_PG17_TYPED_PROTOCOL_PROTOTYPE_ONLY",
+  "scope": "new independent helper/test only, no existing core/parser/strict/deadline/claim changes",
+  "pgServerVersionNum": 170011,
+  "tests": 8,
+  "physicalPgRestoreCounterexample": "expression index function ERRCODEP0001/message42501 -> actual protocolC P0001",
+  "physicalTypes": [
+    "P0001",
+    "42501",
+    "42601",
+    "42P01",
+    "42P07",
+    "57014"
+  ],
+  "privacy": "raw message/detail/context/object/value never output; unknownSQLSTATE masked; session HMAC queryToken, key never exported/persisted",
+  "localResources": "one nonceprivate hostPG17 cluster from existing PG17 tools, noTCP listener; no Docker/sharedstack/PG16; one synthetic restore-target DB, no application users/budgets",
+  "fixtureDirectories0700AndRegularFiles0600": "PASS",
+  "plaintextServerLogs": "disabled/discarded, no raw SQL log files",
+  "cleanup": "PASS proxies closed, ownPID/dataDir verified, PG17 stopped, temporary directory removed",
+  "proxyTimeout": "socket relay stopped; does NOT prove backend query stopped; fixture owner pg_ctl immediate fence confirms teardown",
+  "actualIncident": "Window7957890d2slots exhausted actualpostdata cause remainsUNKNOWN; rawdiscarded diagnostics cannot be reconstructed from safeSummary",
+  "commandAndObjectClass": "UNKNOWN_NOT_IN_ERROR_RESPONSE / UNKNOWN_NOT_CAPTURED, not invented from SQL/messages",
+  "queryTokenScope": "perconnection simpleQuery message/batch only, not an exactTOC/object mapping; ephemeral-key HMAC",
+  "integration": "NOT_WIRED/UNRUN inside actualPG17Docker image, core seam requiresMain exactlease/newapproval and shareddeadline/noncefence review",
+  "realArchiveIdentityUserRowsOrTargetIo": false,
+  "newActualWindowCaptureOrAttempt": false,
+  "sourceSha256": {
+    "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
+    "test-typed-pg-diagnostic-proxy.py": "cb2ffa880ad040ddc4ffa9ff65fe25e6b375b8914ddd1709e0eeda391218f180"
+  }
+}

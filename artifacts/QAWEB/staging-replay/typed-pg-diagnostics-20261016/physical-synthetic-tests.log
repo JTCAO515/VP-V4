@@ -1,0 +1,13 @@
+test_actual_p0001_index_failure_message_cannot_spoof_42501 (physical.OwnPG17) ... ok
+test_fixture_permissions_and_no_plaintext_log_files (physical.OwnPG17) ... ok
+test_pg_restore_itself_through_proxy_reports_actual_p0001 (physical.OwnPG17) ... ok
+test_raw_value_headers_unknown_state_and_ephemeral_tokens (physical.OwnPG17) ... ok
+test_typed_statement_timeout_and_proxy_deadline_are_not_conflated (physical.OwnPG17) ... ok
+test_typed_syntax_missing_duplicate_and_first_failure_only (physical.OwnPG17) ... ok
+test_notice_and_data_rows_with_fake_error_headers_are_not_errors (physical.WireFields) ... ok
+test_typed_c_field_not_fake_message_detail_notice_or_secret_state (physical.WireFields) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.976s
+
+OK
