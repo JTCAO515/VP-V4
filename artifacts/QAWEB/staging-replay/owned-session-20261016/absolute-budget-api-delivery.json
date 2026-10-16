@@ -1,0 +1,15 @@
+{
+  "base": "7f5bdb78ee8bf317b949027561a11bf681997634",
+  "branch": "codex/qaw683-typed-core-20261016",
+  "interface": "Factory creation accepts validated bootstrap_admin and locale_options argument array only; no attach. DiagnosticSession budget parameter retains the supplied exact Budget object and expiry; default relative API remains synthetic compatibility only. Core production mode must require original budget before IO.",
+  "sourceSha256": {
+    "owned-pg-diagnostic-session.py": "0e2fb2a05c298fb4b4b80012e44f82131ab0e24301a664d1c5e5421e8d57b76e",
+    "test-owned-pg-diagnostic-session.py": "a7f66119fda42e78a3f37e2a4c59c7e75fafc26d80ccafa679121a6eb631731d"
+  },
+  "validation": [
+    "absolute-budget-api-tests-02.log: complete affected20 PASS",
+    "absolute-budget-expired-negative.log: additional expired-budget no new session/directory PASS"
+  ],
+  "frozen": "edec/7f5 branch commits and old runtime pins unchanged. New runtime not built yet.",
+  "boundary": "Only owned synthetic PG; no real data/window/restore; core still unchanged at this interface checkpoint; requested Astra/medium effective UNKNOWN."
+}

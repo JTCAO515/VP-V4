@@ -7,6 +7,7 @@ import hmac
 import importlib.util
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import signal
@@ -47,6 +48,7 @@ def _factory_receipt(owner):
     require(owner._process is receipt['process'] and owner.lifecycle_lock is receipt['lock'],'OWN_FACTORY_PROCESS_REPLACED')
     require((owner.root,owner.data,owner.sock,owner.marker,owner.nonce)==receipt['resources'],'OWN_FACTORY_RESOURCES_CHANGED')
     require(json.dumps(owner.identity,sort_keys=True)==receipt['identity'],'OWN_FACTORY_IDENTITY_CHANGED')
+    require((owner.admin,owner.locale_options)==receipt['settings'],'OWN_FACTORY_SETTINGS_CHANGED')
     return receipt
 
 
@@ -110,9 +112,14 @@ class OwnedSyntheticServer:
     """Capability can only be created with a NEW private PG17 child process.
     It cannot attach to a supplied PID/data-dir/socket or shared/system PG.
     """
-    def __init__(self):
+    def __init__(self,bootstrap_admin='qaw_diag_owner',locale_options=('--locale=C',)):
         require(type(self) is OwnedSyntheticServer,'OWN_FACTORY_EXACT_TYPE_REQUIRED')
         require(self not in _FACTORY_RECEIPTS,'OWN_FACTORY_ALREADY_CREATED')
+        require(isinstance(bootstrap_admin,str) and re.fullmatch('[a-zA-Z_][a-zA-Z_0-9]{0,62}',bootstrap_admin),'OWN_BOOTSTRAP_ROLE_REQUIRED')
+        require(type(locale_options) is tuple and len(locale_options) in (1,5),'OWN_LOCALE_OPTIONS_REQUIRED')
+        keys=tuple(option.split('=',1)[0] for option in locale_options)
+        require(keys in (('--locale',),('--locale','--lc-collate','--lc-ctype','--locale-provider','--icu-locale')) and all(re.fullmatch(r'--[a-z-]+=[a-zA-Z0-9_.@-]+',option) for option in locale_options),'OWN_LOCALE_OPTIONS_REQUIRED')
+        self.admin=bootstrap_admin;self.locale_options=locale_options
         self.nonce=secrets.token_hex(16);self.key=secrets.token_bytes(32)
         # mkdtemp has no recursive-deletion finalizer or public cleanup handle.
         self.root=Path(tempfile.mkdtemp(prefix='qaw-session-',dir='/private/tmp'));self.root.chmod(0o700)
@@ -123,16 +130,16 @@ class OwnedSyntheticServer:
         self._process=None;self.identity=None;self.bindings=[];self.registrations={};self.closed=False;self.cleanup_confirmed=False
         self.lifecycle_lock=threading.RLock();self.active_session=None
         self.query_timeout=3
-        receipt={'process':None,'lock':self.lifecycle_lock,'resources':(self.root,self.data,self.sock,self.marker,self.nonce),'identity':'null','rootIdentity':_filesystem_identity(self.root),'markerIdentity':_filesystem_identity(self.marker),'removed':False}
+        receipt={'process':None,'lock':self.lifecycle_lock,'resources':(self.root,self.data,self.sock,self.marker,self.nonce),'identity':'null','rootIdentity':_filesystem_identity(self.root),'markerIdentity':_filesystem_identity(self.marker),'removed':False,'settings':(self.admin,self.locale_options)}
         _FACTORY_RECEIPTS[self]=receipt
         try:
             require(subprocess.run([str(PG/'postgres'),'--version'],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=3).stdout.startswith(b'postgres (PostgreSQL) 17.'),'OWN_PG17_REQUIRED')
-            subprocess.run([str(PG/'initdb'),'-D',str(self.data),'-A','trust','-U','qaw_diag_owner','--locale=C','-E','UTF8','--no-instructions'],env=self.env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True,timeout=20)
+            subprocess.run([str(PG/'initdb'),'-D',str(self.data),'-A','trust','-U',self.admin,*self.locale_options,'-E','UTF8','--no-instructions'],env=self.env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True,timeout=20)
             child=subprocess.Popen([str(PG/'postgres'),'-D',str(self.data),'-c','listen_addresses=','-c','unix_socket_directories='+str(self.sock),'-c','unix_socket_permissions=0700','-c','logging_collector=off','-c','log_min_messages=panic','-c','log_min_error_statement=panic','-c','log_statement=none'],env=self.env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             receipt['process']=child
             self._process=child
             for _ in range(100):
-                r=subprocess.run([str(PG/'pg_isready'),'-h',str(self.sock),'-U','qaw_diag_owner'],env=self.env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=2)
+                r=subprocess.run([str(PG/'pg_isready'),'-h',str(self.sock),'-U',self.admin],env=self.env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=2)
                 if r.returncode==0:break
                 require(self._process.poll() is None,'OWN_SERVER_START_FAILED');time.sleep(.03)
             else:raise ValueError('OWN_SERVER_NOT_READY')
@@ -153,7 +160,7 @@ class OwnedSyntheticServer:
     def command(self,socket_dir=None):
         destination=Path(socket_dir or self.sock)
         require(destination.resolve().is_relative_to(self.root) and not destination.is_symlink(),'OWN_SOCKET_PATH_REQUIRED')
-        return [str(PG/'psql'),'-X','-w','-At','-h',str(destination),'-p','5432','-U','qaw_diag_owner','-d','postgres','-v','ON_ERROR_STOP=1']
+        return [str(PG/'psql'),'-X','-w','-At','-h',str(destination),'-p','5432','-U',self.admin,'-d','postgres','-v','ON_ERROR_STOP=1']
     def _sql(self,sql,timeout=None,limit=None):
         cap=timeout or self.query_timeout
         if limit is not None:
@@ -277,15 +284,20 @@ class BoundProxy(proxy.OwnedUnixProxy):
 
 
 class DiagnosticSession:
-    def __init__(self,owner,seconds=3):
+    def __init__(self,owner,seconds=3,budget=None):
         _factory_receipt(owner);OwnedSyntheticServer.verify(owner)
+        if budget is not None:
+            require(type(budget) is deadline.Budget and budget.wall_end is not None,'OWN_ABSOLUTE_BUDGET_REQUIRED')
+            budget.check()
         self.owner=owner;self.session_token=secrets.token_hex(16)
         with owner.lifecycle_lock:
             require(owner.active_session is None,'OWN_SERVER_SESSION_ALREADY_ACTIVE')
             owner.active_session=self.session_token
         self.directory=Path(tempfile.mkdtemp(prefix='session-',dir=owner.root));self.directory.chmod(0o700)
-        end=datetime.now(timezone.utc)+timedelta(seconds=seconds)
-        self.budget=deadline.Budget(time.monotonic()+seconds,reserve=0,wall_end=end)
+        if budget is None:
+            end=datetime.now(timezone.utc)+timedelta(seconds=seconds)
+            self.budget=deadline.Budget(time.monotonic()+seconds,reserve=0,wall_end=end)
+        else:self.budget=budget
         try:self.proxy=BoundProxy(owner,self.directory,self.budget)
         except BaseException:
             owner.active_session=None;raise

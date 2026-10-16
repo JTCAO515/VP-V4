@@ -1,0 +1,6 @@
+test_explicit_factory_bootstrap_and_absolute_budget_reused (__main__.OwnedSession) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.575s
+
+OK

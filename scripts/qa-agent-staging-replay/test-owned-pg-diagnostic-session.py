@@ -183,6 +183,27 @@ class OwnedSession(unittest.TestCase):
             # This test retains exact ownership of its stopped fixture root.
             if root.exists():m.shutil.rmtree(root)
 
+    def test_explicit_factory_bootstrap_and_absolute_budget_reused(self):
+        owner=m.OwnedSyntheticServer(bootstrap_admin='synthetic_original_admin')
+        self.addCleanup(owner.close)
+        end=m.datetime.now(m.timezone.utc)+m.timedelta(seconds=3)
+        budget=m.deadline.Budget(time.monotonic()+3,reserve=0,wall_end=end)
+        original=(budget.window_end,budget.data_end,budget.wall_end)
+        session=m.DiagnosticSession(owner,budget=budget)
+        self.assertIs(session.budget,budget)
+        result=session.run_synthetic("do $$begin if current_user<>'synthetic_original_admin' then raise exception using errcode='42501';end if;end$$;")
+        self.assertIsNone(result['firstError']);self.assertIs(result['backendCommandStopped'],True)
+        self.assertEqual((budget.window_end,budget.data_end,budget.wall_end),original)
+        budget.expired=True;before=set(owner.root.iterdir())
+        with self.assertRaises(m.deadline.WindowExpired):m.DiagnosticSession(owner,budget=budget)
+        self.assertIsNone(owner.active_session);self.assertEqual(set(owner.root.iterdir()),before)
+
+    def test_bad_factory_settings_cannot_create_process(self):
+        with patch.object(m.subprocess,'Popen') as spawn:
+            with self.assertRaises(ValueError):m.OwnedSyntheticServer(bootstrap_admin='bad role')
+            with self.assertRaises(ValueError):m.OwnedSyntheticServer(locale_options=('--pgdata=/foreign',))
+            spawn.assert_not_called()
+
 
 class FactoryProvenance(unittest.TestCase):
     def test_unregistered_subclass_never_signals_during_construction_cleanup(self):
