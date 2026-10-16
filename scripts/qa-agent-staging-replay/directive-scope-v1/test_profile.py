@@ -368,6 +368,14 @@ class SyntheticGate(ActualSources):
         before=used.read_bytes()
         with self.assertRaisesRegex(ValueError,'DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED'):self.g.claim(self.packet,self.code,self.cfg)
         self.assertEqual(used.read_bytes(),before);self.assertFalse((self.fx.archives/p.authority_name()).exists())
+    def test_host_hints_mode_is_explicit_and_changes_qualified_hash(self):
+        config={'mode':'same-copy-typed-postdata/1','sourceLockSha256':self.cfg['sourceLockSha256'],'windowBindingSha256':self.cfg['windowBindingSha256']}
+        before=p.qualified_code_hash(self.code,config,self.cfg)
+        after=p.qualified_code_hash(self.code,{**config,'mode':'same-copy-typed-postdata/2'},self.cfg)
+        self.assertNotEqual(before,after)
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_TYPED_CONFIGURATION_REQUIRED'):
+            p.qualified_code_hash(self.code,{**config,'mode':'same-copy-typed-postdata/3'},self.cfg)
+
     def test_entry_qualified_hash_binds_real_profile_and_keeps_original_budget(self):
         d=load('entry_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
         core=SimpleNamespace(code_hash=lambda:self.code,diagnostic_window=self.g,diagnostic_deadline=d)
