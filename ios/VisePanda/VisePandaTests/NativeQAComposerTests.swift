@@ -5,10 +5,123 @@ import Testing
 /// Synthetic local bindings only; no Auth, service or device acceptance.
 @MainActor
 struct NativeQAComposerTests {
+    @Test func coalescedFastCompletionAllowsNextQuestion() {
+        var raw = "first"
+        let draft = Binding(get: { raw }, set: { raw = $0 })
+        let attempt = NativeQAComposerAttempt()
+        NativeQAComposerAccess.send(
+            draft: draft, canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { true }, onSend: { complete in raw = ""; complete() }
+        )
+        // Owner completes and clears draft before another render. No busy or
+        // canSend edge is needed to unlock the actual input binding.
+        let input = NativeQAComposerAccess.protectedDraft(draft, isCurrent: { true }, canEdit: { !attempt.isLatched })
+        input.wrappedValue = "second"
+        #expect(raw == "second")
+        var calls = 0
+        let outcome1 = NativeQAComposerAccess.send(
+            draft: draft, canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { true }, onSend: { complete in calls += 1; complete() }
+        )
+        #expect(outcome1)
+        #expect(calls == 1)
+        #expect(!attempt.isLatched)
+    }
+
     @MainActor private final class Eligibility {
         var generation = 1
         var active = true
         var blocked = false
+    }
+
+    @MainActor private final class Owner {
+        var completions: [NativeQAComposerAccess.Completion] = []
+        var work: Task<Void, Never>?
+    }
+
+    @Test func refusalExplicitlyCompletesAndReleasesInput() {
+        let attempt = NativeQAComposerAttempt()
+        let outcome2 = NativeQAComposerAccess.send(
+            draft: .constant("question"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { true }, onSend: { complete in complete() }
+        )
+        #expect(outcome2)
+        #expect(!attempt.isLatched)
+    }
+
+    @Test func cancelledOwnerTaskCompletesWithoutRevivingPrivateInput() async {
+        let attempt = NativeQAComposerAttempt()
+        let owner = Owner()
+        let eligibility = Eligibility()
+        let draft = Binding<String>.constant("private draft")
+        let protected = NativeQAComposerAccess.protectedDraft(
+            draft, isCurrent: { eligibility.active }, canEdit: { !attempt.isLatched }
+        )
+        NativeQAComposerAccess.send(
+            draft: draft, canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { eligibility.active }, onSend: { complete in
+                owner.work = Task { @MainActor in
+                    defer { complete() }
+                    await Task.yield()
+                    guard !Task.isCancelled else { return }
+                }
+            }
+        )
+        #expect(attempt.isLatched)
+        eligibility.active = false
+        owner.work?.cancel()
+        await owner.work?.value
+        #expect(!attempt.isLatched)
+        #expect(protected.wrappedValue == "")
+    }
+
+    @Test func staleScopeAndDuplicateCompletionsCannotUnlockSuccessorAttempt() {
+        let attempt = NativeQAComposerAttempt()
+        let owner = Owner()
+        let eligibility = Eligibility()
+        let oldCurrent: @MainActor () -> Bool = { eligibility.generation == 1 }
+        NativeQAComposerAccess.send(
+            draft: .constant("A"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: oldCurrent, onSend: { owner.completions.append($0) }
+        )
+        eligibility.generation = 2
+        attempt.invalidate()
+        NativeQAComposerAccess.send(
+            draft: .constant("B"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { eligibility.generation == 2 }, onSend: { owner.completions.append($0) }
+        )
+        #expect(owner.completions.count == 2)
+        guard owner.completions.count == 2 else { return }
+        owner.completions[0]()
+        owner.completions[0]()
+        #expect(attempt.isLatched)
+        let outcome3 = NativeQAComposerAccess.send(
+            draft: .constant("stale A"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: oldCurrent, onSend: { _ in Issue.record("stale send") }
+        )
+        #expect(!outcome3)
+        owner.completions[1]()
+        #expect(!attempt.isLatched)
+        NativeQAComposerAccess.send(
+            draft: .constant("next B"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { true }, onSend: { owner.completions.append($0) }
+        )
+        owner.completions[1]()
+        #expect(attempt.isLatched)
+    }
+
+    @Test func completionNeverGrantsUnknownRequestSendPermission() {
+        let attempt = NativeQAComposerAttempt()
+        NativeQAComposerAccess.send(
+            draft: .constant("question"), canSend: true, isBusy: false, hasUnconfirmedRequest: false,
+            attempt: attempt, isCurrent: { true }, onSend: { $0() }
+        )
+        #expect(!attempt.isLatched)
+        let outcome4 = NativeQAComposerAccess.send(
+            draft: .constant("question"), canSend: true, isBusy: false, hasUnconfirmedRequest: true,
+            attempt: attempt, isCurrent: { true }, onSend: { _ in Issue.record("unknown resend") }
+        )
+        #expect(!outcome4)
     }
 
     @Test func preservesOriginalBytesAndOverLimitEdits() {
@@ -73,14 +186,14 @@ struct NativeQAComposerTests {
         var raw = " \ne\u{301}你好🙂\n "
         let original = Array(raw.utf8)
         let draft = Binding(get: { raw }, set: { raw = $0 })
-        var latch = false
+        let attempt = NativeQAComposerAttempt()
         var calls = 0
         var received: [UInt8] = []
         for _ in 0..<2 {
             NativeQAComposerAccess.send(
                 draft: draft, canSend: true, isBusy: false, hasUnconfirmedRequest: false,
-                latched: &latch, isCurrent: { true },
-                onSend: { calls += 1; received = Array(raw.utf8) }
+                attempt: attempt, isCurrent: { true },
+                onSend: { _ in calls += 1; received = Array(raw.utf8) }
             )
         }
         #expect(calls == 1)
@@ -101,14 +214,14 @@ struct NativeQAComposerTests {
             (true, false, false, true, " \n"),
             (true, false, false, true, String(repeating: "🙂", count: 2001))
         ] {
-            var latch = false
+            let attempt = NativeQAComposerAttempt()
             let result = NativeQAComposerAccess.send(
                 draft: .constant(text), canSend: allowed, isBusy: busy,
-                hasUnconfirmedRequest: pending, latched: &latch,
-                isCurrent: { eligible }, onSend: { calls += 1 }
+                hasUnconfirmedRequest: pending, attempt: attempt,
+                isCurrent: { eligible }, onSend: { _ in calls += 1 }
             )
             #expect(!result)
-            #expect(!latch)
+            #expect(!attempt.isLatched)
         }
         #expect(calls == 0)
     }
