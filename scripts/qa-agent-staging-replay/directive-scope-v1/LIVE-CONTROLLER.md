@@ -51,3 +51,29 @@ review a concrete operator bootstrap/configuration and exact source bindings.
 The old bda window and old directives/used grant are not reusable. Proposed cap
 remains at most60 minutes/max2 with original reserves and strict second-attempt
 causal repair; this candidate grants none of that execution authority.
+
+
+## Cleanup phase boundary (controller protocol v2)
+
+HOLD checks the original cleanup deadline as well as the original data deadline,
+before and after source checks. A missing cleanup cap closes as
+HOLD_CLEANUP_UNAVAILABLE; an elapsed cap closes as HOLD_CLEANUP_EXPIRED. The first
+observed cap is latched and cannot be cleared, replaced or extended. The controller
+never writes Budget.cleanup_end, creates a replacement Budget or adds time.
+
+A matching completed entry's cleanup PASS can be reused to close HOLD without
+late cleanup IO. This is prior confirmed cleanup, not a new post-deadline probe.
+Unknown cleanup with an exhausted cap stays CLOSED_UNKNOWN; it does not start a
+new cleanup period. Exact abort is handled independently of data expiry, while
+original PID/object ownership still fences cleanup. EOF/interrupt retain the
+same close path and never delete ledger markers.
+
+There is a deliberate admission limitation: the frozen Budget's data checks do
+not bound a new entry by an already-running cleanup cap. Therefore repair is
+rejected before descriptor reads/entry dispatch once cleanup has begun. Missing
+cleanup evidence also cannot qualify HOLD. The grant's max2 ceiling is unchanged,
+but this controller does not claim that a second real restore is executable with
+that exhausted/terminal-phase Budget. Supporting another data phase would require
+an explicit reviewed lifecycle contract, not a silent reset or a fresh Budget.
+The earlier synthetic two-call fixture omitted cleanup initialization; current
+fixtures model it and no longer advertise that as real two-attempt readiness.
