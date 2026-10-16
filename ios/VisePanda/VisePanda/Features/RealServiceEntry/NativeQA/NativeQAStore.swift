@@ -19,6 +19,7 @@ final class NativeQAStore {
     init(transport: any NativeQATransport) { self.transport = transport }
     var scope: NativeDataScope? { transport.scope }
     var busy: Bool { work != nil }
+    var hasReadableProjection: Bool { active && scope != nil && boundScope == scope }
     var canSend: Bool {
         state == .ready && active && boundScope == scope && scope != nil && !busy && pending == nil && selectedID != nil
         && policy?.consentState == .accepted && !messages.contains { $0.status.waiting }

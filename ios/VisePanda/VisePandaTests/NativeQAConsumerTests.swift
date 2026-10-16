@@ -105,6 +105,41 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
         await store.acceptConsent()
         XCTAssertEqual(port.consents, 0); XCTAssertEqual(store.state, .blocked("NOTICE_CHANGED"))
     }
+    @MainActor func testBackgroundCancelsInFlightHistoryAndClearsProjection() async {
+        let port = NativeQAConsumerTestPort(); port.holdHistory = true
+        let store = NativeQAStore(transport: port)
+        await store.activate(true)
+        let reading = Task { await store.select(port.sessionID) }
+        for _ in 0..<1000 { if port.historyStarted { break }; await Task.yield() }
+        XCTAssertTrue(port.historyStarted)
+        await store.activate(false); await reading.value
+        XCTAssertTrue(port.historyCancelled); XCTAssertTrue(store.messages.isEmpty)
+        XCTAssertNil(store.policy); XCTAssertFalse(store.hasReadableProjection)
+    }
+    @MainActor func testForeignReceiptInputCannotClearOriginalCommand() async {
+        let port = NativeQAConsumerTestPort(); port.foreignReceipt = true
+        let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Original exact input"; await store.send()
+        XCTAssertEqual(store.state, .unknown); XCTAssertNotNil(port.retained)
+        XCTAssertEqual(port.retained?.originalText, "Original exact input"); XCTAssertEqual(port.posts, 1)
+    }
+    @MainActor func testPhysicalReadbackFailureBlocksPostAndPreservesWrittenIdentity() async {
+        let port = NativeQAConsumerTestPort(); port.failReadback = true
+        let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        store.draft = "Written but not verified"; await store.send()
+        XCTAssertEqual(port.posts, 0); XCTAssertNotNil(port.retained)
+        XCTAssertEqual(store.state, .unknown)
+    }
+    @MainActor func testScopeChangeImmediatelyRevokesReadableProjection() async {
+        let port = NativeQAConsumerTestPort(); port.saved = true
+        let store = NativeQAStore(transport: port)
+        await store.activate(true); await store.select(port.sessionID)
+        XCTAssertTrue(store.hasReadableProjection)
+        port.scope = nil
+        XCTAssertFalse(store.hasReadableProjection); XCTAssertFalse(store.canSend)
+    }
     @MainActor func testLocalRequestPathsAndPendingIdentityAreClosed() throws {
         let port = NativeQAConsumerTestPort()
         let policy = try JSONDecoder().decode(NativeQAPolicy.self, from: JSONSerialization.data(withJSONObject: port.policy))
@@ -127,6 +162,8 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
     var posts = 0, consents = 0, messageCount = 1
     var failRetain = false, dropAck = false, hideReceipt = false, saved = false
     var changeActorOnHistory = false, foreignHistory = false
+    var holdHistory = false, historyStarted = false, historyCancelled = false
+    var foreignReceipt = false, failReadback = false
     var noticeHash = String(repeating: "a", count: 64)
     var consent = "accepted", messageStatus = "answered"
     var policy: [String: Any] {
@@ -142,6 +179,7 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
     }
     func loadPending(scope: NativeDataScope) throws -> NativeQAPending? {
         guard let retained else { return nil }
+        if failReadback { throw NativeQAError.journalUnavailable }
         guard retained.matches(scope) else { throw NativeQAError.stale }
         return retained
     }
@@ -170,8 +208,15 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
             object = ["requestId": pending.requestID, "turnId": pending.requestID, "sessionId": sessionID, "status": "pending", "reused": false]
         case .recover:
             if hideReceipt { throw NativeQAError.server(code: "PROVIDER_UNAVAILABLE", ack: "unknown") }
-            object = ["message": messages.first as Any]
+            guard var message = messages.first else { throw NativeQAError.invalidResponse }
+            if foreignReceipt { message["input"] = "Foreign input" }
+            object = ["message": message]
         case .history:
+            if holdHistory {
+                historyStarted = true
+                do { try await Task.sleep(for: .seconds(20)) }
+                catch { historyCancelled = true; throw error }
+            }
             if changeActorOnHistory { self.scope = nil }
             var selected = session
             if foreignHistory { selected["id"] = policyID }

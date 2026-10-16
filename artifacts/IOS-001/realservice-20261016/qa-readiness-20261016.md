@@ -1,4 +1,6 @@
-# iOS 真实 QA 可测剩余：当前源码核验
+# iOS 真实 QA 可测剩余：初始源码核验
+
+后续：Main 已固定 NativeQA 接口并批准新消费者实施，消费者源码已交；见 [nativeqa-consumer.md](nativeqa-consumer.md)。下文保留接口批准前的缺口核验，不冒当前消费者仍未实现。
 
 结论：**尚不能通过现有 bundle/profile 直接完成 Native Bearer → Web QA 同 Session 首答/重开。PR730 已完成真实服务入口准备，不包含 NativeQA 业务适配。** 同域名/同数据库不等于同一业务端口。当前 lease 内没有可独立完成的缺陷修复；先确定下述 server/NativeSession 合同，才有新 NativeQA consumer 的真实实现输入。本次不创建空壳、重复队列、身份或 journal。
 
