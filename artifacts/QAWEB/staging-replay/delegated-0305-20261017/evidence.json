@@ -1,0 +1,146 @@
+{
+  "sourceHead": "8fd76ddf807fe6b5a29f5a17b3ef53530a6ec9de",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE; evidence-only",
+  "review": "PENDING_FIXED_SOURCE_AND_ACTUAL_CONFIGURATION_REVIEW",
+  "authority": {
+    "authorityKind": "JT_EXISTING_DELEGATION_PLUS_BESTJ_BOUNDED_DECISION",
+    "authorizationDigest": "dbf2c2ac261eda63e79262675007aa22ce04b9d2668a20eb0517dcc23922d641",
+    "commitmentSha256": "bfb65e8530f7f68dc153fe02827e30ed344ca57429e6683bbef011f8e3d79aea",
+    "businessDecisionNo": "BESTJ-DB-LOCAL-20261017-0305",
+    "issuerThreadId": "01a1330e-5008-7061-909b-8abb26792003",
+    "nativeDecisionEventId": "fco_01a1461b-3739-75ec-9840-8f2e04400bb1",
+    "decisionBodySha256": "12af49025007e4d1b0ba07c7d17ada4db98a321af5bdc2d2b41bf5a936983c30",
+    "proposalSha256": "3a5ced818a8ab5be839b1f7aa1aa9797104729166e4e5d7ddad119a8eb19a1c0",
+    "delegationEventIds": [
+      "Sentinel_9fd068e678a0819187991a0a17138244",
+      "Sentinel_e4ac0f273c108191a5dfc74e481efce9"
+    ],
+    "delegationRawSha256": "563828019bc610f95b23a18fd3bace42e37e18ac8e6eca63c1096fb0ff16d5cd",
+    "humanRoom": "6acd9506863c81958e1176881961131c",
+    "newHumanEvent": null,
+    "roomProvenance": "ORIGINAL_PARENT_PROVIDED_CONTEXT_NOT_NATIVE_API_FIELD",
+    "secondNativeCallId": "NOT_EXPOSED_NOT_FABRICATED",
+    "sourceBundleSha256": "231fbd337fe8c27926c9aa9a4c769e5f9506e1e87d99249adc0bcd197bb1b30c"
+  },
+  "authorityBoundary": "Real existing JT delegation plus new BestJ decision; not a new JT human event, not a platform signature and not START. Delivery IDs do not create additional grants.",
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/container-diagnostic/restore/source-lock.json": "131f252fa7814f1bc7962d3c7c2f059e63d9cf076d72b0628586c9a744f23b15",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/README.md": "254aeaf051c8580abf91aadbe09045fce51e5f86806edeb1e3192d62e92de1d0",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/bootstrap.py": "f5ccd88357cbd94eb82a0bce241ef4c36617dac92ff4dbffb539aaa98e107e7e",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/entry.py": "a37d8aca0308dc93047e6cc343cad6ca1c45c6e00059358a347b6da221dc6ba9",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/lock-sources.py": "8d9c1b9953dc74fb4daa306b80352a0e9a98a7b13f48365ea8e5c5ed452c7680",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/pending-binding.json": "6058e9c1753cf71f242d19feb4af0b77652cb12c620c7c972efafed0c3f6e9e7",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/profile.py": "391a0deb76858171505f8920fcceb6ce8e2330b88fe54494a04dbc7f3372164a",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/source-lock.json": "ef11dd95a81b48640fb89438dd75e681b12fb4a7d7d8310bd2c467dd89403104",
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/test_delegated_scope.py": "114d67a10d3bb5b64cb0771f5fbdbba0ba46214f50e088096437f511ca915b7e",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/live-controller.py": "e4c14acb4c3580135b8c17d7ae2caf696fdb070cb8d2765a6b30013cda9da9db",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": "176a914db39a78492bbaf32704441dffdd911b86b0f836df6a96fc232c8026fc",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/source-lock.json": "832132e1bc2986e3ae00de26cd8c301f86757e570ac59a9a18e65755e72ff258",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/test_pending_scope.py": "58aac5fe478795189bd4b7fa75c661db972a2f9b3b51c265bec5a38d2d20c7d3",
+    "scripts/qa-agent-staging-replay/reviewed-diagnostic-window.py": "db5216e9134e511ae3fa208b6df8b496c94d1d53f46335361911a66f4ec21589"
+  },
+  "tests": {
+    "delegated": 10,
+    "directV2": 13,
+    "v1": 37,
+    "legacyWindow": 26,
+    "controller": 17,
+    "planNoPG": 4,
+    "total": 107,
+    "privateWrapper": "AST compile and unconfigured guard PASS",
+    "limits": "Synthetic source/ledger negatives and unchanged direct-profile compatibility; source-format verification used explicitly permitted actual non-secret records. No actual material/identity/ledger read or copy."
+  },
+  "logs": [
+    {
+      "privateBasename": "delegated-first.log",
+      "sha256": "22c7745ec8af02cd1be594984bc10e281a8796a56e3e8cfe68c54ee1f49cd7f0",
+      "summary": [
+        "Ran 9 tests in 0.008s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-final.log",
+      "sha256": "366b43e20dd6aba71341419964e56ca6ef5f44194bae9ffe45881b7effa6c717",
+      "summary": [
+        "Ran 10 tests in 0.009s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-v2.log",
+      "sha256": "f0a87a5e9fa91c6b211b22d3e7ddf9fe63299a24a1c45d6529eab1a149f0c0ec",
+      "summary": [
+        "Ran 13 tests in 0.040s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-v1.log",
+      "sha256": "fc05b592a3a6967fc442b90ca38d77a007c9c0fee91236d07ee5b48d3550c787",
+      "summary": [
+        "Ran 37 tests in 0.330s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-legacy.log",
+      "sha256": "7a007866f3dd77103796d2ffa7929ab4083ca58be2088c468e59233595156da1",
+      "summary": [
+        "Ran 26 tests in 0.165s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-controller.log",
+      "sha256": "ed53da5dc8e2e467d5ba80288359aa675377eb7447f165b7b36c0bfae2ca30bd",
+      "summary": [
+        "Ran 17 tests in 0.068s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "delegated-plan.log",
+      "sha256": "ed51c61f4629b5777642392c0f874b953c0674ecb0881e9c76ed003458bedf61",
+      "summary": [
+        "Ran 4 tests in 0.009s",
+        "OK"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "privateArtifacts": {
+    "delegated-0305-binding.typed.prepared.json": {
+      "sha256": "f32154c93327f22e2ac271c33e1fc14b2bcbe337905167c3be31cc2e969c256d",
+      "bytes": 3873
+    },
+    "delegated-0305-source-typed-proof.json": {
+      "sha256": "67dbe54f1ea40134bf4ff7a07cfb8b5385a2f3ccb94fdd742333a1a0622d6de3",
+      "bytes": 1355
+    },
+    "operator-delegated-0305-candidate.py": {
+      "sha256": "8fcfecf9b7fc97e9555151a21e45847da1bffe08e6aec3bc6fec9514ad12556b",
+      "bytes": 2151
+    },
+    "operator-delegated-0305-binding.template.json": {
+      "sha256": "6ffa7bc4ed3f0840bf98d2d8d1d1a20be76205336fc262405bb0c77d1753ab27",
+      "bytes": 140
+    }
+  },
+  "privateIndexSha256": "70e737ba0abbe7ee20789a63d03313700f3abedb29b8eb668d7f292ff767472b",
+  "actualSourceIndexHashes": {
+    "base": "6abd923d08f72dafb355ee0e2710ad61e1bca9278a774ed36b4b891d94eda0c9",
+    "complete": "2428ab22f531cff29b766a6ecb178b559b6313170daaf97a868af5a5a66a0a97",
+    "mainAck": "37e1365e7c784d52036bcdb691e289d2a0a9219b10b9e6a5220c6e8eb341e6b4"
+  },
+  "history": "Initial read-only parser qualification expected the first-hop transport for Main receipt; corrected to the actual codex_app.send_message_to_thread native format. Main escaped payload is compared to actual prompt, not mistaken for another sender. No actual run was attempted.",
+  "runtimeInputs": "All7 frozen runtime input hashes unchanged; no image build or physical restore matrix.",
+  "actualExecution": "NOT_STARTED; code/config independent qualification and every original guard remain required. Existing explicit delegated decision supplies scope; no extra JT event requested.",
+  "oldRecords": "795/bda/used and original drivers preserved; no reset or extension."
+}
