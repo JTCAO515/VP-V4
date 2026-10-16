@@ -1,0 +1,23 @@
+test_absolute_deadline_is_anchored_once_not_per_phase (__main__.DeadlineGuards) ... ok
+test_after_deadline_cleanup_fences_container_not_just_exec_client (__main__.DeadlineGuards) ... ok
+test_execute_unknown_nonce_fence_propagates_to_active_window_guard (__main__.DeadlineGuards) ... ok
+test_inflight_command_capped_and_no_data_after_expiry (__main__.DeadlineGuards) ... ok
+test_inflight_wait_rechecks_utc_jump_and_does_not_resubmit (__main__.DeadlineGuards) ... ok
+test_keyboard_interrupt_records_failed_cleanup_result_after_owned_fence (__main__.DeadlineGuards) ... ok
+test_label_conflict_never_removes_foreign_container_and_cleanup_unknown (__main__.DeadlineGuards) ... ok
+test_launch_timeout_before_created_flag_still_fences_own_nonce (__main__.DeadlineGuards) ... ok
+test_observation_slices_do_not_reset_original_command_timeout (__main__.DeadlineGuards) ... ok
+test_private_module_budget_restores_all_references_and_hash_is_cancellable (__main__.DeadlineGuards) ... ok
+test_same_communicate_retry_never_repeats_sql_input (__main__.DeadlineGuards) ... ok
+test_subprocess_and_sql_paths_share_same_proxy_budget (__main__.DeadlineGuards) ... ok
+test_timeout_uses_the_smaller_utc_or_monotonic_remaining (__main__.DeadlineGuards) ... ok
+test_unknown_cleanup_keeps_future_active_consumption_guard (__main__.DeadlineGuards) ... ok
+test_utc_backward_jump_never_extends_monotonic_limit (__main__.DeadlineGuards) ... ok
+test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (__main__.DeadlineGuards) ... ok
+test_validation_latency_cannot_extend_approved_window (__main__.DeadlineGuards) ... ok
+test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.093s
+
+OK

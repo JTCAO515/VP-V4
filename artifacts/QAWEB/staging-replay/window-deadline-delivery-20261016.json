@@ -1,7 +1,7 @@
 {
   "status": "PASS_NEW_DIAGNOSTIC_PATH_ABSOLUTE_DEADLINE_CANDIDATE_ONLY",
   "base": "3a59608b4810d1a1588c7a055d8e6bd7dd056b70",
-  "restoreCodeSha256": "5dc6cd8449f7bfec8f71f1141a4e14a20bc0ad4eb4e522d699ab6cfd00fbb44f",
+  "restoreCodeSha256": "7b712592625230fbe447fff4f4b84a6b2ea7c69a3789629570e944384c32256c",
   "red": "window-deadline-old-red.log: prior path launches postdata and replay after synthetic clock crosses window",
   "green": "window-deadline-guards-green.log:10 focused tests PASS",
   "sourceBeforeAfter": [
@@ -35,5 +35,14 @@
   "physicalDockerAndActualCipher": "UNRUN/STOP; no daemon start or real data/key/clone read",
   "candidateManifest": "161/86 unchanged; future qa-runtime-binding append-only dependency unmerged, not guessed or included",
   "newWindowApproved": false,
-  "newAuthorizationPins": "remain unconfigured"
+  "newAuthorizationPins": "remain unconfigured",
+  "latestDualClockDelta": {
+    "restoreCodeSha256": "7b712592625230fbe447fff4f4b84a6b2ea7c69a3789629570e944384c32256c",
+    "tests": 18,
+    "red": "window-deadline-utc-old742-oracle-red.log: immutable742 accepts forward UTC jump",
+    "green": "window-deadline-dual-clock-green.log",
+    "mechanism": "min(UTC end-reserve minus utc_now, fixed monotonic end-reserve minus monotonic); anchor captured before validation; inflight same-process observation slices<=0.25s; nominal caps/input not reset; expired is irreversible",
+    "base": "7428478b",
+    "actualIo": "STOP"
+  }
 }

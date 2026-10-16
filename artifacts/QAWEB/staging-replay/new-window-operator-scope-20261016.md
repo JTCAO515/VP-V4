@@ -55,3 +55,8 @@ Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_u
 新诊断入口在首次授权校验后只创建一次monotonic窗口终点，不随阶段/命令/重试重置。数据处理截止预留120秒cleanup；secret/archive/hash/SQL/restore/replay子进程timeout取原上限与同一剩余预算的min，过期不发下一命令。在途子进程由timeout中断，取消/回收本调用创建的host children；不能把docker exec客户端被kill当容器已停，须验证本nonce/ownedlabel、按不可变containerID删除并确认消失。容器启动请求已发但created旗标未置真时也执行该fence。
 
 必要cleanup允许到期后继续、独立总预算60s，仅inspect/remove/reap自有对象，不恢复data预算。foreignlabel/daemon未知/无法确认清理则cleanupFAIL/UNKNOWN、消费和active围栏保留，不授权下一attempt。原严格base字节、旧路径默认行为、47项既有证据与parser不动；新的合成时钟RED/GREEN及10项focused负例见window-deadline-delivery-20261016.json，无真实copy或新窗口。新runtime-binding迁移仍未合QA，不假造hash；当前候选仍161/86，待Main给稳定source再由本manifest owner独立更新。
+
+
+### UTC/monotonic双上界闭合
+批准边界是原绝对UTC windowEnd，同时以一次monotonic end限制最长运行；check/timeout始终取两者剩余预算min（同预留120s）。monotonic anchor在wall取样/授权校验前捕获，校验延迟不增加时间。UTC前跳可使数据立即过期，后跳不能延长monotonic；过期后不重新开放。
+在途等待按<=0.25s切片复查两钟，只继续等待同一进程、不新spawn/重送SQL/input，原命令timeout总上限不重置。发现过期后中断tracked进程并沿原nonce/immutable-ID fence清理，unknown仍保active/consumed结果。新18项focused含旧742UTC-forward RED；未执行真实数据/新窗口/clone。
