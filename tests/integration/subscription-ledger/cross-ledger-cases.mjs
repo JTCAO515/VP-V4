@@ -91,6 +91,18 @@ export async function runCrossLedger(t){
    await assertLegacyPin(db,'after');assert.deepEqual(await counts(db,'19001'),{legacy:0,subscription:1});
    assert.equal((await db.query("select pg_get_userbyid(relowner) as owner from pg_class where oid='subscription_development.periods'::regclass")).rows[0].owner,'postgres');
   });
+  await t.test('unsupported pinned transaction snapshots fail closed in both actual writers with no ledger row',async()=>{
+   for(const isolation of ['repeatable read','serializable','read uncommitted'])for(const direction of ['legacy','subscription']){
+    const c=await client(direction),id=direction==='legacy'?'19501':'19502';
+    try{
+     await c.query(`begin isolation level ${isolation}`);
+     await c.query('select count(*) from pg_catalog.pg_class');
+     const call=direction==='legacy'?rpcOld(c,legacyInput(id,owner(19500))):rpcNew(c,subscriptionInput(id,owner(19500)));
+     await assert.rejects(call,e=>{assert.equal(e.message,'ENTITLEMENT_ISOLATION_UNAVAILABLE');return true;});
+    }finally{await c.query('rollback');await c.end();}
+    assert.deepEqual(await counts(db,id),{legacy:0,subscription:0});
+   }
+  });
   let serial=20000;
   for(const direction of ['legacy_first','subscription_first'])await t.test(`${direction}: same/foreign owner and active/revoked/erased retained identity all conflict`,async()=>{
    for(const same of [true,false])for(const state of ['active','revoked','erased']){
