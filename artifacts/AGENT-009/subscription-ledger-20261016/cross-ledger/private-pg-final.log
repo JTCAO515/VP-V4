@@ -1,0 +1,48 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ development candidate apply rollback leaves no schema, old table/functions/policy/data unchanged (26.811875ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (11.367709ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (3.42625ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (3.260459ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (1.739875ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (2.113125ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (1.383541ms)
+  ✔ distinct verified renewal creates one next descriptor; restore/refund never replenishes it (3.769584ms)
+  ✔ expiry is server time and unknown/future state never active (1.556ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (4.2585ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (1.03325ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (9.481666ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (2.276167ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (1.198042ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (5.176542ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (1.523208ms)
+  ✔ freshness expiration and ambiguous active families conceal private period (2.634542ms)
+  ✔ READ COMMITTED concurrent family commit cannot mix count and selected period snapshots (25.419917ms)
+  ✔ private dump/restore retains erased family, revocation and epochs without adding role grants (161.823ms)
+  ✔ owned PG restart preserves committed receipts and period identities (237.768042ms)
+  ✔ legacy fingerprint permits only pinned authored fence body; all other metadata/ACL/table/data unchanged (5.535292ms)
+✔ subscription private PG17 persistence and denial vectors (1779.309667ms)
+▶ cross-ledger pinned candidate and actual writer concurrency
+  ✔ candidate refuses unknown legacy body/owner/ACL/flags before any schema change (19.318625ms)
+  ✔ transactional candidate replacement rollback restores exact legacy definition owner ACL and flags (21.923708ms)
+  ✔ runtime definer with filtered FORCE-RLS visibility refuses the actual legacy RPC, rollback restores metadata (8.923917ms)
+  ✔ legacy_first: same/foreign owner and active/revoked/erased retained identity all conflict (16.101083ms)
+  ✔ subscription_first: same/foreign owner and active/revoked/erased retained identity all conflict (14.064291ms)
+  ✔ legacy real RPC preserves 720h queue/snapshot/refund/replay while distinct new period remains independent (4.84025ms)
+  ✔ actual concurrent legacy wins identity mutex (same owner) (25.039291ms)
+  ✔ actual concurrent legacy wins identity mutex (foreign owner) (22.39025ms)
+  ✔ actual concurrent subscription wins identity mutex (same owner) (22.841208ms)
+  ✔ actual concurrent subscription wins identity mutex (foreign owner) (25.590209ms)
+  ✔ legacy open writer does not block independent other-ledger transaction (17.810042ms)
+  ✔ subscription open writer does not block independent other-ledger transaction (21.241833ms)
+  ✔ legacy owner lock chain remains acyclic: old A -> old B identity -> new B (41.862667ms)
+  ✔ erase owner/family lock chain remains acyclic: erase -> new B identity -> old B (38.125667ms)
+  ✔ legacy/service boundaries and candidate default-deny remain exact after fence behavior (2.409875ms)
+✔ cross-ledger pinned candidate and actual writer concurrency (1358.245375ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3193.684625

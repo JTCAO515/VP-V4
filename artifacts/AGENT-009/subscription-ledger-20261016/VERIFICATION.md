@@ -1,3 +1,5 @@
+> Current local fence pointer: [cross-ledger verification](cross-ledger/VERIFICATION.md) and [hashes](cross-ledger/hashes.json) record the new QA-based candidate-only two-writer fence. Only this local identity boundary is verified; whole runtime/Auth/privacy/Apple enablement remains NOT_READY/UNRUN. Earlier source-head evidence below remains historical.
+
 > Current candidate pointer (2026-10-16): SQL was moved byte-identically outside automatic migrations to `lib/server/entitlements/subscription-ledger/development-schema.sql`. See [current candidate verification](candidate-sql/VERIFICATION.md) and [current hashes](candidate-sql/hashes.json). The historical source-head evidence below retains its original paths and facts; legacy runtime composition remains NOT_READY.
 
 # AGENT-009 subscription ledger development evidence

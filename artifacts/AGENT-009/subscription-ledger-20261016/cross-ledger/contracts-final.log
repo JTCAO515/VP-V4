@@ -1,0 +1,46 @@
+✔ Free and Pass share consent-scoped benefits without enabling sales or legacy Ask capacity (0.57825ms)
+✔ price experiment changes exactly price, never duration, entitlement or SKU (0.638416ms)
+✔ localized presentation uses catalog inputs and never fabricates a storefront price or balance (0.218125ms)
+✔ generated native/development inputs cannot drift from the versioned authority (0.804ms)
+✔ policy snapshots cannot be mutated through nested configuration or display projections (0.119416ms)
+✔ Sandbox grant routes reject Production even if its feature flag is enabled (0.319083ms)
+✔ same verified Sandbox transaction yields one catalog capacity snapshot (0.48925ms)
+✔ reject cross-account, mismatched receipt, unknown SKU, type, environment and future time (0.215667ms)
+✔ revoked Apple state stays explicit and server clock excludes queued/expired intervals (0.089041ms)
+✔ closed snapshot accepts reordered JSON but rejects every unknown/missing key and wrong type/value (13.654416ms)
+✔ closed input rejects hidden/symbol keys, accessors and non-plain objects without invoking getters (1.194417ms)
+✔ closed input accepts plain/null-prototype JSON data and normal array length descriptors (0.48175ms)
+✔ canonical graph is deeply immutable including all display projections (0.239ms)
+✔ monthly policy preserves Free source and complete-task semantics without inheriting legacy 720h (0.126625ms)
+✔ all consumers fail closed for unknown catalog versions or sales enabling input (0.205334ms)
+✔ zh/en display contains no policy numbers, balances, real SKU or sales price (0.201542ms)
+✔ StoreKit local monthly auto-renewable configuration is isolated and generated reproducibly (0.417167ms)
+✔ legacy catalog/generator/outputs retain pinned base bytes (0.542417ms)
+✔ fixed legacy pins preserve metadata and permit only authored visibility and identity-fence body additions (0.74275ms)
+✔ known-before pin matches accepted legacy source bytes; candidate uses the explicit pinned body (0.207083ms)
+✔ injected verifier/readback accepts accelerated Sandbox period and immutable version snapshot (1.612166ms)
+✔ renewal and revoked current evidence bind the original family without moving period (0.230166ms)
+✔ closed wire rejects unknown versions states, types, keys and private error fields (0.228ms)
+✔ read errors and foreign snapshots fail closed; never none or zero (0.269458ms)
+✔ unknown ACK rejects and does not call the writer twice (0.254958ms)
+✔ transport bounded at 8192 UTF8 bytes; active requires bounded server lease, no client calendar (0.25825ms)
+✔ unconfigured and localTest paths perform zero port/credential/network/write calls (0.853833ms)
+✔ both signed sources reject owner, environment, SKU, type, dates, ownership and group mismatch (3.671417ms)
+✔ readback identity/date/revocation conflicts reject; old observation cannot un-revoke (0.893958ms)
+✔ bounded strict JWS, catalog and approved binding reject before verification (0.297291ms)
+✔ signature rejection and failed or malformed current readback never yield a candidate (0.256542ms)
+✔ async catalog/binding/ports mutation cannot change the frozen policy or verifier identity (0.501709ms)
+✔ readback mutation of prior SDK payload cannot make a different requested transaction agree (0.18825ms)
+✔ SDK/catalog/ports getters are rejected without executing getter code (0.267458ms)
+✔ abort before verification calls zero ports; cancel after first verify never reads Apple (0.32225ms)
+✔ late verifier completion after abort never mints or starts readback (1.8405ms)
+✔ total deadline bounds stalled readback and ignores late completion without candidate (21.138167ms)
+✔ aborting a returned evidence lease refuses persistence before any SQL write (1.268459ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 143.65625
