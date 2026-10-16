@@ -1,0 +1,6 @@
+test_typed_error_and_role_preserved (__main__.ContainerSession) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.302s
+
+OK
