@@ -1,6 +1,0 @@
-{
-  "parent_commit": "696c48a9b137acc88ff41a5e390f59480291848e",
-  "source": "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeRealServiceDisconnectedView.swift",
-  "sha256": "abf8bc8f763cce6df1ce785e414e818b6f457426e34d778062f6b8af19bb85fe",
-  "interface": "NativeRealServiceDisconnectedView(chinese: Bool)"
-}

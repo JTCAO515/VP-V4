@@ -1,5 +1,7 @@
 # IOS-001 real service source seam — 2026-10-16
 
+Full source snapshots, exact pins, probes and representative Simulator screenshots are preserved in the [immutable pre-cleanup evidence archive](https://github.com/JTCAO515/VP-V4/tree/d91b7ca5e4985b15151ac63c5dbc520f4e79b690/artifacts/IOS-001/realservice-20261016). The Main private archive is also retained; product, tests and PBX are unchanged. This PR keeps the necessary narrative with fixed references rather than duplicate executable/source evidence.
+
 Initial audit status: SOURCE INSPECTED; NO NEW INDEPENDENT PRODUCT MODULE. The two candidates were subsequently applied under Main's exact shared lease; see [applied.md](applied.md) for current product changes and verification. The remainder below preserves the initial audit findings.
 
 Worktree `p0-ios-realservice-20261016`, branch `codex/p0-ios-realservice-20261016`, base `5e960e6d4dd4b1050b23622a4dc6ed57653f4b57`; initially clean. Effective model/thinking/service tier UNKNOWN (not exposed). Apple Swift 6.4 arm64 toolchain observed. No simulator, DerivedData, physical device, signing, credentials, provider, grant, migration, remote configuration or production action used.

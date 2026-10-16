@@ -1,5 +1,7 @@
 # Main integrated iOS service entry verification
 
+Full source snapshots, exact pins, probes and representative Simulator screenshots are preserved in the [immutable pre-cleanup evidence archive](https://github.com/JTCAO515/VP-V4/tree/d91b7ca5e4985b15151ac63c5dbc520f4e79b690/artifacts/IOS-001/realservice-20261016). The Main private archive is also retained; product, tests and PBX are unchanged. This PR keeps the necessary narrative with fixed references rather than duplicate executable/source evidence.
+
 Base QA3d99a8af1805d714b71dce959b0811da468c24ea; tested exact source e2b39c8f6f8e00d6dfa71e27381ca4ecca2049fe. Child source87aea8c1, actual-method tests696c48a9 and disconnected view74a17a0b were received in the independent p0-ios-main-20261016 worktree. Shared AppRoute gate and PBX were written only by Main after child returned the two exact Root/Session hunks. Initial artifact-tip cherry-pick lacked its parent-created files; Main resolved only the previously absent evidence directory from the exact9cdf snapshot, preserving child source/data and previous branches. Final product hashes match the accepted candidate; no reset or unrelated edits.
 
 ## PASS

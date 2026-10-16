@@ -1,5 +1,7 @@
 # IOS-001 exact shared lease applied — 2026-10-16
 
+Full source snapshots, exact pins, probes and representative Simulator screenshots are preserved in the [immutable pre-cleanup evidence archive](https://github.com/JTCAO515/VP-V4/tree/d91b7ca5e4985b15151ac63c5dbc520f4e79b690/artifacts/IOS-001/realservice-20261016). The Main private archive is also retained; product, tests and PBX are unchanged. This PR keeps the necessary narrative with fixed references rather than duplicate executable/source evidence.
+
 Main explicitly released only AppShellView.swift:21 and NativeSession.swift:353 for these exact accepted candidates. Applied on original worktree at 9cdf933f6136dd5caef5ab95e720c6504c1ef033. All other shared/Ask hunks remain outside this lease.
 
 Product diff: two replacements, two files. The real-service launch flag now ensures existing four tabs. Installed staging HTTPS may resolve the exact QA host. No installed config/default mode/activation, credentials, same-key retry, budgets, policy or provider behavior changed.
