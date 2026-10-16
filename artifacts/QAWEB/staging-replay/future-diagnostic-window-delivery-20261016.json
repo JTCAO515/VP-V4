@@ -1,7 +1,7 @@
 {
   "status": "PASS_SOURCE_ONLY_UNCONFIGURED_NEW_WINDOW_CANDIDATE",
   "base": "f31e5ea8e98094f486814a6546d0ea14a950d7d8",
-  "restoreCodeSha256": "62b34f2b940a0475fba7ec2a8337ab8f1b15846144d115ec309c8ef5327b0e43",
+  "restoreCodeSha256": "1c07da784d9b3a4119b9146735feb61473818d41012337473520d81cf59204d4",
   "candidateManifestSha256": "65d4a11e2ac2ad2866733248b912a765fa1a660603463d4b6d9e894fe46caf65",
   "candidateSource": "3d99a8af1805d714b71dce959b0811da468c24ea",
   "counts": {
@@ -114,8 +114,16 @@
   },
   "latestLaunchInterruptRepair": {
     "delivery": "window-launch-interrupt-delivery-20261016.json",
-    "restoreCodeSha256": "62b34f2b940a0475fba7ec2a8337ab8f1b15846144d115ec309c8ef5327b0e43",
-    "focusedTests": 23,
+    "restoreCodeSha256": "1c07da784d9b3a4119b9146735feb61473818d41012337473520d81cf59204d4",
+    "focusedTests": 25,
     "actualIo": "STOP"
+  },
+  "runtimePrerequisiteUpdate": {
+    "source": "Main direct environment evidence",
+    "daemon": "READY29.8/API1.56 linuxarm64",
+    "cachedStrictImageIdMatches": true,
+    "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "pullTagOrPgCopyStartedByThisOwner": false,
+    "notManagedRestoreAcceptance": true
   }
 }

@@ -345,6 +345,30 @@ class DeadlineGuards(unittest.TestCase):
         with self.assertRaises(ValueError):budget.cleanup_owned(db)
         self.assertEqual(len(commands),1);self.assertTrue(running[0])
 
+    def test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape(self):
+        deadline=load('diagnostic-window-deadline')
+        cases=[(1,b'[]',None,True),(1,b'',None,True),(2,b'[]',None,False),(1,b'not-json',None,False),(1,b'[]','wrong-id',False),(1,b'[]','daemon-not-ready',False)]
+        for rc,out,override,want_pass in cases:
+            with self.subTest(rc=rc,out=out,override=override):
+                db=SimpleNamespace(name='qaw-confirmed-lower',nonce='nonce',context='desktop-linux',created=False,_deadline_run_issued=True,_deadline_launch_confirmed=True,_deadline_container_id='c'*64)
+                def raw(args,**kwargs):
+                    identifier=args[-1]
+                    error='error: no such object: '+identifier if override is None else ('error: no such object: wrong-id' if override=='wrong-id' else 'error: cannot connect to daemon')
+                    return subprocess.CompletedProcess(args,rc,out,error.encode())
+                budget=deadline.Budget(10,clock=lambda:20,reserve=1);budget.raw_subprocess=SimpleNamespace(run=raw)
+                if want_pass:budget.cleanup_owned(db);self.assertTrue(db._deadline_cleanup_pass)
+                else:
+                    with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+                    self.assertFalse(budget.cleanup_ok)
+
+    def test_lowercase_absence_never_resolves_unconfirmed_launch(self):
+        deadline=load('diagnostic-window-deadline')
+        db=SimpleNamespace(name='qaw-late-lower',nonce='nonce',context='desktop-linux',created=False,_deadline_run_issued=True,_deadline_launch_confirmed=False)
+        budget=deadline.Budget(10,clock=lambda:20,reserve=1)
+        budget.raw_subprocess=SimpleNamespace(run=lambda args,**kw:subprocess.CompletedProcess(args,1,b'[]',('error: no such object: '+args[-1]).encode()))
+        with self.assertRaisesRegex(ValueError,'OWNED_DEADLINE_CLEANUP_UNKNOWN'):budget.cleanup_owned(db)
+        self.assertFalse(budget.cleanup_ok)
+
     def test_absolute_deadline_is_anchored_once_not_per_phase(self):
         deadline=load('diagnostic-window-deadline');from datetime import datetime,timezone,timedelta
         now=datetime.now(timezone.utc);clock=[100.0]

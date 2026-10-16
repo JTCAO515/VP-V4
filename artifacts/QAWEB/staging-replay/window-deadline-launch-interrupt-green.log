@@ -9,8 +9,10 @@ test_interrupted_prefix_survives_unknown_cleanup_and_persistence (__main__.Deadl
 test_keyboard_interrupt_records_failed_cleanup_result_after_owned_fence (__main__.DeadlineGuards) ... ok
 test_label_conflict_never_removes_foreign_container_and_cleanup_unknown (__main__.DeadlineGuards) ... ok
 test_launch_timeout_before_created_flag_still_fences_own_nonce (__main__.DeadlineGuards) ... ok
+test_lowercase_absence_never_resolves_unconfirmed_launch (__main__.DeadlineGuards) ... ok
 test_observation_slices_do_not_reset_original_command_timeout (__main__.DeadlineGuards) ... ok
 test_private_module_budget_restores_all_references_and_hash_is_cancellable (__main__.DeadlineGuards) ... ok
+test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (__main__.DeadlineGuards) ... ok
 test_recorded_launch_id_conflict_never_removes_a_different_id (__main__.DeadlineGuards) ... ok
 test_same_communicate_retry_never_repeats_sql_input (__main__.DeadlineGuards) ... ok
 test_subprocess_and_sql_paths_share_same_proxy_budget (__main__.DeadlineGuards) ... ok
@@ -23,6 +25,6 @@ test_validation_latency_cannot_extend_approved_window (__main__.DeadlineGuards) 
 test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 0.151s
+Ran 25 tests in 0.147s
 
 OK
