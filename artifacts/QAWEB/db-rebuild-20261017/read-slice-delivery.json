@@ -1,0 +1,49 @@
+{
+  "decision": "DB-REBUILD-20261017",
+  "sourceHead": "c66a58b8ba63f7107663a5b63fbcae66bdc4e6eb",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE",
+  "status": "READ_SLICE_COMPLETE_WRITE_CLOSURE_IN_PROGRESS",
+  "baseQA": "813f9d7fdf956e84fe769e823850e79b79508bf4",
+  "serviceContract": "648f02240faa802ca93276a1b43202215c0affd6",
+  "runs": [
+    {
+      "file": "run-238080df6d694bc4bb708006fed26e07.json",
+      "sha256": "db1229290db7bdd347a308df0b7545721fdb82a3718d7f2f00e143c1e75c2639",
+      "status": "FAIL",
+      "cleanup": "PASS",
+      "checks": 0
+    },
+    {
+      "file": "run-daec58dfbb5b4f77b764b3a02f59ee86.json",
+      "sha256": "c9adbfe21444c777b5262e3737606407833f5d1a65c502d420d7fdca3f4c3364",
+      "status": "PASS_NATIVE_SESSION_READ_SLICE",
+      "cleanup": "PASS",
+      "checks": 24
+    },
+    {
+      "file": "run-1653b685f5f24a8e889ff248a93c8700.json",
+      "sha256": "54bf13f768d18a5eee3c0dafdfa49064ccc439febf3f76990d436d44e7b22a37",
+      "status": "FAIL",
+      "cleanup": "PASS",
+      "checks": 0
+    },
+    {
+      "file": "run-bbc46adb807b492a897974b484361dff.json",
+      "sha256": "7d385f11c7b2425c55ac998f1e60f66b50fec7f974d843527a0e5e45e4a55a9d",
+      "status": "PASS_M1_SESSION_DATABASE_CONTRACT",
+      "cleanup": "PASS",
+      "checks": 20
+    }
+  ],
+  "currentProof": "run-daec58dfbb5b4f77b764b3a02f59ee86.json",
+  "scope": "24 checks=12 per fresh database. Separate connections prove retained synthetic read; answer is admin-seeded, not worker-generated.",
+  "unrun": [
+    "full Native submission/worker/budget/result cycle",
+    "real JWT/GoTrue/device",
+    "shared target/provider/deployment"
+  ],
+  "noHistoricalRestore": true,
+  "noExistingMigrationChanges": true,
+  "newResourceOnly": true,
+  "fixtureInterface": "scripts/qa-agent-db-baseline/run.py --run; service owner may instantiate own Fixture and assemble.build, never reuse producer container."
+}

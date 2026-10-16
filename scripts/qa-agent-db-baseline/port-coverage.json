@@ -1,0 +1,477 @@
+{
+  "contractCommit": "648f02240faa802ca93276a1b43202215c0affd6",
+  "contractSha256": "aa19302219d8a4474022a4e1d7cb9b97009e9539c4bfad1e1f4ba89a2b882571",
+  "ports": [
+    {
+      "name": "qa_read_policy_v1",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "qa_accept_policy_v1",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ]
+    },
+    {
+      "name": "qa_list_sessions_v1",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_limit",
+          "typeAndConstraint": "integer=20"
+        }
+      ]
+    },
+    {
+      "name": "qa_read_session_v1",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "qa_submit_message_v1",
+      "caller": "authenticated",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_idempotency_key",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_locale",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_text",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_task_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_relationship",
+          "typeAndConstraint": "text=qa_followup"
+        }
+      ]
+    },
+    {
+      "name": "read_text_turn",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "qa_cancellation_v1",
+      "caller": "authenticated",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text=read|cancel"
+        },
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_request_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "native_prepare_v2",
+      "caller": "existing trusted identity service only",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_owner",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_session",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "native_session_v2",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_attempt",
+          "typeAndConstraint": "uuid default null"
+        }
+      ]
+    },
+    {
+      "name": "qa_native_session_v1",
+      "caller": "authenticated",
+      "state": "INSTALLED_READ_SLICE",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text closed set"
+        },
+        {
+          "name": "p_mobile_epoch",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_payload",
+          "typeAndConstraint": "jsonb default {}"
+        }
+      ]
+    },
+    {
+      "name": "qa_ready_groups_v3",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_limit",
+          "typeAndConstraint": "integer"
+        },
+        {
+          "name": "p_model",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_price_version",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_endpoint",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ]
+    },
+    {
+      "name": "qa_claim_work_v1",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "qa_read_work_v1",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "qa_authorize_dispatch_v1",
+      "caller": "service_role/internal delegated authority",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_context_digest",
+          "typeAndConstraint": "text"
+        }
+      ]
+    },
+    {
+      "name": "qa_authorize_dispatch_v2",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_context_digest",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ]
+    },
+    {
+      "name": "qa_complete_work_v1",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_kind",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_text",
+          "typeAndConstraint": "text"
+        }
+      ]
+    },
+    {
+      "name": "reserve_model_budget",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_task_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_model",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_price_version",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_reserved_micros",
+          "typeAndConstraint": "bigint"
+        }
+      ]
+    },
+    {
+      "name": "dispatch_model_budget",
+      "caller": "service_role/internal v1 authority",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        }
+      ]
+    },
+    {
+      "name": "finish_model_budget",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text=settle|pending|release"
+        },
+        {
+          "name": "p_actual_micros",
+          "typeAndConstraint": "bigint default null"
+        }
+      ]
+    },
+    {
+      "name": "read_hosted_worker_status",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": []
+    },
+    {
+      "name": "hosted_worker_heartbeat",
+      "caller": "service_role",
+      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "parameters": [
+        {
+          "name": "p_worker_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_build",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_started_at",
+          "typeAndConstraint": "timestamptz"
+        },
+        {
+          "name": "p_phase",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_result",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_polls",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_finished",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_unavailable",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_skipped",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_stop_reason",
+          "typeAndConstraint": "text"
+        }
+      ]
+    }
+  ],
+  "notFullFirstAnswer": true
+}
