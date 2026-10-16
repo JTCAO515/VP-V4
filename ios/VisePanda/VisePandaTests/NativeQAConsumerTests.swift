@@ -171,6 +171,19 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
             XCTAssertEqual(port.posts, 1)
         }
     }
+    @MainActor func testCancellationTargetUsesOnlyCurrentProtectedMessageAndNeverRewritesGeneration() async {
+        let port = NativeQAConsumerTestPort(); port.saved = true; port.messageStatus = "pending"
+        let store = NativeQAStore(transport: port)
+        let id = "00000000-0000-4000-8000-000000000004"
+        XCTAssertNil(store.cancellationTarget(for: id))
+        await store.activate(true); await store.select(port.sessionID)
+        XCTAssertEqual(store.cancellationTarget(for: id)?.canRequestStop, true)
+        port.messageStatus = "answered"; await store.refresh()
+        XCTAssertEqual(store.cancellationTarget(for: id)?.canRequestStop, false)
+        XCTAssertEqual(store.messages.first?.status, .answered)
+        await store.activate(false)
+        XCTAssertNil(store.cancellationTarget(for: id)); XCTAssertEqual(port.posts, 0)
+    }
     @MainActor func testLocalRequestPathsAndPendingIdentityAreClosed() throws {
         let port = NativeQAConsumerTestPort()
         let policy = try JSONDecoder().decode(NativeQAPolicy.self, from: JSONSerialization.data(withJSONObject: port.policy))
@@ -244,6 +257,8 @@ nonisolated final class NativeQAConsumerTests: XCTestCase {
             if foreignReceipt { message["input"] = "Foreign input" }
             if let receiptInput { message["input"] = receiptInput }
             object = ["message": message]
+        case .requestCancellation, .readCancellation:
+            throw NativeQAError.invalidResponse // Dedicated cancellation suite owns this independent wire.
         case .history:
             if holdHistory {
                 historyStarted = true
