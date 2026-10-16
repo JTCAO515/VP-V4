@@ -1,0 +1,25 @@
+{
+  "main_hook": "116d73a9af4548373585857355b83b436f038872",
+  "local_exact_cherry": "11dd93d4",
+  "shared_guard_blob": "107a7aa87fdbf6495a1390e54166bceea23aa859",
+  "scope": "Test-only delta plus owned evidence; Main shared guard imported unchanged",
+  "flow": "Real local Next sign-in server safeReturnTo -> PasswordSignInForm Continue href -> click -> same QA Session and en locale",
+  "identity": "Synthetic local well-formed JWT plus intercepted local /auth/v1/user; request count asserted positive. No credentials submitted or real account/provider used. QA API responses intercepted by existing fixture.",
+  "checks": {
+    "browser": "PASS 1 distinct affected case; unchanged prior6 not rerun",
+    "assertions": [
+      "Canonical server-sanitized Continue href keeps Session and locale",
+      "Continue navigates to exact canonical QA URL",
+      "Same Session selected aria-current=true",
+      "QA main lang=en",
+      "No messages submitted and no pageerror"
+    ],
+    "build": "PASS production webpack including imported shared hook and TS compile",
+    "lint": "PASS887",
+    "diff": "PASS",
+    "main_security": "Main-reported24/24 retained, not rerun"
+  },
+  "first_failure": "Original generic cookie fixture had malformed base64url signature and did not pass client getClaims decode; fixed only new test token encoding; product unchanged; raw first failure retained",
+  "remaining": "Actual target Auth/login/provider/persistence/multiturn and mobile real service UNRUN. Last target service503 remains reported, not re-probed by this test.",
+  "test_sha256": "133345244500655a232f61665af0ed282988b859d26d09024175c12f06570bb2"
+}
