@@ -69,7 +69,7 @@ final class NativeVoiceTranslationStore {
     /// The View's actual edit-field read port. Recovered bodies never become local drafts.
     func reviewText(scope current: NativeDataScope?) -> String {
         guard current != nil, scope == current else { return "" }
-        if reviewIsRecovered { return readableResult(scope: current)?.original ?? "" }
+        if reviewIsRecovered { return readableResult(scope: current)?.original ?? localReview }
         return localReview
     }
 
@@ -171,7 +171,7 @@ final class NativeVoiceTranslationStore {
         if let submittedText {
             guard phrase.original.utf8.elementsEqual(submittedText.utf8), phrase.sourceLocale == sourceLocale else { return }
         }
-        if submittedText == nil { reviewIsRecovered = true; localReview = "" }
+        if submittedText == nil { reviewIsRecovered = true }
         turnID = phrase.id; submittedText = phrase.original; sourceLocale = phrase.sourceLocale
         resultPolicyID = translation.policy?.id; resultNoticeHash = translation.policy?.noticeHash
         result = phrase
