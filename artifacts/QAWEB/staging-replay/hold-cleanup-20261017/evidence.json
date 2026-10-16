@@ -1,0 +1,73 @@
+{
+  "task": "683-HOLD-CLEANUP-BOUNDARY",
+  "status": "CODE_COMPLETE_PENDING_INDEPENDENT_REVIEW",
+  "sourceHead": "61ab34aaaf1d34fbfbbf93f33f1a6a86caeedaf5",
+  "base": "8fd76ddf807fe6b5a29f5a17b3ef53530a6ec9de",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE",
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/delegated-scope-v1/source-lock.json": "28cad79b3f6f185b91943a193d9390c9fcece18805e9f9f27c32db15ecbb2410",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/LIVE-CONTROLLER.md": "c366155da204d1bf791edc8be20539f49f74a174aab306f4f56a6496f903b506",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/live-controller.py": "96e6266afb04bc464db4aeabc7d7e2dba700e7ade220ed25154e1f432016a5a6",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": "8760cda9b45d88802818e81590047ed627390d754e4062bf7fc7d740e8f72c76",
+    "scripts/qa-agent-staging-replay/directive-scope-v1/test_live_controller.py": "6a922f29e80a39f746ac59d07727688371f7a27b0ee87bb59b5df0b5448b98fe",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/source-lock.json": "0e685e16ffdee77b83333bca8e6fb6c2863876e1524e7db9d324be9dd4140421"
+  },
+  "fix": [
+    "Latch original cleanup deadline; no clearing, replacement or extension.",
+    "HOLD missing/expired cleanup cap closes; idle transport reaches the same guard.",
+    "Abort is independent of data-expiry admission checks, with original PID/object ownership retained.",
+    "Confirmed matching entry cleanup is reused without late IO; expired UNKNOWN does not get a new timer.",
+    "Reject cleanup-phase reentry before descriptor reads or second entry/producer/claim."
+  ],
+  "admissionLimit": "Current frozen Budget does not constrain new data work by residual cleanup cap; this candidate therefore does not advertise a second real restore after cleanup starts. Max2 grant ceiling is unchanged; restoring such ability requires an explicit reviewed lifecycle contract, not a silent reset.",
+  "tests": {
+    "controllerSynthetic": 22,
+    "PlanSourceQualificationNoPG": 4,
+    "total": 26,
+    "red": "Original controller failed5 new boundary tests. Later fixture was corrected to initialize cleanup as a real completed entry does.",
+    "actualOperations": false
+  },
+  "logs": [
+    {
+      "privateBasename": "hold-cleanup-red.log",
+      "sha256": "b62b3218c6b5606c8304282d59fbe1541a9d7c0ee86e56718df83694e7876a3c",
+      "summary": [
+        "Ran 22 tests in 0.088s",
+        "FAILED (failures=5)"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "hold-cleanup-final-fixed.log",
+      "sha256": "4b41968676ae6d694904a93b9769784d776e358f90c60a0dec9745d94b34c36a",
+      "summary": [
+        "Ran 22 tests in 0.088s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "hold-cleanup-plan-final.log",
+      "sha256": "ed51c61f4629b5777642392c0f874b953c0674ecb0881e9c76ed003458bedf61",
+      "summary": [
+        "Ran 4 tests in 0.009s",
+        "OK"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "unchanged": [
+    "deadline.py and all7 runtime image inputs/pins",
+    "e133 closed records and actual958 checkout",
+    "material/identity/actual ledger and authority bindings"
+  ],
+  "diagnosticCandidate": {
+    "source": "ef495c75eaadda2a0821aa29698376bb6f7e8e69",
+    "proof": "400f0736f84d0b0b6dcd18b1df222fbee92633d2",
+    "publicBranch": "codex/qaw683-frame-classification-20261017",
+    "notIncludedInThisBranch": true,
+    "not42501CausalRepair": true
+  },
+  "integration": "Independent integration owner must regenerate profile locks if combining ef495 with this controller change; separate evidence is not a combined-head test run.",
+  "actualWindow": "ABORTED historical e133; second UNRUN; no restart/reset/retry or new window."
+}
