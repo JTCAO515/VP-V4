@@ -3,6 +3,10 @@ Private-module subprocess adapters; nonce-fenced owned cleanup survives expiry.
 """
 from contextlib import contextmanager
 import copy
+import hashlib
+import importlib.util
+from pathlib import Path
+import threading
 from datetime import datetime,timezone
 import json
 import re
@@ -13,6 +17,26 @@ from time import monotonic
 DATA_CLEANUP_RESERVE_SECONDS=120
 CLEANUP_BUDGET_SECONDS=60
 INFLIGHT_CLOCK_CHECK_SECONDS=0.25
+
+
+def shared_runtime():
+    """One exact Budget class for this source path/digest, no source fallback."""
+    path=Path(__file__).resolve();digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    key='_qaw_absolute_budget_'+hashlib.sha256(str(path).encode()).hexdigest()
+    spec=importlib.util.spec_from_file_location(key,path)
+    candidate=importlib.util.module_from_spec(spec)
+    candidate._qaw_source_digest=digest;candidate._qaw_load_lock=threading.RLock();candidate._qaw_ready=False
+    module=sys.modules.setdefault(key,candidate)
+    if (getattr(getattr(module,'__spec__',None),'origin',None)!=str(path)
+            or getattr(module,'_qaw_source_digest',None)!=digest):
+        raise ValueError('ABSOLUTE_BUDGET_SOURCE_IDENTITY_CONFLICT')
+    with module._qaw_load_lock:
+        if not module._qaw_ready:
+            try:spec.loader.exec_module(module);module._qaw_ready=True
+            except BaseException:
+                if sys.modules.get(key) is module:del sys.modules[key]
+                raise
+    return module
 
 
 def utc_now():return datetime.now(timezone.utc)

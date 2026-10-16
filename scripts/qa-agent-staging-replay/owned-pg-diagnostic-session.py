@@ -27,12 +27,17 @@ def load(name):
     spec=importlib.util.spec_from_file_location(name,HERE/(name+'.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 
 proxy=load('typed-pg-diagnostic-proxy')
-deadline=load('diagnostic-window-deadline')
+deadline=load('diagnostic-window-deadline').shared_runtime()
 PG=Path('/opt/homebrew/opt/postgresql@17/bin')
 
 
 def require(ok,reason):
     if not ok:raise ValueError(reason)
+
+
+def checked_budget(budget):
+    require(type(budget) is deadline.Budget and budget.wall_end is not None,'OWN_ABSOLUTE_BUDGET_REQUIRED')
+    budget.check();return budget
 
 
 # Factory receipts are independent of writable owner attributes. This is an API
@@ -161,19 +166,23 @@ class OwnedSyntheticServer:
         destination=Path(socket_dir or self.sock)
         require(destination.resolve().is_relative_to(self.root) and not destination.is_symlink(),'OWN_SOCKET_PATH_REQUIRED')
         return [str(PG/'psql'),'-X','-w','-At','-h',str(destination),'-p','5432','-U',self.admin,'-d','postgres','-v','ON_ERROR_STOP=1']
-    def _sql(self,sql,timeout=None,limit=None):
+    def _sql(self,sql,timeout=None,limit=None,budget=None):
+        if budget is not None:checked_budget(budget)
         cap=timeout or self.query_timeout
         if limit is not None:
             require(limit>time.monotonic(),'OWN_CONTROL_DEADLINE')
             cap=min(cap,limit-time.monotonic())
-        result=subprocess.run(self.command(),input=sql.encode(),env=self.env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=cap)
+        runner=subprocess if budget is None else deadline.Subprocess(subprocess,budget)
+        result=runner.run(self.command(),input=sql.encode(),env=self.env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=cap)
         require(result.returncode==0,'OWN_CONTROL_QUERY_FAILED')
         return result.stdout.decode().strip()
-    def _read_identity(self,limit=None):
-        return json.loads(self._sql("select pg_catalog.jsonb_build_object('systemId',(select system_identifier::text from pg_catalog.pg_control_system()),'postmasterStart',pg_catalog.pg_postmaster_start_time()::text,'dataDir',pg_catalog.current_setting('data_directory'),'version',pg_catalog.current_setting('server_version_num')::integer);",limit=limit))
-    def verify(self,limit=None):
-        with self.lifecycle_lock:return self._verify(limit)
-    def _verify(self,limit=None):
+    def _read_identity(self,limit=None,budget=None):
+        return json.loads(self._sql("select pg_catalog.jsonb_build_object('systemId',(select system_identifier::text from pg_catalog.pg_control_system()),'postmasterStart',pg_catalog.pg_postmaster_start_time()::text,'dataDir',pg_catalog.current_setting('data_directory'),'version',pg_catalog.current_setting('server_version_num')::integer);",limit=limit,budget=budget))
+    def verify(self,limit=None,budget=None):
+        if budget is not None:checked_budget(budget)
+        with self.lifecycle_lock:return self._verify(limit,budget)
+    def _verify(self,limit=None,budget=None):
+        if budget is not None:checked_budget(budget)
         _factory_receipt(self)
         require(not self.closed and self._process is not None and self._process.poll() is None,'OWN_SERVER_NOT_LIVE')
         for directory in (self.root,self.data,self.sock):
@@ -181,17 +190,18 @@ class OwnedSyntheticServer:
         st=self.marker.lstat();require(stat.S_ISREG(st.st_mode) and not self.marker.is_symlink() and st.st_uid==os.getuid() and st.st_nlink==1 and stat.S_IMODE(st.st_mode)==0o600,'OWN_SERVER_NONCE_CONFLICT')
         require(json.loads(self.marker.read_text())=={'nonce':self.nonce},'OWN_SERVER_NONCE_CONFLICT')
         require(int((self.data/'postmaster.pid').read_text().splitlines()[0])==self._process.pid,'OWN_POSTMASTER_PID_CONFLICT')
-        actual=self._read_identity(limit)
+        actual=self._read_identity(limit,budget)
         require(actual==self.identity and actual['dataDir']==str(self.data) and 170000<=actual['version']<180000,'OWN_SERVER_IDENTITY_CONFLICT')
     def setup_synthetic(self,sql):self.verify();return self._sql(sql)
-    def backend(self,pid,limit=None):
+    def backend(self,pid,limit=None,budget=None):
         require(type(pid) is int and pid>0 and pid!=self._process.pid,'BACKEND_PID_INVALID')
-        raw=self._sql("select coalesce((select pg_catalog.jsonb_build_object('pid',pid,'started',backend_start::text,'databaseOid',datid,'roleOid',usesysid,'state',state) from pg_catalog.pg_stat_activity where pid="+str(pid)+"),'null'::jsonb);",limit=limit)
+        raw=self._sql("select coalesce((select pg_catalog.jsonb_build_object('pid',pid,'started',backend_start::text,'databaseOid',datid,'roleOid',usesysid,'state',state) from pg_catalog.pg_stat_activity where pid="+str(pid)+"),'null'::jsonb);",limit=limit,budget=budget)
         return json.loads(raw)
-    def bind(self,pid,cancel_key,limit=None):
-        with self.lifecycle_lock:return self._bind(pid,cancel_key,limit)
-    def _bind(self,pid,cancel_key,limit):
-        self.verify(limit);row=self.backend(pid,limit)
+    def bind(self,pid,cancel_key,limit=None,budget=None):
+        if budget is not None:checked_budget(budget)
+        with self.lifecycle_lock:return self._bind(pid,cancel_key,limit,budget)
+    def _bind(self,pid,cancel_key,limit,budget=None):
+        self.verify(limit,budget);row=self.backend(pid,limit,budget)
         require(row is not None and row['started'] and row['databaseOid'] and row['roleOid'],'BACKEND_BINDING_UNAVAILABLE')
         binding=BackendBinding({'nonce':self.nonce,'serverIdentity':dict(self.identity),'pid':pid,'started':row['started'],'databaseOid':row['databaseOid'],'roleOid':row['roleOid']},cancel_key)
         self.bindings.append(binding);self.registrations[id(binding)]=self.binding_digest(binding);return binding
@@ -268,7 +278,9 @@ class OwnedSyntheticServer:
 
 class BoundProxy(proxy.OwnedUnixProxy):
     def __init__(self,owner,listen_dir,budget):
-        _factory_receipt(owner);OwnedSyntheticServer.verify(owner);super().__init__(owner.sock,listen_dir,seconds=min(30,budget.timeout(30)))
+        checked_budget(budget)
+        _factory_receipt(owner);OwnedSyntheticServer.verify(owner,limit=time.monotonic()+budget.timeout(3),budget=budget)
+        super().__init__(owner.sock,listen_dir,seconds=min(30,budget.timeout(30)))
         self.owner=owner;self.budget=budget;self.binding=None
     def remaining(self):
         try:return self.budget.timeout(None)
@@ -276,7 +288,7 @@ class BoundProxy(proxy.OwnedUnixProxy):
     def backend(self,tag,payload):
         if tag==b'K':
             require(self.binding is None and len(payload)==8,'BACKEND_KEY_FRAME_INVALID')
-            pid,key=struct.unpack('!II',payload);self.binding=self.owner.bind(pid,key,limit=time.monotonic()+self.remaining())
+            pid,key=struct.unpack('!II',payload);self.binding=self.owner.bind(pid,key,limit=time.monotonic()+self.remaining(),budget=self.budget)
         super().backend(tag,payload)
     def frontend(self,tag,payload):
         if tag==b'Q':require(self.binding is not None,'BACKEND_BINDING_REQUIRED_BEFORE_QUERY')
@@ -285,10 +297,9 @@ class BoundProxy(proxy.OwnedUnixProxy):
 
 class DiagnosticSession:
     def __init__(self,owner,seconds=3,budget=None):
-        _factory_receipt(owner);OwnedSyntheticServer.verify(owner)
-        if budget is not None:
-            require(type(budget) is deadline.Budget and budget.wall_end is not None,'OWN_ABSOLUTE_BUDGET_REQUIRED')
-            budget.check()
+        if budget is not None:checked_budget(budget)
+        _factory_receipt(owner)
+        OwnedSyntheticServer.verify(owner,limit=None if budget is None else time.monotonic()+budget.timeout(3),budget=budget)
         self.owner=owner;self.session_token=secrets.token_hex(16)
         with owner.lifecycle_lock:
             require(owner.active_session is None,'OWN_SERVER_SESSION_ALREADY_ACTIVE')

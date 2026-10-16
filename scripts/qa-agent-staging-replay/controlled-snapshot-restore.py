@@ -22,7 +22,7 @@ locale_profile=load('owned_locale',HERE/'owned-locale-profile.py')
 retry_contract=load('reviewed_retry',HERE/'reviewed-restore-retry.py')
 safe_diagnostics=load('safe_diagnostics',HERE/'safe-restore-diagnostics.py')
 diagnostic_window=load('diagnostic_window',HERE/'reviewed-diagnostic-window.py')
-diagnostic_deadline=load('diagnostic_deadline',HERE/'diagnostic-window-deadline.py')
+diagnostic_deadline=load('diagnostic_deadline',HERE/'diagnostic-window-deadline.py').shared_runtime()
 MODE='shared-readonly-snapshot/1'
 RESTORE_CONTRACT='qaw-shared-snapshot-restoration/1'
 

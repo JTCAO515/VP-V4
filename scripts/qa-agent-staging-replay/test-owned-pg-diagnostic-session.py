@@ -204,6 +204,52 @@ class OwnedSession(unittest.TestCase):
             with self.assertRaises(ValueError):m.OwnedSyntheticServer(locale_options=('--pgdata=/foreign',))
             spawn.assert_not_called()
 
+    def test_real_core_budget_identity_and_expired_zero_control_io(self):
+        owner=self.server();core=m.load('controlled-snapshot-restore')
+        self.assertIs(core.diagnostic_deadline.Budget,m.deadline.Budget)
+        budget=core.diagnostic_deadline.Budget(time.monotonic()+3,reserve=0,wall_end=m.datetime.now(m.timezone.utc)+m.timedelta(seconds=3))
+        session=m.DiagnosticSession(owner,budget=budget);self.assertIs(session.budget,budget)
+        self.assertIs(session.run_synthetic('select 1;')['backendCommandStopped'],True)
+        budget.expired=True
+        with patch.object(m.subprocess,'Popen') as spawn,patch.object(m.OwnedSyntheticServer,'_read_identity') as control:
+            with self.assertRaises(m.deadline.WindowExpired):m.DiagnosticSession(owner,budget=budget)
+            with self.assertRaises(m.deadline.WindowExpired):m.BoundProxy(owner,None,budget)
+            spawn.assert_not_called();control.assert_not_called()
+        fake=type('FakeBudget',(),{'wall_end':budget.wall_end,'check':lambda self:None})()
+        with patch.object(m.subprocess,'Popen') as spawn:
+            with self.assertRaisesRegex(ValueError,'OWN_ABSOLUTE_BUDGET_REQUIRED'):m.DiagnosticSession(owner,budget=fake)
+            spawn.assert_not_called()
+
+    def test_near_deadline_bounds_real_control_query_and_cleanup_survives(self):
+        owner=self.server()
+        budget=m.deadline.Budget(time.monotonic()+.08,reserve=0,wall_end=m.datetime.now(m.timezone.utc)+m.timedelta(seconds=.08))
+        original=m.OwnedSyntheticServer._sql
+        def slow_identity(instance,limit=None,budget=None):return original(instance,'select pg_sleep(1);',limit=limit,budget=budget)
+        began=time.monotonic()
+        with patch.object(m.OwnedSyntheticServer,'_read_identity',slow_identity):
+            with self.assertRaises((m.deadline.WindowExpired,subprocess.TimeoutExpired)):m.DiagnosticSession(owner,budget=budget)
+        self.assertLess(time.monotonic()-began,.6)
+        self.assertIsNone(owner.active_session)
+        self.assertEqual(budget.reserve,0)
+        owner.close();self.assertTrue(owner.cleanup_confirmed)
+
+    def test_wall_clock_jump_during_control_query_stops_without_new_budget(self):
+        owner=self.server();wall=[m.datetime.now(m.timezone.utc)];caps=[];children=[]
+        budget=m.deadline.Budget(time.monotonic()+10,reserve=0,wall_end=wall[0]+m.timedelta(seconds=5),wall_clock=lambda:wall[0])
+        class FakeProcess:
+            returncode=None
+            def __init__(self,*args,**kwargs):children.append(self)
+            def communicate(self,input=None,timeout=None):
+                caps.append(timeout);wall[0]+=m.timedelta(seconds=10);raise subprocess.TimeoutExpired('synthetic-control',timeout)
+            def poll(self):return self.returncode
+            def kill(self):self.returncode=-9
+            def wait(self,timeout=None):return self.returncode
+        with patch.object(m.subprocess,'Popen',FakeProcess):
+            with self.assertRaises(m.deadline.WindowExpired):m.DiagnosticSession(owner,budget=budget)
+        self.assertEqual(len(children),1);self.assertEqual(children[0].returncode,-9)
+        self.assertTrue(caps and max(caps)<=m.deadline.INFLIGHT_CLOCK_CHECK_SECONDS)
+        self.assertTrue(budget.expired);owner.close();self.assertTrue(owner.cleanup_confirmed)
+
 
 class FactoryProvenance(unittest.TestCase):
     def test_unregistered_subclass_never_signals_during_construction_cleanup(self):
