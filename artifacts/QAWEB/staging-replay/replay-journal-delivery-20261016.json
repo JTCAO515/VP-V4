@@ -1,0 +1,27 @@
+{
+  "status": "PASS_OPTIONAL_REPLAY_JOURNAL_COMPLETED_FACTS_ONLY",
+  "base": "c5191db7b218ab48e1d61c8f5f4203aac106381b",
+  "restoreCodeSha256": "3ca426c3427c58f26fb3b0dfa99430d3167b097f88c15135567e21495530a461",
+  "red": "replay-journal-guard-old-red.log: completed sourceGuardDiagnostics lost on interruption",
+  "green": {
+    "interruptionAndPersistenceCases": 2,
+    "completedFactsAndNullableJournalCases": 3
+  },
+  "legacy": "replay-journal-legacy-equality.log exact old/new no-journal result and SQL sequence",
+  "audit": {
+    "sourceAndQaPins": "preflight journal",
+    "baselineLedgerAndQaAbsence": "only after guards pass",
+    "retainedRelations": "after relation metadata returns",
+    "baselineHistoryBeforeAfterSha256": "after each digest returns",
+    "sourceGuardDiagnostics": "deepcopy completed cumulative dictionary immediately",
+    "appliedVersionsAndInFlight": "existing acknowledged-prefix/unknown behavior retained",
+    "retentionDifferencesAndRowMultisetStatus": "summary only, no per-row fingerprints",
+    "lifecycleGatesAndQaV2Acl": "completed observations before require",
+    "interfacesAndHostSwitch": "after original guards pass",
+    "rawSqlSourcesBeforeAfterDigests": "EXCLUDED; per-row hashes and raw SQL never copied"
+  },
+  "actualIo": "STOP",
+  "strictLegacyAuthorityParserOldClaims": "UNCHANGED",
+  "noNewWindowOrCloneOrCapture": true,
+  "sourceJournalCallbackAbsent": "no extra SQL and no return shape change"
+}

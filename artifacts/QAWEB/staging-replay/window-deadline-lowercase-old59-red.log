@@ -1,0 +1,23 @@
+test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (oracle.DeadlineGuards) ...
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (oracle.DeadlineGuards) (rc=1, out=b'[]', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 359, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    if want_pass:budget.cleanup_owned(db);self.assertTrue(db._deadline_cleanup_pass)
+  File "old59", line 154, in cleanup_owned
+ValueError: OWNED_DEADLINE_CLEANUP_UNKNOWN
+
+======================================================================
+ERROR: test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape (oracle.DeadlineGuards) (rc=1, out=b'', override=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 359, in test_real_lowercase_absence_with_confirmed_id_passes_only_exact_shape
+    if want_pass:budget.cleanup_owned(db);self.assertTrue(db._deadline_cleanup_pass)
+  File "old59", line 154, in cleanup_owned
+ValueError: OWNED_DEADLINE_CLEANUP_UNKNOWN
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=2)
