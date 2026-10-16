@@ -112,7 +112,9 @@ class SyntheticGate(ActualSources):
         header.update(version=p.HEADER_VERSION,authorizationDigest=p.AUTHORIZATION,packetSha256=packet_sha,identityPathSha256=p.IDENTITY)
         self.write(ap.with_suffix('.execution-header.json'),header)
         deadline=load('run_deadline',ROOT/'diagnostic-window-deadline.py').shared_runtime()
-        start_budget=deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        if not hasattr(self,'original_budget'):
+            self.original_budget=deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
+        start_budget=self.original_budget
         facade=SimpleNamespace(directiveStartBudget=start_budget,code_hash=lambda:digest,directiveBaseCodeHash=self.code,directiveTypedConfiguration=config,directiveSourceFingerprint=p.fingerprint(self.cfg),diagnostic_deadline=deadline,base=SimpleNamespace(capture=SimpleNamespace(now=lambda:self.fx.t,stamp=datetime.fromisoformat)),locale_profile=legacy.locale)
         return facade,[str(ap),self.packet['manifestPath'],self.fx.identity,'never-plan']
     def refuse_operator_reads(self,path,*args,**kwargs):
@@ -144,6 +146,8 @@ class SyntheticGate(ActualSources):
         self.run_refusal('DIRECTIVE_WINDOW_EXPIRED')
     def test_run_successful_closed_window_refuses_second_before_operator_reads(self):
         self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'PASS_LOCAL_BUNDLE_RESTORE_ONLY','cleanup':'PASS'},self.cfg)
+        facade,args=self.run_inputs()
+        self.g._directive_profile().start_budget(facade,json.loads(p.header_path(args[0]).read_text()))
         result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
         self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
         self.run_refusal('DIRECTIVE_SECOND_WINDOW_NOT_ELIGIBLE')
@@ -159,6 +163,25 @@ class SyntheticGate(ActualSources):
         with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REQUIRED'):p.start_budget(facade,header)
         facade.directiveStartBudget=facade.diagnostic_deadline.from_window(self.packet['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=self.packet['windowStartMonotonic'])
         with self.assertRaisesRegex(ValueError,'DIRECTIVE_START_BUDGET_REPLACED'):p.start_budget(facade,header,b)
+    def test_second_attempt_requires_live_original_clock_owner(self):
+        facade,args=self.run_inputs();header=json.loads(p.header_path(args[0]).read_text())
+        header['attempt']=2
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_ORIGINAL_CLOCK_OWNER_UNAVAILABLE'):
+            p.start_budget(facade,header)
+        header['attempt']=1;b=p.start_budget(facade,header)
+        header['attempt']=2
+        self.assertIs(p.start_budget(facade,header),b)
+        # Same scalars and exact Budget class do not prove an original owner.
+        d=facade.diagnostic_deadline
+        facade.directiveStartBudget=d.from_window(header['windowEnd'],datetime.fromisoformat(self.packet['windowStart']),datetime.fromisoformat,anchor=header['windowStartMonotonic'])
+        with self.assertRaisesRegex(ValueError,'DIRECTIVE_ORIGINAL_CLOCK_OWNER_CONFLICT'):
+            p.start_budget(facade,header)
+        facade.directiveStartBudget=b
+        with patch.object(p.os,'getpid',return_value=-1):
+            with self.assertRaisesRegex(ValueError,'DIRECTIVE_ORIGINAL_CLOCK_OWNER_CONFLICT'):
+                p.start_budget(facade,header)
+        self.assertIs(p.start_budget(facade,header),b)
+
     def test_finalization_delay_and_utc_rollback_cannot_extend_start_mono_end(self):
         d=load('start_cap_budget',ROOT/'diagnostic-window-deadline.py').shared_runtime()
         wall0=datetime.now(timezone.utc);mono=[1000.0];wall=[wall0]
@@ -166,7 +189,7 @@ class SyntheticGate(ActualSources):
         b=d.Budget(4600,clock=clock,wall_end=wall0+timedelta(hours=1),wall_clock=utc_now)
         module=SimpleNamespace(Budget=d.Budget,monotonic=clock,utc_now=utc_now,DATA_CLEANUP_RESERVE_SECONDS=120,CLEANUP_BUDGET_SECONDS=60)
         facade=SimpleNamespace(diagnostic_deadline=module,directiveStartBudget=b,base=SimpleNamespace(capture=SimpleNamespace(stamp=datetime.fromisoformat)))
-        header={'windowStartMonotonic':1000.0,'windowEnd':(wall0+timedelta(hours=1)).isoformat()}
+        header={'windowId':str(uuid.uuid4()),'attempt':1,'windowStartMonotonic':1000.0,'windowEnd':(wall0+timedelta(hours=1)).isoformat()}
         for elapsed,utc_advance in ((10,5),(120,120),(120,20)):
             mono[0]=1000+elapsed;wall[0]=wall0+timedelta(seconds=utc_advance)
             self.assertIs(p.start_budget(facade,header),b)
@@ -187,6 +210,8 @@ class SyntheticGate(ActualSources):
         self.run_refusal('DIAGNOSTIC_ALREADY_ACTIVE_OR_CONSUMED')
     def test_valid_attempt2_reaches_original_causal_guard_not_material(self):
         self.g.claim(self.packet,self.code,self.cfg);self.g.finish(self.packet,self.code,{'status':'FAIL_LOCAL_RESTORE','cleanup':'PASS'},self.cfg)
+        facade,args=self.run_inputs()
+        self.g._directive_profile().start_budget(facade,json.loads(p.header_path(args[0]).read_text()))
         result=self.fx.archives/self.g.filename(self.fx.window,1,'result')
         self.packet.update(attempt=2,parentFailureSha256=p.sha(result.read_bytes()),reviewedSourceCommit='2'*40)
         self.cfg['startFile']=str(self.fx.root/('directive-v1-start-'+self.fx.window+'-2.json'))

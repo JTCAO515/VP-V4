@@ -7,6 +7,7 @@ import copy
 from contextlib import contextmanager
 import fcntl
 import weakref
+import threading
 from datetime import datetime,timezone
 import json
 import os
@@ -211,6 +212,11 @@ def _early_ledger(gate,profile,header):
         require(used=={'status':'CONSUMED_BEFORE_ARCHIVE_READ',**{k:prior.get(k) for k in gate.binding_keys(header,header['codeSha256'],profile)}},'DIAGNOSTIC_PRIOR_CONSUMPTION_CHAIN_REQUIRED')
         require(prior.get('codeSha256')!=header['codeSha256'] and prior.get('reviewedSourceCommit')!=header['reviewedSourceCommit'],'DIAGNOSTIC_SAME_SOURCE_REPEAT_FORBIDDEN')
 
+# Process-local continuity only. Serialized monotonic numbers never establish
+# an origin in another interpreter (notably macOS Python < 3.10). Keep weak
+# ownership plus PID so neither reconstruction nor fork inherits eligibility.
+_START_OWNERS={}
+_START_OWNER_LOCK=threading.RLock()
 _LEASES=weakref.WeakKeyDictionary()
 class _RunLease:
     __slots__=('__weakref__',)
@@ -223,7 +229,18 @@ def start_budget(core,header,expected_object=None):
     require(type(anchor) in (int,float) and math.isfinite(anchor) and anchor<=d.monotonic(),'DIRECTIVE_START_MONOTONIC_CONFLICT')
     require(b.clock is d.monotonic and b.wall_clock is d.utc_now,'DIRECTIVE_START_CLOCK_CONFLICT')
     require(b.window_end==anchor+3600 and b.data_end==b.window_end-d.DATA_CLEANUP_RESERVE_SECONDS and b.reserve==d.DATA_CLEANUP_RESERVE_SECONDS and b.cleanup_seconds==d.CLEANUP_BUDGET_SECONDS and b.wall_end==core.base.capture.stamp(header['windowEnd']),'DIRECTIVE_START_DEADLINE_CONFLICT')
-    b.check();return b
+    window=header.get('windowId');attempt=header.get('attempt')
+    require(type(window) is str and attempt in (1,2),'DIRECTIVE_CLOCK_WINDOW_REQUIRED')
+    with _START_OWNER_LOCK:
+        owner=_START_OWNERS.get(window)
+        if owner is None:
+            require(attempt==1,'DIRECTIVE_ORIGINAL_CLOCK_OWNER_UNAVAILABLE')
+        else:
+            require(owner[0]==os.getpid() and owner[1]() is b,
+                    'DIRECTIVE_ORIGINAL_CLOCK_OWNER_CONFLICT')
+        b.check()
+        if owner is None:_START_OWNERS[window]=(os.getpid(),weakref.ref(b))
+    return b
 
 def lease_budget(lease,core,args,profile):
     header=lease_header(lease,core,args,profile)
