@@ -1,0 +1,75 @@
+{
+  "version": "jt-directives-20261016/v1",
+  "inputs": {
+    "scope.officialRead": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/official-read-thread-content.txt",
+      "sha256": "847381b48c16fb6f79df1426e65f13aac049fdb85235ed0651e8baabcb5a56f0",
+      "bytes": 37873
+    },
+    "scope.incoming": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/bestj-to-mac.record.json",
+      "sha256": "e66b81c1b84b42acfd58228dbaf8da4475730658825aab4665776541e0fe3802",
+      "bytes": 2328
+    },
+    "scope.outgoing": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/mac-to-main.call.record.json",
+      "sha256": "107f523e5502dc4ff8e6645add765541aec6174f452a021d8a2cd1ae6546f30c",
+      "bytes": 3112
+    },
+    "scope.incomingExactText": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/bestj-to-mac.received-text.txt",
+      "sha256": "01951a6e5a2428cb556ed10a8e1ac55e63483178226da78e0b8bbfb61ccea329",
+      "bytes": 2121
+    },
+    "scope.outgoingExactPrompt": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/mac-to-main.sent-prompt.txt",
+      "sha256": "f31faa3ddda9f59b59a467e19b256c00bf78286146914ce509a497434aacd986",
+      "bytes": 2797
+    },
+    "context.officialMacRead": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/official-mac-read-thread-content.txt",
+      "sha256": "b69e96e06e5f3d417542f7d5e6a66ad163a435a05e68c75df2adb972276c11c8",
+      "bytes": 13702
+    },
+    "context.bestjMacRecord": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/bestj-to-mac.full-context.record.json",
+      "sha256": "cc5207667bf8b74e7399a92bcaa6c6eaddad6d2f2c728115297495636c875965",
+      "bytes": 12532
+    },
+    "context.bestjMacExactText": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/bestj-to-mac.received-text.txt",
+      "sha256": "961612577a10cc8fa95c3810c0872e2134ea18a2a6780dbf7f1900b5a61baf0d",
+      "bytes": 11482
+    },
+    "context.parentProvidedApiRaw": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/parent-user-message-read.raw.json",
+      "sha256": "563828019bc610f95b23a18fd3bace42e37e18ac8e6eca63c1096fb0ff16d5cd",
+      "bytes": 10622
+    },
+    "context.secondHopRuntimeCapture": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/mac-to-main.runtime-tool-args-result.json",
+      "sha256": "a6e3dc566c070b1f3e0084dfb29563d0d97ea9d21fcd0b2a0dcd7c7cda3918ae",
+      "bytes": 1928
+    },
+    "context.secondHopPrompt": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/mac-to-main.runtime-sent-prompt.txt",
+      "sha256": "5dc4ec0deb36102011c42a50c1e1ca306dee8edc5d08b131824369ca46aecb16",
+      "bytes": 1334
+    },
+    "context.secondHopResult": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/mac-to-main.runtime-tool-result.json",
+      "sha256": "1db056435930bd145622fc104bd688c63d479028115ec3d0af1a73742d14f9bc",
+      "bytes": 149
+    },
+    "context.indexComplete": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-full-context-20261016-01a144d8/index-complete.json",
+      "sha256": "ba94c99800d029852959c459e4ad7cc55c64133fdf43c08a5d5a2709200ab6dc",
+      "bytes": 2831
+    },
+    "scope.index": {
+      "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/evidence/relay-max2-20261016-01a144c2/index.json",
+      "sha256": "6151072f4c5f587ffe54d010c290988b8760cdae778195d59ad02353601233e0",
+      "bytes": 2890
+    }
+  }
+}
