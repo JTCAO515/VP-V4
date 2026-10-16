@@ -39,3 +39,12 @@ post-data前caller仅新路径采集独立metadata连接的 roleClass=bootstrap/
 ## 当前可交付与未运行
 
 代码门禁/原子claim/负例与精确candidate source绑定可以审阅；真实新授权、真实窗口、slot/identity pins、fresh运行字段尚缺。新窗口/实际恢复/完整ownerACL/managed-extension新86重放均UNRUN，历史失败保留。Main完成review后统一向JT申请上述具体新动作；本owner不自行请求或执行。
+
+
+## 新鲜catalog预填补件（只读，不是备份或稳定窗口）
+
+Main原同link/target执行metadata-probe的BEGIN READ ONLY/ROLLBACK，current_user=postgres/read_only=on。只读文件SHA `a5e5efdb3d897357470628d913952edd71af9edcb3286f2370f394c0a7d31a49`，93650 bytes。20非系统schema、31roles、25memberships、119业务relation元数据、243function ACL、4platformrelation元数据、7event triggers、25default ACL，五extension版本/owner被现有supabase-17.6.1.155-five-extensions/1 classifier识别；14个原数据schema都存在。数据范围/原schema名及计数参见new-window-catalog-coverage-20261016.json。
+
+这些数字是catalog覆盖，不是119张表恢复/ACL正确、数据行计数、managed服务验收或整个60min无DDL的证明；没有vaultsecret/平台表行读取，没有新dump/密文/identity访问。未来依然full schema/ownerACL+无密码globals、14 data schemas+原已批准Realtime89账本；其余platformdata不自动扩展。实际前置还需Docker server可用且固定image/依赖真实验证、新直接JT新窗口范围及无其它planned DDL事实、新Main START/原证据及同identity pins、slot/fresh locale；当前全未因此转为可执行。
+
+维护独占仅由Main协调本已接受范围，普通DML照常；单时点健康/catalog不替代稳定窗口，也不宣称控制所有vendor非计划变化。本补件没有引入代码缺口，复用已交候选与47项focused证据，不增加wrapper、不重跑矩阵。新scope仍仅诊断恢复和获准的同copy本地候选验证，绝无E/target升级授权。

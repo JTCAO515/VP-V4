@@ -98,5 +98,12 @@
   "oldConsumedClaimsOrApprovalsChanged": false,
   "actualOperator": "Main only",
   "effectiveModel": "UNKNOWN; requested Sol6.1/medium only, no model setting changed",
-  "operatorPackage": "new-window-operator-scope-20261016.md"
+  "operatorPackage": "new-window-operator-scope-20261016.md",
+  "freshCatalogPreparation": {
+    "coverage": "new-window-catalog-coverage-20261016.json",
+    "sourceSha256": "a5e5efdb3d897357470628d913952edd71af9edcb3286f2370f394c0a7d31a49",
+    "classification": "PASS_CATALOG_PROFILE_ONLY",
+    "newRuntimeRestoreAcceptance": false,
+    "codeDelta": "none"
+  }
 }
