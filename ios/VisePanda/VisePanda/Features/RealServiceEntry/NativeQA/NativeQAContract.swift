@@ -99,9 +99,11 @@ enum NativeQARequest {
     case history(sessionID: String)
     case recover(sessionID: String, requestID: String)
     case submit(NativeQAPending)
+    case requestCancellation(NativeQACancellationPending)
+    case readCancellation(sessionID: String, requestID: String)
 
     var method: String {
-        switch self { case .consent, .createSession, .submit: "POST"; default: "GET" }
+        switch self { case .consent, .createSession, .submit, .requestCancellation: "POST"; default: "GET" }
     }
     var path: String {
         get throws {
@@ -121,6 +123,12 @@ enum NativeQARequest {
             case .submit(let pending):
                 guard pending.valid else { throw NativeQAError.invalidResponse }
                 return try session(pending.sessionID) + "/messages"
+            case .requestCancellation(let command):
+                guard command.valid else { throw NativeQAError.invalidResponse }
+                return try session(command.sessionID) + "/messages/" + command.requestID + "/cancellation"
+            case .readCancellation(let id, let request):
+                guard NativeQAWire.uuid(request) else { throw NativeQAError.invalidResponse }
+                return try session(id.lowercased()) + "/messages/" + request.lowercased() + "/cancellation"
             }
         }
     }
@@ -134,6 +142,9 @@ enum NativeQARequest {
             case .submit(let pending):
                 guard pending.valid else { throw NativeQAError.invalidResponse }
                 return pending.body
+            case .requestCancellation(let command):
+                guard command.valid else { throw NativeQAError.invalidResponse }
+                return command.body
             default: return nil
             }
         }
