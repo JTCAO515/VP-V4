@@ -1,6 +1,6 @@
 # IOS-001 real service source seam — 2026-10-16
 
-Status: SOURCE INSPECTED; NO NEW INDEPENDENT PRODUCT MODULE. Candidate patches only, not applied.
+Initial audit status: SOURCE INSPECTED; NO NEW INDEPENDENT PRODUCT MODULE. The two candidates were subsequently applied under Main's exact shared lease; see [applied.md](applied.md) for current product changes and verification. The remainder below preserves the initial audit findings.
 
 Worktree `p0-ios-realservice-20261016`, branch `codex/p0-ios-realservice-20261016`, base `5e960e6d4dd4b1050b23622a4dc6ed57653f4b57`; initially clean. Effective model/thinking/service tier UNKNOWN (not exposed). Apple Swift 6.4 arm64 toolchain observed. No simulator, DerivedData, physical device, signing, credentials, provider, grant, migration, remote configuration or production action used.
 
