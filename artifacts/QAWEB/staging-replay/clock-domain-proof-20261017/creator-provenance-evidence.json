@@ -1,0 +1,126 @@
+{
+  "sourceHead": "d0c728e02a3cf961655a2464e93d82b2b15e4053",
+  "proofHead": "RESOLVE_EVIDENCE_ONLY_COMMIT_CONTAINING_THIS_FILE",
+  "supersedesReviewClaim": {
+    "priorSource": "fc45a7db75a9397801b126cbb6876278ae6dde94",
+    "priorProof": "02d3c77757654f144edea516abd431636837b8db",
+    "review": "Standards0 Spec1 P2; prior85PASS retained but NOT review-cleared",
+    "finding": "First preflight registered caller Budget without creation provenance. Pre-registration fork or reconstructed attempt1 could be accepted."
+  },
+  "repair": "Controlled START factory samples its own clocks and records weak object identity, creator PID and original bounds before returning. Entry/direct preflight verify before qualification metadata. Legacy from_window does not grant directive provenance. No old START mutation or resume.",
+  "sourceBlobs": {
+    "scripts/qa-agent-staging-replay/container-diagnostic/restore/source-lock.json": {
+      "gitBlob": "55750bcb2bd0d3a1cbea80838f84e57a21dcf052",
+      "sha256": "e0765ec1b038cad0bac94da41405ac01cd47206828c6cfb643e1bb732492faf3"
+    },
+    "scripts/qa-agent-staging-replay/diagnostic-window-deadline.py": {
+      "gitBlob": "ac14424d6859ecd42821ba62e3d997d4671568b8",
+      "sha256": "dc26c91be66c8203068ea155199ef93bfa09f011928ac0216bd8b9dd98664447"
+    },
+    "scripts/qa-agent-staging-replay/directive-scope-v1/README.md": {
+      "gitBlob": "4e1ed231f8089170d20d5ff5609e077c3cfaed68",
+      "sha256": "71ae40d91a08ccf4527e465b5749498e48c574e9644b4850ccdd49f929d0d72a"
+    },
+    "scripts/qa-agent-staging-replay/directive-scope-v1/entry.py": {
+      "gitBlob": "c0573d7e5fe3948d3cdc72e3b611d8ce6082f7bd",
+      "sha256": "87a0351ae12bd5a8f14653bba0626a3946e1ca6e6fa2bd41b3b84f2c7f43f5e4"
+    },
+    "scripts/qa-agent-staging-replay/directive-scope-v1/profile.py": {
+      "gitBlob": "827d90fc78223e040b136dcfea0bc7feabbfd96c",
+      "sha256": "b62f33cd5618183e8928954a4d06f3be4dec5a158250ade140a5cf78e2d5c7ae"
+    },
+    "scripts/qa-agent-staging-replay/directive-scope-v1/source-lock.json": {
+      "gitBlob": "2819ca8cb49425319367c896b179b24b530d6bdf",
+      "sha256": "3c29a5af2a7b1ab2247a9d343fe31263e456925aaa920b76c35abb8fbbe7db7d"
+    },
+    "scripts/qa-agent-staging-replay/directive-scope-v1/test_profile.py": {
+      "gitBlob": "257ecf96f8e1e17e7c714f37450aee46b8ebc2bb",
+      "sha256": "42fb322de10c37e6883e8622edca6138a5416eec0dc35d0b4117d0d34d5915a5"
+    }
+  },
+  "validation": {
+    "profile": 36,
+    "deadline": 25,
+    "window": 26,
+    "total": 87,
+    "factoryNewHeaderNegative": true,
+    "preRegistrationForkAndRebuiltAttempt1ZeroReads": true,
+    "newDriverCompileAndFactoryAST": "PASS_SOURCE_ONLY",
+    "newDriverRuntimeContract": "UNRUN_NOT_INHERITED_FROM_OLD_DRIVER_2_TESTS_4_SCENARIOS",
+    "matrixRerunForPackaging": false,
+    "independentReview": "PENDING_FIXED_D0C728E0"
+  },
+  "logs": [
+    {
+      "privateLogBasename": "creator-deadline.log",
+      "sha256": "b6963e6477905cf8c2cc03495d5a35a2a708dbaede39070c76f3a1ba71c8880c",
+      "summary": [
+        "Ran 25 tests in 0.183s",
+        "OK"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "d0c728e02a3cf961655a2464e93d82b2b15e4053"
+    },
+    {
+      "privateLogBasename": "creator-profile-final.log",
+      "sha256": "b51e11d2bba78b48f5ff456cd58be4f28a322fa611f82c4145f5d3d9110470ed",
+      "summary": [
+        "Ran 35 tests in 0.315s",
+        "OK"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "PRE_COMMIT_FIXTURE_ITERATION_NOT_FIXED_SOURCE"
+    },
+    {
+      "privateLogBasename": "creator-profile-final2.log",
+      "sha256": "b096ec24f11781caf0d0eb89ea68e312bec6d29a1075a1e3e6462d9e844340d0",
+      "summary": [
+        "Ran 36 tests in 0.317s",
+        "OK"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "d0c728e02a3cf961655a2464e93d82b2b15e4053"
+    },
+    {
+      "privateLogBasename": "creator-profile-green.log",
+      "sha256": "910cee3e2d486188e3905ed45b42cf9cc81930cca370b64b316aec2c910db804",
+      "summary": [
+        "Ran 35 tests in 0.299s",
+        "FAILED (failures=1)"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "PRE_COMMIT_FIXTURE_ITERATION_NOT_FIXED_SOURCE"
+    },
+    {
+      "privateLogBasename": "creator-profile-red.log",
+      "sha256": "d34b4c10e4758de9e7347d971f3fbe068c70c128111d556bacd8fade8f22f230",
+      "summary": [
+        "Ran 35 tests in 0.286s",
+        "FAILED (failures=1, errors=14)"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "PRE_COMMIT_FIXTURE_ITERATION_NOT_FIXED_SOURCE"
+    },
+    {
+      "privateLogBasename": "creator-window.log",
+      "sha256": "859039c09686343a1d12c2ff941668632274109e92c726d521d4c332952f8a1f",
+      "summary": [
+        "Ran 26 tests in 0.181s",
+        "OK"
+      ],
+      "rawPublished": false,
+      "sourceAssociation": "d0c728e02a3cf961655a2464e93d82b2b15e4053"
+    }
+  ],
+  "driver": {
+    "candidateBasename": "operator-first-attempt-v3.py",
+    "sha256": "3028cee1af67af00d579d5ea3d4911af4ed31e955f79ecd82e8ae92973e9c741",
+    "sourceHead": "d0c728e02a3cf961655a2464e93d82b2b15e4053",
+    "configuration": "NO_V3_PLAN_PROVISIONED",
+    "executed": false,
+    "originalV2Sha256": "c8af4e71a2bc8980d967e35a2dfdfc0cbdcd8d1cec1ef0032e21e1437439ef54",
+    "originalUnchanged": true
+  },
+  "actualRestore": "Unchanged first FAIL SCHEMA_POST_DATA 42501, cleanup PASS, used/grant preserved, cause UNKNOWN, second UNRUN_INELIGIBLE; no new window/target query/material read in this repair",
+  "historicalEvidence": "evidence.json retains prior logs, 33+68, driver2/4, old RED, fixture failures, clock3 and missing-log limitations without reclassifying them as new-head results."
+}
