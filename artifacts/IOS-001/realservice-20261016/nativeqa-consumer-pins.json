@@ -1,0 +1,22 @@
+{
+  "contract_commit": "a46ba463",
+  "initial_consumer_commit": "5c37e99b",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAServiceView.swift": "9cbb51518b55432a06a14d0d339b5b4c72a87b9808d5485686f724ea1b65e693",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "e42862ebf8b65e93d5f1f6d2a3649b140125989220e126b4f227b2a103548c44",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAStore.swift": "577689e86b166f7e004bb51e1f6a069717c14dd28318a488c02728c2ce75edec",
+    "ios/VisePanda/VisePandaTests/NativeQAConsumerTests.swift": "2945b0353a87fa00ab05550225a7215bcaec1c99eb9538879f33909a76f5f2c4",
+    "tests/contract/ios-realservice/run_consumer.py": "ea0c674ddc64a9e83b395941d31cf8a3adcca578440113c9a85a79b354d05281"
+  },
+  "tests": {
+    "synthetic_consumer": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "ios17_swift6_typecheck": "PASS",
+    "app_build": "UNRUN",
+    "target": "UNRUN",
+    "device": "UNRUN"
+  }
+}

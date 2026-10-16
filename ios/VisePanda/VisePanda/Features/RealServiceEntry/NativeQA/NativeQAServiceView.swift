@@ -21,14 +21,14 @@ struct NativeQAServiceView: View {
             LazyVStack(alignment: .leading, spacing: VPSpacing.section) {
                 Text(copy("真实服务", "Real service")).font(.title2.bold()).accessibilityAddTraits(.isHeader)
                 Text(status).font(.body).accessibilityIdentifier("native.qa.status")
-                if store.state == .signedOut {
+                if store.scope == nil {
                     Text(copy("请通过账户入口登录后继续。", "Sign in through the account entry to continue."))
                     if let onSignIn {
                         Button(copy("前往登录", "Go to sign in"), action: onSignIn)
                             .frame(minHeight: 44).accessibilityIdentifier("native.qa.signin")
                     }
                 }
-                if let policy = store.policy {
+                if readIdentity.visible, store.hasReadableProjection, let policy = store.policy {
                     VStack(alignment: .leading, spacing: VPSpacing.standard) {
                         Text(chinese ? policy.noticeZh : policy.noticeEn).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("native.qa.notice")
@@ -39,7 +39,7 @@ struct NativeQAServiceView: View {
                         }
                     }
                 }
-                if store.policy?.consentState == .accepted {
+                if readIdentity.visible, store.hasReadableProjection, store.policy?.consentState == .accepted {
                     VStack(alignment: .leading, spacing: VPSpacing.standard) {
                         Text(copy("已保存的会话", "Saved sessions")).font(.headline)
                         ForEach(store.sessions) { session in
@@ -60,7 +60,7 @@ struct NativeQAServiceView: View {
                             .accessibilityIdentifier("native.qa.new-session")
                     }
                 }
-                ForEach(store.messages) { message in
+                ForEach(readIdentity.visible && store.hasReadableProjection ? store.messages : []) { message in
                     VStack(alignment: .leading, spacing: VPSpacing.standard) {
                         Text(message.input).fixedSize(horizontal: false, vertical: true)
                         Text(messageStatus(message.status)).font(.caption).foregroundStyle(Color.vpSecondaryText)
@@ -73,7 +73,7 @@ struct NativeQAServiceView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(VPSpacing.standard).background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
                 }
-                if store.policy?.consentState == .accepted, store.selectedID != nil {
+                if readIdentity.visible, store.hasReadableProjection, store.policy?.consentState == .accepted, store.selectedID != nil {
                     VStack(alignment: .leading, spacing: VPSpacing.standard) {
                         if let maximum = store.policy?.maxTurns {
                             Text(copy("本会话最多 \(maximum) 次提问。", "This session allows up to \(maximum) questions.")).font(.footnote)
@@ -109,7 +109,9 @@ struct NativeQAServiceView: View {
         .onDisappear { store.invalidate() }
     }
     private var status: String {
-        switch store.state {
+        if !readIdentity.visible { return copy("服务页面已暂停。", "This service page is paused.") }
+        if store.scope == nil { return copy("尚未登录", "Signed out") }
+        return switch store.state {
         case .inactive: copy("服务页面已暂停。", "This service page is paused.")
         case .signedOut: copy("尚未登录", "Signed out")
         case .ready: copy("已读取当前会话状态。", "Current session state loaded.")
