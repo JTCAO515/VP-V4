@@ -1,0 +1,11 @@
+{
+  "kind": "SYNTHETIC_EMPTY_POSTGRES_ONLY",
+  "status": "FAIL",
+  "realAuth": "UNRUN",
+  "provider": "UNRUN",
+  "target": "UNRUN",
+  "cleanup": "PASS",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "checks": [],
+  "error": "INSPECT_UNKNOWN"
+}

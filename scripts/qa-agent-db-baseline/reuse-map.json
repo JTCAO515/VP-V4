@@ -1,0 +1,284 @@
+{
+  "qaBase": "813f9d7fdf956e84fe769e823850e79b79508bf4",
+  "scope": "native session create/list/read, policy-consent and retained-message/unknown-ACK projection",
+  "sourceObjects": [
+    {
+      "kind": "table",
+      "name": "public.trips",
+      "source": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+      "sourceSha256": "460990e1301406b2d91c5e7e9dbdef265ba915baac8fe2f8f72012401373b57a",
+      "objectSha256": "a5e208273506db3369fd013fb124aece40143fd725cd4b65575df7817c9cdcd5"
+    },
+    {
+      "kind": "table",
+      "name": "public.turns",
+      "source": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+      "sourceSha256": "460990e1301406b2d91c5e7e9dbdef265ba915baac8fe2f8f72012401373b57a",
+      "objectSha256": "8dccdf284346070c44d06ef17614174295c64db63efbd74f7ca3c66972918d74"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_threads",
+      "source": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+      "sourceSha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9",
+      "objectSha256": "87841e1eed73a3b7c181639dbe75a6bc12f67146e3944c2bf7a066b58366a00e"
+    },
+    {
+      "kind": "table",
+      "name": "public.user_profiles",
+      "source": "supabase/migrations/20260828200000_v4_16_user_profiles.sql",
+      "sourceSha256": "235b46b4fb5487742a59254cac4c54e1321fee7bb966df62935caf1380bb310e",
+      "objectSha256": "c668273e67059ef4b07f3144642d4bf75fc5c62d868edc27fe942e8d40fc6558"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_accounts",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "80acbacbc6fb46ed8baccd610b16602cca1a68a0f5185a1852dace67ed7b867e"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_attempts",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "9a5aaf326da8e8bcb9d9867862cb4f1154516b05c2f07d36e68f1c1f0d96c1ef"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_login_proofs",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "e4a2677c97d39ec26511e40fa1d24a1dc8563ba07b0b485295749e7be8bcfa8b"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_scopes",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "f8696368c009486c20331ccb2ec70bae6ec70e1ad23c78974f862722a46dd8d9"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_provider_limits",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "1da9528d9c31e4698ef9952e117917ced101e4658b5a831851328a7b51ea1875"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_attempts",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "2ac9fd57701eed56260ec449108b2a3bffbbaad04901827f190cdeccdc23ec26"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.work",
+      "source": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+      "sourceSha256": "e7d04e2c0598ed0707c05e90d8720e5eca08da22b1c78d59f52b03ac89912705",
+      "objectSha256": "69ef365dd75f975a5980a0cb7f80077b37726261df29e11a1e99efbb16aa2108"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_policies",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "64b2d011b12479112cba0290dd47bb9ef859b6a1e8cf8344357c51cad61f631e"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_consents",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "f95fd4d0d13f3bd4f93caa38205bb9c870b9dbbd348e6accae68e747dd3eaabb"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_content",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "791ccf93a2090bb4fc2b74391083c3e801dc7648530a1f1c3764ac81b8dd1e13"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_dispatches",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "1560717a662ccd3b340c82bdcf751025c9b1e6391a6e6d405bb3f5d26fdd5621"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_tasks",
+      "source": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "sourceSha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d",
+      "objectSha256": "656ff1e118c726e0f31f95a8e42814f06877af40b8ccbcbf1d0ce78a333d87fe"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_turns",
+      "source": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "sourceSha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d",
+      "objectSha256": "1ad0d537b580abdcdd067c0db1383927bd50ebc84f0d89f3e64fadd589bdec0e"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.prepare_mobile_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "9efd59d2350157b9e8df0518fc0e1b71bdd300be08e0d256c99a8f139cf45581"
+    },
+    {
+      "kind": "function",
+      "name": "public.native_prepare_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "b0accc5db3836b66566a9a24f534117b2867075b5ab1c3cc452793dd08c11371"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.mobile_session_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "9fd34166b2498049af17a4efbd2aebd04ccd4ba019994fbb1ba258269757f5c6"
+    },
+    {
+      "kind": "function",
+      "name": "public.native_session_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "9a149de411aa60c52cf80caf764041940c316e7f50addbc4323563904ecdbe0d"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.mobile_access_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "80b2304f8ef2fbbd8ee2a25e9f3a024bb320203861e38f0aaea83c815437af2c"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.guard_mobile_write_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "ed19f8121b0f273550e8d0bfa3d2e08feea55978353ef883a29095a891a1a0b8"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.guard_mobile_rpc_v2",
+      "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sourceSha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc",
+      "objectSha256": "bfc6711a0c8491da074e735532b71c4ce0e98dbdff693786da4a561c398f3f3e"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.valid_text",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "481305740b80453775480618bc06f05c71d445c7d9c48fd639dc14aecd14b7fe"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.lock_turn",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "9dfc80dde509b765d71a195d61486189903da7ae135d750acdc39cf1f4fd3258"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.text_owner",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "590c415b452e64c2e78a139680d85ff0379fc8d8326524889c2908761e2b6412"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.text_policy_current",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "0848201782ded48c880015ea32f89dd8394dd2476f89baae6206c0638ca858b8"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.immutable_text_policy",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "b32321d604656556a8f64e0de478cde0332971146c9ebf71940b1520d116f0af"
+    },
+    {
+      "kind": "function",
+      "name": "public.accept_text_policy",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "bdb1ae95aa382f19551de864393c57691c0595454d5eaf523f42978426d94ceb"
+    },
+    {
+      "kind": "function",
+      "name": "public.withdraw_text_policy",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "022ddc620d366ba79b43f0b275323df5ea4c6176bcafe4c99635b3fbc9161bbf"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_text_policy",
+      "source": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
+      "sourceSha256": "156ec168fabffa251df49e4b255d5f6f6d2f1711adf06d0a5736c4aee7f1cc75",
+      "objectSha256": "d518038068b6d8ee667dd8057598d4e19a59b838ea70a016120b8242dd525d4d"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_text_turn",
+      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+      "objectSha256": "aa73a56ba28569f785f2217a6c3b562b2a569aaa26e57924d56075c5dd719e6a"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_history_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "fab2314f7082763faaf547a2f34625222c53b4f6435b730101e9868599489148"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_session_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "41838294e04bc9b387aeef0f131b2d58e225f5b949695c9c058e5567a09f020b"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_list_sessions_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "55ae70eaab0421a6a25695939aca50f3e66408c7d0891b72701fd8e11f2004b8"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_policy_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "da3f1e27418595b9a2c3cdfd1d925ed4f979911f0383ae5b16d9cadfd0c0efbd"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_accept_policy_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "88471c0b214e54b86e00ab1c50354d586bef0c3c5302346ec7e0c1cc7fc8d0d1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_native_session_v1",
+      "source": "supabase/migrations/20261016060000_qa_native_session.sql",
+      "sourceSha256": "a70fbf6581668df6e1515e02267891fb2183dda13a543e7dc420a7affc0c4033",
+      "objectSha256": "c9bd1f8040b7d6daac22c065d8cc09805ded24424421915d4d78c42d2b057874"
+    }
+  ],
+  "baselineSha256": "b110c0f2ef5408d7c8a1a7331a8a0eb89112b223a66c3822ff8a6dd8cc1b48f7",
+  "historyReplayed": false,
+  "authProfile": "synthetic claims/session tables; NOT GoTrue or real JWT verification",
+  "unsupported": "submit/dispatch/worker/cancellation/TripProposal writers are NOT installed, not replaced by success stubs",
+  "schemaScope": "Selected original table definitions plus explicit schema-overlay.sql; not a whole-catalog equivalence claim"
+}

@@ -1,0 +1,615 @@
+{
+  "schemaVersion": "qa-db-port-review/1",
+  "sourceHead": "7093ca0409e6cf00720df229231c1f6587ce8b8c",
+  "qaBranch": "codex/qaw005-independent-target-20261013",
+  "purpose": "read-only unchanged caller contract for Main to pass to the exclusive empty-PG baseline owner; not SQL/config/target-apply authority",
+  "targetProjectRef": "dzqdzetcctkhbrhlxxgn",
+  "publicRpcPorts": [
+    {
+      "schema": "public",
+      "name": "qa_read_policy_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "policy + original QaPolicy including contextMode=qa_session_history_v1, maxTurns=8",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_accept_policy_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "accepted + policyId",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_list_sessions_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_limit",
+          "typeAndConstraint": "integer=20"
+        }
+      ],
+      "resultRequiredByCaller": "sessions + sessions[] with unique threadId, at most20",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_read_session_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "session + qa-session/1 + threadId/policyId/serviceTaskId/lastTurnId/messages[]",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_submit_message_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_idempotency_key",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_locale",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_text",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_task_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_relationship",
+          "typeAndConstraint": "text=qa_followup"
+        }
+      ],
+      "resultRequiredByCaller": "accepted + turnId + reused:boolean; original admission not completed answer",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "read_text_turn",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "text + turnId/input/output/outcome, original protected saved output",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_cancellation_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text=read|cancel"
+        },
+        {
+          "name": "p_thread_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_request_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "exact qa-cancellation/1 receipt, no new admission/refund",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "native_prepare_v2",
+      "caller": "existing trusted identity service only",
+      "parameters": [
+        {
+          "name": "p_owner",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_session",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "void; original fresh-proof authority, not a client credential substitute",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "native_session_v2",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_attempt",
+          "typeAndConstraint": "uuid default null"
+        }
+      ],
+      "resultRequiredByCaller": "exact {version:2,subject,sessionId,mobileEpoch}; active mobile epoch authority",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_native_session_v1",
+      "caller": "authenticated",
+      "parameters": [
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text closed set"
+        },
+        {
+          "name": "p_mobile_epoch",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_payload",
+          "typeAndConstraint": "jsonb default {}"
+        }
+      ],
+      "resultRequiredByCaller": "original operation result; SECURITY INVOKER epoch check and QA op in same transaction",
+      "firstIncrementClassification": "relevant to declared Native read/consent/recovery slice; exact implementation/head NOT CONSUMED"
+    },
+    {
+      "schema": "public",
+      "name": "qa_ready_groups_v3",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_limit",
+          "typeAndConstraint": "integer"
+        },
+        {
+          "name": "p_model",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_price_version",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_endpoint",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "disabled OR groups + qualified exact tuple groups[], filter before LIMIT",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "qa_claim_work_v1",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "empty OR reconciliation_required OR leased + ownerId/turnId/leaseToken/attempt/leaseMs",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "qa_read_work_v1",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "blocked OR closed qa_input qa-context/1 source envelope",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "qa_authorize_dispatch_v1",
+      "caller": "service_role/internal delegated authority",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_context_digest",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "authorized OR exact {kind:blocked}; original atomic budget/source dispatch",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "qa_authorize_dispatch_v2",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_policy_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_context_digest",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_notice_hash",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "authorized OR blocked; actual tuple/notice check then unchanged v1 authority",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "qa_complete_work_v1",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_turn_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_lease_token",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_kind",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_text",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "finished OR blocked; original output + terminal Turn/event persisted atomically",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "reserve_model_budget",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_task_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_provider",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_model",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_price_version",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_reserved_micros",
+          "typeAndConstraint": "bigint"
+        }
+      ],
+      "resultRequiredByCaller": "reserved or definite original denial; canonical Turn-to-ServiceTask budget binding",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "dispatch_model_budget",
+      "caller": "service_role/internal v1 authority",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        }
+      ],
+      "resultRequiredByCaller": "dispatched or denied; never an extra preceding worker call",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "finish_model_budget",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_scope_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_owner_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_attempt_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_action",
+          "typeAndConstraint": "text=settle|pending|release"
+        },
+        {
+          "name": "p_actual_micros",
+          "typeAndConstraint": "bigint default null"
+        }
+      ],
+      "resultRequiredByCaller": "settled + overrun:boolean on success; original pending/release semantics otherwise",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "read_hosted_worker_status",
+      "caller": "service_role",
+      "parameters": [],
+      "resultRequiredByCaller": "status + enabled:boolean; disabled required for file-mode start",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    },
+    {
+      "schema": "public",
+      "name": "hosted_worker_heartbeat",
+      "caller": "service_role",
+      "parameters": [
+        {
+          "name": "p_worker_id",
+          "typeAndConstraint": "uuid"
+        },
+        {
+          "name": "p_build",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_started_at",
+          "typeAndConstraint": "timestamptz"
+        },
+        {
+          "name": "p_phase",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_result",
+          "typeAndConstraint": "text"
+        },
+        {
+          "name": "p_polls",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_finished",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_unavailable",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_skipped",
+          "typeAndConstraint": "bigint"
+        },
+        {
+          "name": "p_stop_reason",
+          "typeAndConstraint": "text"
+        }
+      ],
+      "resultRequiredByCaller": "ok + enabled:boolean; heartbeat is not answer or target acceptance",
+      "firstIncrementClassification": "not established by first increment; complete answer/write/worker/login-host chain still required"
+    }
+  ],
+  "sourcePins": [
+    {
+      "path": "lib/server/qa-agent/contract.ts",
+      "sha256": "989a73bb0bb54eebdc4bc8e3bdca975639f7a275cc74d86532e584606f2b9b99"
+    },
+    {
+      "path": "lib/server/qa-agent/service.ts",
+      "sha256": "06a6cfb6114efe56f97cb96699355482662cf688db62490b1f1eb68e8f069000"
+    },
+    {
+      "path": "lib/server/qa-agent/http.ts",
+      "sha256": "c9d0097f121fa4bdf950b35a6e07e6f2a35592eca41882f63a186c724072a3f0"
+    },
+    {
+      "path": "lib/server/qa-agent/native-http.ts",
+      "sha256": "590bb6fcc14ef73749d868b26576f23622c1008db09d65ee250734c974ac4ef3"
+    },
+    {
+      "path": "lib/server/qa-agent/native-store.ts",
+      "sha256": "b2b49c1bfcd5c37d2ca7ae7fffdc5ae9926d3a92dfe84e43289ae6e13297d9c9"
+    },
+    {
+      "path": "lib/server/qa-agent/executor.ts",
+      "sha256": "78a26edcdc434886cdf4d6a15c46b0c2536f7fefdb52b9aec94760b76afd559a"
+    },
+    {
+      "path": "lib/server/qa-agent/worker.ts",
+      "sha256": "0d2aaf8a237301fc9ff17d23978fafe5eef3921ed8009951d06f217aaffcdec9"
+    },
+    {
+      "path": "lib/server/qa-agent/cancellation/service.ts",
+      "sha256": "9ff05cd55f883cc7e2133bfba60225a9a79f168cfde334942d4653bb2fb3c2ff"
+    },
+    {
+      "path": "lib/qa-agent/cancellation-contract.ts",
+      "sha256": "6203dab4c662d4cc958c25c1dae805b41f8d39347356ad0b4cbdfc9d653c8034"
+    }
+  ],
+  "nativeAtomicActions": {
+    "list": {},
+    "create": {},
+    "read": {
+      "p_thread_id": "uuid"
+    },
+    "qa_read_policy_v1": {
+      "p_policy_id": "uuid"
+    },
+    "qa_accept_policy_v1": {
+      "p_policy_id": "uuid",
+      "p_notice_hash": "text"
+    },
+    "qa_list_sessions_v1": {
+      "p_limit": 20
+    },
+    "qa_read_session_v1": {
+      "p_thread_id": "uuid"
+    },
+    "read_text_turn": {
+      "p_turn_id": "uuid"
+    },
+    "qa_submit_message_v1": {
+      "p_thread_id": "uuid",
+      "p_turn_id": "uuid",
+      "p_idempotency_key": "uuid",
+      "p_policy_id": "uuid",
+      "p_locale": "text",
+      "p_text": "text",
+      "p_task_id": "uuid",
+      "p_relationship": "text=qa_followup"
+    },
+    "qa_cancellation_v1": {
+      "p_action": "read|cancel",
+      "p_thread_id": "uuid",
+      "p_request_id": "uuid"
+    }
+  },
+  "emptyPgBaselineValidation": "UNRUN: no baseline source/head/proof consumed yet; no legacy migration replay is proposed",
+  "firstIncrementReport": {
+    "source": "Main delegation, 2026-10-17",
+    "declared": [
+      "Native session validation",
+      "session read",
+      "consent",
+      "unknown-ACK projection"
+    ],
+    "notDeclaredComplete": [
+      "submit/admission",
+      "worker",
+      "budget dispatch/settle",
+      "result completion"
+    ],
+    "baselineHead": "UNKNOWN / not consumed by this service owner",
+    "technicalUnimplementedContract": "Explicit technical RPC failure e.g. PROVIDER_UNAVAILABLE; do not emit kind=blocked/unavailable for technical not-implemented because the unchanged service maps those tags to DATA_POLICY_BLOCKED403. Actual submit RPC technical uncertainty preserves ack unknown."
+  }
+}
