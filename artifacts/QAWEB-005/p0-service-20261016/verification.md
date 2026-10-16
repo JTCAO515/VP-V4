@@ -19,15 +19,23 @@ public 503 after the original protected call. No extra public diagnostic fields
 or environment values are exposed.
 
 Main's supplied observation is anonymous GET `/qa` 200 and GET sessions/policy
-503. If that deployment runs this source, missing QA RPC alone cannot explain
-those anonymous responses: this source returns 401 before RPC without a cookie.
-Check the deployed SHA and configuration predicates first. Deployed SHA and
-target env remain UNKNOWN; there is no proven individual bad env value.
-The DB absence is a separate blocker for the authenticated path, not proof of
-the cause of the first anonymous response.
+503. Subsequent fresh evidence from the original deployment owner pins the alias
+to `dpl_F9GFMNCULZ6ydNLSyf9bQbVZz85K`, READY/preview, source `5e960e6d`.
+The original CLI identity `jtcao515` and same team/project were used for the
+alias read; the old Main list-403 remains recorded and was not bypassed here.
+The target ref and Origin exist and match; `VISEPANDA_QA_AGENT` and
+`VISEPANDA_QA_AGENT_POLICY_ID` are both absent. The configuration gate therefore
+explains the current anonymous 503. Absent CONTEXT_MODE legally defaults to
+`current_input_v1`, but P0 needs the explicit QA mode before activation.
+These are supplied deployment-owner facts, not target reads performed here.
+Missing QA RPC is a separate authenticated-path blocker. Enabling flags alone
+would not establish working QA and is not proposed as activation.
 
 Main's fresh read-only DB result (healthy original Go2China target, migration
 count 75 and listed QA functions absent) is reused as supplied, not re-queried.
+Main's updated comparison is current integration repo 161 migrations, missing
+86, target-only 0; this is not an inventory claim for this frozen base WT and
+does not restore an old 80-migration assumption or authorize applying the diff.
 Important source distinction: `qa_session_history_v1` is a context-mode value,
 not a public RPC called by this service; `qa_task_history_v1` is not called by
 this service or its QA context consumer either. Do not create either function
