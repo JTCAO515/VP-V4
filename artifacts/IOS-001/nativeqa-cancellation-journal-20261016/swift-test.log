@@ -1,0 +1,79 @@
+Building for debugging...
+[1 / 21]
+[2 / 22] VisePanda
+[5 / 27] VisePanda
+[9 / 28] VisePanda
+[12 / 23] VisePandaTests-product
+[14 / 25] VisePandaTests-product
+[17 / 23] VisePandaTests-product
+[19 / 23] VisePandaTests-product
+[23 / 23] VisePandaTests-product
+Build complete! (3.34秒)
+Test Suite 'All tests' started at 2026-10-16 17:16:29.159.
+Test Suite 'All tests' passed at 2026-10-16 17:16:29.160.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQACancellationJournalTests started.
+◇ Test retainedLedgerCASDetectsReplacementBeforeWrite() started.
+◇ Test finishRejectsUnobservedOrWrongReceiptsAndNeverOverwritesSeal() started.
+◇ Test lateGenerationFinishNeedsFreshLoadAndCannotTouchSuccessor() started.
+◇ Test finishFailureKeepsUnknownOrFailsClosed(mode:) started.
+◇ Test scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test full32IncludesObservedAndUnknownAndNeverEvicts() started.
+◇ Test authorizedCleanupAfterScopeNilOnlyDeletesExactCancellationItem() started.
+◇ Test custodyReadbackUnknownReopenAndExactBody() started.
+◇ Test capacityIsAcrossEpochsAndOldEpochIsNeverRebound() started.
+◇ Test retainFailuresDoNotReturnCustody(mode:) started.
+◇ Test observedTombstoneSurvivesReopenAndRetain(state:) started.
+◇ Test encodedRecord4096LimitRejectsBeforeWriting() started.
+◇ Test reentrantCapacityWriterIsRefused() started.
+◇ Test inventoryIsMetadataOnlyAndScopeReadChangesFailClosed() started.
+◇ Test replacementIdentityCannotBeSealedByOldCallback() started.
+◇ Test invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "mismatch" to finishFailureKeepsUnknownOrFailsClosed(mode:) started.
+◇ Test case passing 1 argument field → "endpoint" to scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test case passing 1 argument mode → "denied" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test case passing 1 argument mode → "remove" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test case passing 1 argument mode → "read" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test case passing 1 argument field → "owner" to scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test case passing 1 argument mode → "cas" to finishFailureKeepsUnknownOrFailsClosed(mode:) started.
+◇ Test case passing 1 argument mode → "write" to finishFailureKeepsUnknownOrFailsClosed(mode:) started.
+◇ Test case passing 1 argument field → "generation" to scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test case passing 1 argument field → "epoch" to scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test case passing 1 argument mode → "cas" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test case passing 1 argument mode → "write" to retainFailuresDoNotReturnCustody(mode:) started.
+◇ Test case passing 1 argument mode → "readbackAbsent" to retainFailuresDoNotReturnCustody(mode:) started.
+◇ Test case passing 1 argument mode → "readbackMismatch" to retainFailuresDoNotReturnCustody(mode:) started.
+◇ Test case passing 1 argument mode → "corrupt" to invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "foreign" to invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "body" to invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "oversized" to invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "duplicate" to invalidLedgerNeverGetsOverwritten(mode:) started.
+◇ Test case passing 1 argument mode → "readbackFailure" to retainFailuresDoNotReturnCustody(mode:) started.
+◇ Test case passing 1 argument field → "nil" to scopeFenceBeforeAndDuringWrite(field:) started.
+◇ Test case passing 1 argument state → .cancelled to observedTombstoneSurvivesReopenAndRetain(state:) started.
+◇ Test case passing 1 argument mode → "revoked" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+◇ Test case passing 1 argument state → .terminal to observedTombstoneSurvivesReopenAndRetain(state:) started.
+◇ Test case passing 1 argument mode → "absence" to cleanupFailuresAreNotReportedAsErased(mode:) started.
+✔ Test lateGenerationFinishNeedsFreshLoadAndCannotTouchSuccessor() passed after 0.028 seconds.
+✔ Test retainedLedgerCASDetectsReplacementBeforeWrite() passed after 0.028 seconds.
+✔ Test capacityIsAcrossEpochsAndOldEpochIsNeverRebound() passed after 0.028 seconds.
+✔ Test finishRejectsUnobservedOrWrongReceiptsAndNeverOverwritesSeal() passed after 0.028 seconds.
+✔ Test authorizedCleanupAfterScopeNilOnlyDeletesExactCancellationItem() passed after 0.028 seconds.
+✔ Test encodedRecord4096LimitRejectsBeforeWriting() passed after 0.028 seconds.
+✔ Test finishFailureKeepsUnknownOrFailsClosed(mode:) with 3 test cases passed after 0.028 seconds.
+✔ Test custodyReadbackUnknownReopenAndExactBody() passed after 0.117 seconds.
+✔ Test full32IncludesObservedAndUnknownAndNeverEvicts() passed after 0.117 seconds.
+✔ Test invalidLedgerNeverGetsOverwritten(mode:) with 5 test cases passed after 0.117 seconds.
+✔ Test reentrantCapacityWriterIsRefused() passed after 0.117 seconds.
+✔ Test inventoryIsMetadataOnlyAndScopeReadChangesFailClosed() passed after 0.117 seconds.
+✔ Test replacementIdentityCannotBeSealedByOldCallback() passed after 0.117 seconds.
+✔ Test retainFailuresDoNotReturnCustody(mode:) with 4 test cases passed after 0.117 seconds.
+✔ Test scopeFenceBeforeAndDuringWrite(field:) with 5 test cases passed after 0.117 seconds.
+✔ Test observedTombstoneSurvivesReopenAndRetain(state:) with 2 test cases passed after 0.117 seconds.
+✔ Test cleanupFailuresAreNotReportedAsErased(mode:) with 6 test cases passed after 0.117 seconds.
+✔ Suite NativeQACancellationJournalTests passed after 0.117 seconds.
+✔ Test run with 17 tests in 1 suite passed after 0.117 seconds.
