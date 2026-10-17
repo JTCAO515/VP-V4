@@ -1,0 +1,114 @@
+"""Consume fixed Main-private direct-human evidence, never self-authorize JSON.
+No record creation, credential read or target operation. CLI paths cannot replace
+this evidence with a relay/technical-choice/template file.
+"""
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import uuid
+
+ROOT=Path('/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main')
+AUTHORITY_FILE=ROOT/'shared-operator-human-authorization-20261013.json'
+START_FILE=ROOT/'shared-operator-main-start-20261013.json'
+ANSWER='批准 A–D，并条件式批准满足全部门禁后的 E'
+QUESTION_ITEM_ID=['request_user_input_async','call_xeZ1HzPXM8vRQalSkY7wGJHz',0]
+TARGET='dzqdzetcctkhbrhlxxgn'
+CLAIM_ROOT=Path('/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives')
+# Exact record hash filled from the actual independent Main evidence below.
+AUTHORITY_SHA256='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
+
+
+def require(ok,reason):
+    if not ok:raise ValueError(reason)
+
+
+def canonical_approval_id(value):
+    try:
+        parsed=uuid.UUID(value) if isinstance(value,str) else None
+    except ValueError:
+        parsed=None
+    require(parsed is not None and parsed.int!=0 and str(parsed)==value,'CANONICAL_APPROVAL_UUID_REQUIRED')
+    return value
+
+
+def claim_restore_replay(packet,code_hash,reviewed_retry=False):
+    """Irrevocable atomic claim before any archive read, even on later failure.
+
+    The fixed private capture root owns claims independently of bundle paths.
+    Never overwrite/remove a marker or retry with another manifest/code hash.
+    """
+    approval_id=canonical_approval_id(packet.get('approvalId'))
+    require(packet.get('target')==TARGET and packet.get('codeSha256')==code_hash
+            and re.fullmatch('[a-f0-9]{64}',code_hash or '')
+            and re.fullmatch('[a-f0-9]{64}',packet.get('manifestSha256') or ''),'RESTORE_CLAIM_BINDING_REQUIRED')
+    require(CLAIM_ROOT.resolve()==CLAIM_ROOT,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
+    if reviewed_retry:
+        original,_=read_private(CLAIM_ROOT/('approval-'+approval_id+'.restore-replay.used.json'))
+        require(original.get('stage')=='restore-replay' and original.get('approvalId')==approval_id
+                and original.get('target')==TARGET and original.get('manifestSha256')==packet['manifestSha256'],'ORIGINAL_CONSUMED_CLAIM_REQUIRED')
+    directory=os.open(CLAIM_ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)
+    try:
+        st=os.fstat(directory)
+        require(stat.S_ISDIR(st.st_mode) and st.st_uid==os.getuid() and stat.S_IMODE(st.st_mode)==0o700,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
+        stage='restore-replay-retry-1' if reviewed_retry else 'restore-replay'
+        name='approval-'+approval_id+'.'+stage+'.used.json'
+        receipt={'status':'CONSUMED_BEFORE_ARCHIVE_READ','approvalId':approval_id,'stage':stage,
+                 'target':TARGET,'manifestSha256':packet['manifestSha256'],'codeSha256':code_hash}
+        try:
+            fd=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=directory)
+        except FileExistsError:
+            raise ValueError('RESTORE_REPLAY_APPROVAL_ALREADY_CONSUMED') from None
+        # O_EXCL is the concurrency boundary. A partial write/fsync failure also
+        # leaves this UUID consumed; no archive IO follows a failed claim.
+        with os.fdopen(fd,'w') as f:
+            json.dump(receipt,f,sort_keys=True);f.write('\n');f.flush();os.fsync(f.fileno())
+        os.fsync(directory)
+        return receipt
+    finally:
+        os.close(directory)
+
+
+def read_private(path):
+    require(path.exists(),'DIRECT_AUTHORITY_RECORD_MISSING')
+    st=path.lstat()
+    require(path.is_file() and not path.is_symlink() and st.st_uid==os.getuid() and st.st_nlink==1 and st.st_mode&0o777==0o600,'DIRECT_AUTHORITY_FILE_UNSAFE')
+    raw=path.read_bytes();require(len(raw)<65536,'DIRECT_AUTHORITY_RECORD_TOO_LARGE')
+    return json.loads(raw),hashlib.sha256(raw).hexdigest()
+
+
+def validate_human_record(record,digest):
+    require(digest==AUTHORITY_SHA256,'DIRECT_HUMAN_RECORD_HASH_CHANGED')
+    require(record.get('status')=='HUMAN_SCOPE_AUTHORIZATION_RECEIVED_NOT_EXECUTED'
+            and record.get('source')=='Direct current Main conversation request_user_input_async reply','DIRECT_HUMAN_SOURCE_REQUIRED')
+    require(record.get('humanAnswer')==ANSWER and json.loads(record.get('questionItemId','null'))==QUESTION_ITEM_ID,'DIRECT_HUMAN_ANSWER_OR_ITEM_REQUIRED')
+    require(isinstance(record.get('humanQuestion'),str) and record['humanQuestion'].startswith('共享数据库方向已按你最新选择落实')
+            and record.get('target')==TARGET and record.get('scopeGroups')==['A','B','C','D'] and record.get('conditionalGroup')=='E','DIRECT_HUMAN_SCOPE_CHANGED')
+    require(record.get('ordinaryDmlPause') is False and record.get('newPrivileges') is False and record.get('liveRestoreOrOverwrite') is False
+            and record.get('providerExpensesOrActivation') is False and record.get('fileDoesNotSelfAuthorize') is True,'DIRECT_HUMAN_EXCLUSIONS_CHANGED')
+    return record
+
+
+def validate_packet(packet,stage,code_hash,now,stamp):
+    record,digest=read_private(AUTHORITY_FILE);validate_human_record(record,digest)
+    require(packet.get('humanAuthorizationRecordSha256')==digest,'PACKET_DIRECT_HUMAN_BINDING_REQUIRED')
+    require(packet.get('target')==TARGET and packet.get('codeSha256')==code_hash,'DIRECT_PACKET_TARGET_CODE_CHANGED')
+    require(packet.get('approvedBy')=='JT' and packet.get('proposalOnly') is not True,'DIRECT_PACKET_UNAPPROVED')
+    approval_id=canonical_approval_id(packet.get('approvalId'))
+    require(packet.get('retainUntil')==record['retainUntil'],'DIRECT_RETENTION_SCOPE_CHANGED')
+    require((stamp(packet['windowEnd'])-stamp(packet['windowStart'])).total_seconds()==3600,'DIRECT_WINDOW_NOT_APPROVED_60_MINUTES')
+    require(packet.get('liveRestoreAuthority','NONE')=='NONE' and packet.get('providerActivationOrExpenses',False) is False,'DIRECT_PACKET_SCOPE_EXPANDED')
+    # Independent Main review/start is a second prerequisite, never generated by
+    # this owner/helper. Actual source/owner/fresh/time gates still run afterward.
+    require(START_FILE.exists(),'DIRECT_MAIN_REVIEW_START_MISSING')
+    start,start_hash=read_private(START_FILE)
+    require(packet.get('mainStartReceiptSha256')==start_hash,'DIRECT_MAIN_START_BINDING_REQUIRED')
+    require(start.get('status')=='MAIN_REVIEWED_EXECUTION_START' and start.get('issuedBy')=='Main' and start.get('target')==TARGET
+            and start.get('humanAuthorizationRecordSha256')==digest,'DIRECT_MAIN_START_INVALID')
+    require(stage in start.get('allowedStages',[]) and canonical_approval_id(start.get('approvalId'))==approval_id
+            and start.get('codeHashes',{}).get(stage)==code_hash,'DIRECT_MAIN_STAGE_CODE_UUID_CHANGED')
+    require(stamp(start['validFrom'])<=now and stamp(start['validUntil'])>=stamp(packet['windowEnd']),'DIRECT_MAIN_START_EXPIRED')
+    require(re.fullmatch('[a-f0-9]{40}',start.get('reviewedSourceCommit','')),'DIRECT_MAIN_REVIEW_COMMIT_REQUIRED')
+    return {'authorizationRecordSha256':digest,'questionItemId':record['questionItemId'],'operator':'authorized Codex owner after direct human approval','mainStartReceiptSha256':start_hash,'targetLiveEAuthority':'MAIN_ONLY_CONDITIONAL_NOT_THIS_OWNER'}

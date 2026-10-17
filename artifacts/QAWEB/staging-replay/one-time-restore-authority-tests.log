@@ -1,0 +1,20 @@
+test_actual_record_contains_direct_item_question_answer (__main__.DirectAuthority) ... ok
+test_claim_write_failure_remains_consumed (__main__.DirectAuthority) ... ok
+test_direct_capture_skips_tty_but_requires_authority_before_io (__main__.DirectAuthority) ... ok
+test_direct_restore_skips_tty_but_requires_authority_before_io (__main__.DirectAuthority) ... /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/owned-replay-hook.py:36: DeprecationWarning: invalid escape sequence \.
+  require(re.fullmatch('[0-9]{14}_[a-z0-9_]+\.sql',filename),'REPLAY_SOURCE_FILENAME')
+ok
+test_only_main_reviewed_stage_code_uuid_can_start (__main__.DirectAuthority) ... ok
+test_private_record_permission_gate (__main__.DirectAuthority) ... ok
+test_record_hash_changes_fail (__main__.DirectAuthority) ... ok
+test_relay_or_technical_choice_cannot_replace_human (__main__.DirectAuthority) ... ok
+test_restore_claim_duplicate_changed_binding_and_concurrency (__main__.DirectAuthority) ... ok
+test_restore_failure_claimed_before_archive_io_and_retry_rejected (__main__.DirectAuthority) ... /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/owned-replay-hook.py:36: DeprecationWarning: invalid escape sequence \.
+  require(re.fullmatch('[0-9]{14}_[a-z0-9_]+\.sql',filename),'REPLAY_SOURCE_FILENAME')
+ok
+test_unapproved_packet_rejects_before_main_start (__main__.DirectAuthority) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.053s
+
+OK

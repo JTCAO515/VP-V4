@@ -1,0 +1,8 @@
+{
+  "number": 681,
+  "previousAfterSha256": "6df52023abf64194982c5b61ea1457749a169ee1b6b76eaff82be352aa28d355",
+  "afterSha256": "6df52023abf64194982c5b61ea1457749a169ee1b6b76eaff82be352aa28d355",
+  "at": "2026-10-14T03:13:11.440991+00:00",
+  "verified": true,
+  "reason": "First GraphQL pre-read returned EOF before mutation. REST re-read confirmed original body; bounded UX parallel clarification then written and read back."
+}

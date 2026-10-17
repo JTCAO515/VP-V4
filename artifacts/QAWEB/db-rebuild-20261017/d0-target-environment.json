@@ -1,0 +1,23 @@
+{
+  "project": {
+    "id": "dzqdzetcctkhbrhlxxgn",
+    "connection": "Go2China",
+    "linkId": "link_6acdbe0471c081919ff47de24ca53b0f",
+    "status": "ACTIVE_HEALTHY",
+    "reportedVersion": "17.6.1.155"
+  },
+  "environment": {
+    "database": "postgres",
+    "canConnect": true,
+    "currentUser": "postgres",
+    "sessionUser": "postgres",
+    "canUsePublic": true,
+    "observedAtUTC": "2026-10-17T00:35:06.585490Z",
+    "roleBypassRls": true,
+    "roleSuperuser": false,
+    "serverVersion": "17.6",
+    "canCreatePublic": true,
+    "defaultReadOnly": "off",
+    "transactionReadOnly": "on"
+  }
+}

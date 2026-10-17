@@ -1,0 +1,26 @@
+{
+  "sourceHead": "e60f809b0b7672a8ed99613b6bb8d5b3767f4c1c",
+  "baselineSourceHead": "7f2c1bea6926823cb1a660d52c6adcf19f227c0b",
+  "baselineMigrationSha256": "5c0ffe10aa2b5d183897aa45a1928db98477d301022a444a648c8eab39806b1a",
+  "fixedSource": [
+    {
+      "path": "supabase/migrations/20261016051000_subscription_development_ledger.sql",
+      "sha256": "1c5b582b9b0ee890da9aa881f041baf4768360949894a6c66b540b2679f604f0"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/selected-cases.mjs",
+      "sha256": "0840e1797e2274030a4c55be27873802ac5fa7f4930dbc1648871847291c48d9"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/snapshot-concurrency.mjs",
+      "sha256": "fea0edad183ac61c3eb992808d4ddec731142767205be503a3dd37a767b40942"
+    }
+  ],
+  "unchangedLegacy": [
+    "lib/server/entitlements/journey-pass-catalog.ts",
+    "lib/server/entitlements/storekit-sandbox.ts",
+    "supabase/migrations/20260926113804_vpj34_storekit_grants.sql"
+  ],
+  "sharedMigration": "NOT_APPLIED",
+  "runtime": "DEFAULT_CLOSED"
+}

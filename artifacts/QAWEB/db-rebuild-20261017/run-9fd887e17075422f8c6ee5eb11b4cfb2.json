@@ -1,0 +1,13 @@
+{
+  "kind": "SYNTHETIC_EMPTY_POSTGRES_ONLY",
+  "status": "FAIL",
+  "realAuth": "UNRUN",
+  "provider": "UNRUN",
+  "target": "UNRUN",
+  "cleanup": "PASS",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "checks": [],
+  "nonce": "9fd887e17075422f8c6ee5eb11b4cfb2",
+  "containerId": "2a3aeafc4f4abc5f494097bf0ff84bfc2dc71118678ca6cab3a9165f114cc070",
+  "error": "SQL_42883"
+}

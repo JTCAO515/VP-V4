@@ -1,0 +1,74 @@
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[40 / 91]
+[45 / 91]
+[47 / 91]
+[52 / 91]
+[56 / 91]
+[59 / 91]
+[61 / 91]
+[62 / 91]
+[68 / 91] VisePanda
+[76 / 91] VisePanda
+[81 / 92] SubscriptionTests-product
+[82 / 97]
+[86 / 97] SubscriptionTests-product
+[91 / 97] SubscriptionTests-product
+[93 / 97] SubscriptionTests-product
+Build complete! (5.36秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeSubscriptionTests started.
+◇ Test endpointEpochAndGenerationDriftHideLoadedState() started.
+◇ Test sessionPortChecksScopeBeforeAndAfterRead() started.
+◇ Test closedReadLeaseRejectsMalformedOrExcessiveAuthority() started.
+◇ Test halfOpenPeriodCannotBecomeActiveEarlyOrAfterExpiry() started.
+◇ Test oldNonceCannotOverwriteNewerReadEvenForSameAccount() started.
+◇ Test allClosedStatesPreserveStateAndNullCapacity() started.
+◇ Test catalogRejectsUnknownFieldsPolicyTypesAndSales() started.
+◇ Test ownerScopeAndPeriodIdentityMustMatch() started.
+◇ Test unknownMalformedMissingAndOverlargeFieldsFailClosed() started.
+◇ Test nonpositiveHistoricalStatesNeverCreateAReadLeaseOrAnActiveClaim() started.
+◇ Test actorSwitchImmediatelyHidesLoadedInformationBeforeReload() started.
+◇ Test sameProducerCatalogBothLocalesHasNoPriceOrBalance() started.
+◇ Test repeatedReadWithSameOriginalCheckCannotExtendLeaseEvenAfterFailure() started.
+◇ Test allSixServerParserAcceptedSyntheticSamplesDecode() started.
+◇ Test responseArrivingAtOrAfterLeaseDeadlineIsUnavailable() started.
+◇ Test expirationAtRenderHidesActiveWithoutInventingExpiredReceipt() started.
+◇ Test defaultIsRealUnavailableAndNeverSendsReads() started.
+◇ Test localizedStatusNeverCallsUnknownAZeroOrAProductionSubscription() started.
+◇ Test backgroundAndSignOutRejectLateCallbacks() started.
+◇ Test fullRoundTripIsDeductedFromMonotonicLeaseAndCannotRefillOnReadback() started.
+◇ Test readOnlyReloadStateTransitionsAndFailureClearOldPrivateData() started.
+◇ Test cancellationAndInvalidPayloadDoNotLeaveLoadedOrLoadingState() started.
+◇ Test localTestNeverMasqueradesAsSandboxOrProduction() started.
+✔ Test nonpositiveHistoricalStatesNeverCreateAReadLeaseOrAnActiveClaim() passed after 0.007 seconds.
+✔ Test actorSwitchImmediatelyHidesLoadedInformationBeforeReload() passed after 0.008 seconds.
+✔ Test repeatedReadWithSameOriginalCheckCannotExtendLeaseEvenAfterFailure() passed after 0.010 seconds.
+✔ Test responseArrivingAtOrAfterLeaseDeadlineIsUnavailable() passed after 0.012 seconds.
+✔ Test defaultIsRealUnavailableAndNeverSendsReads() passed after 0.012 seconds.
+✔ Test endpointEpochAndGenerationDriftHideLoadedState() passed after 0.015 seconds.
+✔ Test expirationAtRenderHidesActiveWithoutInventingExpiredReceipt() passed after 0.015 seconds.
+✔ Test fullRoundTripIsDeductedFromMonotonicLeaseAndCannotRefillOnReadback() passed after 0.016 seconds.
+✔ Test readOnlyReloadStateTransitionsAndFailureClearOldPrivateData() passed after 0.019 seconds.
+✔ Test unknownMalformedMissingAndOverlargeFieldsFailClosed() passed after 0.038 seconds.
+✔ Test localTestNeverMasqueradesAsSandboxOrProduction() passed after 0.038 seconds.
+✔ Test closedReadLeaseRejectsMalformedOrExcessiveAuthority() passed after 0.038 seconds.
+✔ Test sessionPortChecksScopeBeforeAndAfterRead() passed after 0.038 seconds.
+✔ Test allSixServerParserAcceptedSyntheticSamplesDecode() passed after 0.038 seconds.
+✔ Test sameProducerCatalogBothLocalesHasNoPriceOrBalance() passed after 0.038 seconds.
+✔ Test allClosedStatesPreserveStateAndNullCapacity() passed after 0.038 seconds.
+✔ Test halfOpenPeriodCannotBecomeActiveEarlyOrAfterExpiry() passed after 0.038 seconds.
+✔ Test ownerScopeAndPeriodIdentityMustMatch() passed after 0.038 seconds.
+✔ Test catalogRejectsUnknownFieldsPolicyTypesAndSales() passed after 0.038 seconds.
+✔ Test localizedStatusNeverCallsUnknownAZeroOrAProductionSubscription() passed after 0.038 seconds.
+✔ Test oldNonceCannotOverwriteNewerReadEvenForSameAccount() passed after 0.038 seconds.
+✔ Test cancellationAndInvalidPayloadDoNotLeaveLoadedOrLoadingState() passed after 0.038 seconds.
+✔ Test backgroundAndSignOutRejectLateCallbacks() passed after 0.038 seconds.
+✔ Suite NativeSubscriptionTests passed after 0.039 seconds.
+✔ Test run with 23 tests in 1 suite passed after 0.039 seconds.
+PASS: actual Swift 6 feature/Swift Testing synthetic-port behavior and actual iOS 17 Simulator SDK SwiftUI typecheck; device/App/target UNRUN
+PASS: module exposes no network-write, StoreKit/account-operation or persistence capability

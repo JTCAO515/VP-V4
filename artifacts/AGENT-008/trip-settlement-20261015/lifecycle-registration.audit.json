@@ -1,0 +1,25 @@
+{
+  "baselineFunctions": [
+    {
+      "signature": "conversation_data_private.schema_supported_v1()",
+      "sourceHash": "236f8c22da3b7a93035c4b1758f2f25280d5137f2cb9e1aadecc5dcaa2839a02"
+    },
+    {
+      "signature": "conversation_data_private.sources_v1()",
+      "sourceHash": "27c19f5223b6fd5a0034ed29cab6912b7d43625bb4f27e542431f87f85b6f8c7"
+    },
+    {
+      "signature": "turn_data_private.schema_supported_v1()",
+      "sourceHash": "22a58d694c11726a04207df7acf09f4b2b03a558428930b7bb98fd8646578d09"
+    },
+    {
+      "signature": "turn_data_private.sources_v1()",
+      "sourceHash": "dcc36222ad9b9e92438c6a1bb8d4ad16b2565e6018f8b88e083fbf7936cd567c"
+    }
+  ],
+  "catalogDelta": [
+    "turn_private.service_task_capacity_settings",
+    "turn_private.service_tasks"
+  ],
+  "newAuditedCatalogHash": "bca0f63681d46c193c56dc1819841075538b4459628b965fc5069f1913cdc38b"
+}

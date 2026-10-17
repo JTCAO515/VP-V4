@@ -1,0 +1,27 @@
+(node:33293) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:33296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:33297) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33297) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:33297) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/e2e/qa-agent-ui/workspace.spec.mjs:971:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (3.3s)
+  ✓   2 tests/e2e/qa-agent-ui/workspace.spec.mjs:2217:1 › WEB001 same actor tabs retain independent URL Session and submission destinations (447ms)
+  ✓   3 tests/e2e/qa-agent-ui/workspace.spec.mjs:2382:1 › cancellation requires explicit confirmation and reads original stopped state after reload without resubmission (851ms)
+  ✓   4 tests/e2e/qa-agent-ui/workspace.spec.mjs:2422:1 › unknown cancellation POST is recovered by original-ID GET after refresh, never automatically re-POSTed (793ms)
+  ✓   5 tests/e2e/qa-agent-ui/workspace.spec.mjs:2470:1 › terminal cancellation read keeps the original answer and never posts a stop (650ms)
+  ✓   6 tests/e2e/qa-agent-ui/workspace.spec.mjs:2498:1 › withdrawn generation consent still permits metadata-only stop of original observed request (814ms)
+  ✓   7 tests/e2e/qa-agent-ui/workspace.spec.mjs:2552:1 › cancellation not_submitted error does not confirm or erase unknown original message admission (708ms)
+  ✓   8 tests/e2e/qa-agent-ui/workspace.spec.mjs:2621:1 › cancellation permission refusal clears protected history and never claims stopped (531ms)
+  ✓   9 tests/e2e/qa-agent-ui/workspace.spec.mjs:2666:1 › late cancellation receipt cannot land in another URL Session (749ms)
+  ✓  10 tests/e2e/qa-agent-ui/workspace.spec.mjs:2714:1 › same actor tabs stop one original identity without duplicate POST or carrying question body (616ms)
+  ✓  11 tests/e2e/qa-agent-ui/workspace.spec.mjs:2803:1 › cancellation recovery storage failure blocks only the stop POST and preserves original identity (612ms)
+  ✓  12 tests/e2e/qa-agent-ui/workspace.spec.mjs:2823:1 › actor change clears cancellation intent and fences the old actor late stop receipt (795ms)
+  ✓  13 tests/e2e/qa-agent-ui/workspace.spec.mjs:2903:1 › late pending cancellation GET cannot overwrite a newer observed stop receipt (848ms)
+
+  13 passed (12.6s)

@@ -1,0 +1,21 @@
+✔ current source and manual addition retain separate provenance and original bytes (0.858792ms)
+✔ country/title do not grant Chinese observation and ambiguous lines stay unknown (0.138208ms)
+✔ stale versions/items, missing evidence, revoked, unmatched and expired sources fail closed (0.175792ms)
+✔ source transport failure differs from a successful empty/missing read (0.050416ms)
+✔ late response, route/actor change and unmount cannot publish into successor read (0.379917ms)
+✔ prepare uses only original versioned patch, preserves bytes, and never confirms or retries unknown ACK (0.329667ms)
+✔ online read binds exact item/version and preserves cookie GET/no-store/abort without model egress (9.808167ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (3.527042ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (0.548708ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (0.838417ms)
+✔ manual value preserves supplied bytes and cannot acquire verified provenance (0.962333ms)
+✔ bounded address input rejects blank, controls, malformed Unicode and overflow without clipping (0.246125ms)
+✔ Chinese text observation uses only real address content and leaves ambiguous scripts unknown (0.322583ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 240.438583

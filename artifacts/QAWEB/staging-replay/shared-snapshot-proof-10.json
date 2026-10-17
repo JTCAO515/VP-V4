@@ -1,0 +1,62 @@
+{
+  "status": "PASS_LOCAL_SHARED_SNAPSHOT_ONLY",
+  "targetRead": false,
+  "realCredentialsOrKeys": false,
+  "stages": [
+    "PASS verify-full TLS and synthetic temporary CLI role without secret argv/output",
+    "PASS incorrect certificate hostname rejected",
+    "PASS three pg_dump+counts+ledger digest share one point despite concurrent rows/revocation/ledger updates",
+    "PASS later sequence advance restores above snapshot row bound; no exact-MVCC sequence claim",
+    "PASS point copy grants no live restore or dispatch authority",
+    "PASS table DDL drift refuses whole group; no stable-catalog assertion from old snapshot",
+    "PASS exporter lost after first dump: later files never start; partial group cannot pass",
+    "PASS independent global-role drift fails whole group; imported old catalog is not sufficient",
+    "PASS rewound nextval would collide: restore refuses and cleans owned copy",
+    "PASS lost exporter refuses subsequent imports; no live-data fallback",
+    "PASS expired exporter refuses before import",
+    "PASS synthetic key/ciphertexts removed"
+  ],
+  "currentStage": "concurrent DML capture",
+  "transport": {
+    "ssl": true,
+    "sessionUser": "cli_login_postgres",
+    "effectiveRole": "postgres",
+    "passwordInArgv": false
+  },
+  "restore": {
+    "status": "PASS_LOCAL_BUNDLE_RESTORE_ONLY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "6fe2b6fe00a97a9a8d0126f09afec23c954f479e677ff97579df7df667f80cab",
+    "countRelations": 18,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformLedger": "PASS_COUNT_AND_DIGEST",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS",
+    "sequenceSafety": {
+      "status": "PASS_MONOTONE_SEQUENCE_NO_COLLISION",
+      "sequences": 1,
+      "advancedBeyondSnapshotRowBound": 1,
+      "exactSnapshotSequenceState": false
+    },
+    "captureMode": "shared-readonly-snapshot/1",
+    "dispatchAuthority": "NONE",
+    "liveRestoreAuthority": "NONE"
+  },
+  "cleanup": "PASS",
+  "elapsedSeconds": 9.984
+}

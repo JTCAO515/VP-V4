@@ -1,0 +1,4606 @@
+{
+  "schemaVersion": "vpv4-current-plan/1",
+  "acceptedAt": "2026-10-14",
+  "repo": "JTCAO515/VP-V4",
+  "legacyInput": "docs/product/VPV10-MODULAR-001/before.json",
+  "liveInput": "docs/product/VPV10-MODULAR-001/replan-before.json",
+  "contract": "docs/contracts/vpv4-project-boundaries.md",
+  "parent": {
+    "id": "PROGRAM",
+    "number": 187,
+    "title": "VP-V4 三工程成果、依赖批次与交付总览",
+    "primaryProject": "agent",
+    "workType": "product-coordination",
+    "lead": "唯一 Main；产品取舍沿 BestJ/CoolJ/JT",
+    "affectedConsumers": [
+      "agent",
+      "ios",
+      "web"
+    ],
+    "originalIssues": [
+      187
+    ],
+    "priority": "P0",
+    "batch": "OVERVIEW",
+    "userOutcome": "优先看到原生持续体验、准确地点动作与表达大字卡，沿已有 Agent/业务端口逐步接入真实能力",
+    "remaining": "本轮交付完整连通前端，不限两个独立样例叶页：对话/旅程/资料库/记忆四Tab、头像详情、二级页/弹窗/关键状态及跨页对象联动。Main 独占共享入口/导航/PBX/前端内存状态和对象ID，逐线早整合与编译/模拟器验证。原dirty/PR690/691复用；真实服务未完成不冒PASS，也不作为前端前置。",
+    "reusePaths": [
+      "docs/contracts/vpv4-project-boundaries.md"
+    ],
+    "evidence": [
+      {
+        "kind": "sample",
+        "ref": "PR688/873",
+        "scope": "sample passed; real QA incomplete"
+      }
+    ],
+    "acceptance": [
+      {
+        "sourceIssue": 187,
+        "checked": false,
+        "text": "三工程可执行任务、主责、原52承接和批次实时一致，无漏项/重复；所有原未满足验收都有明确承接。"
+      },
+      {
+        "sourceIssue": 187,
+        "checked": false,
+        "text": "正式产品发布/用户观察目标保持，规划迁移与样例不冒充完整产品交付。"
+      }
+    ],
+    "activationEvidence": [],
+    "dependencies": [],
+    "checks": [
+      "current plan 覆盖、唯一编号、依赖无环、逐项 GitHub 读回"
+    ],
+    "scopeExclusions": [
+      "不是第四工程，不自动调度旧六线程",
+      "不新增运行/资金/生产/数据权限"
+    ],
+    "frontendIncrementIds": [
+      "IOS-CHAT-MUSE-20261014"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "AGENT-001",
+      "number": 680,
+      "title": "真实文本请求经持久执行返回可恢复回答",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        680,
+        195
+      ],
+      "priority": "P0",
+      "batch": "B1",
+      "userOutcome": "真实文本请求经持久执行返回可恢复回答",
+      "remaining": "复用 qa-agent、hosted worker、ModelGateway 和原文本纵切；补真实 Auth→admission→worker→provider→持久读回、明确失败与预算收据。 既有 PR684/686 的服务、SQL/actorScope、客户端或context源码不因target未验视为缺码；先实测获准链路，再根据真实失败局部修复。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "artifacts/VPJ-07/grounded-service-20260913/verification.md",
+        "artifacts/VPJ-07/worker-service-20260912/verification.md"
+      ],
+      "evidence": [
+        {
+          "kind": "merged-source",
+          "ref": "PR684/PR685",
+          "scope": "existing source and bounded synthetic evidence; real provider acceptance remains incomplete"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 195,
+          "checked": true,
+          "text": "仅完成一个文本请求的持久input→worker→provider→最终回答→原生读取纵切；流式/多模态另单。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "answered/partial/clarification/blocked/technical_failure各有中英用户结果；技术失败不计成功。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "taskId与用户扣次幂等，lease expiry/worker crash/重复投递/cancel race/隔离和terminal-once可测；供应商attempt可能重复计费，逐次记录而非承诺费用绝不重复。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "终端用户同意AI处理前无其个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "体验增量2026-09-17：五种结果均给出自然中英用户结果和可执行下一步，不以outcome/intent代码作为最终回答；answered先给结论，partial保留可靠部分并指出具体缺口，clarification只问影响当前目标的一项，blocked给许可内替代，technical_failure给同任务恢复入口。必要澄清和系统修复沿既有ServiceTask，不以表达优化新增扣次。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "体验增量2026-09-17：在受支持城市输入“机场地址”等有歧义问题时，仅用已核实实体构造必要选择；未知城市/实体不猜测，已有上下文不重复索取。复用#206已验行为与当前证据资格；正常可答却全拒答、技术失败伪称缺知识、没有来源的选项均为失败。"
+        },
+        {
+          "sourceIssue": 195,
+          "checked": false,
+          "text": "助手升级2026-09-27：向VPJ-78/80提供当前真实job、授权、attempt成本、取消与完成回执接缝；新模式通过版本化接入，既有文本模式边界及已勾选证据保持原范围。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-011",
+          "kind": "acceptance",
+          "reason": "真实目标恢复与权限就绪输入；独立源码/fixture工作不等待恢复整票"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "app/api/chat/**",
+        "lib/server/turn/**",
+        "lib/server/jobs/**",
+        "supabase/migrations/**",
+        "tests/**/turn/**"
+      ],
+      "retainedPullRequests": [
+        684
+      ]
+    },
+    {
+      "id": "AGENT-002",
+      "number": 682,
+      "title": "许可内同 Session 多轮与纠正真正进入模型",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        682
+      ],
+      "priority": "P0",
+      "batch": "B1",
+      "userOutcome": "许可内同 Session 多轮与纠正真正进入模型",
+      "remaining": "复用 qa-context/1 资格、digest、有界完整对；补真实追问/纠正/新 Session 隔离与取消超时。 既有 PR684/686 的服务、SQL/actorScope、客户端或context源码不因target未验视为缺码；先实测获准链路，再根据真实失败局部修复。",
+      "reusePaths": [],
+      "evidence": [
+        {
+          "kind": "merged-source",
+          "ref": "PR684/PR685",
+          "scope": "existing source and bounded synthetic evidence; real provider acceptance remains incomplete"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 682,
+          "checked": false,
+          "text": "复用 qa-context/1 资格、digest、有界完整对；补真实追问/纠正/新 Session 隔离与取消超时。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
+      ]
+    },
+    {
+      "id": "AGENT-003",
+      "number": 199,
+      "title": "显式 Memory 被正确消费且可纠正遗忘",
+      "primaryProject": "agent",
+      "workType": "shared-data",
+      "lead": "Profile/Memory 原 domain owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        199
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "显式 Memory 被正确消费且可纠正遗忘",
+      "remaining": "复用 Profile/Memory 唯一权威和现有 UI；补真实消费者入选/使用/撤回，禁止新画像库。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "当前Trip事实、working context、显式跨Trip偏好分别管理；推断预算先只用于当前Trip。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "纠正/本次不用/忘记后，下一轮上下文和待处理工作不复活旧记录。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "同意、来源、scope、版本和memory-use依据可追；Free同样保留当前Trip安全约束和纠错权。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "Q36明确基础偏好对Free/Pass共同可用并跨Trip；保留Profile/Memory每字段唯一权威，用任务专用资格投影接入真实消费者，不能把管理列表整体注入模型。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "通过跨Trip、当前要求覆盖旧默认、纠正/撤回后排队与重试、跨账号迟到响应验证；明确记住且范围许可清楚不重复询问，推断和敏感画像不自动保存，偏好不得改写已确认Trip或替代外部证据。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "HF复用：借LongMemEval更新/跨会话方法编写自有中英反例，分别观察资格、Context入选、实际使用与撤回；管理API不充当模型检索，Profile/Memory字段保持唯一权威源，不为benchmark新建画像或向量库。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "记忆新增/更新实际成功后，顶部轻提示“已加入记忆/Saved to memory”，仅“撤销/Undo”，默认4秒自动隐藏；不抢焦点、不阻断输入。摘要有现成允许内容才附一行，不增加生成步骤；首版不加查看按钮。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "撤销必须作用于本次记忆变更及版本，成功显示已撤销，失败/冲突如实提示，不覆盖后续修改或改变Trip；同一逻辑写入重试/重连/重放不重复弹出，撤销自身不再触发加入记忆提示，换账号清理旧操作入口。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "助手升级2026-09-27：Memory作为一级Tab，VP相关偏好、真实save/undo和成果使用解释构成四处可见性；无记忆时不伪装熟悉，管理项有来源、scope、修改/暂停/忘记入口。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "助手升级2026-09-27：首版真实消费者至少使用已支持的travel pace；再逐字段扩展明确偏好，当前Trip/临时状态/外部事实/任务不得混入长期Memory。"
+        },
+        {
+          "sourceIssue": 199,
+          "checked": false,
+          "text": "助手升级2026-09-27：在任务排队、运行、重试和成果待确认期间纠正或忘记，新的dispatch与推荐不使用旧值；删除同时覆盖衍生摘要、索引和检查点，Free/付费及到期后保持同等基础记忆控制。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/memory/**",
+        "lib/server/context/**",
+        "supabase/migrations/**",
+        "tests/**/memory/**",
+        "app/api/memory/**",
+        "lib/server/identity/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-004",
+      "number": 359,
+      "title": "旅程来源经审核形成可发布的知识变更",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        359,
+        205
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "旅程来源经审核形成可发布的知识变更",
+      "remaining": "复用来源登记、Wiki 生成、原子声明和审核；补真实来源权利、定位、冲突及发布回执，作者审核分离。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "artifacts/VPJ-15/staging-20260912/verification.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "一份获准来源通过实际有界LLM worker生成source/procedure/topic Wiki草稿与statement变更，运营查看差异后经现有异人审查和发布，普通允许reader读到正确版本。"
+        },
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "每条关键声明链接原source revision/span；生成摘要、关系与缺口标draft，模型不能创建来源、reviewer、TTL或发布资格，不把旧模型输出当外部证据。"
+        },
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "页面版本记录source依赖、statement引用、job/prompt/config/input digest和变更理由；重复输入不重复建页或发布，expectedVersion冲突拒绝覆盖，并发/跨页变更不暴露半更新。"
+        },
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "实际worker超时/取消/进程重启可恢复或明确终态；重试幂等，provider调用有配置、费用/unknown和预算回执；拒权或来源撤回后不继续外发/发布。"
+        },
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "固定中英材料覆盖相互矛盾、条件/例外、跨城市差异及注入；新增证据只增加或挑战候选，旧发布事实只有按原流程变更；正文与审查UI能定位原文。"
+        },
+        {
+          "sourceIssue": 359,
+          "checked": false,
+          "text": "沿既有可靠解析路径；#288 Docling REJECT保留，候选重评须明确新缺口和事前判据。实际Ops/worker/发布/读回链与失败结果留证，不以自动标签或本地fixture结票。"
+        },
+        {
+          "sourceIssue": 205,
+          "checked": false,
+          "text": "为Supported Journey Matrix选10–20条原子事实/流程，登记许可、locator、适用范围、版本与审者。"
+        },
+        {
+          "sourceIssue": 205,
+          "checked": false,
+          "text": "中英表达共享语言中立assertion；candidate/reviewed/published/eligible不可混同。"
+        },
+        {
+          "sourceIssue": 205,
+          "checked": false,
+          "text": "运营能提交/审查/撤销并在产品读到结果；没有内容授权则阻塞发布，不批量造810条。"
+        },
+        {
+          "sourceIssue": 205,
+          "checked": false,
+          "text": "首批内容按普通来华游客的城市/场景/必要claim/权利/时效/可用动作组织覆盖；优先支撑规划与变化后的下一步，未定城市名单不得写成已覆盖全国。"
+        },
+        {
+          "sourceIssue": 205,
+          "checked": false,
+          "text": "HF复用：测试集与生产知识分别登记；外部数据记录发布者、准确repo/revision/原行ID、逐源许可及变更，公开/NC/混合来源不自动发布为旅游Fact；优先自有合成评测与已许可审核语料。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        358
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 359,
+          "originalDependency": 358,
+          "currentTarget": 358,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "apps/ops/**",
+        "lib/server/knowledge/**",
+        "lib/server/jobs/**",
+        "lib/server/model-gateway/**",
+        "supabase/migrations/**",
+        "tests/**/knowledge/**",
+        "tests/**/ops/**",
+        "evals/**",
+        "docs/knowledge-base/**",
+        "app/ops/**",
+        "app/api/ops/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-005",
+      "number": 206,
+      "title": "回答引用获准知识并显示部分答案与缺口",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        206,
+        360
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "回答引用获准知识并显示部分答案与缺口",
+      "remaining": "复用 EvidencePack/资格检索/已发布 Wiki；补实际回答证据绑定、不可访问与矛盾拒绝。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 206,
+          "checked": false,
+          "text": "结构化/完整短文baseline→claim coverage→中英回答/卡片；权限时效范围预过滤。"
+        },
+        {
+          "sourceIssue": 206,
+          "checked": false,
+          "text": "required/background/coverage/conflicts并存，同一fact多证据可用，no-answer不被相关度掩盖。"
+        },
+        {
+          "sourceIssue": 206,
+          "checked": false,
+          "text": "真正knowledge gap与provider/policy/user-input/capability问题分流；不自动承诺人工。"
+        },
+        {
+          "sourceIssue": 206,
+          "checked": false,
+          "text": "有依据回答同时约束自由正文和卡片，partial保留可靠部分并指明具体缺口与可用下一步；个人偏好只能筛选解释，不当外部事实；完整证据下全拒答作为失败反例。"
+        },
+        {
+          "sourceIssue": 206,
+          "checked": false,
+          "text": "HF复用：借MIRACL/BIPIA方法分别诊断检索、无答案与注入，保持请求级资格在召回及模型外发前执行、展示前重验；历史百科/旅行基准不当实时知识，相关高分不推翻时效、反证与许可。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "复用#206/#264生产者消费者：自然语言请求按明确对象、别名、required claims和完整短文/关键词检索已发布投影，输出EvidencePack并在原生zh/en与已有Web读到对应答案、限定和来源。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "研究索引和产品索引按用途/actor隔离；在召回、模型外发、展示及历史重载前执行当前资格。旧索引命中已撤回/过期/错范围知识也无法被外发或展示为事实。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "EvidencePack记录required/background/missing/conflicts及statement/publication/source/span和检索/ontology版本；关键遗漏、错误引用和证据充足时全拒答均判失败，不由相关度决定完整性。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "分开missing_content/retrieval_miss/user_input_missing/capability_unsupported/policy_denied/provider_failure；retrieval miss先有界直接lookup，真正缺口仅保留脱敏规范化模式，不保留私人原文。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "沿用当前只分类输入的数据边界；如外发知识片段/上下文需版本化实际数据流配置与对应告知/同意及旧模式兼容，不静默改变现有policy。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "冻结复用加新增的中英问题族与qrels/必要claim真值，调参和保留集按来源版本/问题族隔离；跑实际查询、普通账号owner隔离、撤回和故障，并报告覆盖/过拒答、p50/p95与成本分母。"
+        },
+        {
+          "sourceIssue": 360,
+          "checked": false,
+          "text": "K2 记录同批结构化/直接读取baseline与本路径实测差异；向量化/重排仍归AGENT-016真实召回和净收益激活门。iOS/Web实际读回、原Trip不变、历史证据和回退须通过，随后与K1共同核对整票完成标准。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-004",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 360,
+          "originalDependency": 359,
+          "currentTarget": 359,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/knowledge/**",
+        "lib/server/turn/**",
+        "ios/**",
+        "components/chat/**",
+        "tests/**/knowledge/**",
+        "evals/**",
+        "lib/server/model-gateway/**",
+        "lib/grounded/**",
+        "supabase/migrations/**"
+      ],
+      "retainedPullRequests": [
+        416
+      ],
+      "internalStages": [
+        {
+          "id": "K1",
+          "name": "有依据回答与部分答案边界",
+          "historicalSources": [
+            206
+          ],
+          "inputs": []
+        },
+        {
+          "id": "K2",
+          "name": "已发布Wiki/原子声明的实际消费者证据",
+          "historicalSources": [
+            360
+          ],
+          "inputs": [
+            "AGENT-004 的已发布知识及 K1 结果语义"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-005 同时承接 K1 与 K2；K2 的读回/回退完成仅是一阶段证据，不单独关闭整票。向量化/重排仍受 AGENT-016 的真实召回与净收益激活门约束。"
+    },
+    {
+      "id": "AGENT-006",
+      "number": 208,
+      "title": "地图供应商按用途和成本受控补查降级",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        208,
+        367
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "地图供应商按用途和成本受控补查降级",
+      "remaining": "复用高德主选、腾讯补充适配；补同实体坐标、许可/成本/失败实测，不新采购。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/benchmarks/maps/vpj-18-362-closeout.md",
+        "artifacts/VPJ-18/full-matrix-20260914/verification.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 208,
+          "checked": false,
+          "text": "对海外行前+境内在途、英文检索、中文POI、入口/步行/路线矩阵、SDK UI和授权逐项比较。"
+        },
+        {
+          "sourceIssue": 208,
+          "checked": false,
+          "text": "依据公开文档、控制台与实测记录价格/配额/缓存和二次展示行为；已有API可用即可开发，不等待书面许可或采购批准，未知商业条件单列。"
+        },
+        {
+          "sourceIssue": 208,
+          "checked": false,
+          "text": "agent按实际效果选择一个主地图并列回滚/无地图模式；第二家有明确效果收益再接入，不设额外产品许可。"
+        },
+        {
+          "sourceIssue": 367,
+          "checked": false,
+          "text": "用maps-01对照证据明确启用的城市/能力/触发条件及收益标准；正常请求不默认双调用。无显著收益则保持腾讯开发可用但运行关闭，记录原因。"
+        },
+        {
+          "sourceIssue": 367,
+          "checked": false,
+          "text": "超时/无覆盖可按策略有限切换；鉴权/配额错误进入明确配置或运维状态，不无限重试，不静默突破预算。"
+        },
+        {
+          "sourceIssue": 367,
+          "checked": false,
+          "text": "用户位置/查询外发接收方在既有同意范围内；未同意第二家时不外发，验证撤回、超时及并发。"
+        },
+        {
+          "sourceIssue": 367,
+          "checked": false,
+          "text": "新供应商重新生成完整路线、保留源和ID映射；不能跨底图混用未经确定用途的字段或平均两家ETA。"
+        },
+        {
+          "sourceIssue": 367,
+          "checked": false,
+          "text": "验证两家均不可用、实体冲突、坐标边界与额外成本上限；高级矩阵/室内/可达圈只启用已证实改善具体任务的能力，其余保留后续项。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/maps/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json",
+        "lib/server/maps/**",
+        "scripts/maps/**",
+        "tests/**/maps/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-007",
+      "number": 200,
+      "title": "图片语音模型在中英任务上具备可用资格",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        200
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "图片语音模型在中英任务上具备可用资格",
+      "remaining": "复用 C0 适配和已有失败证据；分 OCR/vision/ASR/TTS 补真实数据流、usage、取消与质量，文本资格不代媒体资格。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "用许可内合成材料验证实际region OCR/vision、ASR和TTS任务能力、usage、取消/删除，不假定文本模型具备媒体。"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "中英数字/否定/姓名/日期/字幕朗读一致性及失败输出分任务切片报告。"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "选择最少合格媒体路径，未验证能力不进入12/27；密钥不进客户端。"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "数字/否定/姓名/日期逐项判分，partial与拒绝不伪装通过"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "取消、超时、费用未知和接收地区有真实回执；供应商留存未知如实保留"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "只将已验vision能力交给材料消费者；ASR/TTS仍单独关闭"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "金额、否定、姓名、日期的错漏单列，静音/截断/噪声有明确失败"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "取消后停止可控处理并验证临时音频清理，未知外部费用待核"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "冻结来源/模型/地区/预算与质量阈值，不能用文字模型通过代替ASR"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "否定/数字/地址发音有独立听审记录，失败不能上线"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "记录实际字符/秒数/usage、首音频延迟、取消及缓存用途"
+        },
+        {
+          "sourceIssue": 200,
+          "checked": false,
+          "text": "短讲解默认长度沿用catalog；清理和供应商留存边界可核"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/media/**",
+        "lib/server/media-translation/**",
+        "evals/**",
+        "docs/benchmarks/media/**",
+        "tests/**/media/**"
+      ],
+      "retainedPullRequests": [
+        484
+      ]
+    },
+    {
+      "id": "AGENT-008",
+      "number": 227,
+      "title": "完整 ServiceTask 的额度和实际尝试成本一致",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        227
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "完整 ServiceTask 的额度和实际尝试成本一致",
+      "remaining": "复用 durable budget 与现账本；补取消/未知结算/重试、必要澄清归属，不扩收费策略。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "按Q37服务任务口径，由agent在开发启用前冻结Free/Pass周期与滚动窗口的开发容量，真实收费前再确认，配置化验证且客户端显示正确下次可用时刻；旧6/30/300/60 Ask数字仅作历史占位，不换名沿用或构造旧收费路径。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "ServiceTask是一项明确目标及必要澄清、系统修复，关联多个Turn/attempt；并发预留、按获准成果标准结算和失败返还可审，未决partial/改稿/TTL/跨期消费不启用。 新计量先记录模式，内部attempt成本独立累计，不构造双重扣次路径。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "安全/记忆纠错/导出删除/手动编辑/缓存播放不付费；强模型预算不能悄悄降低安全质量。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "消费VPJ-34的有效grant与VPJ-33政策版本，验证未到startsAt不发容量、到期余量不结转、退款/恢复不补发或重置账号窗口；媒体上限按33的版本化值核成本。不重新实现购买、排队和退款交易账本。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "验证最后一份容量竞争、相同key不同参数、两设备/多worker、取消与完成竞态、晚到usage和跨窗口；实际结果/结算幂等，失败或未知状态不被当零成本。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "助手升级2026-09-27：免费保留真实首值、基础Memory和有界委托体验；付费提升研究深度/协调/持续工作范围；系统修复/必要澄清不新增消费，已交付关键资料不因到期锁住。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "助手升级2026-09-27：用户所述200问题低于US$5含模型/搜索/地图/语音；增量后台步骤/重试/存储/支持和实际佣金分开计量，报告每任务及旅程窗口成本分布，不把潜在佣金当已到账。"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "复用#195/#194记录模式、v2开发政策；初期开发grant可验证，正式集成消费Q2且不伪造交易"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "真实DB最后一份容量竞争、两设备/多worker、同key异参数、写入前后崩溃不双扣"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "必要澄清/系统修复/失败不额外消费；安全、记忆纠错、导出删除、手动编辑免费，内部成本仍止损"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "消费#198确认回执，不因provider返回/卡片/按钮点击扣一次"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "取消与提交竞态唯一裁定，过期Proposal/旧worker不能结算"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "部分成功、系统修复与主动新目标区分，未明确开始新目标不扣新单位"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "partial释放、首次等待24h且不超过grant期限；跨期继续重新接纳，不偷扣下一段"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "账号跨档位滚动窗口连续；未来段不发容量、到期不结转、Pass用尽不自动扣Free"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "取消/到期/退款/迟到成果的唯一结算和下次可用时刻在真实并发数据库验证"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "秒/字符/图片/文件及地图/模型所有attempt独立对账，遵守catalog媒体上限"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "超时/取消/迟到usage标待核，unknown不算0；必要修复沿累计预算，不能新建task续烧"
+        },
+        {
+          "sourceIssue": 227,
+          "checked": false,
+          "text": "复用真实媒体与工具证据核成本，不用文本token推算全部；经济性未验不作正式容量承诺"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-009",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/identity/quota/**",
+        "lib/server/model-gateway/**",
+        "lib/server/entitlements/**",
+        "ios/**",
+        "tests/**/cost/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-009",
+      "number": 226,
+      "title": "一次官方测试购买产生双端同源权益",
+      "primaryProject": "agent",
+      "workType": "shared-data",
+      "lead": "购买与权益原 domain owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web"
+      ],
+      "originalIssues": [
+        226,
+        503
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "一次官方测试购买产生双端同源权益",
+      "remaining": "复用 StoreKit/旧订阅兼容/权益投影；补官方交易、退款恢复和 iOS/Web grant 读回，本地 StoreKit 不代真实交易。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "StoreKit2交易验证→服务端账号绑定→权益→两端生效；重放/换机/恢复不重复延长或补额度。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "non-renewing类型的期限与恢复由服务端账本处理，退款撤销有可核路径；到期保留Trip/手动编辑/安全资料。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "TestFlight/sandbox与production隔离，购买pending/cancelled/revoked不当success；真实付款另门验证。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "消费VPJ-33唯一版本化政策；现有Pass的720h、排队、生效、退款和恢复作为兼容路径验证，新订阅续期/撤销按新版本单独实现。媒体/容量由33定义，任务消费由35承接，不复制另一账本。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "StoreKit购买交易/grant与ServiceTask容量及attempt成本分离；恢复或任务重试不补发同一权益，本轮保持现行激活起算，未定容量不写入真实在售商品。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "助手升级2026-09-27：新订阅产品需独立版本化renewal/expiry/revocation及同源权益，先以官方Sandbox证据验证；保留既有non-renewing Pass/grant兼容，不把旧720h规则静默套用所有商品。"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "直接消费已合并catalog，Q1展示接线可同PR完成，非开工硬依赖"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "唯一环境+transaction身份、可信购买时间、策略/容量快照；跨账号/未知SKU/签名/环境不符拒绝"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "pending/cancelled/revoked不算成功；Xcode local与真实Sandbox分开留证，不启用生产付款"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "同交易重放/双端恢复不加时、不补容量；消息乱序有可追对账"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "退款不移动其他段或抹已有成果；用户可见生效/到期/恢复/撤销原因"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "真实Sandbox/持久DB回执与两端读取对应；仅本地StoreKit测试不足以关闭"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "每段720h且到期余量不结转；可信时间排序，已固定段不静默移动"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "重复/并发/晚到过期交易不从恢复时间重启；退款空窗和其他段时间保留"
+        },
+        {
+          "sourceIssue": 226,
+          "checked": false,
+          "text": "账号滚动窗口不因购买/恢复重置；实际并发与崩溃恢复有证据"
+        },
+        {
+          "sourceIssue": 503,
+          "checked": false,
+          "text": "直接消费已合并catalog，Q1展示接线可同PR完成，非开工硬依赖"
+        },
+        {
+          "sourceIssue": 503,
+          "checked": false,
+          "text": "唯一环境+transaction身份、可信购买时间、策略/容量快照；跨账号/未知SKU/签名/环境不符拒绝"
+        },
+        {
+          "sourceIssue": 503,
+          "checked": false,
+          "text": "pending/cancelled/revoked不算成功；Xcode local与真实Sandbox分开留证，不启用生产付款"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-018",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "app/api/storekit/**",
+        "lib/server/entitlements/**",
+        "supabase/migrations/**",
+        "tests/**/entitlements/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-010",
+      "number": 504,
+      "title": "Trip 删除后各端与迟到工作均遵守生命周期",
+      "primaryProject": "agent",
+      "workType": "shared-data",
+      "lead": "删除与数据生命周期原 domain owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        504
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "Trip 删除后各端与迟到工作均遵守生命周期",
+      "remaining": "复用原删除任务与回执；补原生发起、执行、双端状态和迟到消息不复活已删数据。",
+      "reusePaths": [],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 504,
+          "checked": false,
+          "text": "复用PR #496持久队列/写围栏/tombstone；真实JWT→HTTP→worker→DB→读取，非仅SQL claims"
+        },
+        {
+          "sourceIssue": 504,
+          "checked": false,
+          "text": "同key异scope、过期身份、other、并发确认/链接与删除验证；202不显示已删除"
+        },
+        {
+          "sourceIssue": 504,
+          "checked": false,
+          "text": "缓存回网/租约清理实测；allUserDataCompleted仍false，账户删除不能误用此单Trip执行器"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        496
+      ]
+    },
+    {
+      "id": "AGENT-011",
+      "number": 230,
+      "title": "恢复演练保留权限与删除状态并给出可核结果",
+      "primaryProject": "agent",
+      "workType": "quality-delivery",
+      "lead": "恢复演练与数据生命周期原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        230
+      ],
+      "priority": "P0",
+      "batch": "B1",
+      "userOutcome": "恢复演练保留权限与删除状态并给出可核结果",
+      "remaining": "保留实际加密 capture PASS、两次真实 restore FAIL 与 cleanup PASS；补 post-data 权限根因和获准后真实恢复。窗口已过，不自动重试或启动 E。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [
+        {
+          "kind": "Main-reported actual",
+          "scope": "capture four ciphertexts PASS; restore locale failure then post-data permission failure; cleanup PASS; original window expired; no further execution here"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "在隔离恢复目标实测DB与Storage备份、RPO/RTO、恢复数据一致性。"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "恢复后重新应用删除tombstone与权益/许可撤销，避免已删数据复活。"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "故障演练记录实际时间/未验项，不在Production做破坏操作。"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "按数据类确定backup或no-backup TTL；对象元数据/文件、RLS/grants/functions/queue恢复分别验。"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "按数据类backup/no-backup TTL、对象文件和元数据、RLS/grants/functions/queue分别验"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "独立保存tombstone来源，恢复入口先拒读，已删资料不得先暴露再补删"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "测实际RPO/RTO、一致性及未验项；不动Production或共用数据库"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "删除、权益退款/撤销和许可撤回在恢复后持续生效"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "缺失/损坏对象、重复worker与恢复期间新tombstone可恢复对账"
+        },
+        {
+          "sourceIssue": 230,
+          "checked": false,
+          "text": "实际时间及不可恢复范围写回演练记录，阈值事先固定"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        189
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 230,
+          "originalDependency": 189,
+          "currentTarget": 189,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "scripts/db/restore/**",
+        "docs/runbooks/**",
+        "tests/**/restore/**",
+        "artifacts/VPJ-38/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-012",
+      "number": 229,
+      "title": "运营可见质量成本故障并安全停用恢复能力",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        229
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "运营可见质量成本故障并安全停用恢复能力",
+      "remaining": "保留 PR679/W2 安全暂停和原成果；补原 ops/lifecycle 未完成范围，不能把 QA 首答要求扩成整票前置。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "artifacts/VPJ-37/verification.md",
+        "artifacts/VPJ-37/unrun.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "task/attempt/provider/tool/actor-scope计数互相可对账，日志无原聊天和秘密。"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "仪表盘可读任务成功、partial、错误、延迟、provider费用和人工时间，不把未观测记0。"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "按能力/供应商/城市关闭可及时作用并提供用户替代；预算熔断可恢复且不删Trip。"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "复用PR #501现存聚合视图，真实授权读和无权限拒绝，金额保持精度"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "task/attempt/provider/tool作用域相互可对账；未观测不能显示0"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "人工分钟、延迟、错误与费用缺口可定位，日志不含原聊天/材料/秘密"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "真实请求入口和worker派发均消费控制；在途处理/取消边界明确"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "能力、供应商、城市作用域与预算熔断分别验，未授权运营拒绝"
+        },
+        {
+          "sourceIssue": 229,
+          "checked": false,
+          "text": "Staging演练关闭/恢复和故障回滚，保留删除/撤权，#268复用同版本证据"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-008",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/observability/**",
+        "apps/ops/**",
+        "lib/flags/**",
+        "tests/**/observability/**",
+        "docs/runbooks/**",
+        "app/ops/**",
+        "app/api/ops/**"
+      ],
+      "retainedPullRequests": [
+        501
+      ]
+    },
+    {
+      "id": "AGENT-013",
+      "number": 264,
+      "title": "Harness 对真实问答改稿恢复和模型候选给出发布证据",
+      "primaryProject": "agent",
+      "workType": "quality-delivery",
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        264,
+        265,
+        266,
+        267,
+        268
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "Harness 对真实问答改稿恢复和模型候选给出发布证据",
+      "remaining": "复用既有 Harness/冻结案例；按只读问答→保晚餐少走路改稿→取消重连→配对校准→发布判定分段补证，保所有原 AC。",
+      "reusePaths": [
+        "docs/harness/README.md",
+        "docs/harness/OFFLINE-SEEDS.md",
+        "artifacts/VPJ-67/recorded-usage-20260913/verification.md",
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "artifacts/VPJ-70/verification.md",
+        "artifacts/VPJ-70/unrun.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "获准测试用户在真实原生Ask无需创建Trip即可获得answered/partial/clarification/blocked/technical_failure及对应证据；复用VPJ-07/16实际producer/consumer，不重建基础能力。"
+        },
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "服务端身份和用途/接收方资格始终成立，正常可答/部分可答/缺字段/证据过期与冲突/资料注入/provider不可用均有命名观察；只读请求前后Trip数量和内容不变。"
+        },
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "关键claim有当前适用证据和对应校验回执；必要claim遗漏、过度拒答和无谓追问能被判失败，固定快照不冒充实时核验。"
+        },
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "任务ID可追至attempt、上下文/证据/工具版本、原因码、终态、耗时、预算及实际usage；仅allowlist字段，缺失费用标unknown。"
+        },
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "H1 将12场景中负责的只读案例接入必测集合；fixture与真实Staging分栏，中英各至少一条实际任务链通过，不能以界面文字或mock冒充H1完成。"
+        },
+        {
+          "sourceIssue": 264,
+          "checked": false,
+          "text": "H1 验证原生消费者和现有Web Chat结果语义并保留老客户端兼容；该阶段不扩充Web功能范围。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "用户对当前Trip要求第二天少走路、不动已确认晚餐；沿现有候选→可见diff→精确版本确认→原子Patch→重载路径验收，不另建writer。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "按同日期/时区、出行模式、来源版本和口径比较步行距离或步行时长，运行前选择主要步行指标并要求其严格减少，另一指标辅助披露，不能删必保留项目换成功；基础数据归VPJ-65/19。证据不足只算待核候选，不算已验证少走路。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "晚餐item ID、地点、日期/时区、起止时间、确认状态及回执在候选/diff/最终Trip均不变；当前明确要求优先于旧偏好但不能覆盖权限与安全。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "用户确认绑定不可变proposal revision与base Trip revision；未确认、拒绝、过期、越权/撤权以及另一客户端修改均不误写或覆盖，重复确认不重复提交。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "H2 按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和独立Web同Trip/diff语义一致，应用后重载与事务回执一致。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "H2 报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执时不得宣称H2完成，也不能据此满足整票统一完成标准。"
+        },
+        {
+          "sourceIssue": 265,
+          "checked": false,
+          "text": "助手升级2026-09-27：局部改稿增加artifact/task/memory basis一致性观测，精确保留已确认对象；真实步行改善等既有专项不因新UI而缩减。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "对同一真实任务在接受请求、工具返回、提案生成、提交前后及流式尾包命名检查点注入超时/重复投递/进程崩溃/断网/取消，重新进入得到真实最终状态。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "用户扣次和Trip提交不重复；provider attempt可能重复收费须真实计量。提交或usage未知先核验/对账，不盲重试副作用。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "取消阻止后续新副作用；提交已发生则显示已提交，不能伪称撤销。旧租约不能继续提交，跨账号旧事件不能回放。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "实际Staging持久worker/数据/客户端在进程重启后仍恢复同一任务；进程内fake只能作为准备证据。任务次数/期限/费用均有预设上限。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "将12场景中的故障与取消案例及命名注入点加入回归，保存实际最终状态/回执/失败矩阵；原生中英及现有Web受影响恢复路径验证。"
+        },
+        {
+          "sourceIssue": 266,
+          "checked": false,
+          "text": "助手升级2026-09-27：覆盖独立对话与后台任务、重启检查点、改口/撤回后旧成果失效、at-least-once工具执行和逻辑成果幂等；unknown不得变completed。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "在获准的同一只读任务链上比较现有基线与一个明确候选，输出采纳/拒绝/证据不足及逐例证据；可只改提示词，不要求新增provider或自动生产路由。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "固定任务输入、时钟、证据、权限、预算政策、grader与版本，开发集调优、holdout只作冻结后评测；污染案例登记后转开发集并补未用于调优的holdout。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "候选运行前由agent固定质量容差、正常可答/必要claim不退化、延迟/单任务/整批技术上限和预声明收益；无需产品签字，资金范围沿用已有授权。结果不足报evidence_insufficient，不作通过。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "每个适用只读场景每配置起步重复3次并分中英/风险汇总；样本数、失败、NOT_RUN及unknown成本同时报告，不能用总体均分掩盖切片失败或小样本宣称统计显著。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "确定性红线与质量rubric分开；人工校准正反例、记录grader分歧，不由生成模型自评或看结果后改标准。回归中故意退化候选须被拒绝。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "H4 交付同源JSON报告/Markdown摘要与可复用只读配对入口；该阶段完成仅证明只读比较，Trip配对归内部H2、最终能力判定归内部H5，均不能省略。开发接收方/地区按开发接入规则记录实际配置及用户同意，不等待第三方审批。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "在既有配对入口加入任务完成、事实限定、正确偏好使用、下一步、密度、英文自然度及情境语气rubric；人工校准并预冻结阈值，正常可答的过度拒绝判失败，hard fail不被均分抵消。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选沿用已有测试授权、技术预算和事前阈值，不等待产品许可。"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "接续PR #495 freeze/report和#287盲评，不重建工具；真实人反馈不能用合成标签冒充"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "开发/holdout暴露记录、A/B交换/平局/都失败/分歧均留存"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "任务完成、事实、偏好、下一步、密度、英文语气分项；退化候选必须被拒"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "每适用场景每配置至少3次，固定输入/时钟/证据/权限/预算与版本"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "中英/风险/正常可答分层，失败/NOT_RUN/unknown成本不漏；硬失败不能均分抵消"
+        },
+        {
+          "sourceIssue": 267,
+          "checked": false,
+          "text": "事前收益与延迟/成本上限固定，JSON/Markdown同源，不自动切生产路由"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "H5 使用同一选定commit/config与预冻结grader/阈值整合只读和Trip两条真实任务；选定配置可为达到门槛的原基线，仅对拟采纳候选复用内部H4配对入口扩充H2的Trip比较。候选被拒可保留基线，不强制新增候选；完整回归与停用责任仍必需。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "完整12场景按required mode实际运行，必测集无FAIL/NOT_RUN；中英/风险/正常可答分别达门槛，未运行不删除分母、全拒答不算成功，命名集硬违规0但不外推绝对可靠。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "H5 将真实原生Ask/Trip、独立Web同Trip、持久worker、证据资格、步行量、准确确认/回执与预算/恢复证据串联；fixture和录制回放不能替代规定真实模式。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "接入已有Ops/flag及发布报告，复用VPJ-63同版本或等价受影响路径的真实境内外网络证据；路径变化需重验，不用本机/VPN假装用户网络。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "在获准Staging演练按能力停用、恢复与部署回退，用户有可用替代，已确认Trip和删除/撤权状态不丢失；不改已应用迁移、不恢复撤销材料。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "先验证故意失败或缺证据能阻塞判定，再提交实际结果；基线/候选变化重跑受影响集合，不拼接不同配置的通过报告。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "H5 Harness门纳入现有发布验收资料；不授权生产，不自动关闭WEB-002/IOS-009/AGENT-015/AGENT-022，不替代真实账号、原生设备、IAP、隐私或商店验收。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "HF复用：最终报告同时核验真实任务结果和内容/语气，不以讨喜均分抵消状态、事实、记忆、确认硬失败；确认公开基准、开发集和独立验收集的暴露记录，采用资源版本/许可/运行环境可追。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "助手升级2026-09-27：在既有12场景与实际发布门之外，汇总新助手三段体验和E1–E10的适用证据；不重置历史失败，不以新增场景数替代真实闭环。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "H5 消费内部H3故障恢复和H4只读候选比较的规定证据，并核对H2真实Trip结果；缺失不伪造。报告结构可先准备，但内部阶段先后不是对已superseded旧票的外部原生依赖。"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "12场景无FAIL/NOT_RUN，中英/风险/正常可答分别达标；故意缺证据应拒绝"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "ServiceTask澄清、偏好、确认、步行量、回执/成本真实可串联；不用录制回放替代required mode"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "同版本或已证明等价的#231/#232网络证据，不拼接不同配置通过报告"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "部署回退保留追加迁移、删除/撤权与已确认Trip，失败应阻判定"
+        },
+        {
+          "sourceIssue": 268,
+          "checked": false,
+          "text": "拒绝候选可保留合格基线；仍需完整回归，本门不自动批准Production或替代设备/IAP/隐私验收"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-003",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-005",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-012",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 265,
+          "originalDependency": 219,
+          "currentTarget": 219,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 266,
+          "originalDependency": 265,
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H3",
+          "inputStage": "H2"
+        },
+        {
+          "sourceIssue": 268,
+          "originalDependency": 266,
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H5",
+          "inputStage": "H3"
+        },
+        {
+          "sourceIssue": 268,
+          "originalDependency": 267,
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H5",
+          "inputStage": "H4"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/turn/**",
+        "lib/server/context/**",
+        "lib/server/knowledge/**",
+        "lib/server/observability/**",
+        "app/api/chat/**",
+        "components/chat/**",
+        "ios/VisePanda/**",
+        "evals/harness/**",
+        "tests/**/harness/**",
+        "docs/harness/**",
+        "artifacts/VPJ-67/**",
+        "lib/server/trip/**",
+        "lib/server/constraints/**",
+        "lib/server/memory/**",
+        "app/api/trips/**",
+        "components/canvas/**",
+        "artifacts/VPJ-68/**",
+        "lib/server/jobs/**",
+        "artifacts/VPJ-69/**",
+        "docs/benchmarks/**",
+        "lib/server/model-gateway/prompt/**",
+        "artifacts/VPJ-70/**",
+        "lib/flags/**",
+        "docs/acceptance/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-71/**"
+      ],
+      "retainedPullRequests": [
+        420,
+        495
+      ],
+      "internalStages": [
+        {
+          "id": "H1",
+          "name": "真实只读问答证据",
+          "historicalSources": [
+            264
+          ],
+          "inputs": []
+        },
+        {
+          "id": "H2",
+          "name": "真实 Trip 配对改稿证据",
+          "historicalSources": [
+            265
+          ],
+          "inputs": [
+            "H1 的任务/证据口径及既有路线与确认端口"
+          ]
+        },
+        {
+          "id": "H3",
+          "name": "故障取消与持久恢复证据",
+          "historicalSources": [
+            266
+          ],
+          "inputs": [
+            "H2 的真实 Trip 任务链和命名检查点"
+          ]
+        },
+        {
+          "id": "H4",
+          "name": "只读模型/提示词候选配对",
+          "historicalSources": [
+            267
+          ],
+          "inputs": [
+            "H1 的冻结只读任务；可与 H2/H3 独立准备"
+          ]
+        },
+        {
+          "id": "H5",
+          "name": "统一发布判定与停用恢复报告",
+          "historicalSources": [
+            268
+          ],
+          "inputs": [
+            "H1/H2/H3/H4 各自规定的真实证据；同一配置/阈值，不拼接通过"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-013 的完成范围包含 H1–H5 全部约定交付。H4 只读比较通过只完成一个内部阶段，不能关闭整票或替代 H2/H3/H5。各阶段 fixture/获准真实模式、Trip/故障/只读候选/最终能力判定证据分别保留；任何未验项按原标准如实记录，不增加数据运行、资金或生产授权。"
+    },
+    {
+      "id": "AGENT-014",
+      "number": 222,
+      "title": "人工服务只读取按任务授予的资料",
+      "primaryProject": "agent",
+      "workType": "shared-data",
+      "lead": "ServiceCase 与资料许可原 domain owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        222
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "人工服务只读取按任务授予的资料",
+      "remaining": "复用 ServiceCase 与用途/接收方资格；补明确授权、撤回与访问回执，人工服务不获得隐含全量资料权限。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "用户创建CaseRequest、预览要分享字段、授予有期限AccessGrant，指定员工才可读取。"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "撤回/到期/换员工/其他用户无法继续读取；未授权仍可请求通用支持。"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "此单提供31/32共同依赖的case身份与授权，不承诺真人已接单。"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "真人路径以具体旅途执行问题申请为范围；申请已记录不等于接单，未确认容量/时段不承诺即时处理或把普通行前规划默认转人工。"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "接续PR #497真实身份/RPC合同；原生申请、换员工、撤回、到期完整可操作"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "指定员工/other/旧员工分别验拒绝；新目录空态不能虚构接单人"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "请求仅记申请，旅途执行问题范围清楚；不默认把行前计划转人工"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "请求/AccessGrant接入#228可用handler合同；不得等待#239终验才补数据能力"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "用户可读审计和最少授权范围，重放不会重新授予"
+        },
+        {
+          "sourceIssue": 222,
+          "checked": false,
+          "text": "删除/到期/换员工与读取竞态、账号切换在真实持久存储验收"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/service-cases/**",
+        "lib/server/identity/**",
+        "supabase/migrations/**",
+        "tests/**/service-cases/**"
+      ],
+      "retainedPullRequests": [
+        497
+      ]
+    },
+    {
+      "id": "AGENT-015",
+      "number": 243,
+      "title": "客户 Production 环境具有隔离和回滚保证",
+      "primaryProject": "agent",
+      "workType": "quality-delivery",
+      "lead": "Production 环境与回滚原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        243
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "客户 Production 环境具有隔离和回滚保证",
+      "remaining": "保留原独立 Production 义务与已有资产；当前共享 QA dzt 不完成本票，按原授权边界准备真实隔离/恢复证据，不新建资源。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 243,
+          "checked": false,
+          "text": "独立Production项目/服务凭证/配置和备份，与Staging严格分离；迁移前后验证和回滚完整。"
+        },
+        {
+          "sourceIssue": 243,
+          "checked": false,
+          "text": "隐私/Terms/support域名/资产/地区契约已齐备，功能旗标按能力设置。"
+        },
+        {
+          "sourceIssue": 243,
+          "checked": false,
+          "text": "实际部署由operator控制，secrets不写repo；不能用Preview通过替代Production验收。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-011",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/runbooks/**",
+        "scripts/db/**",
+        "docs/operator-actions.json",
+        "artifacts/VPJ-43/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-016",
+      "number": 248,
+      "title": "真实召回缺口触发最小混合检索改进",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        248
+      ],
+      "priority": "P2",
+      "batch": "EXPAND",
+      "userOutcome": "真实召回缺口触发最小混合检索改进",
+      "remaining": "保留 activationEvidence；仅当现检索的真实失败可复现才比较混合 RAG/重排，不预先换架构。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "以实际qrels/语料规模触发实验，对同批直接读取baseline比较exact/FTS/trigram/vector/RRF。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "PGroonga、rerank、Contextual Retrieval逐项消融；权限/时效/例外/反证切片不回退。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "只有质量/延迟/成本净收益才开放；extension版本/许可/恢复失败可回滚直接lookup。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "HF复用：真实激活门保持；明确契约与范围后可先用公开/自有合成数据作有界离线加载、格式和对照准备，不视为本票激活或真实收益。先判定缺内容/别名、排名或召回问题；每轮最多两个候选、只改一个检索变量。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "HF复用：优先Sentence Transformers验证，收益成立后再评估TEI；精确核Qwen/BGE各权重许可与revision及运行后端支持，不由embedding支持推定reranker兼容。模型库不替代RLS，主线保留原Postgres/直接lookup回退。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "知识升级：以VPJ-76同批真实baseline/问题族/qrels区分缺内容、别名、排名与召回失误，再依现有activationEvidence触发；产品RLS/时效/范围在检索前、外发前和展示前保持，研究与产品语料不能串用。"
+        },
+        {
+          "sourceIssue": 248,
+          "checked": false,
+          "text": "知识升级：每轮比较至多两个候选且只变一项，事前冻结质量改进、p95延迟与单任务费用上限；中文分词和中英别名实测，失败/无净收益保留原路径与完整证据，不因安装pgvector/reranker或公开论文收益而称采用成立。"
+        }
+      ],
+      "activationEvidence": [
+        {
+          "sourceIssue": 248,
+          "condition": "在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过"
+        }
+      ],
+      "dependencies": [
+        {
+          "taskId": "AGENT-005",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        206
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 248,
+          "originalDependency": 360,
+          "currentTarget": 206,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/knowledge/retrieval/**",
+        "evals/**",
+        "docs/benchmarks/**",
+        "supabase/migrations/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-017",
+      "number": 249,
+      "title": "获准航班来源支持变化后的行程重验",
+      "primaryProject": "agent",
+      "workType": null,
+      "lead": "agent 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "agent"
+      ],
+      "originalIssues": [
+        249,
+        250
+      ],
+      "priority": "P2",
+      "batch": "EXPAND",
+      "userOutcome": "获准航班来源支持变化后的行程重验",
+      "remaining": "保留两票各自 activationEvidence；先来源/中国航线实证，再授权状态消费与相关行程重验，不冒覆盖和运营状态。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 249,
+          "checked": false,
+          "text": "按中国境内/跨境航线样本比较coverage/延迟/许可/价格/归因/存储，不直接选择名气最大。"
+        },
+        {
+          "sourceIssue": 249,
+          "checked": false,
+          "text": "agent记录字段来源/TTL和无coverage返回，按已有测试资金授权设置技术上限并实测，不等待额外产品或供应商许可。"
+        },
+        {
+          "sourceIssue": 249,
+          "checked": false,
+          "text": "不购买/出票/爬取受限系统。"
+        },
+        {
+          "sourceIssue": 250,
+          "checked": false,
+          "text": "单主Flight Adapter显示有效观察与来源时刻，延误信息映射到相关Trip重验候选。"
+        },
+        {
+          "sourceIssue": 250,
+          "checked": false,
+          "text": "unknown/取消/过期不自动重订；用户确认后才改变Trip。"
+        },
+        {
+          "sourceIssue": 250,
+          "checked": false,
+          "text": "撤权、停用、供应商超时和无覆盖演练，不侵入酒店/铁路交易。"
+        }
+      ],
+      "activationEvidence": [
+        {
+          "sourceIssue": 249,
+          "condition": "在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过"
+        },
+        {
+          "sourceIssue": 250,
+          "condition": "在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 250,
+          "originalDependency": 249,
+          "scope": "同一任务内部输入，旧编号仅为历史来源；不是外部自依赖",
+          "kind": "internal",
+          "stage": "F2",
+          "inputStage": "F1"
+        }
+      ],
+      "sourceScope": [
+        "docs/benchmarks/aviation/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-51/**",
+        "lib/server/external-evidence/flight/**",
+        "ios/**",
+        "tests/**/flight/**"
+      ],
+      "retainedPullRequests": [],
+      "internalStages": [
+        {
+          "id": "F1",
+          "name": "航班来源和中国航线实证",
+          "historicalSources": [
+            249
+          ],
+          "inputs": [
+            "原来源激活条件"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "授权状态消费与相关Trip重验",
+          "historicalSources": [
+            250
+          ],
+          "inputs": [
+            "F1 合格来源及原状态消费激活条件"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-017 保留 F1/F2 各自激活门与技术验收，F1 完成不能替代 F2；只有两阶段约定范围均满足才完成整票。规划不启动航班采购、运行或交易。"
+    },
+    {
+      "id": "AGENT-018",
+      "number": 225,
+      "title": "商品服务边界清楚并凭证据决定后续订阅升级",
+      "primaryProject": "agent",
+      "workType": "product-coordination",
+      "lead": "商品策略原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        225,
+        252
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "商品服务边界清楚并凭证据决定后续订阅升级",
+      "remaining": "保留 Free/订阅/旧 Pass 兼容；年订阅和交易扩展只在原经营触发门满足后决策，不前置完整商业矩阵。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "2026-09-27采用Free+用户付费订阅的产品方向，月订阅作为首轮候选；实际价格/周期/容量尚未冻结。旧30天Pass及$19.99/$14.99为历史实现/实验参考，不是新方案唯一销售约束。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "明确现行购买开始/提前续买/退款/恢复/到期，以及获准的新服务任务周期与Free窗口口径；新容量未决定前不写入在售商品，无unlimited或人工包含承诺。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "agent先用StoreKit开发/sandbox配置完成链路；真实上架时从实际账户核对SKU/合同主体/税费及价格，未上线商品不能收私人款。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "旧non-renewing Pass保持每笔交易720h、排队/startsAt/退款/恢复的既有账本语义，不能套用于新订阅。按商品策略版本分别规定续期、到期、撤销、容量和跨期服务；未选值只用于明确标记的开发配置，真实销售前核对官方商品及公开权益。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "权益表回写Q36：Free与Pass共同具有获准的基础显式跨Trip偏好；Q37采用完整服务任务方向，原Ask数值不得换名沿用，partial/改稿/TTL/跨期及新容量先决策再公布。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "Q38购买后激活、到达起算、eSIM和支付渠道保持待研究；本轮不改变现行购买/生效/到期规则、不增加商品承诺。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "助手升级2026-09-27：付费边界围绕行前研究、约束核查、复杂协调和持续任务；免费保留基础记忆/纠错/导出删除与可用首值。eSIM/无限服务/人工包含不因资源库入口而获准。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "助手升级2026-09-27：有佣/无佣候选使用同一适配规则，佣金元数据不提升有机排序，披露商业出口和候选覆盖；用户在其他平台预订仍可获得独立助手价值。"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "复用catalog v2/policy v1及本地StoreKit，不再等开发容量/partial/TTL决策"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "未绑定真实SKU时保持不可购买；实际店面/税费/合同主体记录为待核，不把参考美元当当地价"
+        },
+        {
+          "sourceIssue": 225,
+          "checked": false,
+          "text": "基本偏好两档共享、不含无限人工；Q38激活/eSIM仍排除，真实销售另门核价与成本"
+        },
+        {
+          "sourceIssue": 252,
+          "checked": false,
+          "text": "以重复旅行/持续价值证据评估年订阅；首轮订阅方向已由ADR-0027接受，包装由VPJ-33负责。只读Live Offer、代客执行、签约履约按品类分别决策。"
+        },
+        {
+          "sourceIssue": 252,
+          "checked": false,
+          "text": "比较责任、服务成本、恢复/退款和排名中立性；不把affiliate增长自动当升级理由。"
+        },
+        {
+          "sourceIssue": 252,
+          "checked": false,
+          "text": "本Issue只评估更长期或更深的商业扩展，不启用外部交易；现有L1a/L1b与旧Pass账本兼容继续保留，不能恢复已被替代的首轮订阅禁令。"
+        }
+      ],
+      "activationEvidence": [
+        {
+          "sourceIssue": 252,
+          "condition": "在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 252,
+          "originalDependency": 245,
+          "currentTarget": 245,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 252,
+          "originalDependency": 247,
+          "currentTarget": 246,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "docs/commercial/**",
+        "docs/runbooks/**",
+        "lib/server/entitlements/**",
+        "tests/**/entitlements/**",
+        "docs/adr/**",
+        "artifacts/VPJ-54/**"
+      ],
+      "retainedPullRequests": [
+        482
+      ]
+    },
+    {
+      "id": "AGENT-019",
+      "number": 246,
+      "title": "客户试点与真实经营观察支撑下一步产品选择",
+      "primaryProject": "agent",
+      "workType": "product-coordination",
+      "lead": "客户发现原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web"
+      ],
+      "originalIssues": [
+        246,
+        247
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "客户试点与真实经营观察支撑下一步产品选择",
+      "remaining": "复用客户发现、事件口径和人工成本定义；分别保留两周试点与真实激活/付费观察，synthetic 不能当经营结果。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "执行总35h时间盘：真实客户任务10、研发验收8、招募社区6、内容合作4、知识审查3、支持2、复盘2；30–40h按需求伸缩。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "两个周sprint只跑自有/转介绍+一个社区+一个伙伴渠道；3–4访谈+1–2交付起步；禁止未请求群发。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "Planning/Arriving/In-trip队列、opt-in、原话/行为/来源/分钟数去敏记录；为Supported Journey Matrix提供真实需求。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "初期使用许可内现有入口或VPJ-62 intake，不等待地图/支付/完整App；Founder-assisted与产品自助明确。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "按规划/临近抵达/在途分别记录真实首值、重复问题与下一自然节点机会；Demo、创始人协助与自助真实能力分别统计，不从社媒触达推断已实现。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "C1 以两个周sprint的去敏任务/交付/分钟记录、需求复盘及下一轮负责人/节奏交接作为有限阶段交付；不以永久运营义务延长该阶段，但不能据此跳过C2或关闭合并后的整票。"
+        },
+        {
+          "sourceIssue": 246,
+          "checked": false,
+          "text": "助手升级2026-09-27：区分探索/关键安排未定/已预订/在途人群；观察任务采用、自然节点回访、记忆可理解与可纠正、无需VP预订时的独立付费意愿；小样本不外推转化率。"
+        },
+        {
+          "sourceIssue": 247,
+          "checked": false,
+          "text": "activated=采用可继续使用的真实Trip结果；outcome_recorded可含拒绝，不能混为激活。"
+        },
+        {
+          "sourceIssue": 247,
+          "checked": false,
+          "text": "opportunity-based organic/triggered/founder-prompted回访分开；真实净付款与退款/赠送/sandbox分开。"
+        },
+        {
+          "sourceIssue": 247,
+          "checked": false,
+          "text": "依据主报告单一B0-B4门和容量/现金止损决策，不以一个OR指标杀整个Program；少样本明确不确定。"
+        },
+        {
+          "sourceIssue": 247,
+          "checked": false,
+          "text": "经营指标以有机会的服务任务/Trip为分母，区分Free/Pass、人工辅助、真实支付与sandbox；保留必要澄清次数、任务成本及实际人工分钟，旧Ask数值不可当同等新服务容量。"
+        },
+        {
+          "sourceIssue": 247,
+          "checked": false,
+          "text": "助手升级2026-09-27：分开任务完成/有用partial/blocked/失败、订阅实收/退款/实际结算佣金/全体活跃旅客成本；记录跨旅程回访和获客成本，不把月收入简单年化当稳定ARR证据。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "IOS-010",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 247,
+          "originalDependency": 244,
+          "currentTarget": 244,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "docs/operations/**",
+        "docs/commercial/**",
+        "artifacts/VPJ-46/**",
+        "apps/ops/**",
+        "artifacts/VPJ-47/**"
+      ],
+      "retainedPullRequests": [],
+      "internalStages": [
+        {
+          "id": "C1",
+          "name": "有限两周客户发现试点与交接",
+          "historicalSources": [
+            246
+          ],
+          "inputs": []
+        },
+        {
+          "id": "C2",
+          "name": "真实激活付款成本与回访观察",
+          "historicalSources": [
+            247
+          ],
+          "inputs": [
+            "原经营观察定义和获准真实产品数据；不以样例/试点曝光代真实指标"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-019 统一交付 C1 的有限试点及 C2 当期真实经营观察与后续责任交接；C1 结束不意味着 C2 指标已获得或整票完成。长期每周运营属于后续持续工作，不据此制造永久无法结项的义务；缺少真实产品/付款输入如实保留。"
+    },
+    {
+      "id": "AGENT-020",
+      "number": 251,
+      "title": "需求证据决定未来客户端与语言范围",
+      "primaryProject": "agent",
+      "workType": "product-coordination",
+      "lead": "产品需求与语言范围负责人（沿原决策归属）",
+      "affectedConsumers": [
+        "iOS",
+        "Web"
+      ],
+      "originalIssues": [
+        251
+      ],
+      "priority": "P2",
+      "batch": "EXPAND",
+      "userOutcome": "需求证据决定未来客户端与语言范围",
+      "remaining": "保留 Android/新增语言 activationEvidence；Agent 提供扩展余地，不启动未来端、SDK或新运行工程。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 251,
+          "checked": false,
+          "text": "根据真实需求决定Android/西俄阿的先后，不从schema兼容推断已支持。"
+        },
+        {
+          "sourceIssue": 251,
+          "checked": false,
+          "text": "复用同协议/Trip/entitlement，平台原生体验、语料和无障碍分别验收。"
+        },
+        {
+          "sourceIssue": 251,
+          "checked": false,
+          "text": "给独立容量/预算/迁移计划后再拆实现，不把本研究当客户端开发。"
+        }
+      ],
+      "activationEvidence": [
+        {
+          "sourceIssue": 251,
+          "condition": "在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过"
+        }
+      ],
+      "dependencies": [
+        {
+          "taskId": "AGENT-022",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        },
+        {
+          "taskId": "AGENT-019",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        245,
+        246
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 251,
+          "originalDependency": 245,
+          "currentTarget": 245,
+          "scope": "原生开工依赖保留"
+        },
+        {
+          "sourceIssue": 251,
+          "originalDependency": 247,
+          "currentTarget": 246,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/product/**",
+        "docs/benchmarks/**",
+        "artifacts/VPJ-53/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-021",
+      "number": 232,
+      "title": "境内外网络下三工程消费链路有实际证据",
+      "primaryProject": "agent",
+      "workType": "quality-delivery",
+      "lead": "跨端网络验收原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        232
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "境内外网络下三工程消费链路有实际证据",
+      "remaining": "按 iOS/Web/Agent 分别验证媒体、酒店、IAP、通知；复用原适配与用途约束，不宣称全国/全网可用。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "按真实海外/境内WiFi/漫游/弱网记录DNS→API→DB→model/map/media的p50/p95/失败，不用provider国籍推断可达。"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "设置超时、断线恢复和离线读取目标，验证语音长连接/图片导入在预算内。"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "地区不合格时给实际替代拓扑和用户边界；采购或部署变更不自行执行。"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "在真实境内外网络验证OTA参数落地、StoreKit购买/恢复、APNs接收与回跳、Files/Share Extension导入，不以model测试代替这些不同链路。"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "复用#231真实探针，分DNS/API/DB/model/map/media链记录p50/p95/失败与样本数"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "功能逐项可用即开测；M/V/F对应未就绪行标UNRUN，不等待全票启动"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "超时/恢复/离线目标预冻结；本机或VPN不能冒充真实用户网络，替代部署只提案"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "消费H1/Q2/Q3/N2/F2实际链，按已可用功能滚动验收"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "逐字段核OTA落地，StoreKit/APNs/文件分别记成功失败，模型探针不替代"
+        },
+        {
+          "sourceIssue": 232,
+          "checked": false,
+          "text": "绑定地点/网络/时刻/build/config；拓扑变化重验受影响路径，缺设备/网络仅阻相关行"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-007",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-009",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-006",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/network/**",
+        "scripts/diagnostics/**",
+        "artifacts/VPJ-39/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "AGENT-022",
+      "number": 245,
+      "title": "客户收到产品后的支持和发布关账可追溯",
+      "primaryProject": "agent",
+      "workType": "quality-delivery",
+      "lead": "发布交付与支持原 owner",
+      "affectedConsumers": [
+        "iOS",
+        "Web",
+        "Agent"
+      ],
+      "originalIssues": [
+        245
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "客户收到产品后的支持和发布关账可追溯",
+      "remaining": "复用运营交付和回滚说明；补真实交付、支持和观察窗口，不能以代码或商店提交代客户结果。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 245,
+          "checked": false,
+          "text": "至少72小时系统观察与7天机会相关用户跟踪；自助/人工帮助、拒绝/激活、sandbox/真实购买分开。"
+        },
+        {
+          "sourceIssue": 245,
+          "checked": false,
+          "text": "支持队列、退款/删除、事故回滚、知识失效有负责人和实测响应。"
+        },
+        {
+          "sourceIssue": 245,
+          "checked": false,
+          "text": "发布门全部关闭且未解决严重问题为0才结束Program产品交付；不以下载量作为完成。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "IOS-009",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        },
+        {
+          "taskId": "IOS-010",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        242,
+        244
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 245,
+          "originalDependency": 242,
+          "currentTarget": 242,
+          "scope": "原生开工依赖保留"
+        },
+        {
+          "sourceIssue": 245,
+          "originalDependency": 244,
+          "currentTarget": 244,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/acceptance/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-45/**",
+        "docs/handoff.json"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "IOS-001",
+      "number": 203,
+      "title": "首访委托和回访继续同一旅程目标",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "Main 已指定的原/新 iOS owner 01a12dba-36ee-7602-a285-698d04d2cbcc",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        203
+      ],
+      "priority": "P0",
+      "batch": "B2",
+      "userOutcome": "首访委托和回访继续同一旅程目标",
+      "remaining": "复用 VPJ77 四 Tab、JourneyEntry、目标返回与成果；保留 E2 生命周期暂停，补真实回访连续性和原测量链。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "新想法、已有材料、已在途均可开始；不强制先创建完整计划或填长表。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "回访显示当前Trip/上次决定/下一步，用户可跳过问题；首值来自真实计划对象。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "记录first_value与拒绝原因分开；大字/键盘/无权限/配额用尽有路径。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "继承同意范围内事件schema；first_value/activated/outcome_declined不混计。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "体验增量2026-09-17：以无日期新想法、已有安排导入、在途回访三类任务验收首值；每次必要问题伴随已有成果或具体变化，用户可跳过，已知日期/人数/服务意向不重问。分别记录首次可用成果时间、实际采用/保存、拒绝和技术失败，并以明确分母报告重复提问率，不预设未经测量的收益数字。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "助手升级2026-09-27：首次呈现有吸引力的个性化选择，回访优先真实新成果/未决问题；没有进展不捏造更新，不强制先建Trip或填写完整问卷。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "助手升级2026-09-27：评价用户能否说明VP记得什么、正在做什么、结果在哪及如何改口；目标结果完成与partial/blocked/technical_failure分开计量。"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "消费#197已有相对日成果；不强制填长表/完整计划"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "同一ServiceTask复用已知人数/日期，拒绝、配额、无权限、大字键盘均有路径"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "first_value、采用/保存、outcome_declined、technical_failure分别记录，重复提问率写分母"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "不先要求重新口述材料，关键歧义才追问"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "跳过导入、解析失败和拒绝确认仍可继续，既有计划不丢失"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "首值计时以真实可用成果为准，上传或OCR完成不计激活"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "当前状态/偏好版本可追；撤回偏好不复活"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "无完整计划、离线、到期/配额不足仍可读已有安全成果"
+        },
+        {
+          "sourceIssue": 203,
+          "checked": false,
+          "text": "必要澄清沿原目标，用户可跳过；无依据下一步清楚标未知"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-003",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        202
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 203,
+          "originalDependency": 202,
+          "currentTarget": 202,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "tests/**/onboarding/**",
+        "docs/product/**"
+      ],
+      "retainedPullRequests": [],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a12dba-36ee-7602-a285-698d04d2cbcc",
+        "scope": "本轮已批准恢复：对话主屏；首访/回访连续体验；成果与确认卡；输入与附件/语音解释",
+        "boundary": "移至V10项目的额外来源 confirmation_required 未绕过，原项目/原已授权源码内继续。",
+        "evidence": "最新唯一HANDOFF记录批准恢复；原停止和dirty/失败保留，新工具启动/实施进展以Main正式证据为准，不以active标签替代。"
+      },
+      "frontendSlice": {
+        "scope": [
+          "对话主屏",
+          "首访/回访连续体验",
+          "成果与确认卡",
+          "输入与附件/语音解释"
+        ],
+        "reuse": [
+          "原IOS001已交stable59d92cc3；JourneyEntry/Frontend候选、18 Foundation状态断言和失败记录作为既有证据保留，不重做。",
+          "r1编译FAIL与r2 BUILD SUCCEEDED均保留；shared Ask/Conversation/PBX候选仍由Main整合"
+        ],
+        "criteria": [
+          "四Tab主体验中对话、首次与回访、结果卡及确认/取消状态连续可操作。",
+          "输入/附件/语音入口解释能力、来源与未接入边界，不伪造真实上传、识别或模型结果。",
+          "复用四Tab/壳与原候选，不重建；E2/metrics default deny及旧暂停不恢复；真实目标/首值/服务验证单独保留。"
+        ]
+      },
+      "frontendIncrementIds": [
+        "IOS-CHAT-MUSE-20261014"
+      ]
+    },
+    {
+      "id": "IOS-002",
+      "number": 201,
+      "title": "单张截图经校正和明确确认加入同一 Trip",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        201,
+        507
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "单张截图经校正和明确确认加入同一 Trip",
+      "remaining": "复用 PR472/474、Photo Picker/Vision/Proposal；补真实登录→收件箱→原文校正→diff确认→双端重载，不重做 Docling。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "只做Photo Picker单张旅行截图→私有收件箱→受控解析→关键日期金额原文定位→用户确认；Share Extension/多页文件由VPJ-55承接。"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "不给全相册/邮箱读取权限；未批准外发时使用许可内本地/人工录入路径。"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "重复导入、解析失败、取消、TTL、删除、跨账号隔离可测；OCR成功不是供应商已确认。"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "HF复用：参考VPJ-73的Docling采用/否决证据，合格时只接回本票截图→定位字段→用户校正的边界；研究PDF对照不扩张本票格式，否决Docling不阻止采用其他合格方案；保留原始材料定位及取消/TTL。"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "体验增量2026-09-17：单张截图的校正界面展示原文定位、日期/地址/金额/状态及与当前Trip的新增/重复/冲突；用户确认字段后才进入既有Proposal流程，解析失败或取消保留原安排，相同输入重放不重复加项。仅保留本票单图范围，不引入全相册读取。"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "复用设备Vision，不把M1当本地OCR开工硬依赖；需要云解析时才消费其资格"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "原文定位、新增/重复/冲突可见；拒绝和版本过期不写入"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "真实登录→私有收件箱→Proposal→明确确认→两端重载有串联证据"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "相同输入/凭证不重复添项，失败与取消保留确认Trip"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "真机验证文件保护、24h逻辑TTL、重新启动和下次访问清理；不承诺App不运行也即时物理删除"
+        },
+        {
+          "sourceIssue": 201,
+          "checked": false,
+          "text": "owner/other和旧设备回网拒绝可追；只访问用户选中的图片"
+        },
+        {
+          "sourceIssue": 507,
+          "checked": false,
+          "text": "复用设备Vision，不把M1当本地OCR开工硬依赖；需要云解析时才消费其资格"
+        },
+        {
+          "sourceIssue": 507,
+          "checked": false,
+          "text": "原文定位、新增/重复/冲突可见；拒绝和版本过期不写入"
+        },
+        {
+          "sourceIssue": 507,
+          "checked": false,
+          "text": "真实登录→私有收件箱→Proposal→明确确认→两端重载有串联证据"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-007",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/artifacts/**",
+        "lib/server/media/**",
+        "app/api/artifacts/**",
+        "supabase/migrations/**",
+        "tests/**/artifacts/**"
+      ],
+      "retainedPullRequests": [
+        472
+      ]
+    },
+    {
+      "id": "IOS-003",
+      "number": 209,
+      "title": "地点发现保存消歧和导航保持同一准确实体",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "Main 已指定的原/新 iOS owner 01a13928-1a52-7b00-84ac-d6c6523f0396",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        209,
+        363,
+        364,
+        210
+      ],
+      "priority": "P0",
+      "batch": "B2",
+      "userOutcome": "地点发现保存消歧和导航保持同一准确实体",
+      "remaining": "复用 Explore/地图/路线与三个子片；补双语同选中、保存交给 VP、步行公交驾车比较与供应商导航交接。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/contracts/place-identity.md",
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 209,
+          "checked": false,
+          "text": "中文/英文/拼音同一canonical实体；providerID和内部ID分开，城市同名需要消歧。"
+        },
+        {
+          "sourceIssue": 209,
+          "checked": false,
+          "text": "GCJ/WGS等坐标转换显式且不双转，地图/列表同选中对象；不从向量分数猜入口。"
+        },
+        {
+          "sourceIssue": 209,
+          "checked": false,
+          "text": "当前位置拒权/无网时可用中文地址和缓存；路线报价只按已授权观察时效呈现。"
+        },
+        {
+          "sourceIssue": 209,
+          "checked": false,
+          "text": "体验增量2026-09-17：地图、地点列表和详情沿同一Trip/day/item身份保留选中对象；休息、值机、未定用餐等时间线事件不伪装为具名POI或借附近坐标补齐。正式点位缺坐标明确显示，既有文字安排仍可读；绑定已有地点/服务的引用可核对，切换视图不改变确认版本。"
+        },
+        {
+          "sourceIssue": 363,
+          "checked": false,
+          "text": "统一地点身份与provider ID映射；城市/分店歧义让用户选择，机场/航站楼/站口/入口表达父子关系；名称或向量相似不能触发自动合并。"
+        },
+        {
+          "sourceIssue": 363,
+          "checked": false,
+          "text": "关键词/输入提示/周边/详情/地址解析走统一适配；地图、列表、详情共享选中ID；保留中文原名、英文别名来源和城市。周边厕所/便利店/餐饮/药店/ATM分类可查，特殊服务未知不推断。"
+        },
+        {
+          "sourceIssue": 363,
+          "checked": false,
+          "text": "坐标明确WGS/GCJ等来源与转换记录、经纬顺序；禁止双转和把建筑中心当入口。来源缺少入口时明确未知。"
+        },
+        {
+          "sourceIssue": 363,
+          "checked": false,
+          "text": "仅接一个主地图展示SDK；原生/服务端/Web分别配置应用或域名限制；客户端只接必要展示凭据。拒绝定位可手动选起点/城市，失效数据不伪装实时。"
+        },
+        {
+          "sourceIssue": 363,
+          "checked": false,
+          "text": "查询观察与已审核Fact分开；保存、重载与跨账号隔离沿既有权限契约，供应商字段逐用途控制，不整库复制。"
+        },
+        {
+          "sourceIssue": 364,
+          "checked": false,
+          "text": "展示总耗时、步行距离、换乘、分段、出发/到达时间、来源及查询时间；区分当前/指定未来出发，不将当前拥堵当明日预测。"
+        },
+        {
+          "sourceIssue": 364,
+          "checked": false,
+          "text": "路线同一方案保持单供应商完整结果，费用估算不当实际报价；公交规划不当实时到站，驾车规划不当叫车成功；缺少电梯/楼梯等数据不承诺无障碍。"
+        },
+        {
+          "sourceIssue": 364,
+          "checked": false,
+          "text": "入口可确认时使用准确入口；机场/站场首次到访给中文地址卡。导航跳转验证坐标、ID、目标App已装/未装、打开失败和回到VP；失败时可复制地址/使用可用网页出口。"
+        },
+        {
+          "sourceIssue": 364,
+          "checked": false,
+          "text": "真实两端演示包含定位拒权、无路线、超时、过期、起终点错误；不自动发送持续位置，不绕过权限或预算。"
+        },
+        {
+          "sourceIssue": 210,
+          "checked": false,
+          "text": "中英官方/编辑内容可主动浏览、搜索和收藏；说明覆盖与来源。"
+        },
+        {
+          "sourceIssue": 210,
+          "checked": false,
+          "text": "Save/Ask/Add使用同一实体ID，Add走Proposal/Confirm；地点没找到可发起消歧/研究。"
+        },
+        {
+          "sourceIssue": 210,
+          "checked": false,
+          "text": "无内容、已下架、过期图片/许可、分页/弱网状态可用，不用静态假数据冒充全国。"
+        },
+        {
+          "sourceIssue": 210,
+          "checked": false,
+          "text": "助手升级2026-09-27：新四Tab无独立Explore，全球入口使用明确选区/实体/来源带入主会话；不能把照片或用户偏好当地点证据，生产图片有权利与真实地点对应。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-006",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 363,
+          "originalDependency": 362,
+          "currentTarget": 362,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/external-evidence/**",
+        "lib/server/explore/**",
+        "app/api/places/**",
+        "tests/**/places/**",
+        "lib/server/maps/**",
+        "scripts/maps/**",
+        "tests/**/maps/**",
+        "app/explore/**",
+        "components/explore/**",
+        "tests/**/explore/**"
+      ],
+      "retainedPullRequests": [],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a13928-1a52-7b00-84ac-d6c6523f0396",
+        "scope": "本轮已批准恢复：ios/VisePanda/VisePanda/Frontend/Journeys/**；原NativePlaceActionsView/PlacePresentation独占范围",
+        "boundary": "不接管共享 AppShell/route/PBX/Conversation；不新增 backend/实际数据操作。",
+        "evidence": "最新唯一HANDOFF记录批准恢复；原停止和dirty/失败保留，新工具启动/实施进展以Main正式证据为准，不以active标签替代。"
+      },
+      "frontendSlice": {
+        "scope": [
+          "ios/VisePanda/VisePanda/Frontend/Journeys/**",
+          "原NativePlaceActionsView/PlacePresentation独占范围"
+        ],
+        "reuse": [
+          "PR691 OPEN at77ab3209185ef82d207ef5c7e51427f955ee1dc6；原3focused/parse/SDK及Main同源Appbuild证据",
+          "Main已cherry f581cd8d+9d07738a；不当PR已merge或完整交互已验"
+        ],
+        "criteria": [
+          "旅程列表→旅程→日期→地点安排与状态完整导航，返回与跨页选中对象一致。",
+          "地点动作与路线交接复用PR691生产presentation；未连接路线/provider时如实显示unknown/样例，不冒供应商结果。",
+          "共享对象ID与内存样例状态消费Main接口，支持前端确认/取消/恢复交互，不直接写真实Trip或新增后端。"
+        ]
+      }
+    },
+    {
+      "id": "IOS-004",
+      "number": 506,
+      "title": "Today 显示确认版本行程和中文地址",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        506
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "Today 显示确认版本行程和中文地址",
+      "remaining": "复用已有 Today evidence producer；补中文地址生产者/原生呈现与版本一致，不把父票关闭当本片完成。",
+      "reusePaths": [],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 506,
+          "checked": false,
+          "text": "只消费现有确认快照，不新建Trip数据源；在线确认后两端版本一致"
+        },
+        {
+          "sourceIssue": 506,
+          "checked": false,
+          "text": "地图/图片加载失败仍可读已有文字；无日期/无日程有真实空态"
+        },
+        {
+          "sourceIssue": 506,
+          "checked": false,
+          "text": "到期/额度不足保留许可内已保存资料，不承诺后台监控"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "IOS-005",
+      "number": 216,
+      "title": "旅途中以可信中英表达和大字卡沟通",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "Main 已指定的原/新 iOS owner 01a13924-853c-7561-8b51-548950947cc9",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        216
+      ],
+      "priority": "P0",
+      "batch": "B2",
+      "userOutcome": "旅途中以可信中英表达和大字卡沟通",
+      "remaining": "复用原生表达卡片/文本能力；补来源、语言一致性与失败路径，媒体能力单独验。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "首单仅文字输入→中英译文→给本地人看大字卡，原文随时可见；图片入口通过材料API另行接入。"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "金额/否定/地点/过敏等关键语义双向验证，高风险不声称认证翻译。"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "同一Trip地址/场景可带入但不无关调用历史私密记忆；额度耗尽仍可读已存短语。"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "接续PR #485实际worker/同意/预算链，错误格式和关键数字不生成误导卡片"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "金额、否定、地点、过敏语义做独立双向核验；模型自回译不是独立验证"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "真机最大字号/VoiceOver、失败/拒绝/停止路径通过，不宣称认证翻译"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "只传明确选择的字段，不默认带入历史私密记忆"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "保存短语受账号/资料权利隔离，离线使用复用T2可用缓存合同"
+        },
+        {
+          "sourceIssue": 216,
+          "checked": false,
+          "text": "持久提交恢复读取原回执，不因后台/重开重复生成；缓存读取不扣次"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-005",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/media-translation/**",
+        "app/api/translate/**",
+        "tests/**/translate/**",
+        "evals/**",
+        "app/api/media/**"
+      ],
+      "retainedPullRequests": [
+        485
+      ],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a13924-853c-7561-8b51-548950947cc9",
+        "scope": "本轮已批准恢复：原NativeTranslationView/TranslationPresentation独占范围；表达大字卡相关弹窗/关键状态",
+        "boundary": "不接管共享 AppShell/route/PBX/Conversation；不新增 provider费用/backend/生产动作。",
+        "evidence": "最新唯一HANDOFF记录批准恢复；原停止和dirty/失败保留，新工具启动/实施进展以Main正式证据为准，不以active标签替代。"
+      },
+      "frontendSlice": {
+        "scope": [
+          "原NativeTranslationView/TranslationPresentation独占范围",
+          "表达大字卡相关弹窗/关键状态"
+        ],
+        "reuse": [
+          "PR690 OPEN ate4b23cda354c741c61ea59445771471143734be3",
+          "Main已cherry cfc251b8/7748fbc0/d5f14a37；空译文/phrase/scope/snapshot/语言/字号边界保留"
+        ],
+        "criteria": [
+          "表达入口、大字卡、返回及相关弹窗/状态与主体验连通，复用原展示和字号/语言守卫。",
+          "合成ready/pending/unavailable/unknown明确标记；无真实翻译/provider/语音调用或持久化副作用。",
+          "真实翻译、账号、模型、设备验收仍按原完整AC；局部样例/编译通过不关闭整票。"
+        ]
+      }
+    },
+    {
+      "id": "IOS-006",
+      "number": 212,
+      "title": "酒店官方出口在原生与 Web 正确交接",
+      "primaryProject": "ios",
+      "workType": "shared-data",
+      "lead": "iOS 酒店交接原 owner（与 Web consumer owner 协作）",
+      "affectedConsumers": [
+        "iOS",
+        "Web"
+      ],
+      "originalIssues": [
+        212
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "酒店官方出口在原生与 Web 正确交接",
+      "remaining": "iOS lead 保留 Native 首片、真机参数、供应商 App 安装/未安装跳转；Web consumer 共同验证 allowlist/归因，opened 不当 booked。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "使用Trip.com/Booking.com现有可用API或官方链接开发并验证App跳转、归因和参数；不等待联盟批准、合同或供应商书面答复。"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "真机验证hotel/date/occupancy/filters究竟保留哪些参数；不保留的字段写入用户提示。"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "没有联盟账号或专用API时直接使用非联盟官方搜索出口；不自造库存、room SKU或佣金参数。"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "体验增量2026-09-17：把TourMind列为可选酒店供应商研究候选，记录采纳/暂缓/否决依据及实际查询权限、费用/总价口径、外宾入住信息、字段用途和来源版本。源码可复用性与远端API/内容权利分别核对；候选不可用不阻塞原官方外跳，不把本票扩大为订房、支付、取消或履约，未验项保留UNRUN。"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "接续PR #498，完成现存编译/设备检查；分别核安装/未安装供应商App"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "hotel/date/rooms/adults/children逐字段记录；exact hotel丢失、儿童年龄不足必须提示"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "固定域名/过期/失败回退；opened永不标booked，非联盟出口可完整使用"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "PR #498附录已有RollingGo tools/tags/hotels/handoff真实观察；当前主线未集成，不从零重做探针"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "字段用途、source版本、外宾入住信息和总价口径有证据或unknown；登录后价格不猜"
+        },
+        {
+          "sourceIssue": 212,
+          "checked": false,
+          "text": "候选不可用可暂缓且不阻塞H1；无支付/代订/room SKU编造或佣金影响排序"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/hotels/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json"
+      ],
+      "retainedPullRequests": [
+        498
+      ]
+    },
+    {
+      "id": "IOS-007",
+      "number": 237,
+      "title": "签名 Archive 产出可安装 TestFlight 包",
+      "primaryProject": "ios",
+      "workType": "quality-delivery",
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        237
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "签名 Archive 产出可安装 TestFlight 包",
+      "remaining": "复用已关闭 #508 unsigned Archive/CI 成果；仅补签名、上传、真实安装原范围，不重开已交付项。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/contracts/vpj-56.md",
+        "artifacts/VPJ-56/verification.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 237,
+          "checked": true,
+          "text": "macOS CI锁稳定Xcode版本并跑原生build/tests，artifact保存xcresult与bundle版本；PR不用生产秘密。"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "JT完成Apple账号/BundleID/签名/上传，产出首个可安装TestFlight构建；只证明分发，不证明完整产品。"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "记录实际上传SDK要求和证书轮换/构建失败/撤回路径；42复用该轨，44正式上架。"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "#237已勾CI项保留，复用main现有Xcode允许清单，不重建CI"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "核main缺少的签名手册与#421来源再移入；证书轮换/失败/撤回路径准确"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "实际Apple上传要求在执行时查官方资料；无凭据时明确UNRUN签名，不索取聊天秘密"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "记录bundle/version/build/commit/后端环境对应及安装证据"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "真实账号/BundleID/签名/上传有当前授权才执行，上传等待不阻塞其他开发"
+        },
+        {
+          "sourceIssue": 237,
+          "checked": false,
+          "text": "撤回构建/证书失效/安装失败路径记录；只证明分发，不宣称完整Beta"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        ".github/workflows/**",
+        "scripts/ios/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-56/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "IOS-008",
+      "number": 233,
+      "title": "原生整链交互可访问且性能可接受",
+      "primaryProject": "ios",
+      "workType": "quality-delivery",
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        233
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "原生整链交互可访问且性能可接受",
+      "remaining": "复用四 Tab/动效/组件，补实体 VoiceOver、性能、大字与整链观察，不把 iOS 总验收设为所有 Web 工作前置。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "按VPJ-77确定的一致视觉系统和已批准品牌资产复验；语义token、对话/计划/sheet/键盘/返回锚点保持同一状态语义，不机械照搬概念图。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "体验增量2026-09-17：在相关上游实际可用后，整链复验同一Trip的概览/日程/地图及Today选区、版本、修改后重载一致；采用ADR-0027四Tab、全局搜索与Today在Journeys内的导航，不为图文表现复制桌面多栏或另建Trip数据源。素材未就绪时可用文字成果仍可读，按真实小屏/大字/VoiceOver验证。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "助手升级2026-09-27：按EXPERIENCE.md E1–E10检查真实UI；Memory一步可达，任务运行不阻塞对话，结果更新不抢焦点，四Tab/全局搜索/旧deep link/账号与隐私入口全部可达。"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "复用#478在途修复及#198真实消费者；基础壳证据不能替代已登录链"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "Cream/Ink/Plum/Gold、品牌资产与状态一致；卡片原子出现，保存动效须等回执"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "Reduce Motion/Transparency、键盘/来电/低电量/弱网按实际设备录证，性能用profile测"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "按功能逐行接入审验，最终复验Today/地图/日程同版本及失效状态"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "图片/地图失败不挡文字成果，动效可中断、不抢滚动位置"
+        },
+        {
+          "sourceIssue": 233,
+          "checked": false,
+          "text": "保留五Tab/Today在Trip内，小屏/大屏/中英/无障碍有实际证据；未就绪行UNRUN"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "IOS-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-002",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-003",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-004",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-005",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-006",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        241
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 233,
+          "originalDependency": 241,
+          "currentTarget": 241,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "tests/**/ios/**",
+        "docs/design/**",
+        "artifacts/VPJ-40/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "IOS-009",
+      "number": 242,
+      "title": "TestFlight 真机贯通规划准备与旅途",
+      "primaryProject": "ios",
+      "workType": "quality-delivery",
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        242
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "TestFlight 真机贯通规划准备与旅途",
+      "remaining": "复用已合功能与四 Tab；补真实设备三段完整链及原权限/生命周期/服务结果，fixture 不代设备验收。",
+      "reusePaths": [
+        "docs/product/assistant-upgrade-2026-09-27/README.md",
+        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+        "docs/program/2026-09-05/INTERFACES.md",
+        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "邀请受控用户在原生build完成一个真实Trip的Plan/Ready/Travel，含外跳、离线、恢复、拒绝/取消。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "助手升级2026-09-27：新助手E1–E10在适用真实链和客户端验收，至少含worker重启、任务运行时改口、忘记偏好后重试、旧成果确认拒绝及同源成果读回；截图/merged/fixture不能完成本项。"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "原生/Web重载与拒绝路径绑定真实账号/版本/环境；不拼接不同Trip假装全程"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "网络/provider/RLS/数据/UX证据可定位；sandbox交易不计收入"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "逐项准备与验收可滚动进行，尚未交付功能记录缺陷/UNRUN，不由fixture填补"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "父票全部验收依赖逐项查证，包括O2/G2/R2/S2/U3/W2/K2/J4/F2/A2；未就绪就保留未验"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "真实设备经历断网/恢复/拒绝/取消/授权撤回，结果与成本回执一致"
+        },
+        {
+          "sourceIssue": 242,
+          "checked": false,
+          "text": "未到旅行机会窗口不伪造成功/失败，经营留存和真实付款留#247；无Production/AppStore发布动作"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "IOS-007",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "IOS-008",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-010",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-021",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "WEB-002",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [
+        241
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 242,
+          "originalDependency": 241,
+          "currentTarget": 241,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/acceptance/**",
+        "tests/e2e/**",
+        "artifacts/VPJ-42/**",
+        "docs/runbooks/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "IOS-010",
+      "number": 244,
+      "title": "满足原门禁后完成 App Store 1.0 审核交付",
+      "primaryProject": "ios",
+      "workType": "quality-delivery",
+      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [
+        244
+      ],
+      "priority": "P1",
+      "batch": "B3",
+      "userOutcome": "满足原门禁后完成 App Store 1.0 审核交付",
+      "remaining": "复用签名、隐私与数字商品材料；补原真实提交和审核，不将本规划当生产发布授权。",
+      "reusePaths": [
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [],
+      "acceptance": [
+        {
+          "sourceIssue": 244,
+          "checked": false,
+          "text": "TestFlight测试轨与AppStore完整1.0生产轨区分；满足当前Xcode/SDK、隐私清单、AI第三方同意和账号删除要求。"
+        },
+        {
+          "sourceIssue": 244,
+          "checked": false,
+          "text": "中英元数据/实机截图/支持/隐私URL、reviewer访问、IAP审查与恢复说明对应实际功能。"
+        },
+        {
+          "sourceIssue": 244,
+          "checked": false,
+          "text": "JT执行签名/提交/发布，拒审按原因修复；未通过不宣称已上架。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "IOS-009",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-009",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-015",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "原生受影响 build/test；原票真机/VoiceOver/签名验收按需实测"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "docs/release/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-44/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "WEB-001",
+      "number": 681,
+      "title": "从已可体验样例走向真实持久会话",
+      "primaryProject": "web",
+      "workType": null,
+      "lead": "web 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "web"
+      ],
+      "originalIssues": [
+        681
+      ],
+      "priority": "P0",
+      "batch": "B1",
+      "userOutcome": "从已可体验样例走向真实持久会话",
+      "remaining": "真实 QA 客户端源码已存在：app/qa/page.tsx 挂载 QaAgentWorkspace，api.ts 提供 sessions/create/history/send，pending-identity.ts 保留原 requestId 与恢复；PR684 已合入，PR686 的873源延续现有 HTTP/SQL/context 客户端。当前剩余首先是获准目标的集成与实际验收；只有实际复现源码缺陷才最小返修，禁止因 target UNRUN 重做登录、Session、新建切换、刷新或重复提交逻辑。PR688 synthetic 样例已交付，真实首答/持久化/多轮未由样例完成。",
+      "reusePaths": [
+        "app/qa/page.tsx",
+        "components/qa-agent/QaAgentWorkspace.tsx",
+        "components/qa-agent/api.ts",
+        "components/qa-agent/pending-identity.ts",
+        "tests/e2e/qa-agent-ui",
+        "lib/server/qa-agent",
+        "lib/server/qa-agent-context"
+      ],
+      "evidence": [
+        {
+          "kind": "source-inspected / merged-source",
+          "ref": "PR684",
+          "commit": "2dbc7136620bd75ce81e99103aac1ea1b5dfd6ae",
+          "scope": "真实客户端 Auth/policy/Session/history/恢复与拒绝路径已实现；本轮源盘点，不冒目标运行"
+        },
+        {
+          "kind": "source-in-QA / retained tests",
+          "ref": "PR686 at 8731c54ed45940477672233cb9f96dc2c0996421; tests/e2e/qa-agent-ui/**; artifacts/QAWEB-005/context/verification.md",
+          "scope": "HTTP/SQL/context 源与既有合成/契约证据复用；PR686 仍OPEN、未合production main，真实target链未验"
+        },
+        {
+          "kind": "merged-source",
+          "ref": "PR688",
+          "commit": "8731c54ed45940477672233cb9f96dc2c0996421",
+          "verifiedBy": "GitHub PR API this turn",
+          "scope": "synthetic sample only"
+        },
+        {
+          "kind": "sample-local-browser",
+          "ref": "artifacts/VPV10-MODULAR-001/qa-demo/focus-fix/evidence.md",
+          "sourceSha256": "03ece0a86cc918dd46d656010cfced8ba5c2875371412c611caf816734505adf"
+        },
+        {
+          "kind": "sample-deployed-browser",
+          "ref": "Main 2026-10-14 formal handoff",
+          "scope": "desktop1440x1000/mobile390x844 sample interactions PASS; first strict whole-page FAIL retained (Vercel feedback static script blocked)"
+        },
+        {
+          "kind": "UNRUN",
+          "scope": "real Auth/persist/provider/multiturn/worker not established by sample"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 681,
+          "checked": true,
+          "text": "PR688 synthetic /qa/demo 会话切换、追问、键盘/reset 与 no-data-network 样例已验；不等于真实 Session。"
+        },
+        {
+          "sourceIssue": 681,
+          "checked": false,
+          "text": "真实登录与许可后新建/切换 Session，获得真实首答并刷新持久读回。"
+        },
+        {
+          "sourceIssue": 681,
+          "checked": false,
+          "text": "用户/Session 隔离、double click/重试不重复 admission，桌面/移动可操作。"
+        },
+        {
+          "sourceIssue": 681,
+          "checked": false,
+          "text": "原真实 provider/持久化/多轮标准保留；样例完成不关闭本票。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-002",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
+      ]
+    },
+    {
+      "id": "WEB-002",
+      "number": 234,
+      "title": "Web 独立完成同 Trip 规划成果审阅与确认",
+      "primaryProject": "web",
+      "workType": null,
+      "lead": "web 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "web"
+      ],
+      "originalIssues": [
+        234
+      ],
+      "priority": "P1",
+      "batch": "B2",
+      "userOutcome": "Web 独立完成同 Trip 规划成果审阅与确认",
+      "remaining": "TripCanvas 与 ChatThreadWorkspace 已有真实 Web 消费者；复用同 Trip proposal/diff/confirm/revision、成果读取和方向消费者。PR599/f69780ba 已合的精确 Trip comparison 与5a8090be方向消费者保持；本票剩余是按 Web 独立工程核对现有链的实际集成、响应式/可访问性和确认重载，只有实证缺口才补码，不重新建Canvas或降为iOS轻量附属。",
+      "reusePaths": [
+        "components/canvas/TripCanvas.tsx",
+        "components/chat/ChatThreadWorkspace.tsx",
+        "docs/program/2026-09-05/INTERFACES.md"
+      ],
+      "evidence": [
+        {
+          "kind": "merged-source",
+          "ref": "PR599",
+          "commit": "f69780ba5b407491a426ccfdc8ba1f9f7cb2437a",
+          "scope": "GitHub API确认merged；精确Trip comparisons消费者源复用，不冒真实环境验收"
+        },
+        {
+          "kind": "source-inspected",
+          "commit": "5a8090be9cfd87081d6b6bc2d59cf4fe2a18572c",
+          "scope": "TripCanvas既有directions/proposal/confirm/版本拒绝；QA873树中存在",
+          "ref": "PR677"
+        },
+        {
+          "kind": "source boundary",
+          "ref": "components/canvas/TripCanvas.tsx; components/chat/ChatThreadWorkspace.tsx",
+          "scope": "现有源码不是缺失；目标/设备/完整Web验收仍按原AC记录"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 234,
+          "checked": false,
+          "text": "Web 用户独立完成 Chat、同 Trip 编辑、成果读取、材料状态、权益显示、可见 diff 与明确确认；跨端重载同一版本。"
+        },
+        {
+          "sourceIssue": 234,
+          "checked": false,
+          "text": "按 Web 场景与权限选择能力；确需设备能力的具体功能保留清晰交接路径，不将整个 Web 定义为 iOS 附属，也不要求三端功能完全相同。"
+        },
+        {
+          "sourceIssue": 234,
+          "checked": false,
+          "text": "桌面和390×844、中英、键盘可访问、品牌资产来源及 claim scan 通过；Landing/Explore/Early Access 同意与可用范围如实。"
+        },
+        {
+          "sourceIssue": 234,
+          "checked": false,
+          "text": "正文不控制按钮权限或确认目标；旧/未知 schema 安全降级，跨账号与版本冲突拒绝，不丢字段确认新语义。"
+        },
+        {
+          "sourceIssue": 234,
+          "checked": false,
+          "text": "沿已交付 #192/#198/#202/#241 的领域与分享接口复用，结果、限定与下一步一致；未接入能力明确说明。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-003",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        },
+        {
+          "taskId": "AGENT-009",
+          "kind": "acceptance",
+          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "app/**",
+        "components/**",
+        "lib/i18n.ts",
+        "tests/**/frontend/**",
+        "docs/design/**",
+        "public/assets/**"
+      ],
+      "retainedPullRequests": []
+    },
+    {
+      "id": "WEB-003",
+      "number": 683,
+      "title": "QA Web 交付版本与真实问答验收一致",
+      "primaryProject": "web",
+      "workType": "quality-delivery",
+      "lead": "web 原实施 owner，Main 按现 lease 协调",
+      "affectedConsumers": [
+        "web"
+      ],
+      "originalIssues": [
+        683
+      ],
+      "priority": "P0",
+      "batch": "B1",
+      "userOutcome": "QA Web 交付版本与真实问答验收一致",
+      "remaining": "复用既有 vp-v4/QA 域名和873自动READY切换；部署与sample已分别有证据，剩余真实Auth/provider/persist/multi-turn/worker验收，不新资源或绕拒绝。",
+      "reusePaths": [],
+      "evidence": [
+        {
+          "kind": "merged-source",
+          "ref": "PR688",
+          "commit": "8731c54ed45940477672233cb9f96dc2c0996421",
+          "verifiedBy": "GitHub PR API this turn",
+          "scope": "synthetic sample only"
+        },
+        {
+          "kind": "sample-local-browser",
+          "ref": "artifacts/VPV10-MODULAR-001/qa-demo/focus-fix/evidence.md",
+          "sourceSha256": "03ece0a86cc918dd46d656010cfced8ba5c2875371412c611caf816734505adf"
+        },
+        {
+          "kind": "sample-deployed-browser",
+          "ref": "Main 2026-10-14 formal handoff",
+          "scope": "desktop1440x1000/mobile390x844 sample interactions PASS; first strict whole-page FAIL retained (Vercel feedback static script blocked)"
+        },
+        {
+          "kind": "UNRUN",
+          "scope": "real Auth/persist/provider/multiturn/worker not established by sample"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 683,
+          "checked": false,
+          "text": "复用既有 vp-v4/QA 域名和873自动READY切换；部署与sample已分别有证据，剩余真实Auth/provider/persist/multi-turn/worker验收，不新资源或绕拒绝。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-011",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "AGENT-002",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "WEB-001",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        }
+      ],
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "受影响 lint/typecheck 与 contract/security 行为测试",
+        "按本票实际消费者验证浏览器或服务链；fixture/目标/发布证据分开"
+      ],
+      "scopeExclusions": [
+        "不新增数据权威、费用或生产权限",
+        "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
+      ]
+    },
+    {
+      "id": "IOS-011",
+      "number": 692,
+      "title": "资料库与记忆前端共享对象、来源和偏好反馈",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "Main 已指定的独立前端 owner 01a1396d-7aa8-7c70-b717-d9c47866bb28",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [],
+      "priority": "P0",
+      "batch": "B2",
+      "statusLabel": "status:in-progress",
+      "userOutcome": "在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈",
+      "remaining": "已批准且由 Main 指定原独立前端线程开工；本规划 owner 未实施或验收。实际数据/账号/provider接入不是前端前置，仍需完成本切片前端交付与Main整合验证，不能假称真实服务完成。",
+      "reusePaths": [
+        "docs/contracts/vpv4-project-boundaries.md"
+      ],
+      "sourceScope": [
+        "ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**"
+      ],
+      "evidence": [
+        {
+          "kind": "approved frontend scope",
+          "ref": "latest unique Main HANDOFF / Muse approval Sentinel_8dcca8e4 / 04c7226a / cf685329",
+          "scope": "完整页面范围已批准；HTML精确library/file指针已知但官方读取能力缺失；不是实现或验收证据"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 692,
+          "checked": false,
+          "text": "资料库列表/详情/来源归属、空态与不可用态可操作；同一资料跨对话、旅程、资料库使用 Main 给定的同一对象 ID。"
+        },
+        {
+          "sourceIssue": 692,
+          "checked": false,
+          "text": "保存、导出、分享分别显示真实前端动作与结果；本地样例不得声称已导出文件、已分享给他人或已写入真实 Library。"
+        },
+        {
+          "sourceIssue": 692,
+          "checked": false,
+          "text": "记忆查看、修改、忘记都有明确反馈与取消路径，跨页展示随 Main 内存样例状态同步；不创建第二 Profile/Memory 权威或调用真实删除。"
+        },
+        {
+          "sourceIssue": 692,
+          "checked": false,
+          "text": "统一标明本地体验样例/未连接真实服务；缺后端、DB/provider 不阻塞前端实现，真实功能验收仍归 AGENT-003 等原合同。"
+        },
+        {
+          "sourceIssue": 692,
+          "checked": false,
+          "text": "复用既有 Library/Knowledge/Memory 消费者与组件；与 Main 的导航/对象接口整合后完成必要编译、模拟器交互和适用 CI，不以模型/fixture 单测冒完整 App 体验。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [
+        {
+          "taskId": "AGENT-003",
+          "kind": "acceptance",
+          "reason": "真实Memory权威与撤回消费者的最终接入输入，非本轮独立前端开工门"
+        }
+      ],
+      "checks": [
+        "受影响Swift语法/必要编译",
+        "Main整合后模拟器完整连通交互与适用CI",
+        "source/synthetic/target/device分别记录，不用fixture冒真实服务"
+      ],
+      "scopeExclusions": [
+        "不修改Main共享AppShell/route/PBX/Conversation或前端内存对象权威",
+        "不新增backend/DB/权限/凭据/费用/生产或恢复旧E2",
+        "不重建四Tab壳，不展开额外研究"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "relatedIssues": [
+        187,
+        199
+      ],
+      "activeWork": {
+        "owner": "01a1396d-7aa8-7c70-b717-d9c47866bb28",
+        "scope": "ios-library-memory-20261014；base de0ce108；ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**",
+        "boundary": "共享导航/PBX/Conversation和前端内存对象由Main整合，原单writer lease保持。",
+        "evidence": "Main正式回传已在VP-V10真实开工；本规划owner仅记录事实，不重派线程或宣称验收通过。"
+      }
+    },
+    {
+      "id": "IOS-012",
+      "number": 693,
+      "title": "助手头像详情展示状态活动权限待办与可跳过定制",
+      "primaryProject": "ios",
+      "workType": null,
+      "lead": "Main 已指定的独立前端 owner 01a1396d-7ce1-70a2-b495-745aca4d18db",
+      "affectedConsumers": [
+        "ios"
+      ],
+      "originalIssues": [],
+      "priority": "P0",
+      "batch": "B2",
+      "statusLabel": "status:in-progress",
+      "userOutcome": "用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验",
+      "remaining": "已批准且由 Main 指定原独立前端线程开工；本规划 owner 未实施或验收。实际数据/账号/provider接入不是前端前置，仍需完成本切片前端交付与Main整合验证，不能假称真实服务完成。",
+      "reusePaths": [
+        "docs/contracts/vpv4-project-boundaries.md"
+      ],
+      "sourceScope": [
+        "ios/VisePanda/VisePanda/Features/Frontend/Assistant/**"
+      ],
+      "evidence": [
+        {
+          "kind": "approved frontend scope",
+          "ref": "latest unique Main HANDOFF / Muse approval Sentinel_8dcca8e4 / 04c7226a / cf685329",
+          "scope": "完整页面范围已批准；HTML精确library/file指针已知但官方读取能力缺失；不是实现或验收证据"
+        }
+      ],
+      "acceptance": [
+        {
+          "sourceIssue": 693,
+          "checked": false,
+          "text": "头像入口、详情及相关弹窗/关键状态与四 Tab 主体验连通；状态、活动、权限、待办、人格均在已批准范围内可查看。"
+        },
+        {
+          "sourceIssue": 693,
+          "checked": false,
+          "text": "首次定制可跳过、取消和返回，不强制填完才可继续主体验；前端状态与 Main 统一对象/内存接口一致。"
+        },
+        {
+          "sourceIssue": 693,
+          "checked": false,
+          "text": "权限呈现区分已知、未连接、未知与请求动作；样例开关不扩大真实账户/资料/模型/设备权限，也不伪称授权成功。"
+        },
+        {
+          "sourceIssue": 693,
+          "checked": false,
+          "text": "复用现有头像/助手呈现和 accepted UI 范围；不重建四 Tab 壳，不新增后端人格服务或真实任务权威。"
+        },
+        {
+          "sourceIssue": 693,
+          "checked": false,
+          "text": "统一标明本地体验样例及真实服务未连接；整合后完成必要编译、模拟器交互和适用 CI，真人/真实Auth/provider仍分开记录。"
+        }
+      ],
+      "activationEvidence": [],
+      "dependencies": [],
+      "checks": [
+        "受影响Swift语法/必要编译",
+        "Main整合后模拟器完整连通交互与适用CI",
+        "source/synthetic/target/device分别记录，不用fixture冒真实服务"
+      ],
+      "scopeExclusions": [
+        "不修改Main共享AppShell/route/PBX/Conversation或前端内存对象权威",
+        "不新增backend/DB/权限/凭据/费用/生产或恢复旧E2",
+        "不重建四Tab壳，不展开额外研究"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "relatedIssues": [
+        187,
+        203
+      ],
+      "activeWork": {
+        "owner": "01a1396d-7ce1-70a2-b495-745aca4d18db",
+        "scope": "ios-assistant-detail-20261014；base de0ce108；ios/VisePanda/VisePanda/Features/Frontend/Assistant/**",
+        "boundary": "共享导航/PBX/Conversation和前端内存对象由Main整合，原单writer lease保持。",
+        "evidence": "Main正式回传已在VP-V10真实开工；本规划owner仅记录事实，不重派线程或宣称验收通过。"
+      }
+    }
+  ],
+  "batches": [
+    {
+      "id": "B2",
+      "outcome": "当前最高优先：整套连通 iOS 前端，含 Main 四Tab整合、IOS-001/003/005及新IOS-011/012独立切片。",
+      "parallel": "原owner/dirty/PR复用，独立目录并行；共享导航/PBX/Conversation/前端对象状态由Main单writer整合。不因HTML尚未定位或真实QA/DB/provider未验暂停已批准页面范围。"
+    },
+    {
+      "id": "B1",
+      "outcome": "真实 QA 未完成部分作为 iOS 必需依赖或必要安全收尾推进；已可体验的 QA873 sample 不重做。",
+      "parallel": "不作为全部 iOS frontend 的前置完成门；恢复/目标操作仍受原具体授权、有效窗口与实际资源门禁约束，本次没有新增运行权限。"
+    },
+    {
+      "id": "B3",
+      "outcome": "跨端真实质量、TestFlight、生产发布与客户观察。",
+      "parallel": "签名准备、质量与产品协调可先准备；真实发布仍按原具体门禁。"
+    },
+    {
+      "id": "EXPAND",
+      "outcome": "只有原activationEvidence满足才考虑扩展。",
+      "parallel": "不是当前实现承诺。"
+    }
+  ],
+  "currentFrontier": {
+    "summary": "JT 已批准 Muse 参考规划并恢复整套连通 iOS 前端：Main 统一四 Tab/导航/PBX/前端内存状态与跨页对象 ID；IOS-001 对话与成果确认、IOS-003 旅程层级与地点路线、IOS-005 表达大字卡，以及独立资料库/记忆、头像详情切片一并覆盖。真实 QA/DB/provider 不是前端开工前置；真实功能 AC 与权限边界不变。",
+    "activeTaskIds": [
+      "IOS-001",
+      "IOS-003",
+      "IOS-005",
+      "IOS-011",
+      "IOS-012"
+    ],
+    "authority": "Sentinel_8dcca8e4fe6881918c0053857e13cc9a / 04c7226a28988191a1f94586de5b2b40 / cf6853297ab4819193ce2c0bb09af443 via formal Main HANDOFF",
+    "approvedAdditionalSlices": [
+      "IOS-011",
+      "IOS-012"
+    ],
+    "previousPriorityAcceptedAt": "2026-10-14T06:17:00Z",
+    "acceptedAt": null,
+    "acceptedDate": "2026-10-14"
+  },
+  "approvedVisualSource": {
+    "htmlPath": null,
+    "libraryId": "libfile_cfee5ae80ee08191847a4d8fafce1d04",
+    "fileId": "file_00000000d02c81f8afa0f952e74f1e56",
+    "filename": "VP-iOS-Muse-研究规划汇报.html",
+    "namespace": "cloud /workspace/shared, not a verified local Mac path",
+    "status": "Exact identifiers received from Main; library_read/prepare_materialize not exposed in current tool inventory",
+    "impact": "Only additional visual-detail verification; approved complete page coverage proceeds",
+    "researchExpanded": false
+  },
+  "frontendIntegration": {
+    "owner": "unique Main",
+    "scope": [
+      "four-tab entry/navigation",
+      "AppShell/AppRoute/PBX/Conversation shared integration",
+      "single frontend in-memory sample state",
+      "cross-page object IDs"
+    ],
+    "requirements": [
+      "simulator defaults to four tabs; retain legacy shell rollback",
+      "do not create a second Trip/Memory/identity authority",
+      "source, synthetic, build, app interaction and real service acceptance stay distinct"
+    ]
+  },
+  "authorizedFrontendIncrements": [
+    {
+      "id": "IOS-CHAT-MUSE-20261014",
+      "acceptedAt": "2026-10-14T10:01:00Z",
+      "source": "Sentinel_1de3567fc58481919ba98c6b17e8db4c via unique Main HANDOFF",
+      "outcome": "在既有完整四Tab前端上增量交付 Muse 聊天视觉、新/历史侧栏和输入交互；不新建运行工程或真实Session权威。",
+      "integration": "Main独占新WT ios-chat-muse-main-20261014 / branch codex/ios-chat-muse-main-20261014，base冻结945a，已记录接口fedd8de8与原图资产72275967。共享Root/NativeFrontendState/PBX/资产由Main单writer，规划owner不写。",
+      "writers": [
+        {
+          "owner": "01a12dba-36ee-7602-a285-698d04d2cbcc",
+          "branch": "codex/ios-chat-muse-20261014（原WT保留dirty）",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/Chat/**",
+          "delivery": "正文、独立浮动双线、原图头像+VisePanda、gift空白页与drawer壳；保attachment/voice/confirmation及跨页联动。"
+        },
+        {
+          "owner": "01a139e4-1a8a-70a0-8d03-e725fa86b392",
+          "branch": "codex/ios-chat-composer-20261014，WT ios-chat-composer-20261014，base945a",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/ChatComposer/**",
+          "delivery": "NativeMuseChatComposerView(state:onAttach:onExpression:onPlace:onVoice:)；开始聊天placeholder、plus工具、空voice/有字send、keyboard和原2000限制。"
+        },
+        {
+          "owner": "01a139e4-1cf2-7ec0-93b2-a11c7f873b2b",
+          "branch": "codex/ios-chat-sidebar-20261014，WT ios-chat-sidebar-20261014，base945a",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/ChatSidebar/**",
+          "delivery": "NativeMuseChatSidebarView(state:onClose:)；new/history/currentselection和关闭，消费Main同一state，明确样例。"
+        }
+      ],
+      "reuse": [
+        "旧完整前端PR697冻结945a16094c62914f4922fec910cdb48b7ab3cc2e；继续原CI/正常整合，不因新视觉改旧审阅head或取消旧交付。",
+        "IOS001既有stable59d92cc3、共享四Tab/确认与对象联动及原失败记录复用；新增量尚未交付，不宣传新视觉已完成。",
+        "Main样例会话接口沿单一NativeFrontendState：messages=[]、activeLocalConversationID/localConversations、start/selectLocalConversation，逐Session保草稿/context/pendingConfirmation；不创建真实业务Session。"
+      ],
+      "assets": [
+        {
+          "role": "原图头像",
+          "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/ios-chat-muse-assets-20261014/IMG_4852.jpeg",
+          "bytes": 269167,
+          "sha256": "a2bfdd463df05335d052c4485bfa613a422ef67a575aaacb2b886efd436cf29e"
+        },
+        {
+          "role": "只读视觉参考，不入产品",
+          "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/ios-chat-muse-assets-20261014/IMG_5369.jpeg",
+          "bytes": 205730,
+          "sha256": "0856ac2c5b10fe441c7f134637b60c00fc1ab301ca31ff0f83e7c00e1977e96f"
+        }
+      ],
+      "assetStatus": "官方协调物化后Main已view；本规划owner只读字节/SHA核验一致。聊天资产缺口已解决，无需JT重传；不生成替代头像，原JPEG由Main纳入imageset，脸帽在UI圆形裁切。",
+      "criteria": [
+        "新/历史侧栏、当前选中/关闭与本地会话草稿/确认上下文一致；无真实Session或新数据权威。",
+        "原图脸帽、VisePanda名字/详情可达，gift空白页可返回；四Tab及表达/地点入口保持。",
+        "空/有字/键盘输入、plus、voice/send、原2000限制正确，长消息可上下滚动且顶部可读。",
+        "既有附件/语音解释、确认及跨页对象联动保留；统一标明本地样例，不冒真实Auth/provider/持久化完成。",
+        "按增量运行必要测试、实际模拟器/截图、正式review/适用CI和保护merge；新head不复用旧945a绿灯冒通过。"
+      ],
+      "boundaries": "不改旧PR697审阅头、MainHandoff/规则；不恢复旧E2/W2，不增加DB/费用/生产/窗口或被拒动作。三个owner真实工具开始由Main记录；规划owner不另派工。"
+    }
+  ]
+}

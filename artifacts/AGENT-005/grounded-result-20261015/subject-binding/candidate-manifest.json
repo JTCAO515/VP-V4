@@ -1,0 +1,27 @@
+{
+  "base": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "status": "NOT_APPLIED_SHARED_CANDIDATE",
+  "files": [
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "beforeSha256": "1da27f24208cd76380eafbe5586d91675af87401617cd4c41e5628d54416441a",
+      "afterSha256": "53d1ebfeb1c2697bf4f71ee8c11c941cb4777903e3ae1883768c948e38426adc"
+    }
+  ],
+  "sqlContextBeforeSha256": "13e1ab3ed22295fe54f8635512e7121d39f96a8331f76731b3db360073149962",
+  "notes": "TS candidate assumes Main server-authorized context projection; it does not establish canonical selected-Ask admission or new subject authority. SQL migration and scope registry require Main coordination.",
+  "sqlCandidates": [
+    {
+      "signature": "public.read_grounded_ai_assist_context_v1(uuid)",
+      "beforeSha256": "91cf3a0658dab9d16e20aa31c0cecd1cc2bdcb6a20f5915a1c38a8dc6898e22f",
+      "afterSha256": "e8819b15df13942725419a89899eba0dc56b8acfe9d7c13d7fa517d584b4b968",
+      "state": "NOT_APPLIED_NOT_DB_TESTED"
+    },
+    {
+      "signature": "public.grounded_ai_assist_work_v1(jsonb)",
+      "beforeSha256": "cc32f8bba8422a5320728fa7830167eb7080f17c5d6dfd412cd952f16f8d920b",
+      "afterSha256": "2b878e969659980cbabd5573466b6d2812f4fcd13bfdf40d3eadc93c7c74dba2",
+      "state": "NOT_APPLIED_NOT_DB_TESTED"
+    }
+  ]
+}

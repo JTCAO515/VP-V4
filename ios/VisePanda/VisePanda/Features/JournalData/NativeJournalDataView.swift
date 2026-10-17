@@ -32,6 +32,13 @@ struct NativeJournalDataView: View {
                             Text(cursor.conversationID + " · " + String(cursor.afterSequence)).font(.caption)
                             Text(t("仅可导出位置元数据；换账号、退出或原权限失效会清除此缓存", "Only position metadata is exportable; account replacement, sign-out or original eligibility denial clears this cache")).font(.caption)
                         }
+                        if let inventory = row.record.qaCancellation {
+                            Text(t("保留的停止身份数量：", "Retained stop identities: ") + String(inventory.totalRecords)).font(.caption)
+                            ForEach(Array(inventory.records.enumerated()), id: \.offset) { _, item in
+                                Text("epoch " + String(item.mobileEpoch) + " · " + item.sessionID + " · " + item.requestID + " · " + (item.observedState?.rawValue ?? "unknown"))
+                                    .font(.caption).textSelection(.enabled)
+                            }
+                        }
                         if row.record.state == .pending {
                             Text(row.record.kind == .originalOperation ? t("可导出原操作字节", "Original operation bytes may be exported")
                                 : t("仅导出安全操作元数据；正文与授权保持受保护", "Only safe operation metadata is exported; body and authority remain protected")).font(.caption)
@@ -112,6 +119,8 @@ struct NativeJournalDataView: View {
             switch record.source {
             case .coverage: NativeDataCoverageView()
             case .ask: NativeAskView(isActive: actor != nil)
+            case .translationRecovery: NativeTranslationView()
+            case .qaSubmission, .qaCancellation: NativeQAEntryView(chinese: chinese, isActive: actor != nil)
             case .community: NativeCommunitySubmissionView()
             case .communitySafety: NativeCommunitySafetyView()
             case .experience: NativeExperienceView(access: session.communityExperienceAccess)
@@ -250,6 +259,9 @@ extension NativeJournalDataSourceID {
     func title(chinese: Bool) -> String {
         let names: [Self: (String, String)] = [
             .assistantEventsCursor: ("可恢复事件缓存", "Replay position cache"),
+            .translationRecovery: ("翻译提交恢复", "Translation request recovery"),
+            .qaSubmission: ("问答提交恢复", "QA request recovery"),
+            .qaCancellation: ("问答停止记录", "QA stop records"),
             .coverage: ("覆盖操作", "Coverage operation"), .materialReference: ("材料引用清理", "Material-reference cleanup"),
             .profile: ("档案清理", "Profile cleanup"), .conversation: ("对话清理", "Conversation cleanup"),
             .serviceOperation: ("服务协作", "Service operation"), .turn: ("轮次清理", "Turn cleanup"),

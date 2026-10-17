@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+// Explicit local TEST adapter: original SQL suites on native PostgreSQL 17.11.
+// This does not emulate Docker isolation or claim target 17.6 compatibility.
+import {spawnSync,spawn} from 'node:child_process';
+import {mkdtempSync,chmodSync,writeFileSync,readFileSync,unlinkSync,rmSync,lstatSync} from 'node:fs';
+import {join,resolve} from 'node:path';
+const args=process.argv.slice(2),bin=process.env.VP_TRIP_PG_BIN,state=process.env.VP_TRIP_NATIVE_STATE;
+const fail=message=>{process.stderr.write('Native PostgreSQL test adapter: '+message+'\n');process.exit(2);};
+if(!bin||!state||!resolve(state).startsWith('/tmp/agent008-native-state-')||lstatSync(state).mode%512!==448)fail('private state required');
+const label=s=>typeof s==='string'&&/^(vpj[0-9]+-[a-z0-9-]+|vp-[a-z0-9-]+)$/.test(s);
+const run=(file,a,input)=>spawnSync(join(bin,file),a,{input,encoding:'utf8',maxBuffer:32*1024*1024});
+const emit=r=>{if(r.stdout)process.stdout.write(r.stdout);if(r.stderr)process.stderr.write(r.stderr);process.exit(r.status??1);};
+if(args[0]==='run'){
+ const name=args[args.indexOf('--name')+1];if(!label(name)||!args.includes('--network')||args[args.indexOf('--network')+1]!=='none'||!args.includes('public.ecr.aws/supabase/postgres:17.6.1.159'))fail('unrecognized fixture launch');
+ const root=mkdtempSync('/tmp/agent008-native-pg-');chmodSync(root,0o700);const data=join(root,'data');
+ writeFileSync(join(state,name+'.json'),JSON.stringify({root,data}),{mode:0o600,flag:'wx'});
+ let r=run('initdb',['-D',data,'-U','postgres','-A','trust','--no-locale','-E','UTF8']);if(r.status!==0)emit(r);
+ r=run('pg_ctl',['-D',data,'start','-w','-l',join(root,'postgres.log'),'-o',`-c timezone=UTC -c listen_addresses='' -c unix_socket_directories='${root}' -c unix_socket_permissions=0700`]);if(r.status!==0)emit(r);
+ process.stdout.write(name+'\n');process.exit(0);
+}
+if(args[0]==='exec'){
+ const at=args[1]==='-i'?2:1,name=args[at];if(!label(name))fail('unknown owned label');const {root,data}=JSON.parse(readFileSync(join(state,name+'.json'),'utf8'));if(!root.startsWith('/tmp/agent008-native-pg-')||data!==join(root,'data'))fail('invalid private ownership');
+ const command=args[at+1],rest=args.slice(at+2);if(!['psql','pg_isready'].includes(command))fail('unsupported fixture command');
+ for(let i=0;i<rest.length;i++)if(rest[i]==='-h'){if(rest[i+1]!=='/tmp/vpj59-socket')fail('non-fixture destination');rest[i+1]=root;}
+ const child=spawn(join(bin,command),rest,{stdio:'inherit'});child.on('error',e=>fail(e.message));child.on('exit',code=>process.exit(code??1));process.on('SIGTERM',()=>child.kill('SIGTERM'));
+ await new Promise(()=>{});
+}
+if(args[0]==='rm'){
+ const name=args.at(-1);if(!label(name))fail('unknown owned label');const file=join(state,name+'.json'),{root,data}=JSON.parse(readFileSync(file,'utf8'));if(!root.startsWith('/tmp/agent008-native-pg-')||data!==join(root,'data'))fail('invalid private ownership');
+ const r=run('pg_ctl',['-D',data,'stop','-m','fast','-w']);if(r.status!==0)emit(r);rmSync(root,{recursive:true,force:true});unlinkSync(file);process.stdout.write(name+'\n');process.exit(0);
+}
+fail('unsupported Docker operation; no fallback to a real daemon');

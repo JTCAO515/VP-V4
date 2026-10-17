@@ -1,0 +1,73 @@
+{
+  "sourceHead": "67167c59c5f2bad596f1410e8e09bdb975d3e899",
+  "proofHead": "RESOLVE_EVIDENCE_ONLY_COMMIT_CONTAINING_THIS_ADDITION",
+  "baseSource": "367031827899b524ef63ab2173a6d4692175ac0f",
+  "review": "PENDING_FIXED_P2_CLOSURE",
+  "finding": "Repinned foreign native sender was accepted by token-presence first-hop checks. Synthetic baseline RED retained.",
+  "fix": [
+    "Whole native codex_delegation envelope parsed; direct source_thread_id must match fixed BestJ, not payload tokens or source_sender projection.",
+    "First receipt must be the unique direct matching turn item in the official Mac snapshot, with correct receiver/kind and untruncated output.",
+    "Separate pinned upstreamContext uses existing full_context_two_hop_evidence_index shape; parentProvidedRoom and byte/hash links bind human raw, native receipt, Mac read. Room remains parent-provided context, not independently observed native API room.",
+    "Quoted/nested/malformed/duplicate/truncated/foreign receipts and wrong room context refuse after complete repin."
+  ],
+  "sourceSha256": {
+    "scripts/qa-agent-staging-replay/directive-scope-v2/README.md": "cc643abdcb7816f0b50897ace9fff1b0998d57e68a3366c960097b65ee871917",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/profile.py": "e479344a81775e58074202f184bf3ed2a6b7ecaee45bfdbf40aaaaffb9b2a9ff",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/source-lock.json": "76306359e2bbe6a086b5722039e3ec7c0b43773cb8877d2179eec824b7c8411f",
+    "scripts/qa-agent-staging-replay/directive-scope-v2/test_pending_scope.py": "9fd3345de390256b5455c22191c8a7ad63713ac4d15ce46177a7e3d2ec747a25"
+  },
+  "newChecks": {
+    "v2Tests": 13,
+    "repinNegativeSubcases": 10,
+    "privateWrapperChecks": 3,
+    "pendingZeroProtectedIOFactoryStartPreserved": true
+  },
+  "logs": [
+    {
+      "privateBasename": "v2-sender-red.log",
+      "sha256": "6fd2494e648b6498fb02330d47f8b8c55eb3556555cfb76f5a3f4582b113c2a9",
+      "summary": [
+        "BASELINE RED: foreign native outer sender accepted after repin when body quotes correct tokens. Synthetic only; no real new event."
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-sender-green.log",
+      "sha256": "188c5ad5c34a07ab905a151d7d101a0a21c76322c1682312b32698e5373bebbb",
+      "summary": [
+        "Ran 12 tests in 0.034s",
+        "OK"
+      ],
+      "rawPublished": false
+    },
+    {
+      "privateBasename": "v2-sender-final-fixed.log",
+      "sha256": "ce81e419827a9209c7c5f2302b2528e0e4ea18267c3f2bf323cb5a431919e4d3",
+      "summary": [
+        "Ran 13 tests in 0.034s",
+        "OK"
+      ],
+      "rawPublished": false
+    }
+  ],
+  "oldApprovedShapeReferences": {
+    "scope.incoming": "e66b81c1b84b42acfd58228dbaf8da4475730658825aab4665776541e0fe3802",
+    "context.bestjMacRecord": "cc5207667bf8b74e7399a92bcaa6c6eaddad6d2f2c728115297495636c875965",
+    "context.officialMacRead": "b69e96e06e5f3d417542f7d5e6a66ad163a435a05e68c75df2adb972276c11c8",
+    "context.indexComplete": "ba94c99800d029852959c459e4ad7cc55c64133fdf43c08a5d5a2709200ab6dc",
+    "context.parentProvidedApiRaw": "563828019bc610f95b23a18fd3bace42e37e18ac8e6eca63c1096fb0ff16d5cd"
+  },
+  "referenceLimit": "Only old approved non-secret source format references read and hash-checked; no new actual authorization or network. No message bodies published.",
+  "reuse": "V1/legacy/controller/bootstrap/runtime unchanged from367 source; prior84 associated checks reused, not rerun. Old failed finding/proof retained, not recast as approved.",
+  "privateWrapper": {
+    "basename": "operator-bootstrap-v2-sender-fixed.py",
+    "sha256": "d62c654f97219b1a9e7362d52d1c03fb33cb25771d37f5da1eb6baa663e20332",
+    "change": "SOURCE_HEAD only; original37da preserved",
+    "checkReceiptSha256": "5b0eeccdf7e03ec8b728f50afbbe3f2fa5297d0ebe66871b8214d46c5b6a7c46",
+    "bindingTemplateSha256": "6ffa7bc4ed3f0840bf98d2d8d1d1a20be76205336fc262405bb0c77d1753ab27",
+    "configured": false,
+    "activated": false
+  },
+  "pendingFacts": "Actual new human event/pins/configuration absent. pending-binding remains all null; only future source data schema adds upstreamContext pin. No old grant fallback or bda reuse.",
+  "actualOperations": "NONE; no actual START/claim/material/PG/Docker/target operation; original records unchanged."
+}

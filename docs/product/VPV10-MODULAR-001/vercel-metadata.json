@@ -1,0 +1,50 @@
+{
+  "evidenceDate": "2026-10-14",
+  "source": "official same-account Vercel CLI GET /v9/projects/id and /domains; MCP 404 preserved in verification narrative",
+  "account": "jtcao515",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "name": "vp-v4",
+  "repo": "JTCAO515/VP-V4",
+  "framework": "nextjs",
+  "productionBranch": "main",
+  "rootDirectory": null,
+  "buildCommand": null,
+  "installCommand": null,
+  "outputDirectory": null,
+  "domains": [
+    {
+      "name": "qatesting.go2china.space",
+      "gitBranch": "codex/qaw005-main-20261013",
+      "verified": true
+    },
+    {
+      "name": "staging.go2china.space",
+      "gitBranch": "codex/s2-native-ask-io-20260911",
+      "verified": true
+    },
+    {
+      "name": "testing.go2china.space",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "go2china.space",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "www.go2china.space",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "vp-v4.vercel.app",
+      "gitBranch": null,
+      "verified": true
+    }
+  ],
+  "paginationNext": null,
+  "mutations": [],
+  "environmentValuesRead": false
+}

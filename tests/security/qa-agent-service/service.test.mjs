@@ -36,7 +36,7 @@ test('strict browser mutation CSRF and cookie-only boundary',()=>{
  assert.equal(browserBoundary(req('GET')),true);
 });
 test('QA environment cannot enable production or arbitrary destination',()=>{
- const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VERCEL_ENV:'preview'};
+ const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,VISEPANDA_QA_SUPABASE_PROJECT_REF:'dzqdzetcctkhbrhlxxgn',NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VERCEL_ENV:'preview'};
  assert.ok(qaConfig(env.VISEPANDA_QA_AGENT_ORIGIN,env));
  for(const patch of [{VERCEL_ENV:'production'},{NEXT_PUBLIC_SUPABASE_URL:'https://other.supabase.co'},{VISEPANDA_QA_AGENT:'false'},{VISEPANDA_QA_AGENT_CONTEXT_MODE:'all_history'},{VISEPANDA_QA_AGENT_ORIGIN:'https://go2china.space'}])assert.equal(qaConfig('https://qatesting.go2china.space',{...env,...patch}),null);
 });
@@ -71,7 +71,7 @@ test('client model/history/Trip flags and invalid bodies never reach admission',
 
 test('finite Vercel system preview URLs work without trusting request host headers or other projects',()=>{
  const host='vp-v4-git-codex-qaw005-main-jtcao515s-projects.vercel.app';
- const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VERCEL_ENV:'preview',VERCEL_URL:host};
+ const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,VISEPANDA_QA_SUPABASE_PROJECT_REF:'dzqdzetcctkhbrhlxxgn',NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VERCEL_ENV:'preview',VERCEL_URL:host};
  assert.ok(qaConfig('https://'+host+'/qa',env));
  assert.equal(qaConfig('https://vp-v4-other-jtcao515s-projects.vercel.app/qa',env),null);
  assert.equal(qaConfig('https://evil.invalid/qa',{...env,VERCEL_URL:'evil.invalid'}),null);

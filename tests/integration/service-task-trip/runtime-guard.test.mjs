@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID as uuid} from 'node:crypto';
+import {nativeDatabase} from './native-db.mjs';
+import {fixturePorts} from './fixture.mjs';
+const flags={skip:!process.env.VP_TRIP_PG_BIN,timeout:180000};
+test('fixed runtime denies unknown functions/body/ACL/trigger state and replica-mode authority',flags,async t=>{
+ const {db,upgrade}=await nativeDatabase(t);await db('begin;'+upgrade+'commit;');const f=fixturePorts(db);await db('update turn_private.service_task_capacity_settings set trip_enabled=true,enabled=true');
+ const a=await f.workerFixture(),goal=await f.canonical(a),c=await f.prepare(a,goal),input={action:'ask',operationId:uuid(),basis:{contextId:c.contextId,contextDigest:c.contextDigest,baseVersion:0},text:'Move B to d2'};
+ const ready=async()=>assert.equal((await db('select turn_private.trip_service_task_runtime_v1() v'))[0].v,true);
+ const denied=async()=>{assert.equal((await db('select turn_private.trip_service_task_runtime_v1() v'))[0].v,false);await assert.rejects(f.call(a,'submit_trip_service_task_v1',[a.trip,input,goal]),/SCHEMA_UNSUPPORTED/);assert.equal((await db(`select count(*)::int n from turn_private.service_tasks where owner_id='${a.owner}'`))[0].n,0);};
+ await ready();
+ await db('create function turn_private.unregistered_agent008_function() returns boolean language sql as $$select true$$');await denied();await db('drop function turn_private.unregistered_agent008_function()');await ready();
+ const definition=(await db("select pg_get_functiondef('scoped_edit_private.worker_policy_v1(uuid,uuid,uuid)'::regprocedure) v"))[0].v;
+ await db("create or replace function scoped_edit_private.worker_policy_v1(u uuid,pid uuid,sid uuid) returns boolean language sql security definer set search_path='' as $$select true$$");await denied();await db(definition);await ready();
+ await db('grant execute on function turn_private.complete_trip_clarification_v1(jsonb) to authenticated');await denied();await db('revoke execute on function turn_private.complete_trip_clarification_v1(jsonb) from authenticated');await ready();
+ await db('alter table turn_private.text_content disable trigger trip_objective_text_erased');await denied();await db('alter table turn_private.text_content enable trigger trip_objective_text_erased');await ready();
+ assert.equal((await db("set session_replication_role='replica';select turn_private.trip_service_task_runtime_v1() v"))[0].v,false);
+ const accepted=await f.call(a,'submit_trip_service_task_v1',[a.trip,input,goal]);assert.equal(accepted.kind,'trip_service_task/1');
+ for(const role of ['anon','service_role'])await assert.rejects(db(`set role ${role};select public.privacy_trip_service_task_v1(null,null,null,null,null)`),/permission denied/);
+ for(const role of ['anon','authenticated'])await assert.rejects(db(`set role ${role};select public.trip_service_task_worker_v1('target','{}')`),/permission denied/);
+});

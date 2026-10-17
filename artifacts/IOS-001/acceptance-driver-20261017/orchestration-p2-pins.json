@@ -1,0 +1,15 @@
+{
+  "reviewed_base": "08106049fae34afd6168fea5f617e312009cf815",
+  "fixed_source": "91128dd01c802013b6f277f47a5c2aa2bf381359",
+  "files": {
+    "tests/contract/ios-realservice/acceptance/real_ui.py": {
+      "before_sha256": "94414d7290bf87996f874d37d64c5febc80788af515843e41b111d7e955b59ec",
+      "after_sha256": "cf6c1f16b4afc66b49007fa2ee1ba876f4512a34959521691fc3e6d32afcf899"
+    },
+    "tests/contract/ios-realservice/acceptance/test_real_ui.py": {
+      "before_sha256": "a761ddd05776befb1bb7de6b37ae4c3fb158f90a1a7ef9243cfa3b19ca72b1bb",
+      "after_sha256": "f11fc6c3aacb68fe214a09b52617c8c829e5e4970d9992ff3b60341fe9ff02e2"
+    }
+  },
+  "verification": "Pure mocked orchestration only; no external commands/App/simulator/target"
+}

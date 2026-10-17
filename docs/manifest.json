@@ -1,7 +1,8 @@
 {
   "schemaVersion": "vpj-docs/1",
-  "date": "2026-09-05",
-  "authority": "docs/VISEPANDA-MASTER-PLAN-2026-09-05.md",
+  "date": "2026-10-14",
+  "authority": "docs/contracts/vpv4-project-boundaries.md",
+  "currentPlan": "docs/product/VPV10-MODULAR-001/current-plan.json",
   "files": [
     {
       "path": "docs/2026-08-29-vp-v4-launch-readiness-audit.md",
@@ -180,6 +181,26 @@
       "status": "document"
     },
     {
+      "path": "docs/agents/evidence/v10-rule-adoption-20261013/DEVELOPMENT-RULES.after.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/evidence/v10-rule-adoption-20261013/DEVELOPMENT-RULES.before.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/evidence/v10-rule-adoption-20261013/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/evidence/v10-rule-adoption-20261013/global-AGENTS.after.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/evidence/v10-rule-adoption-20261013/global-AGENTS.before.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/issue-execution-contract.md",
       "status": "document"
     },
@@ -344,6 +365,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/assistant-explicit-travel-intake-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/assistant-selected-source-message-v2.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/basic-preferences-cross-trip.md",
       "status": "document"
     },
@@ -353,6 +382,10 @@
     },
     {
       "path": "docs/contracts/context-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/conversation-task-history-v1.md",
       "status": "document"
     },
     {
@@ -380,6 +413,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/foreground-traffic-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/foreground-traffic.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/grounded-execution-baseline.md",
       "status": "document"
     },
@@ -404,6 +445,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/journeys-goal-index-v1.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/knowledge-provenance.md",
       "status": "document"
     },
@@ -421,6 +466,10 @@
     },
     {
       "path": "docs/contracts/lexical-retrieval-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/library-source-adapters.md",
       "status": "document"
     },
     {
@@ -444,6 +493,18 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/native-entry-resume.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/native-memory-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/native-planning-intake-http-v2.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/network-unavailable.md",
       "status": "document"
     },
@@ -456,11 +517,35 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/pdf-intake-sql-v1.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/pending-proposal-read.md",
       "status": "document"
     },
     {
       "path": "docs/contracts/place-identity.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/planning-v2-durable-checkpoints.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/planning-v2-model-attempt-binding.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/planning-v2-model-journal-consumer.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/planning-v2-model-output-receipt.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/planning-v2-model-request.md",
       "status": "document"
     },
     {
@@ -492,6 +577,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/qa-independent-target.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/qualified-intake-comparison-binding-proposal.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/rail-guidance-c0.md",
       "status": "document"
     },
@@ -512,6 +605,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/scoped-edit-sql-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/selected-source-result-v2-context-compat.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/service-task-metering.md",
       "status": "document"
     },
@@ -528,7 +629,15 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/translation-history-v2.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/travel-constraints.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/trip/scoped-edit.md",
       "status": "document"
     },
     {
@@ -640,7 +749,31 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-27.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-29.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-30-delivery-sql-v2.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-30-delivery-v2.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-30.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-31.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-32.md",
       "status": "document"
     },
     {
@@ -660,11 +793,19 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-48-publication.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-48.md",
       "status": "document"
     },
     {
       "path": "docs/contracts/vpj-49.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-55.md",
       "status": "document"
     },
     {
@@ -676,7 +817,31 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-58-archive-data-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-58-coverage-progress-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-58-data-coverage.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-58-material-references.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-59.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-61-lifecycle-sql-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-61-lifecycle-v1.md",
       "status": "document"
     },
     {
@@ -685,6 +850,138 @@
     },
     {
       "path": "docs/contracts/vpj-62.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-64.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj17-source-impact-outbox.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj20-place-actions-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj20-place-actions.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj21-readiness-declarations.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj23-reviewed-lodging-classification.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj24-reservation-ledger.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj24-reservation-return.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj25-offline-read.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj25-offline-text-provenance-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj29-recovery-confirm-guard.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-core-export-d2-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-core-export-d2.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-entitlement-export-d5.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-linked-trip-delete-d3.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-memory-delete-d4.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-memory-export-d4-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj36-memory-export-d4.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj58-coverage-progress-data.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj65-native-support-http.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj65-production-feasibility.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj65-trip-item-support.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj79-change-proposal-reference.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj79-five-results.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj79-trip-proposal-reference-discovery.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj79-web-trip-comparison.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-bounded-planning-closeout-sql.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-bounded-planning-closeout.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-intake-admission-binding-v2-proposal.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-planning-comparison.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-stay-area-producer-seams.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj80-v2-worker-protocol-ports.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpv4-project-boundaries.md",
       "status": "document"
     },
     {
@@ -761,6 +1058,10 @@
     },
     {
       "path": "docs/design/journey/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/evidence/v5-staging-migration/README.md",
       "status": "document"
     },
     {
@@ -924,6 +1225,382 @@
       "status": "document"
     },
     {
+      "path": "docs/product/VPV10-MODULAR-001/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/187.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/195.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/199.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/200.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/201.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/203.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/205.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/206.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/208.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/209.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/210.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/212.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/216.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/222.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/225.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/226.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/227.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/229.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/230.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/232.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/233.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/234.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/237.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/242.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/243.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/244.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/245.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/246.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/247.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/248.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/249.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/250.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/251.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/252.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/264.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/265.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/266.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/267.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/268.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/359.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/360.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/363.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/364.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/367.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/503.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/504.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/506.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/507.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/680.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/681.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/682.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/after/683.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/187.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/199.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/200.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/201.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/203.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/206.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/208.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/209.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/212.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/216.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/222.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/225.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/226.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/227.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/229.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/230.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/232.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/233.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/234.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/237.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/242.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/243.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/244.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/245.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/246.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/248.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/249.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/251.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/264.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/359.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/504.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/506.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/680.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/681.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/682.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/683.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/692.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/693.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-overview.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/issue-map.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/verification.md",
+      "status": "document"
+    },
+    {
       "path": "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
       "status": "document"
     },
@@ -936,7 +1613,15 @@
       "status": "document"
     },
     {
+      "path": "docs/product/assistant-upgrade-2026-09-27/INTERACTION-SPECIMEN.md",
+      "status": "document"
+    },
+    {
       "path": "docs/product/assistant-upgrade-2026-09-27/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/TASK-ACTIVITY.md",
       "status": "document"
     },
     {
@@ -1465,6 +2150,10 @@
     },
     {
       "path": "docs/runbooks/frontend-cutover.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/hosted-planning-deployment-preparation.md",
       "status": "document"
     },
     {

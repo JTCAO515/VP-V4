@@ -4,7 +4,7 @@ nonisolated final class NativeScreenshotReviewUITests: XCTestCase {
     @MainActor
     func testLocalReviewOpensAndClosesWithoutSelectingPhoto() {
         let application = XCUIApplication()
-        application.launchArguments = ["-VisePandaLocale", "en"]
+        application.launchArguments = ["-VisePandaLegacyShell", "-VisePandaLocale", "en"]
         application.launch()
         application.tabBars.buttons["Trip"].tap()
 
@@ -24,7 +24,7 @@ nonisolated final class NativeScreenshotReviewUITests: XCTestCase {
     @MainActor
     func testChineseLocalReviewEntry() {
         let application = XCUIApplication()
-        application.launchArguments = ["-VisePandaLocale", "zh-Hans"]
+        application.launchArguments = ["-VisePandaLegacyShell", "-VisePandaLocale", "zh-Hans"]
         application.launch()
         application.tabBars.buttons["行程"].tap()
 
@@ -41,7 +41,7 @@ nonisolated final class NativeScreenshotReviewUITests: XCTestCase {
             throw XCTSkip("UNRUN: one synthetic screenshot must be added to the simulator Photos library")
         }
         let application = XCUIApplication()
-        application.launchArguments = ["-VisePandaLocale", "en"]
+        application.launchArguments = ["-VisePandaLegacyShell", "-VisePandaLocale", "en"]
         application.launch()
         application.tabBars.buttons["Trip"].tap()
         application.buttons["trip.screenshot.localReview"].tap()

@@ -25,28 +25,33 @@ struct NativePlaceActionsView: View {
     }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     private var locale: String { chinese ? "zh" : "en" }
-    private struct Key: Equatable { let scope: NativeDataScope?; let candidate: NativePlaceCandidate; let refresh: UUID }
-    private var key: Key { .init(scope: scope, candidate: candidate, refresh: refresh) }
+    private struct Key: Equatable { let scope: NativeDataScope?; let candidate: NativePlaceCandidate; let refresh: UUID; let locale: String }
+    private var key: Key { .init(scope: scope, candidate: candidate, refresh: refresh, locale: locale) }
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(t("收藏／问 VP／加入候选", "Save / Ask VP / Add candidate")).font(.headline)
-            Text(t("收藏保存地点身份引用，不保存供应商正文，也不会加入日程。加入只生成候选，须在原提案查看差异并明确确认。", "Save persists an identity reference. Add creates a candidate for the original Proposal diff and explicit confirmation.")).font(.caption)
+        VStack(alignment: .leading, spacing: 16) {
+            placeOverview
+            Text(t("围绕这个地点", "Use this place")).font(.title3.bold())
+            Text(t("收藏便于再找到；问 VP 先准备问题；加入行程先查看候选差异，再由你确认。", "Save to find it again, prepare a question for VP, or review a Trip candidate before confirming.")).font(.subheadline)
             if candidate.matchedCanonicalPoiId == nil {
-                Text(t("此结果尚无 canonical 映射，请重新选择已映射的具体地点。", "This result has no canonical mapping. Reselect a mapped specific place."))
+                Text(t("还未核对到准确地点，收藏和加入行程暂不可用。请返回地点列表，确认城市、分店或入口后重新选择。", "This result is not matched to a verified place yet. Return to the place list and check the city, branch or entrance before saving or adding."))
             } else if let scope {
                 if trips.scope == scope {
+                    Text(t("1 · 选择行程", "1 · Choose a Trip")).font(.headline)
                     Picker(t("同一行程", "Same Trip"), selection: $selectedTrip) {
                         Text(t("明确选择行程", "Choose a Trip explicitly")).tag(String?.none)
                         ForEach(trips.trips) { Text($0.title).tag(Optional($0.id)) }
-                    }.accessibilityIdentifier("place.actions.trip")
+                    }.pickerStyle(.menu).accessibilityIdentifier("place.actions.trip")
+                    if trips.trips.isEmpty && !trips.loading && !trips.unavailable {
+                        Text(t("当前没有可选行程。请先在行程中创建，再回来刷新。", "No Trips to choose from. Create one in Trips, then return and refresh.")).font(.subheadline)
+                    }
                 }
-                Button(t("重读行程与地点身份", "Reread Trip and place identity")) { reload() }
+                Button(t("刷新地点与行程", "Refresh place and Trip")) { reload() }
                     .disabled(store.busy || trips.loading).accessibilityIdentifier("place.actions.refresh")
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
                     if let target, let context = store.visible(target), review == nil {
                         currentActions(context, target: target)
                     } else {
-                        Text(t("当前版本、映射或来源仍待核对；过期后请重读。未确认可行。", "Current version, mapping or sources need checking. Reread after expiry. Feasibility is pending."))
+                        Text(pendingExplanation)
                             .accessibilityIdentifier("place.actions.pending")
                     }
                 }
@@ -56,8 +61,10 @@ struct NativePlaceActionsView: View {
                     }.disabled(store.busy || store.pending != nil).accessibilityIdentifier("place.actions.forget.withdrawn")
                 }
                 if let pending = store.pending {
-                    Text(t("上次操作回执未确认。仅恢复原操作：", "The previous acknowledgement is unresolved. Recover only the original operation: ") + pending.command.tripId)
-                    Button(t("读取原操作回执", "Read original operation receipt")) { run { await perform(nil, scope: scope, recover: true) } }
+                    Label(t("上次操作结果待确认", "Previous result needs checking"), systemImage: "exclamationmark.arrow.circlepath").font(.headline)
+                    Text(t("请先读取上次结果，避免重复收藏或生成候选。停止操作只终止未提交部分，已提交内容保留。", "Read the previous result before saving or creating another candidate. Stopping only ends unsubmitted work; committed work is preserved.")).font(.subheadline)
+                    Text(t("原行程：", "Original Trip: ") + pending.command.tripId).font(.caption).textSelection(.enabled)
+                    Button(t("检查上次操作结果", "Check previous operation result")) { run { await perform(nil, scope: scope, recover: true) } }
                         .disabled(store.busy).accessibilityIdentifier("place.actions.recover")
                     Button(t("停止未提交操作（已提交的不会撤销）", "Stop unsubmitted operation (committed work is preserved)")) {
                         run { await perform(nil, scope: scope, recover: true, abandon: true) }
@@ -71,10 +78,15 @@ struct NativePlaceActionsView: View {
                 if let receipt = store.receipt, store.scope == scope {
                     receiptView(receipt, scope: scope)
                 }
-                if store.busy || trips.loading { ProgressView() }
+                if store.busy || trips.loading { ProgressView(t("正在核对，请稍候…", "Checking, please wait…")) }
                 if let notice = store.notice { Text(message(notice)).font(.caption).accessibilityIdentifier("place.actions.notice") }
                 if trips.unavailable { Text(t("行程读取失败，请重新登录或刷新。", "Trip read failed. Reauthenticate or refresh.")) }
-            } else { Text(t("请登录后操作自己的行程。", "Sign in to act on your own Trip.")) }
+            } else {
+                Label(t("操作暂不可用", "Actions unavailable"), systemImage: "lock")
+                Text(session.dataScope == nil
+                     ? t("请先登录，再回来选择自己的行程。上次操作若结果未知，登录后先检查原操作结果。", "Sign in, then return to choose your Trip. If a previous result is unknown, check that operation after signing in.")
+                     : t("页面暂未激活。返回此页面后刷新地点与行程，再继续。", "This page is inactive. Return and refresh the place and Trip before continuing."))
+            }
             Link(t("打开 VP 手动提问", "Open VP to ask manually"), destination: URL(string: "visepanda://ask")!)
         }
         .task(id: key) { store.journalObservation = session.journalDataObservation(.placeAction); await loadTrips() }
@@ -84,41 +96,79 @@ struct NativePlaceActionsView: View {
         .onChange(of: start) { _, _ in windowConfirmed = false }
         .onChange(of: end) { _, _ in windowConfirmed = false }
         .onChange(of: scope) { _, _ in clear() }
+        .onChange(of: candidate) { _, _ in clear() }
+        .onChange(of: chinese) { _, _ in
+            task?.cancel(); store.invalidateContext(); dayId = nil; windowConfirmed = false; review = nil
+        }
+        .environment(\.locale, Locale(identifier: chinese ? "zh_CN" : "en_US"))
         .onDisappear { if review == nil { clear() } }
         .sheet(item: $review, onDismiss: { reload() }) { NativePlaceActionReview(reference: $0, chinese: chinese) }
     }
+    private var pendingExplanation: String {
+        if store.pending != nil { return t("先检查上次操作结果，再继续此地点的新操作。", "Check the previous operation before starting a new one for this place.") }
+        if trips.loading || store.busy { return t("正在核对所选行程与地点，请稍候。", "Checking the selected Trip and place. Please wait.") }
+        if selectedTrip == nil { return t("先明确选择一个行程，收藏、提问和候选将使用同一地点与行程。", "Choose a Trip first. Save, Ask and Add will use the same place and Trip.") }
+        return t("资料已过期或尚未核对。请刷新地点与行程；路线与可行性仍待核。", "Details have expired or need checking. Refresh the place and Trip; routes and feasibility remain pending.")
+    }
+    private var placeOverview: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label(t("选中的地点", "Selected place"), systemImage: "mappin.circle.fill").font(.headline)
+            Text(candidate.rawName).font(.title2.bold()).textSelection(.enabled)
+            Text(t("地点名称来源：", "Place name source: ") + (candidate.provider == .amap ? t("高德地图", "AMap") : t("腾讯地图", "Tencent Maps")))
+                .font(.subheadline)
+            Text(t("保留来源原名；其他语言名称、地址及准确入口未在此处核实。请结合上方地点详情确认，名称相似不代表同一地点。", "The source name is preserved. Other language names, address and exact entrance are unverified here. Check the place details above; similar names do not establish identity.")).font(.caption)
+            DisclosureGroup(t("查看地点身份与来源", "Place identity and source")) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(t("VP 地点 ID：", "VP place ID: ") + (candidate.matchedCanonicalPoiId ?? t("待核对", "Pending match")))
+                    Text(t("地图来源地点 ID：", "Map source place ID: ") + candidate.providerPoiId)
+                    Text(t("收藏、提问和候选沿用以上同一引用；来源 ID 与 VP 地点 ID 分开核对。", "Save, Ask and Add keep this same reference. The map source ID and VP place ID are checked separately."))
+                }.font(.caption).textSelection(.enabled)
+            }.accessibilityIdentifier("place.actions.identity")
+        }.padding().frame(maxWidth: .infinity, alignment: .leading)
+            .background(.quaternary, in: RoundedRectangle(cornerRadius: 16))
+    }
     @ViewBuilder private func currentActions(_ context: NativePlaceActionContext, target: NativePlaceActionSelection) -> some View {
-        if context.sourceCandidatesStatus == "unavailable" { Text(t("来源读取暂不可用，不能把缺少结果当成没有约束。", "Source reader unavailable; missing results do not mean no constraints.")).font(.caption) }
-        Text(t("当前行程版本：", "Current Trip version: ") + String(context.tripVersion))
-        Text(t("路线、停留、预约、开放时段、缓冲与费用未齐全时保持待核；当前路况不能保证未来行程。", "Routes, stay duration, reservations, opening windows, buffers and costs remain pending until supported. Current traffic does not guarantee a future Trip.")).font(.caption)
-        if context.saved?.status == "saved" {
-            Text(t("本次重读：已收藏引用", "This read: saved reference")).accessibilityIdentifier("place.actions.saved.current")
-            Button(t("取消此收藏引用", "Unsave this reference")) { submit("unsave", target: target) }
-                .disabled(store.busy || store.pending != nil)
-        } else {
-            Button(t("收藏此地点引用", "Save this place reference")) { submit("save", target: target) }
-                .disabled(store.busy || store.pending != nil).accessibilityIdentifier("place.actions.save")
-        }
-        Button(t("在同一个 VP 准备提问", "Prepare question in the same VP")) {
-            run {
-                let handoff = await store.ask(target: target, locale: locale, current: { self.target }) { try await session.placeActionRequest(tripId: target.tripId, body: $0, actor: target.scope) }
-                if let handoff, self.target == target, scope == target.scope { session.prepareExploreAsk(handoff) }
+        if context.sourceCandidatesStatus == "unavailable" { Text(t("来源资料暂不可读，缺少结果不代表没有约束。", "Source details are unavailable; missing results do not mean no constraints.")).font(.subheadline) }
+        Text(t("本次核对的地点名称：", "Place name checked for this read: ") + context.title).textSelection(.enabled)
+        Text(t("行程版本：", "Trip version: ") + String(context.tripVersion)).font(.caption)
+        VStack(alignment: .leading, spacing: 10) {
+            Text(t("2 · 收藏或问 VP", "2 · Save or ask VP")).font(.headline)
+            if context.saved?.status == "saved" {
+                Label(t("本次刷新：已收藏", "Saved on this read"), systemImage: "bookmark.fill").accessibilityIdentifier("place.actions.saved.current")
+                Button(t("取消收藏", "Unsave")) { submit("unsave", target: target) }
+                    .disabled(store.busy || store.pending != nil)
+            } else {
+                Button(t("收藏这个地点", "Save this place")) { submit("save", target: target) }
+                    .disabled(store.busy || store.pending != nil).accessibilityIdentifier("place.actions.save")
             }
-        }.disabled(store.busy || store.pending != nil).accessibilityIdentifier("explore.place.ask")
-        Text(t("仅准备同一 canonical 引用，仍由你明确发送；没有授予供应商或知识使用资格。", "Prepares the same canonical reference for your explicit send. Provider and knowledge eligibility remain unconfirmed.")).font(.caption)
-        Picker(t("加入哪一天", "Day for the candidate"), selection: $dayId) {
-            Text(t("明确选择一天", "Choose a day explicitly")).tag(String?.none)
-            ForEach(context.days) { Text($0.date).tag(Optional($0.id)) }
-        }.accessibilityIdentifier("place.actions.day")
-        DatePicker(t("开始时间", "Start"), selection: $start)
-        DatePicker(t("结束时间", "End"), selection: $end)
-        Toggle(t("我明确选择此时间窗口（不代表已核实停留时长）", "I explicitly choose this time window (not verified stay duration)"), isOn: $windowConfirmed)
-        Button(t("生成同一行程候选并查看差异", "Create same-Trip candidate and review diff")) { submit("add", target: target) }
-            .disabled(store.busy || store.pending != nil || dayId == nil || !windowConfirmed || end <= start || end.timeIntervalSince(start) > 86400)
-            .accessibilityIdentifier("place.actions.add")
+            Text(t("只保存地点引用，不保存地图供应商正文，也不会加入日程。", "Saves a place reference, without storing map supplier content or adding to your schedule.")).font(.caption)
+            Button(t("在同一个 VP 准备提问", "Prepare question in the same VP")) {
+                run {
+                    let language = locale
+                    var capture: NativeCanonicalPlaceAskCapture?
+                    let handoff = await store.ask(target: target, locale: language, current: { self.target }, capture: { capture = $0 }) {
+                        try await session.placeActionRequest(tripId: target.tripId, body: $0, actor: target.scope)
+                    }
+                    if handoff != nil, let capture, self.target == target, scope == target.scope, language == locale {
+                        session.prepareCanonicalPlaceAsk(capture)
+                    }
+                }
+            }.disabled(store.busy || store.pending != nil || session.canonicalPlaceAskRecoveryRequired).accessibilityIdentifier("explore.place.ask")
+            if session.canonicalPlaceAskRecoveryRequired {
+                Text(t("已有地点提问结果待核，请回 VP 只读取原提问回执。", "A place question is unresolved. Return to VP and read its original receipt only.")).font(.caption)
+            }
+            Text(t("带入同一地点，仍由你明确发送问题；供应商资料与知识使用资格待核。", "Prepares the same place for you to send explicitly. Eligibility to use supplier information and knowledge remains unconfirmed.")).font(.caption)
+            if store.pending != nil || store.busy { Text(pendingExplanation).font(.caption) }
+        }.buttonStyle(.bordered)
+        NativePlaceCandidatePanel(
+            chinese: chinese, days: context.days.map { .init(id: $0.id, date: $0.date) },
+            dayId: $dayId, start: $start, end: $end, windowConfirmed: $windowConfirmed,
+            busy: store.busy, unresolved: store.pending != nil
+        ) { submit("add", target: target) }
+        NativePlaceRoutePendingPanel(chinese: chinese)
     }
     @ViewBuilder private func receiptView(_ receipt: NativePlaceActionReceipt, scope: NativeDataScope) -> some View {
-        Text(t("历史操作回执：", "Historical operation receipt: ") + receipt.operationId).font(.caption)
+        Text(t("操作记录（仍须刷新当前状态）：", "Operation record (refresh to check current state): ") + receipt.operationId).font(.caption)
         if receipt.action == "add" {
             if let preview = receipt.preview {
                 Text(preview.status == "infeasible" ? t("本候选发现时间约束冲突", "Candidate has timing conflicts") : t("本候选可行性待核", "Candidate feasibility pending"))
@@ -196,7 +246,7 @@ struct NativePlaceActionsView: View {
         guard self.scope == scope, !Task.isCancelled, store.pending == nil, let receipt = store.receipt else { return }
         if selectedTrip == receipt.tripId { await readTrip(receipt.tripId, scope: scope) }
     }
-    private func reload() { task?.cancel(); store.invalidateContext(); refresh = UUID() }
+    private func reload() { task?.cancel(); store.invalidateContext(); dayId = nil; windowConfirmed = false; refresh = UUID() }
     private func run(_ action: @escaping () async -> Void) { guard task == nil || !store.busy else { return }; task?.cancel(); task = Task { await action() } }
     private func clear() { task?.cancel(); task = nil; trips.clear(); store.clear(); selectedTrip = nil; dayId = nil; windowConfirmed = false; review = nil }
     private func message(_ code: String) -> String {
@@ -211,3 +261,168 @@ struct NativePlaceActionsView: View {
         }
     }
 }
+
+// IOS003_PRESENTATION_BEGIN
+/// Presentation only. The action store remains the authority for every request.
+enum NativePlaceAddAvailability: Equatable {
+    case ready, busy, unresolved, noDays, chooseDay, confirmWindow, invalidOrder, tooLong
+
+    static func evaluate(busy: Bool, unresolved: Bool, days: [String], dayId: String?,
+                         confirmed: Bool, start: Date, end: Date) -> Self {
+        if unresolved { return .unresolved }
+        if busy { return .busy }
+        if days.isEmpty { return .noDays }
+        guard let dayId, days.contains(dayId) else { return .chooseDay }
+        if end <= start { return .invalidOrder }
+        if end.timeIntervalSince(start) > 86400 { return .tooLong }
+        if !confirmed { return .confirmWindow }
+        return .ready
+    }
+    func explanation(chinese: Bool) -> String {
+        let pair: (String, String) = switch self {
+        case .ready: ("下一步查看候选差异；明确确认后才能改变行程。", "Next, review the candidate diff. Your explicit confirmation is required to change the Trip.")
+        case .busy: ("正在核对，请稍候。", "Checking. Please wait.")
+        case .unresolved: ("先检查上次操作结果，避免重复生成候选。", "Check the previous result before creating another candidate.")
+        case .noDays: ("这个行程还没有可选日期。请在行程中添加日期后刷新。", "This Trip has no days to choose from. Add a day in Trips, then refresh.")
+        case .chooseDay: ("请明确选择这个行程中的一天。", "Explicitly choose a day in this Trip.")
+        case .confirmWindow: ("请核对开始、结束时间，再勾选时间窗口。默认时间不代表你的选择。", "Check start and end, then confirm the time window. Default times are not your selection.")
+        case .invalidOrder: ("结束时间须晚于开始时间。", "End must be after start.")
+        case .tooLong: ("时间窗口不能超过 24 小时。请缩短后重新核对。", "The time window cannot exceed 24 hours. Shorten it and check again.")
+        }
+        return chinese ? pair.0 : pair.1
+    }
+}
+// IOS003_PRESENTATION_END
+
+private struct NativePlaceCandidatePanel: View {
+    struct Day: Identifiable { let id: String; let date: String }
+    let chinese: Bool
+    let days: [Day]
+    @Binding var dayId: String?
+    @Binding var start: Date
+    @Binding var end: Date
+    @Binding var windowConfirmed: Bool
+    let busy: Bool
+    let unresolved: Bool
+    let add: () -> Void
+    private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
+    private var availability: NativePlaceAddAvailability {
+        .evaluate(busy: busy, unresolved: unresolved, days: days.map(\.id), dayId: dayId,
+                  confirmed: windowConfirmed, start: start, end: end)
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(t("3 · 准备行程候选", "3 · Prepare a Trip candidate")).font(.headline)
+            Text(t("选择日期和时间，只生成候选，不直接修改行程。", "Choose a day and time to create a candidate for review.")).font(.subheadline)
+            Picker(t("加入哪一天", "Day for the candidate"), selection: $dayId) {
+                Text(t("明确选择一天", "Choose a day explicitly")).tag(String?.none)
+                ForEach(days) { Text($0.date).tag(Optional($0.id)) }
+            }.pickerStyle(.menu).accessibilityIdentifier("place.actions.day")
+            DatePicker(t("开始时间", "Start"), selection: $start)
+                .accessibilityIdentifier("place.actions.start")
+            DatePicker(t("结束时间", "End"), selection: $end)
+                .accessibilityIdentifier("place.actions.end")
+            Text(t("显示时区：", "Displayed time zone: ") + TimeZone.current.identifier).font(.caption)
+            Text(t("请核对所选行程日期与时区。这里不自动换算日期，也不据此认定停留时长可行。", "Check the Trip day and time zone. Dates are not converted automatically and this does not establish a feasible stay duration.")).font(.caption)
+            Toggle(t("我已明确选择这个时间窗口（停留时长仍待核）", "I explicitly choose this window (stay duration still pending)"), isOn: $windowConfirmed)
+                .accessibilityIdentifier("place.actions.window.confirm")
+            Button(t("生成候选 · 下一步查看差异", "Create candidate · Review diff next")) { add() }
+                .buttonStyle(.borderedProminent).disabled(availability != .ready)
+                .accessibilityIdentifier("place.actions.add")
+            Text(availability.explanation(chinese: chinese)).font(.subheadline)
+                .accessibilityIdentifier("place.actions.add.reason")
+        }
+        .onChange(of: dayId) { _, _ in windowConfirmed = false }
+        .onChange(of: start) { _, _ in windowConfirmed = false }
+        .onChange(of: end) { _, _ in windowConfirmed = false }
+        .padding().frame(maxWidth: .infinity, alignment: .leading)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+private struct NativePlaceRoutePendingPanel: View {
+    let chinese: Bool
+    private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label(t("路线与费用 · 待核", "Routes and costs · Pending"), systemImage: "point.topleft.down.curvedto.point.bottomright.up").font(.headline)
+            Text(t("步行、公交、驾车：此处尚未查询路线。距离、耗时、换乘、票价和当前路况均未知。", "Walking, transit, driving: no routes have been queried here. Distance, duration, transfers, fares and current traffic are unknown.")).font(.subheadline)
+            Text(t("在原候选差异中核对起终点、入口、方式、出发时间和资料来源；确认供应商用途、计费与同意后才查询。公交规划不代表实时到站，驾车规划不代表已叫车。", "In the original candidate review, check endpoints, entrances, mode, departure time and sources. Check supplier purpose, billing and consent before querying. Transit planning does not establish real-time arrivals; driving planning does not book a ride.")).font(.caption)
+            Text(t("开放时间、预约、停留、缓冲与无障碍资料未齐时保持待核；当前路况不能保证未来行程。", "Opening hours, reservations, stay, buffers and accessibility remain pending without supporting details. Current traffic does not guarantee a future Trip.")).font(.caption)
+        }.padding().frame(maxWidth: .infinity, alignment: .leading)
+            .background(.quaternary, in: RoundedRectangle(cornerRadius: 16))
+            .accessibilityIdentifier("place.actions.routes.pending")
+    }
+}
+
+#if DEBUG
+/// Main may mount this leaf directly: NativePlaceActionsSampleExperience().
+/// This entry uses the production presentation panels with synthetic callbacks only.
+struct NativePlaceActionsSampleExperience: View {
+    @Environment(\.locale) private var locale
+    @State private var chineseOverride: Bool?
+    private var chinese: Bool { chineseOverride ?? (locale.language.languageCode?.identifier == "zh") }
+    init() {}
+    var body: some View {
+        VStack(spacing: 0) {
+            Picker("Sample language / 样例语言", selection: Binding(get: { chinese }, set: { chineseOverride = $0 })) {
+                Text("中文").tag(true)
+                Text("English").tag(false)
+            }.pickerStyle(.segmented).padding()
+                .accessibilityIdentifier("place.sample.language")
+            NativePlaceActionsSample(chinese: chinese).id(chinese)
+        }.onChange(of: locale.identifier) { _, _ in chineseOverride = nil }
+    }
+}
+
+/// Isolated in-memory interaction fixture. Never creates a session, writes data or calls a provider.
+private struct NativePlaceActionsSample: View {
+    let chinese: Bool
+    @State private var dayId: String?
+    @State private var start = Date(timeIntervalSince1970: 1792026000)
+    @State private var end = Date(timeIntervalSince1970: 1792029600)
+    @State private var confirmed = false
+    @State private var saved = false
+    @State private var questionPrepared = false
+    @State private var review = false
+    @State private var result = false
+    @State private var unresolved = false
+    private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(t("Sample · 未连接 · 仅内存交互", "Sample · Unconnected · In-memory interactions only")).font(.headline)
+                Text(t("示例地点 / Sample place", "Sample place / 示例地点")).font(.title2)
+                Text(t("来源：合成样例；示例行程和地点均非真实资料。", "Source: synthetic fixture. This place and Trip are not real records."))
+                Button(saved ? t("取消样例收藏", "Unsave sample") : t("样例收藏", "Save sample")) { saved.toggle() }.disabled(unresolved)
+                Button(t("准备样例问题", "Prepare sample question")) { questionPrepared = true }.disabled(unresolved)
+                if questionPrepared { Text(t("样例问题已准备，未发送给 VP。", "Sample question prepared; nothing sent to VP.")) }
+                NativePlaceCandidatePanel(chinese: chinese, days: [.init(id: "sample-day", date: "2026-10-15")], dayId: $dayId, start: $start, end: $end, windowConfirmed: $confirmed, busy: false, unresolved: unresolved) { review = true; result = false }
+                if review {
+                    Text(t("Sample 差异：示例日期新增一个地点候选。", "Sample diff: add one place candidate to the sample day."))
+                    Button(t("确认样例差异（仅内存）", "Confirm sample diff (memory only)")) { review = false; result = true }
+                        .disabled(unresolved)
+                    Button(t("取消样例差异", "Cancel sample diff")) { review = false }
+                }
+                if result { Text(t("样例确认完成，真实行程未改变。", "Sample confirmation complete; no real Trip changed.")) }
+                Toggle(t("模拟未知操作结果", "Simulate an unknown result"), isOn: $unresolved)
+                if unresolved {
+                    Text(t("Sample：操作结果未知，不能假定写入失败。", "Sample: the result is unknown; a failed write cannot be assumed."))
+                    Button(t("样例读取原操作结果", "Read original sample result")) { unresolved = false }
+                    Button(t("样例停止未提交操作", "Stop unsubmitted sample operation")) { unresolved = false; review = false }
+                }
+                NativePlaceRoutePendingPanel(chinese: chinese)
+                Button(t("重置样例", "Reset sample")) {
+                    dayId = nil; confirmed = false; saved = false; questionPrepared = false
+                    review = false; result = false; unresolved = false
+                }
+            }.padding()
+        }.environment(\.locale, Locale(identifier: chinese ? "zh_CN" : "en_US"))
+    }
+}
+
+#Preview("IOS-003 Sample 双语") { NativePlaceActionsSampleExperience() }
+#Preview("IOS-003 Sample 大字") {
+    NativePlaceActionsSampleExperience().environment(\.dynamicTypeSize, .accessibility3)
+}
+#endif

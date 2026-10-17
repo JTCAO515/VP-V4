@@ -14,6 +14,11 @@ struct NativeTripItem: Codable, Identifiable, Equatable {
     var startsAt: String?
     var endsAt: String?
     var manualOrder: Int? = nil
+    var userAddress: NativeUserProvidedAddress? = nil
+    private enum CodingKeys: String, CodingKey {
+        case id, dayId, title, startsAt, endsAt, manualOrder
+        case userAddress = "chineseAddress"
+    }
 }
 
 struct NativeTripDay: Codable, Identifiable, Equatable {
@@ -63,7 +68,7 @@ struct NativeTripPatch: Codable, Equatable {
 
 /// Optional keys are omitted when encoded, preserving the server's closed op schema.
 struct NativeTripOperation: Codable, Equatable {
-    enum Kind: String, Codable { case setTitle = "set_title", upsertDay = "upsert_day", deleteDay = "delete_day", upsertItem = "upsert_item", deleteItem = "delete_item", reorderItems = "reorder_items" }
+    enum Kind: String, Codable { case setTitle = "set_title", upsertDay = "upsert_day", deleteDay = "delete_day", upsertItem = "upsert_item", deleteItem = "delete_item", reorderItems = "reorder_items", setChineseAddress = "set_item_chinese_address" }
     let kind: Kind
     var title: String?
     var dayId: String?
@@ -73,6 +78,51 @@ struct NativeTripOperation: Codable, Equatable {
     var startsAt: String?
     var endsAt: String?
     var itemIds: [String]? = nil
+    var addressText: NativeAddressOperationText? = nil
+}
+
+extension NativeTripOperation {
+    private enum CodingKeys: String, CodingKey { case kind, title, dayId, date, timeZone, itemId, startsAt, endsAt, itemIds, text }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        kind = try c.decode(Kind.self, forKey: .kind)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        dayId = try c.decodeIfPresent(String.self, forKey: .dayId)
+        date = try c.decodeIfPresent(String.self, forKey: .date)
+        timeZone = try c.decodeIfPresent(String.self, forKey: .timeZone)
+        itemId = try c.decodeIfPresent(String.self, forKey: .itemId)
+        startsAt = try c.decodeIfPresent(String.self, forKey: .startsAt)
+        endsAt = try c.decodeIfPresent(String.self, forKey: .endsAt)
+        itemIds = try c.decodeIfPresent([String].self, forKey: .itemIds)
+        if kind == .setChineseAddress {
+            let raw = try decoder.container(keyedBy: NativeAddressKey.self)
+            guard Set(raw.allKeys.map(\.stringValue)) == Set(["kind", "dayId", "itemId", "text"]),
+                  c.contains(.text), let dayId, let itemId, NativeTripSupportTarget.item(dayId), NativeTripSupportTarget.item(itemId) else { throw NativeAddressValueError.invalid }
+            addressText = try c.decodeNil(forKey: .text) ? .clear : .set(c.decode(String.self, forKey: .text))
+            if case .set(let text) = addressText, !NativeAddressText.valid(text) { throw NativeAddressValueError.invalid }
+        } else if c.contains(.text) { throw NativeAddressValueError.invalid }
+    }
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(kind, forKey: .kind)
+        if kind == .setChineseAddress {
+            guard let addressText, let dayId, let itemId, NativeTripSupportTarget.item(dayId), NativeTripSupportTarget.item(itemId),
+                  title == nil, date == nil, timeZone == nil, startsAt == nil, endsAt == nil, itemIds == nil else { throw NativeAddressValueError.invalid }
+            try c.encode(dayId, forKey: .dayId); try c.encode(itemId, forKey: .itemId)
+            switch addressText {
+            case .clear: try c.encodeNil(forKey: .text)
+            case .set(let text):
+                guard NativeAddressText.valid(text) else { throw NativeAddressValueError.invalid }
+                try c.encode(text, forKey: .text)
+            }
+        } else {
+            guard addressText == nil else { throw NativeAddressValueError.invalid }
+            try c.encodeIfPresent(title, forKey: .title); try c.encodeIfPresent(dayId, forKey: .dayId)
+            try c.encodeIfPresent(date, forKey: .date); try c.encodeIfPresent(timeZone, forKey: .timeZone)
+            try c.encodeIfPresent(itemId, forKey: .itemId); try c.encodeIfPresent(startsAt, forKey: .startsAt)
+            try c.encodeIfPresent(endsAt, forKey: .endsAt); try c.encodeIfPresent(itemIds, forKey: .itemIds)
+        }
+    }
 }
 
 struct NativeTripPending: Decodable {
@@ -136,8 +186,17 @@ struct NativeTripDraft: Equatable, Identifiable {
             for item in old?.items ?? [] where !newItemIDs.contains(item.id) {
                 operations.append(.init(kind: .deleteItem, dayId: day.id, itemId: item.id))
             }
-            for item in day.items where previousItems[item.id] != item {
-                operations.append(.init(kind: .upsertItem, title: item.title, dayId: day.id, itemId: item.id, startsAt: item.startsAt, endsAt: item.endsAt))
+            for item in day.items {
+                let previous = previousItems[item.id]
+                var ordinaryFields = item
+                ordinaryFields.userAddress = previous?.userAddress
+                if previous != ordinaryFields {
+                    operations.append(.init(kind: .upsertItem, title: item.title, dayId: day.id, itemId: item.id, startsAt: item.startsAt, endsAt: item.endsAt))
+                }
+                if previous?.userAddress != item.userAddress {
+                    let value: NativeAddressOperationText = item.userAddress.map { .set($0.text) } ?? .clear
+                    operations.append(.init(kind: .setChineseAddress, dayId: day.id, itemId: item.id, addressText: value))
+                }
             }
         }
         return .init(expectedVersion: baseVersion, operations: operations)

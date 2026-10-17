@@ -47,6 +47,17 @@ this feature; older non-JWT legacy product readers retain their original indepen
 
 ## Other retained records are not pending-cleanup sources
 
+IOS-005 adds the fixed `translationRecovery` companion at
+`L.translation-recovery.E`, bringing the current fixed inventory to 31 sources.
+Its original reader is `NativeTranslationRecoveryJournal` behind the current
+Session scope gate. Export includes only operation/Turn identity and the fixed
+metadata boundary; original text, translation, input hash, prompt and credentials
+are excluded. Returning opens the original Translation consumer for GET-only
+reconciliation. A matching positive terminal receipt and exact physical removal
+can produce original completion evidence; pending, unknown, generic cancellation,
+local abandonment and explicit account cleanup cannot. The historical 29-source
+inventory above and the replay-position source retain their own semantics.
+
 `NativeNotificationJournal.bindingService(E)` (`N.notifications.v2.E.device`) is a persistent safe
 server-device binding, not an unresolved request. APNs authority and StoreKit/entitlement/payment
 records are never swept or presented as pending. `L.device-delete-receipt.E` is the original

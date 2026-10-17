@@ -1,0 +1,20 @@
+Trip privacy preview conversation {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":null,"redactCounts":null}
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2475.618875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2540.543917
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/privacy-flow.test.mjs:17:1
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2475.618875ms)
+  TypeError: Cannot read properties of null (reading 'tripContexts')
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:24:29)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

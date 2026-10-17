@@ -1,0 +1,185 @@
+{
+  "kind": "SYNTHETIC_EMPTY_POSTGRES_ONLY",
+  "status": "PASS_NATIVE_SESSION_READ_SLICE",
+  "realAuth": "UNRUN",
+  "provider": "UNRUN",
+  "target": "UNRUN",
+  "cleanup": "PASS",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "checks": [
+    {
+      "database": "baseline_1",
+      "check": "native login epoch/idempotent login through original functions; synthetic Auth",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "JSON claims fallback and profile owner RLS",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "native create/list/read/reopen",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "anon/anonymous/stale epoch/cross-actor refusal",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "minimal roles: no client private-content/Trip writer/trusted prepare",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "missing policy/consent cannot admit or create a Turn",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "exact notice policy and explicit consent",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "atomic admission and exact text idempotency; no duplicate queue",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "worker control default disabled",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "ready exact tuple matched before LIMIT",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "reserve/dispatch tuple and service ACL; no answer before settled usage",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "synthetic usage settle\u2192complete\u2192durable answer reopen, no seeded answer",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "same Task/parent preserved and bounded prior context",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "unknown dispatch/ACK retains bytes and pending budget; no requeue/release",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "withdrawal protects content; cancellation needs no new consent and never settles cost",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "missing request receipt is unknown, not not_submitted",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_1",
+      "check": "revoked session cannot reopen",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "native login epoch/idempotent login through original functions; synthetic Auth",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "JSON claims fallback and profile owner RLS",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "native create/list/read/reopen",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "anon/anonymous/stale epoch/cross-actor refusal",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "minimal roles: no client private-content/Trip writer/trusted prepare",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "missing policy/consent cannot admit or create a Turn",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "exact notice policy and explicit consent",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "atomic admission and exact text idempotency; no duplicate queue",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "worker control default disabled",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "ready exact tuple matched before LIMIT",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "reserve/dispatch tuple and service ACL; no answer before settled usage",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "synthetic usage settle\u2192complete\u2192durable answer reopen, no seeded answer",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "same Task/parent preserved and bounded prior context",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "unknown dispatch/ACK retains bytes and pending budget; no requeue/release",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "withdrawal protects content; cancellation needs no new consent and never settles cost",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "missing request receipt is unknown, not not_submitted",
+      "status": "PASS"
+    },
+    {
+      "database": "baseline_2",
+      "check": "revoked session cannot reopen",
+      "status": "PASS"
+    }
+  ],
+  "nonce": "5c514bbfdc8a4ff4949dd4190cc87d45",
+  "containerId": "2a02e0d9f63c3ce909ec64310552bf20f0afd54595871db4028267aead10619c",
+  "functionCatalogRepeatable": true,
+  "baselineSha256": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8"
+}

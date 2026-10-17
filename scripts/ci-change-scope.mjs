@@ -44,24 +44,30 @@ export function detectScope(env = process.env) {
   }
 }
 
-export const DB_LANES = ['postgres','postgres-native','supabase-rls','supabase-http-native','supabase-http-ops'];
+export const DB_LANES = ['postgres','postgres-native','postgres-native-17','supabase-rls','supabase-http-native','supabase-http-ops'];
 const checkNames = ['typecheck','build','test','unit','contract','integration','security','e2e','browser','evals','flags','assets'];
 const baseChecks = () => Object.fromEntries(checkNames.map(k=>[k,false]));
 const full = reason => ({version:1,profile:'full',reason,checks:Object.fromEntries(checkNames.map(k=>[k,true])),dbLanes:[...DB_LANES]});
 const prose = f => documents.has(f)||documentPatterns.some(p=>p.test(f))||/^docs\/.+\.md$/.test(f)||/^artifacts\/.+\.(?:md|log|log\.gz)$/.test(f);
+// Only this reviewed dynamic route may contain brackets; other paths retain the closed syntax.
+const qaCancellationRoute = 'app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts';
 /** Unknown/unsafe diff and CI policy itself always select the full superset. */
 export function selectCheckPlan(files,eventName,forceFull=false){
  if(forceFull||eventName!=='pull_request'||!Array.isArray(files)||files.length===0)return full('manual_push_or_unavailable_diff');
- if(files.some(f=>typeof f!=='string'||!/^[-A-Za-z0-9_./]+$/.test(f)||f.split('/').includes('..')))return full('unknown_path');
+ if(files.some(f=>typeof f!=='string'||(f!==qaCancellationRoute&&!/^[-A-Za-z0-9_./]+$/.test(f))||f.split('/').includes('..')))return full('unknown_path');
  if(files.some(f=>f.startsWith('.github/workflows/')||/^scripts\/(?:ci-change-scope|run-ci-suite|ci-suites\/)/.test(f)||/tests\/unit\/governance\/(?:ci-change-scope|db-integration-ci|ci-selected)/.test(f)))return full('ci_policy_changed');
  if(files.every(prose))return {version:1,profile:'documentation',reason:'prose_only',checks:baseChecks(),dbLanes:[]};
  const checks=baseChecks(),lanes=new Set();let known=true;
  for(const f of files){
   if(prose(f))continue;
+  if(['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts',
+   'app/api/chat/native/v7/place-ask/route.ts','lib/server/privacy/turn-data/contract.ts','lib/server/privacy/turn-data/export.ts',
+   'lib/server/privacy/turn-data/source-schema.json','lib/server/jobs/hosted-text-worker.ts'].includes(f))lanes.add('postgres-native-17');
+  if(f.startsWith('lib/server/qa-agent/cancellation/')||['lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',qaCancellationRoute].includes(f))lanes.add('postgres-native-17');
   if(f==='package.json'||f==='pnpm-lock.yaml'||f==='tsconfig.json'||/^next\.config\./.test(f)||/^middleware\./.test(f))return full('shared_runtime_configuration');
   if(f.startsWith('supabase/')){for(const l of DB_LANES)lanes.add(l);Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});continue;}
   if(f.startsWith('ios/')||f.startsWith('scripts/ios/'))continue; // Native workflow builds/tests changed iOS code; no unrelated Web/DB.
-  if(f.startsWith('app/')||f.startsWith('components/')||f.startsWith('apps/ops/')||f.startsWith('public/')){
+  if(f==='lib/qa-agent/cancellation-contract.ts'||f.startsWith('app/')||f.startsWith('components/')||f.startsWith('apps/ops/')||f.startsWith('public/')){
    Object.assign(checks,{typecheck:true,build:true,test:true,unit:true,contract:true,security:true,e2e:true,browser:true,flags:true,assets:true});
    lanes.add(f.startsWith('apps/ops/')?'supabase-http-ops':'supabase-http-native');
    if(f.startsWith('app/api/')||f.startsWith('apps/ops/')){lanes.add('postgres');lanes.add('supabase-rls');}
@@ -71,26 +77,32 @@ export function selectCheckPlan(files,eventName,forceFull=false){
    Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});
    lanes.add('postgres');lanes.add('supabase-http-native');
    if(/^lib\/server\/(?:identity|privacy|auth)\//.test(f))for(const l of DB_LANES)lanes.add(l);
+   if(/^lib\/server\/(?:service-task-trip\/|trip\/scoped-edit\/|turn\/scoped-edit\/|model-gateway\/|jobs\/run-hosted-text-worker\.mjs$)/.test(f))lanes.add('postgres-native-17');
    if(f.startsWith('lib/server/model-gateway/'))checks.evals=true;
-   if(f.startsWith('lib/server/knowledge/')||f.startsWith('lib/server/jobs/wiki')){lanes.add('postgres-native');lanes.add('supabase-http-ops');}
+   if(f.startsWith('lib/server/knowledge/')||f.startsWith('lib/server/jobs/wiki')){lanes.add('postgres-native');lanes.add('postgres-native-17');lanes.add('supabase-http-ops');}
    if(f.startsWith('lib/server/ops/'))lanes.add('supabase-http-ops');continue;
   }
   if(f.startsWith('tests/integration/')){
    Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true,integration:true});
    // Static conservative families; shared fixtures/unknown families require full lanes.
+   if(f.startsWith('tests/integration/service-task-trip/')&&!/\.test\.mjs$/.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
    if(f.startsWith('tests/integration/web-trip-continuity/')){lanes.add('supabase-http-native');checks.build=true;checks.browser=true;checks.e2e=true;continue;}
    if(/\/fixtures\//.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
+   if(f==='tests/integration/qa-agent-cancellation/pg-proof.mjs'){lanes.add('postgres-native-17');continue;}
    const classified=integrationClassification();if(classified.problems.length)return full('classification_error');
    const row=classified.rows.find(r=>r.file===f);
    if(row&&DB_LANES.includes(row.lane)){lanes.add(row.lane);continue;}
    if(row?.lane==='test:integration')continue;
    return full('unmapped_integration_dependency');
   }
-  if(/^tests\/(?:unit|contract|security)\//.test(f)){Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
+  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/')||f.startsWith('tests/contract/agent-grounded-result/')||f.startsWith('tests/contract/qa-agent-cancellation/')||f.startsWith('tests/contract/canonical-place-ask/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
   if(f.startsWith('tests/e2e/')){Object.assign(checks,{typecheck:true,build:true,e2e:true,browser:true,assets:true});continue;}
   if(f.startsWith('evals/')){checks.evals=true;checks.contract=true;continue;}
   known=false;
  }
+ // pnpm test reads .next static output: any selected static test requires a build.
+ // Close this dependency after combining all changed-path families.
+ if(checks.test)checks.build=true;
  return known?{version:1,profile:'affected',reason:'known_changed_paths',checks,dbLanes:DB_LANES.filter(l=>lanes.has(l))}:full('unknown_dependency');
 }
 export function detectPlan(env=process.env){

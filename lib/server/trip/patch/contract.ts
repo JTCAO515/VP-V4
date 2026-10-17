@@ -1,4 +1,6 @@
-export type TripItem = Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string; manualOrder?: number }>;
+import { isUserAddressText, readUserProvidedAddress, userProvidedAddress, type UserProvidedChineseAddress } from "../../../trip-user-address.ts";
+
+export type TripItem = Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string; manualOrder?: number; chineseAddress?: UserProvidedChineseAddress }>;
 export type TripDay = Readonly<{ id: string; date: string; timeZone?: string; items?: readonly TripItem[] }>;
 export type TripSnapshot = Readonly<{ version: number; title: string; days: readonly TripDay[] }>;
 export type TripPatchOperation =
@@ -6,6 +8,7 @@ export type TripPatchOperation =
   | Readonly<{ kind: "upsert_day"; dayId: string; date: string; timeZone?: string }>
   | Readonly<{ kind: "delete_day"; dayId: string }>
   | Readonly<{ kind: "upsert_item"; itemId: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>
+  | Readonly<{ kind: "set_item_chinese_address"; dayId: string; itemId: string; text: string | null }>
   | Readonly<{ kind: "delete_item"; itemId: string; dayId: string }>
   | Readonly<{ kind: "reorder_items"; dayId: string; itemIds: readonly string[] }>;
 export type TripPatch = Readonly<{ expectedVersion: number; operations: readonly TripPatchOperation[] }>;
@@ -34,7 +37,18 @@ export function applyPatch(snapshot: TripSnapshot, patch: TripPatch): TripSnapsh
       case "set_title": title = operation.title.trim(); break;
       case "upsert_day": { const previous = days.get(operation.dayId); days.set(operation.dayId, { id: operation.dayId, date: operation.date, ...(operation.timeZone ? { timeZone: operation.timeZone } : {}), items: previous?.items ?? [] }); break; }
       case "delete_day": if (!days.delete(operation.dayId)) fail("day not found"); break;
-      case "upsert_item": { const day = days.get(operation.dayId); if (!day) fail("item day not found"); const items = new Map((day.items ?? []).map((item) => [item.id, item])); items.set(operation.itemId, { ...itemFrom(operation), ...(items.get(operation.itemId)?.manualOrder !== undefined ? { manualOrder: items.get(operation.itemId)!.manualOrder } : {}) }); days.set(day.id, { ...day, items: [...items.values()] }); break; }
+      case "upsert_item": { const day = days.get(operation.dayId); if (!day) fail("item day not found"); const items = new Map((day.items ?? []).map((item) => [item.id, item])); items.set(operation.itemId, { ...itemFrom(operation), ...(items.get(operation.itemId)?.chineseAddress ? { chineseAddress: items.get(operation.itemId)!.chineseAddress } : {}), ...(items.get(operation.itemId)?.manualOrder !== undefined ? { manualOrder: items.get(operation.itemId)!.manualOrder } : {}) }); days.set(day.id, { ...day, items: [...items.values()] }); break; }
+      case "set_item_chinese_address": {
+        const day = days.get(operation.dayId);
+        if (!day || !day.items.some(item => item.id === operation.itemId)) fail("item not found");
+        day.items = day.items.map(item => {
+          if (item.id !== operation.itemId) return item;
+          const { chineseAddress: previous, ...rest } = item;
+          void previous;
+          return operation.text === null ? rest : { ...rest, chineseAddress: userProvidedAddress(operation.text) };
+        });
+        break;
+      }
       case "reorder_items": {
         const day = days.get(operation.dayId);
         if (!day || operation.itemIds.length !== day.items.length || operation.itemIds.some(id => !day.items.some(item => item.id === id))) fail("invalid order");
@@ -59,6 +73,7 @@ function assertOperation(operation: unknown): asserts operation is TripPatchOper
     case "upsert_day": if (!hasOnlyKeys(operation, ["kind", "dayId", "date", "timeZone"]) || !validId(operation.dayId) || !validDate(operation.date) || (operation.timeZone !== undefined && !validTimeZone(operation.timeZone))) fail("invalid day"); return;
     case "delete_day": if (!hasOnlyKeys(operation, ["kind", "dayId"]) || !validId(operation.dayId)) fail("dayId required"); return;
     case "upsert_item": if (!hasOnlyKeys(operation, ["kind", "itemId", "dayId", "title", "startsAt", "endsAt"]) || !validId(operation.itemId) || !validId(operation.dayId) || !validTitle(operation.title) || !validWindow(operation.startsAt, operation.endsAt)) fail("invalid item"); return;
+    case "set_item_chinese_address": if (!hasOnlyKeys(operation, ["kind", "dayId", "itemId", "text"]) || !validId(operation.dayId) || !validId(operation.itemId) || !(operation.text === null || isUserAddressText(operation.text))) fail("invalid user address"); return;
     case "reorder_items": if (!hasOnlyKeys(operation, ["kind", "dayId", "itemIds"]) || !validId(operation.dayId) || !Array.isArray(operation.itemIds) || operation.itemIds.length > 500 || !operation.itemIds.every(validId) || new Set(operation.itemIds).size !== operation.itemIds.length) fail("invalid order"); return;
     case "delete_item": if (!hasOnlyKeys(operation, ["kind", "itemId", "dayId"]) || !validId(operation.itemId) || !validId(operation.dayId)) fail("invalid item"); return;
     default: fail("unknown operation");
@@ -72,7 +87,7 @@ function assertSnapshot(snapshot: TripSnapshot): void {
     if (!isRecord(day) || !validId(day.id) || !validDate(day.date) || (day.timeZone !== undefined && !validTimeZone(day.timeZone)) || ids.has(day.id) || dates.has(day.date) || !Array.isArray(day.items ?? [])) fail("invalid snapshot day");
     ids.add(day.id); dates.add(day.date);
     const items: readonly unknown[] = Array.isArray(day.items) ? day.items : [];
-    for (const item of items) { if (!isRecord(item) || !validId(item.id) || item.dayId !== day.id || !validTitle(item.title) || !validWindow(item.startsAt, item.endsAt) || (item.manualOrder !== undefined && (!Number.isSafeInteger(item.manualOrder) || Number(item.manualOrder) < 0 || Number(item.manualOrder) > 2147483647)) || itemIds.has(item.id)) fail("invalid snapshot item"); itemIds.add(item.id); }
+    for (const item of items) { if (!isRecord(item) || !validId(item.id) || item.dayId !== day.id || !validTitle(item.title) || !validWindow(item.startsAt, item.endsAt) || (item.manualOrder !== undefined && (!Number.isSafeInteger(item.manualOrder) || Number(item.manualOrder) < 0 || Number(item.manualOrder) > 2147483647)) || (item.chineseAddress !== undefined && readUserProvidedAddress(item.chineseAddress).kind !== "provided") || itemIds.has(item.id)) fail("invalid snapshot item"); itemIds.add(item.id); }
   }
 }
 

@@ -1,0 +1,17 @@
+✔ current source and manual addition retain separate provenance and original bytes (0.896917ms)
+✔ country/title do not grant Chinese observation and ambiguous lines stay unknown (0.140584ms)
+✔ stale versions/items, missing evidence, revoked, unmatched and expired sources fail closed (0.180792ms)
+✔ source transport failure differs from a successful empty/missing read (0.084083ms)
+✔ late response, route/actor change and unmount cannot publish into successor read (0.730792ms)
+✔ prepare uses only original versioned patch, preserves bytes, and never confirms or retries unknown ACK (0.301666ms)
+✔ online read binds exact item/version and preserves cookie GET/no-store/abort without model egress (9.183542ms)
+✔ source display expires by 30s without polling and retains confirmed manual bytes independently (0.440667ms)
+✔ earlier evidence expiry clears only references; explicit refresh and context invalidation retain their fences (0.915458ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86.376792

@@ -7,7 +7,7 @@ nonisolated final class NativeHotelHandoffUITests: XCTestCase {
     @MainActor private func review(locale: String) throws {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["-VisePandaLocale", locale]
+        app.launchArguments = ["-VisePandaLegacyShell", "-VisePandaLocale", locale]
         app.launch()
         let tools = app.tabBars.buttons[locale == "en" ? "Tools" : "工具"]
         XCTAssertTrue(tools.waitForExistence(timeout: 10)); tools.tap()
@@ -41,7 +41,7 @@ nonisolated final class NativeHotelHandoffUITests: XCTestCase {
         }
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["-VisePandaLocale", "en"]
+        app.launchArguments = ["-VisePandaLegacyShell", "-VisePandaLocale", "en"]
         app.launch()
         let tools = app.tabBars.buttons["Tools"]
         XCTAssertTrue(tools.waitForExistence(timeout: 10)); tools.tap()

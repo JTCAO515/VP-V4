@@ -1,0 +1,65 @@
+{
+  "status": "PASS_D2_BOUNDED_ADMISSION_WORKER_ISOLATION",
+  "scope": "known legacy functions/constraints and synthetic admission/worker isolation; NOT target replica or dispatch acceptance",
+  "checks": [
+    {
+      "name": "four legacy function bodies and three locally instantiated constraints exactly match D0; fourth constraint source hash matches without resolver stub",
+      "status": "PASS"
+    },
+    {
+      "name": "full local admission candidate including least-privilege grants rolls back to exact before metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "7 authenticated and 6 service grants only on new functions; 5 internal-only, anon/PUBLIC denied; existing ACL and unrelated captured objects preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary Native admission/replay/reopen with matched old guarded start/read functions; consent, byte-change, cross-actor and direct legacy admission bypass denied",
+      "status": "PASS"
+    },
+    {
+      "name": "old global worker QA theft reproduced and rolled back; minimal patch excludes QA, legacy text lock refuses QA, original QA claim/read obtains correct Task under service role",
+      "status": "PASS"
+    },
+    {
+      "name": "standalone QA invalid-session cancellation preserves original turn/text; pending budget remains reconciliation-required; later assistant-helper scope drift refuses with P0201",
+      "status": "PASS"
+    },
+    {
+      "name": "safe STOP preserves exact new request and Task linkage; worker disabled and no claim/dispatch/provider invoked",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "target": "UNRUN",
+  "provider": "UNRUN",
+  "workerDispatch": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d2_verify.py": "45694a099b66a9ce4ba2002f7ac8290cda0e21eda745cc6dcbbb4c091a13c02e",
+    "scripts/qa-agent-db-baseline/target-delta/d2_compat.py": "7de8029200e4b8d7d6c1b0fa2fe1f897ebc66434f82b135b9fb215e77f4a3a09",
+    "scripts/qa-agent-db-baseline/target-delta/d2_worker_compat.py": "4c65230738c4c88d852ccb10f252eed8341e99c176e78397d946f0d2688d9bd1",
+    "scripts/qa-agent-db-baseline/target-delta/propose.py": "3267e08b47f72bdc46af1da429c07590ff3bf8adb46d79be8c889950415ce034"
+  },
+  "containerId": "7bddc4fef5283a031a884bb8534626bd69b505e8445d627962a417f58fcb2b4d",
+  "nonce": "4c9226eda5704eee8870902de728e833",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "qaClaimVariant": {
+    "name": "public.qa_claim_work_v1",
+    "targetBefore": "absent",
+    "fixedSourceBodyHash": "8233806e8b7fd7bc83a3c31175d7820f56a1ef289af7c975e0639fc27a280fba",
+    "candidateBodyHash": "ef042205141ba0b19873541c6f5775c1f849a81244ffd327e1fd1e1a80cec901",
+    "change": "new standalone QA claimer retains original work cancellation and all receipt/budget filters; excludes unavailable assistant-only observer under runtime absence guard",
+    "premiseObjects": [
+      "turn_private.assistant_conversations",
+      "turn_private.assistant_goals",
+      "turn_private.assistant_messages",
+      "turn_private.cancel_unclaimable_turn_v1",
+      "turn_private.assistant_event_link_v1"
+    ],
+    "scopeChangeSqlstate": "P0201",
+    "noStubOrAnchorCreated": true,
+    "reference": "20261010020000_assistant_events.sql: observer returns without terminal/event update for non-assistant-linked legacy Tasks"
+  },
+  "proposalSha256": "8a80f1380f00e89a5c82b4d95d9e9c89bde957d7d4807954436a611a809d82ed"
+}

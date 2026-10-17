@@ -1,0 +1,333 @@
+{
+  "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "objects": [
+    {
+      "kind": "function",
+      "name": "turn_private.valid_text"
+    },
+    {
+      "kind": "table",
+      "name": "public.trips"
+    },
+    {
+      "kind": "table",
+      "name": "public.turns"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_threads"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_turn_events"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_turn_idempotency"
+    },
+    {
+      "kind": "table",
+      "name": "public.user_profiles"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_accounts"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_attempts"
+    },
+    {
+      "kind": "table",
+      "name": "identity_private.mobile_login_proofs"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_scopes"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_provider_limits"
+    },
+    {
+      "kind": "table",
+      "name": "public.model_budget_attempts"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.work"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_policies"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_consents"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_content"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.text_dispatches"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_tasks"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_turns"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.grounded_turns"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_capacity_settings"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_capacity"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.hosted_worker_control"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.hosted_worker_heartbeats"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_conversations"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_goals"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_messages"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.prepare_mobile_v2"
+    },
+    {
+      "kind": "function",
+      "name": "public.native_prepare_v2"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.mobile_session_v2"
+    },
+    {
+      "kind": "function",
+      "name": "public.native_session_v2"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.mobile_access_v2"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.guard_mobile_write_v2"
+    },
+    {
+      "kind": "function",
+      "name": "identity_private.guard_mobile_rpc_v2"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.lock_turn"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.text_owner"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.text_policy_current"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.immutable_text_policy"
+    },
+    {
+      "kind": "function",
+      "name": "public.accept_text_policy"
+    },
+    {
+      "kind": "function",
+      "name": "public.withdraw_text_policy"
+    },
+    {
+      "kind": "function",
+      "name": "public.start_text_turn"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.terminal"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.hide_text_content"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_text_policy"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_history_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_session_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_list_sessions_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_policy_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_accept_policy_v1"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_consumer_window_v1"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_link_mode_v1"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.require_text_task"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_lock_work_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_submit_turn_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_submit_message_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_claim_work_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_work_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_authorize_dispatch_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_complete_work_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_native_session_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.enqueue_turn_work"
+    },
+    {
+      "kind": "function",
+      "name": "public.start_chat_turn"
+    },
+    {
+      "kind": "function",
+      "name": "public.reserve_model_budget"
+    },
+    {
+      "kind": "function",
+      "name": "public.dispatch_model_budget"
+    },
+    {
+      "kind": "function",
+      "name": "public.finish_model_budget"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_ready_groups_v3"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_authorize_dispatch_v2"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_hosted_worker_status"
+    },
+    {
+      "kind": "function",
+      "name": "public.hosted_worker_heartbeat"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.assistant_event_link_v1"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.cancel_unclaimable_turn_v1"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_text_turn"
+    },
+    {
+      "kind": "function",
+      "name": "public.cancel_chat_turn"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_cancellation_v1"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.reserve_model_budget_unbound"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.cancel_chat_turn_unmetered"
+    },
+    {
+      "kind": "table",
+      "name": "auth.users"
+    },
+    {
+      "kind": "table",
+      "name": "auth.sessions"
+    },
+    {
+      "kind": "function",
+      "name": "auth.uid"
+    },
+    {
+      "kind": "function",
+      "name": "auth.jwt"
+    },
+    {
+      "kind": "function",
+      "name": "auth.role"
+    }
+  ]
+}

@@ -16,6 +16,8 @@ export function draftTripPatch(base: TripSnapshot, draft: TripSnapshot): TripPat
     for (const item of day.items ?? []) {
       const old = previous?.items?.find(value => value.id === item.id);
       if (!old || old.title !== item.title || old.startsAt !== item.startsAt || old.endsAt !== item.endsAt) operations.push({ kind: "upsert_item", itemId: item.id, dayId: day.id, title: item.title, ...(item.startsAt ? { startsAt: item.startsAt } : {}), ...(item.endsAt ? { endsAt: item.endsAt } : {}) });
+      const moved = base.days.filter(value => value.id !== day.id).flatMap(value => value.items ?? []).find(value => value.id === item.id);
+      if (moved?.chineseAddress) operations.push({ kind: "set_item_chinese_address", dayId: day.id, itemId: item.id, text: moved.chineseAddress.text });
     }
     const beforeOrder = previous?.items?.map(item => item.id) ?? [];
     const afterOrder = (day.items ?? []).map(item => item.id);

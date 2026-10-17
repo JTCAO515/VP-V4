@@ -1,0 +1,19 @@
+{
+  "baseImage": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "imageId": "sha256:486c5548b7f3c58bff04c59d064d88b47b80d1b36f2cbb636031349a0d973f3c",
+  "pythonVersion": "3.12.15",
+  "helperSha256": "0daff6f1b7f0be043b07a7ba804c50127914f518de0ad3a815c142acbc4e0f1f",
+  "helperCommit": "edec7a531824a11634851c7a64b2083c1bd27aa4",
+  "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+  "sourceSha256": {
+    "owned-pg-diagnostic-session.py": "0daff6f1b7f0be043b07a7ba804c50127914f518de0ad3a815c142acbc4e0f1f",
+    "typed-pg-diagnostic-proxy.py": "b80c9b48aea362d303e0e627984e4c580f49eea7544b788d63a20b2aeb04c51e",
+    "diagnostic-window-deadline.py": "0d136538eb4d0c913b892416230bdc583b6b339f99cbaa0aafc838c4c4bd44d7",
+    "container-diagnostic/Dockerfile": "e3d8a6fdab547eb285de0977a94eb8e56f235807b5113bc1c57ff93fbbe9dbf5",
+    "container-diagnostic/service.py": "49a40c9fecbba8c9ec88830879b7a9b9aed2e49c44d38796a14fec18eed97d93"
+  },
+  "packagesSha256": "33f7e2396de3e24861f07c0aeac87eb050a075c0f8e23c3b03507d6d39ee4957",
+  "apkTrustKeyHashes": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub\nd11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d  /etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub",
+  "officialPackageSource": "https://dl-cdn.alpinelinux.org/alpine/v3.23/main",
+  "packageSignaturePolicy": "apk default trusted keys, no allow-untrusted; exact versions in Dockerfile and packages.lock.json"
+}

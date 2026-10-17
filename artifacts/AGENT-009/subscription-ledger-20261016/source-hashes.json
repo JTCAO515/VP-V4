@@ -1,0 +1,107 @@
+{
+  "base": "61caa52a03cb59ff0075b8cf59c63994c30821e1",
+  "testedSourceHead": "ccd6ce0c4c0d013e18d6e785d3022c86e32abb98",
+  "catalogReadOnlyDependencies": [
+    "b438be04",
+    "1fd9669d"
+  ],
+  "firstSourceFileBirthUtc": "2026-10-15T21:05:25.247244+00:00",
+  "oldSourceUnchanged": [
+    {
+      "path": "lib/server/entitlements/AppleRootCA-G3.cer",
+      "sha256": "63343abfb89a6a03ebb57e9b3f5fa7be7c4f5c756f3017b3a8c488c3653e9179",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/generate-development-config.mjs",
+      "sha256": "c753ce07e41eaf852472a8c796825ee8622c22fcd30a7635f7e13575218fdf2a",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/grant-read.ts",
+      "sha256": "5057e4e9084f6291c5e36559b86fadb00ea4b52a40151078b6006cb4912be17b",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/index.ts",
+      "sha256": "c7f3fd740b4284759998ce05fc26db0a1d962fe9ceb69237a142eb409dd6a21b",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/journey-pass-catalog.ts",
+      "sha256": "8e199f06002b371c4309a422b72c25ce3c668e109939ed4189b28192a41b88e8",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/journey-pass-development.ts",
+      "sha256": "5adcb6e43739cc21a20dadd487f63b5c11f421bd1dcd79e17de8bba391c7c35c",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/runtime-target.ts",
+      "sha256": "dd68c3306a3e8228fe4034b61169ad402f10aa81657f94963cff77a8d3df6079",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "lib/server/entitlements/storekit-sandbox.ts",
+      "sha256": "b0467b7ce8c754d626da670e30cd8fa07fce5ea4a2554d7c0f8a08606a9fb799",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "supabase/migrations/20260926113804_vpj34_storekit_grants.sql",
+      "sha256": "9c283d9228200138918b792c22d25e8c3da62cd67d48a4b3a422d6124ecdef90",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "supabase/migrations/20261003220000_vpj36_entitlement_export_source_fence.sql",
+      "sha256": "2c8ddf4420d25a4956e82f283606b64039a9dce9b0c2260ce271b148c40b3420",
+      "unchangedFromBase": true
+    }
+  ],
+  "ownedSourceFiles": [
+    {
+      "path": "lib/server/entitlements/subscription-ledger/WIRE.md",
+      "sha256": "ef9a6954aa50bc53647800c7e416fd0bb97cd822add89522d7dce78e45831dbe"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/contract.ts",
+      "sha256": "4e2b4b65d8f481b9c91e29b1eff848e71ae16b318de61f87a9cb719db721841e"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/persistence.ts",
+      "sha256": "49d3fc9ba7df7aab920bb581f45324321f0ba09769293556aaac60c44485369e"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/verification.ts",
+      "sha256": "4685b7f796d3aaa3798bc0c3c6cefe28aff480045db65fffbba6307356b467b6"
+    },
+    {
+      "path": "supabase/migrations/20261016051000_subscription_development_ledger.sql",
+      "sha256": "5c0ffe10aa2b5d183897aa45a1928db98477d301022a444a648c8eab39806b1a"
+    },
+    {
+      "path": "tests/contract/subscription-ledger/fixtures.mjs",
+      "sha256": "14602abca825b012a23e8cb62bb1d7c3344a47a48f530eb9ef0d3fb20fdcbaeb"
+    },
+    {
+      "path": "tests/contract/subscription-ledger/verification.test.mjs",
+      "sha256": "b44ec526cb138f19cd831cb26a59e08eb075398ba839077a1b651451889445be"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/postgres.test.mjs",
+      "sha256": "34483aaab4fb1888b2ca1a8a611612a187aa139a284b280d248cd2fc18cda9f9"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/selected-cases.mjs",
+      "sha256": "e4bec9acc8a683e2de37851765ffee0eea54d61b0a4502151c8cd80cd5d990db"
+    },
+    {
+      "path": "tests/security/subscription-ledger/verification.test.mjs",
+      "sha256": "78683c4350c2cf1dcc0bfe6e1ab79cd1e7e6e0ab81f8853d82ee0d049162bd2c"
+    }
+  ],
+  "migrationStatus": "NOT_APPLIED_SHARED",
+  "runtime": "DEFAULT_CLOSED",
+  "realAppleSignatureAndAPI": "UNRUN",
+  "crossLedgerBidirectionalUniqueness": "NOT_READY"
+}

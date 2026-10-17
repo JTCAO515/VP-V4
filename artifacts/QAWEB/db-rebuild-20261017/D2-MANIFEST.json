@@ -1,0 +1,23 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_AND_ADMISSION_ONLY",
+  "sourceCommit": "9d14a09a32aa4b4903706ac42321e81cd6932524",
+  "targetReady": false,
+  "targetReadsDuringD2": 0,
+  "targetWrites": 0,
+  "frozen7fUnchanged": true,
+  "finalRun": "d2-run-5b9f5d3ccdb44cc692993ca48e168bf1.json",
+  "groups": 5,
+  "cleanup": "PASS",
+  "newReadRequest": "NOT_EXECUTED",
+  "files": {
+    "D2-DELIVERY.md": "daf5008f162610177c256bbf3433ba9c5c39b5a5b2b25a01008ea78e67bfc578",
+    "D2-MINIMAL-READ-REQUEST.md": "495d63d2c2ced82d316b0ffe40332fa60984050617332c6ff97092d4dff7c0a4",
+    "d2-admission-proposal.sql": "f1d25b1daa5c7f4bf92b8821c2975a62908a7be17ea16a2e366eb4cdec9276e3",
+    "d2-compatibility.json": "71f09f884618a2b8c2365c17dd5de2d681b8a6df079967c3a9d5b06612b616d4",
+    "d2-grants-proposal.sql": "fb2d07f1cc9d1d05dfa1fade36d76163eee556daa40ed68c41bfb6a17b8f2e79",
+    "d2-impact.json": "f215f9b1d05f9111ef1ce3712e6432762e7b8e2f3e1821794cad66fbc0247e44",
+    "d2-requested-catalog.sql": "00a046ed6b161b3cb81c1cbfc2733578d234d167b69d27ea82b1090d4584a417",
+    "d2-run-5b9f5d3ccdb44cc692993ca48e168bf1.json": "69b23c90152ef1ae16c2f188eacc7e446fb507841164c64caf60fb75bfe948e5",
+    "d2-run-a1db156086d743d7bce89594569a5e1d.json": "0d3aa4e31194491fdea274b34f9608af07694960f93f9ec712d90726b41e1cba"
+  }
+}

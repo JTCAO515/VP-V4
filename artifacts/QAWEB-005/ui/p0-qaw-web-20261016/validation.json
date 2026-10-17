@@ -1,0 +1,40 @@
+{
+  "base": "5e960e6d4dd4b1050b23622a4dc6ed57653f4b57",
+  "finding": "Real qatesting signed-out bookmark /qa?locale=en&session=11111111-1111-4111-8111-111111111111 exposed Sign in href with fixed returnTo=/qa; same Session/locale lost",
+  "change": "Both QA signed-out and API401 links encode internal QA return target with only normalized locale and valid UUID Session; discard unrelated incoming query parameters",
+  "shared_dependency": {
+    "file": "lib/navigation/safe-return-to.ts",
+    "before_git_blob": "d3aef1a417296b1a04a20e6ae1aa3640aae8a017",
+    "state": "Read-only by this owner. Existing shared guard rejects QA query and defaults to /visepanda. Exact closed-query change candidate sent to sole Main writer. End-to-end login return is NOT verified by QA href-only tests."
+  },
+  "checks": {
+    "browser": "PASS 6 distinct affected cases: current-session401; signed-out1440/390; invalid Session; unavailable5031440/390",
+    "browser_run1": "4 passed; 503 case interrupted because fixture tried to select an absent Session during503; remaining case unrun",
+    "browser_run2": "2 failed due broad role=alert matching both product alert and Next route announcer; test scoped to main without product changes",
+    "browser_run3": "2 passed (both503 cases)",
+    "build": "PASS production webpack with existing synthetic local public Auth configuration",
+    "typescript": "PASS noEmit incremental false",
+    "lint": "PASS887",
+    "docs": "PASS",
+    "diff": "PASS",
+    "existing_cancellation": "8 affected browser/18 unit retained; no cancellation logic changed or rerun"
+  },
+  "live_readonly": {
+    "tool": "Official CUA in-app browser; no browsercontrol skill listed; no new plugin installed",
+    "qa_page": "PASS Agent QA title; signed-out link; invited account login form reachable; no credentials submitted",
+    "api_sessions": "503 PROVIDER_UNAVAILABLE ack:not_submitted",
+    "api_policy": "503 PROVIDER_UNAVAILABLE ack:not_submitted"
+  },
+  "unrun": [
+    "Actual bound-account login",
+    "Real provider answer",
+    "New Session persisted data",
+    "Refresh and reopen persisted real Session",
+    "Real authenticated desktop/mobile target flow",
+    "Budget/billing/worker/SQL target acceptance"
+  ],
+  "source_sha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "edf835dd5f278d25ae0e7f9b4a480a49742d7b905d0fd897f9a51ecce6cc951f",
+    "tests/e2e/qa-agent-ui/workspace.spec.mjs": "9a1192e2452a2b6d0ae84530a623eeb5671b019b6e34ffbf0f4391cd350ea58d"
+  }
+}

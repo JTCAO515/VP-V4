@@ -1,0 +1,32 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load remote build context
+#1 DONE 0.0s
+
+#2 copy /context /
+#2 DONE 0.0s
+
+#3 [internal] load metadata for public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#3 DONE 0.0s
+
+#4 [1/4] FROM public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#4 resolve public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b done
+#4 DONE 0.0s
+
+#5 [2/4] RUN printf '%s\n' https://dl-cdn.alpinelinux.org/alpine/v3.23/main > /etc/apk/repositories  && apk add --no-cache gdbm=1.26-r0 libbz2=1.0.8-r6 libexpat=2.8.5-r0 libffi=3.5.2-r0 libgcc=15.2.0-r2 libpanelw=6.5_p20251123-r0 libstdc++=15.2.0-r2 mpdecimal=4.0.1-r0 pyc=3.12.15-r0 python3=3.12.15-r0 python3-pyc=3.12.15-r0 python3-pycache-pyc0=3.12.15-r0 sqlite-libs=3.53.4-r0 xz-libs=5.8.4-r0  && mkdir -p /opt/homebrew/opt/postgresql@17 /private/tmp /opt/qaw  && ln -s /nix/var/nix/profiles/default/bin /opt/homebrew/opt/postgresql@17/bin  && ln -s /nix/var/nix/profiles/default/share /opt/homebrew/opt/postgresql@17/share  && ln -s "$(pg_config --pkglibdir)" /opt/homebrew/opt/postgresql@17/lib  && chown postgres:postgres /private/tmp  && chmod 700 /private/tmp  && apk info -v | sort > /opt/qaw/runtime-packages.txt
+#5 CACHED
+
+#6 [3/4] COPY owned-pg-diagnostic-session.py typed-pg-diagnostic-proxy.py diagnostic-window-deadline.py /opt/qaw/
+#6 DONE 0.0s
+
+#7 [4/4] COPY container-diagnostic/restore/runtime.py container-diagnostic/restore/client.py /opt/qaw/
+#7 DONE 0.0s
+
+#8 exporting to image
+#8 exporting layers 0.0s done
+#8 exporting manifest sha256:5abad441bc337ae4bd1d8348f562d8d4b453eb0ba3453b4f67b9eb3d67191723 done
+#8 exporting config sha256:b88a0c5e306aabe502e8e32f2d22391961c926b6c5dcf0738c3b57cd84c583bf done
+#8 naming to docker.io/library/qaw683-diagnostic:restore-absolute done
+#8 unpacking to docker.io/library/qaw683-diagnostic:restore-absolute 0.0s done
+#8 DONE 0.1s
+{"builtImage": "sha256:5abad441bc337ae4bd1d8348f562d8d4b453eb0ba3453b4f67b9eb3d67191723", "postgresBinaryUnchanged": true}

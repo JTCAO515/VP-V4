@@ -1,0 +1,98 @@
+[
+  {
+    "to": "anon",
+    "from": "anon",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "authenticated",
+    "from": "anon",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "postgres",
+    "from": "anon",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "service_role",
+    "from": "anon",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "anon",
+    "from": "authenticated",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "authenticated",
+    "from": "authenticated",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "postgres",
+    "from": "authenticated",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "service_role",
+    "from": "authenticated",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "anon",
+    "from": "postgres",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "authenticated",
+    "from": "postgres",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "postgres",
+    "from": "postgres",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "service_role",
+    "from": "postgres",
+    "usage": true,
+    "member": true
+  },
+  {
+    "to": "anon",
+    "from": "service_role",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "authenticated",
+    "from": "service_role",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "postgres",
+    "from": "service_role",
+    "usage": false,
+    "member": false
+  },
+  {
+    "to": "service_role",
+    "from": "service_role",
+    "usage": true,
+    "member": true
+  }
+]

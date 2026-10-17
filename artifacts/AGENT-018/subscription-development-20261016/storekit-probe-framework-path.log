@@ -1,0 +1,3 @@
+PASS: local StoreKitTest configuration loaded; storefront=USA
+PASS: product=dev.visepanda.subscription.monthly, type=autoRenewable, unit=month, value=1, group=dev.visepanda.subscription, synthetic price=0.99
+UNRUN: Sandbox transactions, renewal, refund, restoration, ledger, target UI, human acceptance

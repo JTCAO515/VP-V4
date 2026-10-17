@@ -1,0 +1,42 @@
+✔ durability fault initial-directory-sync stays stopped for a separate process, with no successor claim or send (193.8975ms)
+✔ durability fault release-directory-sync stays stopped for a separate process, with no successor claim or send (227.482ms)
+✔ durability fault terminal-file-sync stays stopped for a separate process, with no successor claim or send (208.603541ms)
+✔ durability fault unlink stays stopped for a separate process, with no successor claim or send (217.380166ms)
+✔ canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses (1118.336667ms)
+✔ actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage (1389.891167ms)
+✔ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7264.068292ms)
+✔ two original worker dispatches survive actual process restart; third has no claim/reserve/provider (178.422208ms)
+✔ concurrent worker instances and a separate process cannot overlap the same journal run (128.22775ms)
+✔ first failure or unknown ACK/usage is sticky across restart, with original pending holds (768.968542ms)
+✔ crash after durable enter retains original lock and denies a restarted worker without auto-recovery (171.01875ms)
+✔ root stop intent persists without stealing an active permit and vetoes its not-yet-sent request (108.365209ms)
+✔ expiry during authorized SQL dispatch prevents physical send and preserves pending budget (23.777541ms)
+✔ wrong actor/policy/config/source/job binding refuses construction before any RPC or send (5.755333ms)
+✔ empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending (50.838791ms)
+✔ uncontrolled original worker and an independent authorized run do not inherit another run stop (41.734666ms)
+✔ truncated journal, altered grant, and symlink refuse without provider or silent file replacement (18.454458ms)
+{"case":"control-stop-create-refusal","b":{"denied":0,"bError":null},"c":{"result":"unavailable","claims":0,"physical":0}}
+(node:5741) ExperimentalWarning: Module mocking is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5741) DeprecationWarning: mock.module(): options.namedExports is deprecated. Use options.exports instead.
+{"case":"root-stop-create-refusal","bResult":{"reason":"unavailable","polls":0,"finished":0,"unavailable":0,"skipped":0},"cResult":{"reason":"unavailable","polls":1,"finished":0,"unavailable":1,"skipped":0},"additionalClaims":0,"additionalPhysical":0}
+✔ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7295.951916ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7403.880583
+
+✔ control stop survives denied sidecar creation while A owns dispatch; new process C cannot claim/send (192.805542ms)
+✔ original hosted-root chain preserves B failure with sidecar creation denied until after A completes (7437.984542ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9874.743291

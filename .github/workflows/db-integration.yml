@@ -107,6 +107,77 @@ jobs:
           echo "VP_WIKI_PG_BIN=$bin" >> "$GITHUB_ENV"
           echo "VP_WIKI_PG_MODULE=$RUNNER_TEMP/pg-client/node_modules/pg/lib/index.js" >> "$GITHUB_ENV"
           echo "LC_ALL=C" >> "$GITHUB_ENV"
+      - name: Prepare PostgreSQL 17 for resolved-subject integration
+        if: matrix.lane == 'postgres-native-17'
+        shell: bash
+        run: |
+          set -euo pipefail
+          taskPgBin=/usr/lib/postgresql/17/bin
+          taskPgCrypto=/usr/share/postgresql/17/extension/pgcrypto.control
+          if ! { test -x "$taskPgBin/postgres" && test -x "$taskPgBin/initdb" && test -x "$taskPgBin/pg_ctl" && test -r "$taskPgCrypto" && "$taskPgBin/postgres" --version | grep -Eq '^postgres \(PostgreSQL\) 17\.'; }; then
+            # Only this disposable Ubuntu job installs major17. Never create or
+            # start a default cluster; restore temporary CI controls on any exit.
+            taskPgTemp=$(mktemp -d "$RUNNER_TEMP/agent005-pg17.XXXXXX")
+            taskPgPaths=(/usr/sbin/policy-rc.d /etc/postgresql-common/createcluster.conf /etc/apt/sources.list.d/agent005-pg17.sources /usr/share/postgresql-common/pgdg/agent005-pg17.asc)
+            taskPgOriginal=()
+            for taskPgIndex in "${!taskPgPaths[@]}"; do
+              if test -e "${taskPgPaths[$taskPgIndex]}" || test -L "${taskPgPaths[$taskPgIndex]}"; then
+                sudo cp -a "${taskPgPaths[$taskPgIndex]}" "$taskPgTemp/original-$taskPgIndex"
+                taskPgOriginal[$taskPgIndex]=1
+              else
+                taskPgOriginal[$taskPgIndex]=0
+              fi
+            done
+            taskPgRestore() {
+              taskPgStatus=$?
+              trap - EXIT
+              set +e
+              taskPgRestoreFailed=0
+              for taskPgIndex in "${!taskPgPaths[@]}"; do
+                sudo rm -f "${taskPgPaths[$taskPgIndex]}" || taskPgRestoreFailed=1
+                if test "${taskPgOriginal[$taskPgIndex]}" = 1; then
+                  sudo cp -a "$taskPgTemp/original-$taskPgIndex" "${taskPgPaths[$taskPgIndex]}" || taskPgRestoreFailed=1
+                fi
+              done
+              rm -rf -- "$taskPgTemp" || taskPgRestoreFailed=1
+              if test "$taskPgRestoreFailed" != 0; then
+                printf 'Failed to restore temporary PG17 CI controls\n' >&2
+                exit 1
+              fi
+              exit "$taskPgStatus"
+            }
+            trap taskPgRestore EXIT
+            printf '#!/bin/sh\nexit 101\n' > "$taskPgTemp/policy-rc.d"
+            printf "create_main_cluster = false\nstart_conf = 'manual'\n" > "$taskPgTemp/createcluster.conf"
+            sudo install -d /etc/postgresql-common
+            sudo rm -f "${taskPgPaths[0]}" "${taskPgPaths[1]}"
+            sudo install -m 755 "$taskPgTemp/policy-rc.d" "${taskPgPaths[0]}"
+            sudo install -m 644 "$taskPgTemp/createcluster.conf" "${taskPgPaths[1]}"
+            # Reuse an already configured official PGDG source. Otherwise use
+            # its public signing key and a dedicated temporary noble source.
+            if ! grep -RFqs 'apt.postgresql.org/pub/repos/apt' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null; then
+              taskPgCodename=$(. /etc/os-release; printf '%s' "$VERSION_CODENAME")
+              test "$taskPgCodename" = noble
+              taskPgArch=$(dpkg --print-architecture)
+              case "$taskPgArch" in amd64|arm64) ;; *) exit 1 ;; esac
+              curl --fail --silent --show-error --proto '=https' --tlsv1.2 https://www.postgresql.org/media/keys/ACCC4CF8.asc -o "$taskPgTemp/pgdg.asc"
+              sudo install -d /usr/share/postgresql-common/pgdg /etc/apt/sources.list.d
+              sudo rm -f "${taskPgPaths[2]}" "${taskPgPaths[3]}"
+              sudo install -m 644 "$taskPgTemp/pgdg.asc" "${taskPgPaths[3]}"
+              printf 'Types: deb\nURIs: https://apt.postgresql.org/pub/repos/apt\nSuites: noble-pgdg\nArchitectures: %s\nComponents: main\nSigned-By: %s\n' "$taskPgArch" "${taskPgPaths[3]}" > "$taskPgTemp/pgdg.sources"
+              sudo install -m 644 "$taskPgTemp/pgdg.sources" "${taskPgPaths[2]}"
+            fi
+            sudo apt-get update
+            sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get -o Dpkg::Options::=--force-confold install -y --no-install-recommends postgresql-17
+          fi
+          test -x "$taskPgBin/initdb" && test -x "$taskPgBin/pg_ctl" && test -r "$taskPgCrypto"
+          "$taskPgBin/postgres" --version | grep -Eq '^postgres \(PostgreSQL\) 17\.'
+          mkdir -p "$RUNNER_TEMP/pg-client-17"
+          npm install --prefix "$RUNNER_TEMP/pg-client-17" --no-save --no-package-lock --ignore-scripts "pg@$PG_CLIENT_VERSION"
+          test -r "$RUNNER_TEMP/pg-client-17/node_modules/pg/lib/index.js"
+          echo "VP_WIKI_PG_BIN=$taskPgBin" >> "$GITHUB_ENV"
+          echo "VP_WIKI_PG_MODULE=$RUNNER_TEMP/pg-client-17/node_modules/pg/lib/index.js" >> "$GITHUB_ENV"
+          echo "LC_ALL=C" >> "$GITHUB_ENV"
       - uses: supabase/setup-cli@v1
         if: startsWith(matrix.lane, 'supabase-')
         with:

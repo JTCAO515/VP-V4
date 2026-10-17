@@ -1,0 +1,13 @@
+// Explicit self-owned fixture diagnostic; no default test discovery or target connection.
+import assert from 'node:assert/strict';import {readFileSync,writeFileSync} from 'node:fs';import {createDiagnosticPg,diagnosticArtifactRoot as root} from './diagnostic-owned-pg.mjs';
+const owned=createDiagnosticPg();let c;let source;
+try{
+ source=readFileSync('supabase/migrations/20261015083120_agent005_canonical_place_ask.sql','utf8');
+ const initialized=owned.bootstrap(readFileSync('tests/integration/canonical-place-ask-sql/inspect.mjs','utf8'));assert.equal(initialized.status,0,initialized.stderr);c=await owned.connect();
+ await c.query('begin');await c.query(source);await c.query('rollback');
+ const injected=source.replace('do $guards$',"alter table turn_private.grounded_turns drop constraint grounded_selected_place_request_shape;\ndo $guards$");assert.notEqual(injected,source);
+ await c.query('begin');let message;try{await c.query(injected);assert.fail('known invalid schema must not pass');}catch(error){message=error.message;assert.match(message,/^CANONICAL_PLACE_LIFECYCLE_GUARD_MISMATCH /);}finally{await c.query('rollback');}
+ const detail=JSON.parse(message.slice(message.indexOf('{')));const names=['selected_schema','profile_schema','result_infrastructure','result_schema','turn_schema','turn_runtime','conversation_schema','export_hooks','turn_write_hooks','turn_hooks','trip_runtime'];assert.deepEqual(Object.keys(detail.guards).sort(),names.sort());assert.equal(detail.guards.selected_schema,false);assert.equal(detail.guards.trip_runtime,false);assert.ok(Object.values(detail.guards).every(v=>v===true||v===false||v===null));
+ assert.equal((await c.query("select count(*)::int n from pg_attribute where attrelid='turn_private.grounded_turns'::regclass and attname='selected_place_request' and not attisdropped")).rows[0].n,0);
+ writeFileSync(root+'/ci-diagnostic-local-safe.json',JSON.stringify({normalNativeAppendAndRollback:'PASS',knownMissingCheckStillRejected:'PASS',diagnosticContent:'guard names/booleans and server_version only',details:detail,supabaseFailureCause:'UNKNOWN pending official CI vector'},null,2)+'\n');console.log('STRICT_CONTENT_FREE_GUARD_DIAGNOSTIC_PASS',JSON.stringify(detail));
+}finally{try{await c?.end();}finally{owned.cleanup();}}

@@ -1,0 +1,6 @@
+test_complete_same_copy_strict_restore (__main__.StrictSyntheticRestore) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.691s
+
+OK

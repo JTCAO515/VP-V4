@@ -1,20 +1,25 @@
 /** Offline package binding only. No credentials, network or activation authority. */
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {parseQaHostedProfile} from '../../lib/server/qa-agent/hosted-profile.ts';
+import {parseQaHostedProfile,requireQaAcceptanceTarget} from '../../lib/server/qa-agent/hosted-profile.ts';
+import {readApprovedQaTarget} from '../../lib/server/qa-agent/target.ts';
 import {isQwenEndpoint} from '../../lib/server/model-gateway/adapters/provider-endpoints.ts';
 
-const keys=['schemaVersion','environment','databaseUrl','ownerId','policyId','scopeId','noticeHash','build','qwenEndpoint','startupState','restartPolicy'];
+const keys=['schemaVersion','environment','projectRef','databaseUrl','ownerId','policyId','scopeId','noticeHash','build','qwenEndpoint','startupState','restartPolicy'];
 const exact=(v,k)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===k.length&&k.every(x=>Object.hasOwn(v,x));
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(v);
 const hash=v=>createHash('sha256').update(v).digest('hex');
 function prepare(profile,target){
-  if(!exact(target,keys)||target.schemaVersion!=='qa-hosted-deployment-target/1'||target.environment!=='staging'
-    ||target.databaseUrl!=='https://dzqdzetcctkhbrhlxxgn.supabase.co'||!['ownerId','policyId','scopeId'].every(k=>uuid(target[k]))
+  const binding=readApprovedQaTarget(target?.projectRef);
+  if(!exact(target,keys)||target.schemaVersion!=='qa-hosted-deployment-target/2'||target.environment!=='staging'
+    ||!binding||target.databaseUrl!==binding.databaseUrl||!['ownerId','policyId','scopeId'].every(k=>uuid(target[k]))
     ||typeof target.noticeHash!=='string'||!/^[a-f0-9]{64}$/.test(target.noticeHash)
     ||typeof target.build!=='string'||!/^[a-f0-9]{12,40}$/.test(target.build)||!isQwenEndpoint(target.qwenEndpoint)
     ||target.startupState!=='disabled'||target.restartPolicy!=='no')throw Error('target');
+  if(profile?.schemaVersion!=='vpj07-hosted-text-worker/4'||profile.projectRef!==target.projectRef)throw Error('profile target');
   const checked=parseQaHostedProfile(profile);
+  requireQaAcceptanceTarget(checked,{schemaVersion:'qa-runtime-binding/1',projectRef:target.projectRef,
+    ownerId:target.ownerId,policyId:target.policyId,scopeId:target.scopeId,noticeHash:target.noticeHash},target.qwenEndpoint,target.build);
   if(/^(?:sb_secret_|sk-|token_|password_)/i.test(checked.qwen.priceVersion))throw Error('profile');
   const profileJson=JSON.stringify(checked)+'\n';
   return {profileJson,targetJson:JSON.stringify({...target,profileSha256:hash(profileJson)})+'\n'};
@@ -39,7 +44,11 @@ try{
     const {profileSha256,...selected}=target;
     const canonical=prepare(JSON.parse(profileJson),selected);
     if(profileJson!==canonical.profileJson||targetJson!==canonical.targetJson||build!==undefined&&target.build!==build)throw Error('package');
-    if(emit==='--emit'||emit==='--emit-runtime')process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
+    if(emit==='--emit'||emit==='--emit-runtime'){
+      process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
+      if(emit==='--emit-runtime')process.stdout.write('\n'+JSON.stringify({schemaVersion:'qa-runtime-binding/1',
+        projectRef:target.projectRef,ownerId:target.ownerId,policyId:target.policyId,scopeId:target.scopeId,noticeHash:target.noticeHash}));
+    }
   }
 }catch{
   console.error('QA deployment package unavailable.');process.exitCode=1;

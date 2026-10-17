@@ -1,11 +1,15 @@
 # Issue tracker: GitHub
 
+> 当前执行定义已迁至 [Agent / iOS / Web 计划](../product/VPV10-MODULAR-001/current-plan.json)。旧 issue-plan.json 的83任务、20 replacements及旧生成正文保留为历史定义/证据；旧同步命令禁止恢复旧标题正文。当前用户结果、稳定ID、依赖和批次只从新源读取。
+
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 Use [JTCAO515/VP-V4 Issues](https://github.com/JTCAO515/VP-V4/issues) through an authenticated
 GitHub tool or `gh`. Work units and checks follow [`development-workflow.md`](development-workflow.md);
 label semantics follow [`triage-labels.md`](triage-labels.md).
 
-- VPJ-00 #187 is the active product program. `issue-plan.json` owns task identities, scope,
-  acceptance and dependencies; live GitHub and environment observations establish execution state.
+- VPJ-00 #187 is the active product program. `docs/product/VPV10-MODULAR-001/current-plan.json` owns current task identities, scope,
+  acceptance and dependencies; legacy `issue-plan.json` retains the original VPJ definitions; live GitHub and environment observations establish execution state.
 - Product Issues use their VPJ rows. Explicit maintenance uses a compact goal/scope/checks/
   acceptance/rollback brief — never a second program for a small fix.
 - Use `Related to` on partial PRs and keep the unverified checklist. An available interface may
@@ -19,9 +23,13 @@ label semantics follow [`triage-labels.md`](triage-labels.md).
 `UNAUTHENTICATED`, `SAFETY_BLOCKED` and `DATA_POLICY_BLOCKED` are runtime refusals, not permission
 to use a guest actor, a service credential or a bypass.
 
-## 生成正文与同步
+## 当前生成与同步
 
-Full VPJ bodies are generated from `issue-plan.json`. The compact body keeps the user result,
+`node scripts/vpj-program.mjs render-current` 只生成当前三工程正文、总览和索引。`render` 有 current plan 时路由同一当前生成器；旧 publish/sync-bodies/sync-selected/close-old 命令拒绝远端修改，不能把新编号恢复为旧 VPJ。当前迁移逐项比对 live before/after 后发布，真实状态及读回保留在专项证据。
+
+## 历史 VPJ 生成约定（非当前同步入口）
+
+Full VPJ bodies are generated from `issue-plan.json`. For VPV10-MODULAR-001 migrated open Issues, `modularDirection` binds the reviewed mapping and full retained body snapshot; definition changes require an explicit snapshot refresh. Existing preflight still preserves checked progress and append-only evidence, and rejects unknown drift. The compact body keeps the user result,
 complete acceptance, blockers and task-specific red lines; the linked execution row owns scope,
 commands, evidence, external prerequisites and rollback. GitHub delivery milestones mirror
 `deliveryStage` in the same manifest.

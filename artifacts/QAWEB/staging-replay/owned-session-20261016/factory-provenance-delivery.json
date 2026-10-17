@@ -1,0 +1,25 @@
+{
+  "task": "683",
+  "base": "568060aab844665737f62a5169e417d9bff13031",
+  "status": "P2_FACTORY_PROVENANCE_FIXED_SYNTHETIC_ONLY",
+  "sourceSha256": {
+    "owned-pg-diagnostic-session.py": "554f2c932ddd8f6406a869fda08e01bd497a09966dbbfc04754665bf0f91474c",
+    "test-owned-pg-diagnostic-session.py": "5fb21394a1568dd1854febe69b0b407f645912f26ac59429d783d637cc0272b9"
+  },
+  "redEvidence": "Before fix: fake handle construction cleanup recorded SIGQUIT; assertion failed. No real foreign process or signal used.",
+  "finalTests": {
+    "log": "factory-provenance-tests-03.log",
+    "count": 15,
+    "result": "PASS",
+    "durationSeconds": 9.731,
+    "coverage": "Original 10 physical cases plus 5 provenance cases; normal cancel, resistant fallback, startup-failure cleanup, wrong process/identity/method, forged/subclass refusals. Final fixture teardown assertions PASS."
+  },
+  "history": "factory-provenance-tests-01.log retains two initial failures: test tracking --version as startup; Python3.9 detached TemporaryDirectory cleanup. Both corrected; initial failed run retained a stopped fixture directory, not claimed globally cleaned. 02 and final03 pass. Old logs unchanged.",
+  "implementation": "Independent weak registry pins exact factory class, original locally captured Popen, lifecycle lock, resource tuple and serialized identity. Single signal helper reads registered original child and performs nonvirtual verification; rejects unregistered, subclasses, process/resource/identity replacement and instance method overrides. Session/proxy require receipt. Construction cleanup uses same signal helper, with startup nonce/PID checks before identity exists.",
+  "limit": "Public capability contract only, not a sandbox against arbitrary Python module mutation. Container/shared core integration UNRUN; actual incident root cause UNKNOWN. No real archive/key/restore/capture/window/third attempt/E/provider/Prod actions.",
+  "model": {
+    "requested": "gpt-6-astra/medium",
+    "effective": "UNKNOWN"
+  },
+  "sharedCore": "Unchanged; original design-seam-and-next-scope.md remains proposal only."
+}

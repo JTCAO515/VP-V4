@@ -10,6 +10,28 @@ final class NativeAskStore {
     private(set) var notice: String?
     private(set) var scope: NativeDataScope?
     private(set) var pending: NativeTextSubmission?
+    private var canonicalAdoptedGeneration: UUID?
+    private var canonicalAdoptedIntent: Intent?
+    private var canonicalAdoptedNotice: String?
+    private var canonicalSceneActive = false
+    private var canonicalReadEpoch = UUID()
+    private let canonicalUptime: () -> TimeInterval
+    private var canonicalSelectedDeadlines: [String: TimeInterval] = [:]
+    private(set) var canonicalSelectedTurnIDs: Set<String> = []
+    private(set) var canonicalSelectedProofs: [String: NativeCanonicalPlaceHistoryProof] = [:]
+    private(set) var canonicalSelectedReadUnavailable = false
+    var hasCanonicalSelectedResults: Bool { !canonicalSelectedTurnIDs.isEmpty }
+    func canonicalSelectedCurrent(_ turnID: String, scope current: NativeDataScope?) -> Bool {
+        current != nil && current == scope && canonicalSceneActive
+            && turns.first(where: { $0.id == turnID })?.result?.projection == "current"
+            && (canonicalSelectedDeadlines[turnID].map { canonicalUptime() < $0 } ?? false)
+    }
+    func hasCurrentCanonicalSelected(scope current: NativeDataScope?) -> Bool {
+        canonicalSelectedTurnIDs.contains { canonicalSelectedCurrent($0, scope: current) }
+    }
+    var canonicalSelectedRefreshDelay: TimeInterval {
+        max(1, (canonicalSelectedDeadlines.values.min() ?? canonicalUptime() + 30) - canonicalUptime() - 5)
+    }
     var draft = ""
     var city = "shanghai"
     private var groundedDeadline: TimeInterval = 0
@@ -30,6 +52,7 @@ final class NativeAskStore {
     private var aiAssistTokens: [String: UUID] = [:]
     let mode: NativeAskMode
     private var base: String { mode.base }
+    private var policyResponseVersion: Int { mode == .serviceTask ? 1 : mode.version }
     enum Intent: Equatable {
         case restoring, newGoal, awaiting(String), continuation(NativeTextTurn), blocked
     }
@@ -37,8 +60,8 @@ final class NativeAskStore {
     private var boundNotice: String?
     private var pendingNotice: String?
     private var pendingAcknowledged = false
-    init(mode: NativeAskMode = .currentInput) {
-        self.mode = mode
+    init(mode: NativeAskMode = .currentInput, canonicalUptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
+        self.mode = mode; self.canonicalUptime = canonicalUptime
         intent = mode.usesTask ? .restoring : .newGoal
     }
     var noticeIdentity: String? {
@@ -57,7 +80,7 @@ final class NativeAskStore {
         guard hasObsoletePending, let pending else { return }
         await perform(session) { current in
             let reply: NativeTextAction = try await self.call(session, current, suffix: "/consent", method: "DELETE", body: ["policyId": pending.policyId])
-            guard reply.version == self.mode.version, reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
+            guard reply.version == self.policyResponseVersion, reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
             try session.clearPendingAsk(matching: pending)
             self.pending = nil; self.pendingNotice = nil; self.pendingAcknowledged = false; self.draft = ""; self.intent = .blocked
             try await self.load(session, current)
@@ -96,6 +119,9 @@ final class NativeAskStore {
 
     func reset(for next: NativeDataScope?) {
         guard scope != next else { return }
+        canonicalAdoptedIntent = nil; canonicalAdoptedNotice = nil
+        canonicalSelectedDeadlines = [:]; canonicalSelectedTurnIDs = []; canonicalSelectedProofs = [:]; canonicalSelectedReadUnavailable = false
+        canonicalReadEpoch = UUID()
         intent = mode.usesTask ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
         groundedDeadline = 0
         eventRead = nil; eventCursors = [:]
@@ -106,6 +132,7 @@ final class NativeAskStore {
     /// Hide read results and invalidate in-flight operations without discarding
     /// a same-account unsent draft during temporary authentication loss.
     func suspendReads() {
+        canonicalSelectedDeadlines = [:]
         groundedDeadline = 0
         eventRead = nil
         aiAssist = [:]; aiAssistTokens = [:]
@@ -116,6 +143,7 @@ final class NativeAskStore {
     func applyTurnErasure(_ erased: NativeTurnDataErasure) {
         guard scope == erased.scope else { return }
         readGeneration = UUID()
+        canonicalSelectedDeadlines = [:]
         turns.removeAll { erased.turnIDs.contains($0.turnId) }
         if let eventTurnID, erased.turnIDs.contains(eventTurnID) { eventRead = nil; self.eventTurnID = nil }
         for id in erased.turnIDs { aiAssist[id] = nil; aiAssistTokens[id] = nil; eventCursors[id] = nil }
@@ -128,6 +156,7 @@ final class NativeAskStore {
         // An empty visible cache can still have an old history request in flight.
         // Invalidate that read without invalidating an unrelated send's bytes.
         readGeneration = UUID()
+        canonicalSelectedDeadlines = [:]
         let pendingAffected = pending.map { erased.turnIDs.contains($0.turnId) || erased.threadIDs.contains($0.threadId) } == true
         let visibleAffected = turns.contains { erased.turnIDs.contains($0.turnId) || erased.threadIDs.contains($0.threadId) }
         let intentAffected: Bool
@@ -260,7 +289,7 @@ final class NativeAskStore {
         await perform(session) { current in
             guard self.policy == reviewed else { throw NativeDataError.staleSessionResponse }
             let reply: NativeTextAction = try await self.call(session, current, suffix: "/consent", method: "POST", body: ["policyId": reviewed.id, "noticeHash": reviewed.noticeHash])
-            guard reply.version == self.mode.version && reply.kind == "accepted" else { throw NativeDataError.invalidResponse }
+            guard reply.version == self.policyResponseVersion && reply.kind == "accepted" else { throw NativeDataError.invalidResponse }
             try await self.load(session, current)
         }
     }
@@ -270,7 +299,7 @@ final class NativeAskStore {
         await perform(session) { current in
             guard self.policy == policy else { throw NativeDataError.staleSessionResponse }
             let reply: NativeTextAction = try await self.call(session, current, suffix: "/consent", method: "DELETE", body: ["policyId": policy.id])
-            guard reply.version == self.mode.version && reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
+            guard reply.version == self.policyResponseVersion && reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
             self.turns = []; self.draft = ""; self.intent = .restoring
             if let pending = self.pending, pending.policyId == policy.id {
                 try session.clearPendingAsk(matching: pending)
@@ -280,10 +309,71 @@ final class NativeAskStore {
         }
     }
 
+    func canonicalSceneChanged(active: Bool) {
+        canonicalReadEpoch = UUID()
+        canonicalSceneActive = active
+        if !active { canonicalAdoptedIntent = nil; canonicalAdoptedNotice = nil; canonicalSelectedDeadlines = [:] }
+    }
+    func invalidateCanonicalAdoption() { canonicalAdoptedIntent = nil; canonicalAdoptedNotice = nil }
+    func canonicalRecheckFailed() { invalidateCanonicalAdoption(); notice = "CANONICAL_PLACE_RECHECK_REQUIRED" }
+    func adoptCanonicalPlaceAsk(navigationID: UUID, locale: String, session: NativeSession) {
+        guard canonicalSceneActive, mode == .serviceTask, scope == session.dataScope,
+              !busy, pending == nil, !session.canonicalPlaceAskRecoveryRequired,
+              policy?.consentState == .accepted, permitsSubmission else { notice = "CANONICAL_PLACE_UNSUPPORTED"; return }
+        do {
+            try session.adoptCanonicalPlaceAsk(navigationID: navigationID, locale: locale)
+            canonicalAdoptedIntent = intent; canonicalAdoptedNotice = noticeIdentity; canonicalAdoptedGeneration = session.canonicalPlaceAskReferenceGeneration; notice = nil
+        } catch { notice = "CANONICAL_PLACE_RECHECK_REQUIRED" }
+    }
+    func recoverCanonicalPlaceAsk(using session: NativeSession) async {
+        guard canonicalSceneActive, let retained = session.canonicalPlaceAskPending,
+              retained.scope == session.dataScope, retained.scopeKind == "thread", mode == .serviceTask else { notice = "CANONICAL_PLACE_RECOVERY_REQUIRED"; return }
+        await perform(session) { current in
+            do {
+                let bytes = try await session.readCanonicalPlaceAskReceipt(retained)
+                try self.ensure(session, current)
+                guard self.canonicalSceneActive else { self.notice = "CANONICAL_PLACE_RECOVERY_REQUIRED"; return }
+                try await self.acceptCanonicalPlaceAsk(bytes, retained: retained, session: session, current: current)
+            } catch { self.notice = "CANONICAL_PLACE_RECOVERY_REQUIRED" }
+        }
+    }
+    private func acceptCanonicalPlaceAsk(_ bytes: Data, retained: NativeCanonicalPlaceAskPending,
+                                         session: NativeSession, current: Context) async throws {
+        switch try NativeCanonicalPlaceAskResponse.decode(bytes, pending: retained, expectedDigest: retained.requestDigest) {
+        case .accepted(let originalReceipt, let turn):
+            let original = try JSONDecoder().decode(NativeTextSubmission.self, from: retained.submission)
+            let accepted = try JSONDecoder().decode(NativeTextAccepted.self, from: originalReceipt)
+            guard accepted.matches(original, version: mode.version) else { throw NativeDataError.invalidResponse }
+            let observer = session.journalDataObservation(.ask), ticket = observer.begin()
+            try session.acknowledgeCanonicalPlaceAsk(retained, receipt: bytes)
+            observer.finish(ticket, retained.operationID)
+            canonicalAdoptedIntent = nil; canonicalAdoptedNotice = nil
+            intent = .awaiting(turn)
+            if draft == original.text { draft = "" }
+            try await load(session, current)
+        case .unknown: notice = "CANONICAL_PLACE_RECOVERY_REQUIRED"
+        case .notSubmitted: notice = "CANONICAL_PLACE_NOT_SUBMITTED"
+        case .unavailable(let reason): notice = "CANONICAL_PLACE_" + reason
+        }
+    }
+
     func send(locale: String, using session: NativeSession) async {
         guard canSend, let policy else { return }
+        guard session.canonicalPlaceAskNavigation == nil else { notice = "CANONICAL_PLACE_RECHECK_REQUIRED"; return }
+        guard !session.canonicalPlaceAskRecoveryRequired else { notice = "CANONICAL_PLACE_RECOVERY_REQUIRED"; return }
         await perform(session) { current in
             guard self.policy == policy else { throw NativeDataError.staleSessionResponse }
+            let capture = session.canonicalPlaceAskSelection
+            if self.mode == .serviceTask, capture == nil, case .continuation(let parent) = self.intent,
+               parent.result != nil || self.canonicalSelectedTurnIDs.contains(parent.id) {
+                self.notice = "CANONICAL_PLACE_RECHECK_REQUIRED"; return // Never continue a selected Task through an untyped legacy submission.
+            }
+            if let capture {
+                guard self.mode == .serviceTask, self.pending == nil, self.canonicalSceneActive,
+                      self.canonicalAdoptedIntent == self.intent, self.canonicalAdoptedNotice == self.noticeIdentity,
+                      self.canonicalAdoptedGeneration == session.canonicalPlaceAskReferenceGeneration,
+                      capture.current(scope: current.scope, locale: locale) else { self.notice = "CANONICAL_PLACE_RECHECK_REQUIRED"; return }
+            }
             if self.pending == nil {
                 var request = NativeTextSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(), idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id, locale: locale, text: self.draft)
                 if self.mode.usesTask {
@@ -302,6 +392,24 @@ final class NativeAskStore {
                     if case .continuation(let parent) = self.intent { request.city = parent.result?.city }
                     else { request.city = self.city }
                     guard request.city.map(NativeKnowledgeSelection.cities.contains) == true else { throw NativeDataError.invalidResponse }
+                }
+                if let capture {
+                    let retained = try NativeCanonicalPlaceAskPending(originalTask: request, capture: capture)
+                    try session.retainCanonicalPlaceAsk(retained, policy: policy)
+                    do {
+                        let adoptedIntent = self.canonicalAdoptedIntent, adoptedNotice = self.canonicalAdoptedNotice
+                        let generation = self.canonicalAdoptedGeneration
+                        let bytes = try await session.canonicalPlaceAskRequest(retained, beforeSend: {
+                            self.canonicalSceneActive && self.operation == current.token && self.scope == current.scope
+                                && self.canonicalAdoptedIntent == adoptedIntent && self.intent == adoptedIntent
+                                && self.canonicalAdoptedNotice == adoptedNotice && self.noticeIdentity == adoptedNotice
+                                && session.canonicalPlaceAskReferenceGeneration == generation
+                        })
+                        try self.ensure(session, current)
+                        guard self.canonicalSceneActive else { self.notice = "CANONICAL_PLACE_RECOVERY_REQUIRED"; return }
+                        try await self.acceptCanonicalPlaceAsk(bytes, retained: retained, session: session, current: current)
+                    } catch { self.notice = "CANONICAL_PLACE_RECOVERY_REQUIRED" }
+                    return
                 }
                 let retained = try session.retainPendingAsk(request, policy: policy, mode: self.mode)
                 self.pendingNotice = retained.noticeIdentity
@@ -338,9 +446,18 @@ final class NativeAskStore {
     private func load(_ session: NativeSession, _ current: Context) async throws {
         let generation = readGeneration
         let policy: NativeTextPolicyReply = try await call(session, current, suffix: "/policy", method: "GET")
-        guard policy.version == mode.version && policy.kind == "policy" && policy.policy.valid else { throw NativeDataError.invalidResponse }
+        guard policy.version == policyResponseVersion && policy.kind == "policy" && policy.policy.valid else { throw NativeDataError.invalidResponse }
         let started = ProcessInfo.processInfo.systemUptime
-        let history: NativeTextHistory = try await call(session, current, suffix: "/turns", method: "GET")
+        let selectedStarted = canonicalUptime(), selectedEpoch = canonicalReadEpoch
+        var selectedRows: [NativeCanonicalPlaceHistoryRow] = []
+        let history: NativeTextHistory
+        if mode == .serviceTask {
+            let selected: NativeCanonicalPlaceHistory = try await call(session, current, suffix: "/turns", method: "GET")
+            history = .init(version: selected.version, kind: selected.kind, turns: selected.turns.map(\.turn))
+            selectedRows = selected.turns
+        } else {
+            history = try await call(session, current, suffix: "/turns", method: "GET")
+        }
         guard readGeneration == generation else { throw NativeDataError.staleSessionResponse }
         guard history.version == mode.version && history.kind == (mode == .grounded ? "grounded_history" : "history") && history.turns.count <= 20
             && history.turns.allSatisfy(\.valid) && Set(history.turns.map(\.id)).count == history.turns.count else { throw NativeDataError.invalidResponse }
@@ -351,6 +468,10 @@ final class NativeAskStore {
         boundNotice = identity
         if changed { draft = ""; intent = .blocked }
         if policy.policy.consentState != .accepted {
+            if mode == .serviceTask {
+                canonicalSelectedReadUnavailable = !canonicalSelectedTurnIDs.isEmpty
+                canonicalSelectedDeadlines = [:]; canonicalSelectedTurnIDs = []; canonicalSelectedProofs = [:]
+            }
             // Consent screens also need a bounded refresh interval. A zero deadline
             // otherwise polls every second and races the user's acceptance tap.
             if mode == .grounded { groundedDeadline = ProcessInfo.processInfo.systemUptime + max(1, 30 - (ProcessInfo.processInfo.systemUptime - started)) }
@@ -373,6 +494,18 @@ final class NativeAskStore {
                 lifetime = min(lifetime, try result.lifetime(for: turn, elapsed: elapsed))
             }
             groundedDeadline = ProcessInfo.processInfo.systemUptime + lifetime
+        } else if mode == .serviceTask {
+            var deadlines: [String: TimeInterval] = [:]
+            for row in selectedRows where row.selected && canonicalSceneActive && canonicalReadEpoch == selectedEpoch {
+                // Invalid/unavailable selected projections never fall back to plain output.
+                if let lifetime = try? row.lifetime(elapsed: canonicalUptime() - selectedStarted) {
+                    deadlines[row.turn.id] = canonicalUptime() + lifetime
+                }
+            }
+            canonicalSelectedReadUnavailable = !canonicalSelectedTurnIDs.isEmpty && selectedRows.isEmpty
+            canonicalSelectedDeadlines = deadlines
+            canonicalSelectedTurnIDs = Set(selectedRows.filter(\.selected).map { $0.turn.id })
+            canonicalSelectedProofs = Dictionary(uniqueKeysWithValues: selectedRows.compactMap { row in row.proof.map { (row.turn.id, $0) } })
         } else if history.turns.contains(where: { $0.result != nil }) { throw NativeDataError.invalidResponse }
         turns = history.turns
         if let pending {
@@ -396,6 +529,7 @@ final class NativeAskStore {
 
     private func reconcileIntent(changed: Bool) {
         guard mode.usesTask else { return }
+        if mode == .serviceTask && canonicalSelectedReadUnavailable { intent = .blocked; return } // Missing current projection never silently births another Goal/Task.
         // A deliberate new question is not replaced by a late result from an old task.
         if intent == .newGoal || changed { return }
         let latest: NativeTextTurn?
@@ -417,7 +551,9 @@ final class NativeAskStore {
     }
 
     private func call<T: Decodable>(_ session: NativeSession, _ current: Context, suffix: String, method: String, body: [String: String]? = nil) async throws -> T {
-        let data = try await session.askRequest(path: base + suffix, method: method, body: body.map { try JSONEncoder().encode($0) })
+        let policyPath = mode == .serviceTask && ["/policy", "/consent"].contains(suffix)
+        let path = (policyPath ? "api/chat/native/v1" : base) + suffix
+        let data = try await session.askRequest(path: path, method: method, body: body.map { try JSONEncoder().encode($0) })
         try ensure(session, current)
         return try JSONDecoder().decode(T.self, from: data)
     }
@@ -444,6 +580,8 @@ final class NativeAskStore {
             guard !Task.isCancelled else { return }
             // Hide previously returned bodies after any failed policy/session refresh.
             groundedDeadline = 0
+            canonicalSelectedReadUnavailable = !canonicalSelectedTurnIDs.isEmpty
+            canonicalSelectedDeadlines = [:]; canonicalSelectedTurnIDs = []; canonicalSelectedProofs = [:]
             policy = nil; turns = []
             if case NativeDataError.server(let code) = error { notice = code } else { notice = "retry" }
         }

@@ -1,0 +1,27 @@
+{
+  "url": "http://127.0.0.1:3181/qa/demo",
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "result": "PASS",
+      "interaction": "keyboard preset, switch, simplify, unknown, correction, reset, four tabs, limit, refresh",
+      "unexpectedRequests": [],
+      "consoleErrors": [],
+      "boundaryAttempts": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "result": "PASS",
+      "interaction": "keyboard preset, switch, simplify, unknown, correction, reset, four tabs, limit, refresh",
+      "unexpectedRequests": [],
+      "consoleErrors": [],
+      "boundaryAttempts": []
+    }
+  ]
+}

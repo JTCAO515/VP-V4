@@ -1,0 +1,76 @@
+{
+  "mode": "candidate_read_only",
+  "sourceSha": "7d0c5128857e859720452d8a9f864fd8b20c8388",
+  "sourceBranch": "codex/qaw005-independent-target-20261013",
+  "remoteSha": null,
+  "remoteExactMatch": false,
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "approvedTarget": {
+    "kind": "explicit-shared",
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
+    "databaseUrl": "https://dzqdzetcctkhbrhlxxgn.supabase.co"
+  },
+  "effectiveQaEnvironmentNames": [],
+  "sourceSha256": {
+    "docs/contracts/qa-independent-target.md": "5f8816fe6439a95b868afc3e164fd0728c387dca8061616b1380aa87f334501a",
+    "lib/server/qa-agent/target.ts": "4bd3d303a2d91881e41d19cfc44e04cd49ff8475fb418a540f5fe062a6756cf6",
+    "lib/server/qa-agent/config.ts": "5a6edf5eb8f488b3edf7dcbe57fa3690aef5331679a9b5968c0dc21f1968e5c9",
+    "lib/server/qa-agent/hosted-profile.ts": "70958ae30f8dc17fa8bf21a20fdda45e7167e6d8e83e909732ec41667b1903f5",
+    "deploy/hosted-worker/validate-qa-target.mjs": "e4e45e84022ca735f99cf573f2642940f62c6bf86582c600dcb32d141a01b1a0",
+    "lib/server/qa-agent/worker.ts": "c34785aa897de3a36d315644b969c159ee447dbb8cdbdc43b7cbd0cd33287a4e"
+  },
+  "nonsecretPreviewConfigCandidate": [
+    {
+      "key": "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+      "value": "dzqdzetcctkhbrhlxxgn",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "value": "https://qatesting.go2china.space",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    }
+  ],
+  "publicUrlRequiredBeforeRuntime": "NEXT_PUBLIC_SUPABASE_URL must exactly equal the approved target URL; key values are not read/copied",
+  "sourceContractVersions": {
+    "hostedProfile": "vpj07-hosted-text-worker/4",
+    "targetPackage": "qa-hosted-deployment-target/2"
+  },
+  "previewRequest": {
+    "name": "vp-v4",
+    "project": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "gitSource": {
+      "type": "github",
+      "org": "JTCAO515",
+      "repo": "VP-V4",
+      "ref": "codex/qaw005-independent-target-20261013",
+      "sha": "7d0c5128857e859720452d8a9f864fd8b20c8388"
+    },
+    "withLatestCommit": false
+  },
+  "currentDomain": {
+    "name": "qatesting.go2china.space",
+    "gitBranch": "codex/qaw005-main-20261013"
+  },
+  "domainPatchCandidate": {
+    "name": "qatesting.go2china.space",
+    "gitBranch": "codex/qaw005-independent-target-20261013"
+  },
+  "domainChangeRequired": true,
+  "domainChangeAllowedByThisTool": false,
+  "cutoverGate": "Main exact-head review and required CI PASS must be provided before changing the live QA domain; preparation is not that evidence",
+  "flagsOrBudgetEnabledByThisTool": false,
+  "credentialsReadOrCopied": false,
+  "runtimeAuthSessionProviderAndBudget": "UNRUN",
+  "authorityBoundary": "Shared target approval and database capture/rehearsal A-D plus conditional E do not authorize model spend or runtime activation",
+  "resourceMutations": 0
+}

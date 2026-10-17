@@ -86,7 +86,7 @@ else
     (( bytes >= 2 && bytes <= 4096 )) || fail 'QA target size is invalid'
     # Read only the nonsecret build selector before the full canonical check.
     # preflight has no build argument; start must still match the target build.
-    qa_build=$(python3 - "$target_file" <<'PYBUILD'
+    qa_selection=$(python3 - "$target_file" <<'PYBUILD'
 import json, re, sys
 try:
     def pairs(items):
@@ -97,14 +97,19 @@ try:
             result[key] = value
         return result
     with open(sys.argv[1], encoding="utf-8") as source:
-        build = json.load(source, object_pairs_hook=pairs)["build"]
+        target = json.load(source, object_pairs_hook=pairs)
+    build, project_ref = target["build"], target["projectRef"]
+    if not isinstance(project_ref, str) or not re.fullmatch(r"[a-z0-9]{20}", project_ref) or project_ref != "dzqdzetcctkhbrhlxxgn":
+        raise ValueError()
     if not isinstance(build, str) or not re.fullmatch(r"[0-9a-f]{12,40}", build):
         raise ValueError()
-    print(build)
+    print(build + "\n" + project_ref)
 except (OSError, ValueError, TypeError, KeyError):
     sys.exit(1)
 PYBUILD
     ) || fail 'QA target build is unavailable'
+    qa_build=${qa_selection%%$'\n'*}
+    qa_project_ref=${qa_selection#*$'\n'}
     [[ $action != start || $qa_build == "$2" ]] || fail 'QA target build does not match start'
     # Resolve once: both validation and worker creation consume this same local
     # immutable image ID. Never pull a tag or execute a host-supplied validator.
@@ -122,8 +127,12 @@ PYBUILD
       /qa/profile.json /qa/target.json "$qa_build" --emit-runtime) || fail 'QA package is unavailable'
     if [[ $action == start ]]; then
       profile_json=${validated%%$'\n'*}
-      endpoint=${validated#*$'\n'}
-      extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint")
+      qa_runtime=${validated#*$'\n'}
+      [[ $qa_runtime == *$'\n'* ]] || fail 'QA runtime binding is unavailable'
+      endpoint=${qa_runtime%%$'\n'*}
+      qa_binding=${qa_runtime#*$'\n'}
+      [[ -n $qa_binding && $qa_binding != *$'\n'* ]] || fail 'QA runtime binding is unavailable'
+      extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint" --env "VISEPANDA_QA_SUPABASE_PROJECT_REF=$qa_project_ref" --env "VISEPANDA_QA_RUNTIME_BINDING=$qa_binding")
     fi
   else
     profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'

@@ -1,0 +1,302 @@
+[
+  {
+    "version": "20260824101500",
+    "name": "v4_baseline"
+  },
+  {
+    "version": "20260824104424",
+    "name": "plat_conf_connection_probes"
+  },
+  {
+    "version": "20260824104547",
+    "name": "plat_conf_ops_probe"
+  },
+  {
+    "version": "20260824105759",
+    "name": "plat_conf_worker_probe_grant"
+  },
+  {
+    "version": "20260825052328",
+    "name": "ai14_actor_rls_fault_probes"
+  },
+  {
+    "version": "20260825153534",
+    "name": "ai14_reviewer_separation_probe"
+  },
+  {
+    "version": "20260825153613",
+    "name": "ai14_reviewer_select_probe"
+  },
+  {
+    "version": "20260825160314",
+    "name": "ai10_durable_trip_proposals"
+  },
+  {
+    "version": "20260825160458",
+    "name": "ai10_confirm_outcomes"
+  },
+  {
+    "version": "20260825161535",
+    "name": "ai10_confirm_fault_triggers"
+  },
+  {
+    "version": "20260827030717",
+    "name": "ai13b_proposal_revision_lineage"
+  },
+  {
+    "version": "20260828153000",
+    "name": "v4_08_durable_chat_threads"
+  },
+  {
+    "version": "20260828160000",
+    "name": "v4_09_chat_feedback"
+  },
+  {
+    "version": "20260828170000",
+    "name": "v4_10_trip_version_snapshots"
+  },
+  {
+    "version": "20260828180000",
+    "name": "v4_11_trip_place_references"
+  },
+  {
+    "version": "20260828190000",
+    "name": "v4_12_trip_action_references"
+  },
+  {
+    "version": "20260828193000",
+    "name": "v4_13_memory_profile"
+  },
+  {
+    "version": "20260828194000",
+    "name": "v4_15_memory_consumer_receipts"
+  },
+  {
+    "version": "20260828200000",
+    "name": "v4_16_user_profiles"
+  },
+  {
+    "version": "20260828210000",
+    "name": "v4_17_privacy_lifecycle"
+  },
+  {
+    "version": "20260829191000",
+    "name": "v4_14_server_minted_memory_consent"
+  },
+  {
+    "version": "20260830100000",
+    "name": "launch_03_trip_content_snapshots"
+  },
+  {
+    "version": "20260830210000",
+    "name": "launch_11_trip_proposal_patch"
+  },
+  {
+    "version": "20260830211000",
+    "name": "launch_11_trip_proposal_patch_revision"
+  },
+  {
+    "version": "20260909033302",
+    "name": "vpj_02_repair_local_rpc_runtime"
+  },
+  {
+    "version": "20260909184816",
+    "name": "vpj_59_durable_model_budget"
+  },
+  {
+    "version": "20260909223841",
+    "name": "vpj_04_native_mobile_sessions"
+  },
+  {
+    "version": "20260910002858",
+    "name": "vpj_05_confirm_intent_authority"
+  },
+  {
+    "version": "20260910163426",
+    "name": "vpj_07_durable_turn_work"
+  },
+  {
+    "version": "20260910171836",
+    "name": "vpj_07_text_authorization"
+  },
+  {
+    "version": "20260910174748",
+    "name": "vpj_07_native_text_consumer"
+  },
+  {
+    "version": "20260910190526",
+    "name": "vpj_59_stop_model_budget"
+  },
+  {
+    "version": "20260910190658",
+    "name": "vpj_37_ops_scope_read_model"
+  },
+  {
+    "version": "20260910200522",
+    "name": "vpj_14_ops_candidate_review"
+  },
+  {
+    "version": "20260910213151",
+    "name": "vpj_15_private_source_assertion"
+  },
+  {
+    "version": "20260911072414",
+    "name": "vpj_07_scoped_text_claim"
+  },
+  {
+    "version": "20260911200339",
+    "name": "vpj_07_service_task_records"
+  },
+  {
+    "version": "20260911205200",
+    "name": "vpj_07_task_context"
+  },
+  {
+    "version": "20260912042452",
+    "name": "vpj_15_knowledge_publication"
+  },
+  {
+    "version": "20260912183000",
+    "name": "vpj_16_reviewed_question"
+  },
+  {
+    "version": "20260912190000",
+    "name": "vpj_16_grounded_turn"
+  },
+  {
+    "version": "20260913080000",
+    "name": "vpj_08_grounded_events"
+  },
+  {
+    "version": "20260913090000",
+    "name": "vpj_16_payment_questions"
+  },
+  {
+    "version": "20260913100000",
+    "name": "vpj_16_connectivity_questions"
+  },
+  {
+    "version": "20260913145239",
+    "name": "vpj_16_cancelled_work_projection"
+  },
+  {
+    "version": "20260914001000",
+    "name": "vpj_16_unanswered_needs"
+  },
+  {
+    "version": "20260914040000",
+    "name": "vpj_16_place_statements"
+  },
+  {
+    "version": "20260914041000",
+    "name": "vpj_16_place_questions"
+  },
+  {
+    "version": "20260914080000",
+    "name": "vpj_74_ontology_provenance"
+  },
+  {
+    "version": "20260914090000",
+    "name": "vpj_74_lineage_tracking"
+  },
+  {
+    "version": "20260914100000",
+    "name": "vpj_19_363_place_identity"
+  },
+  {
+    "version": "20260914110000",
+    "name": "vpj_75_359_wiki_schema"
+  },
+  {
+    "version": "20260914120000",
+    "name": "vpj_75_359_wiki_dispatcher"
+  },
+  {
+    "version": "20260914130000",
+    "name": "vpj_75_wiki_draft_content"
+  },
+  {
+    "version": "20260914140000",
+    "name": "vpj_75_wiki_statement_review"
+  },
+  {
+    "version": "20260914150000",
+    "name": "vpj_75_wiki_statement_proposals"
+  },
+  {
+    "version": "20260915180000",
+    "name": "vpj_75_wiki_job_reclaim"
+  },
+  {
+    "version": "20260915190000",
+    "name": "vpj_76_360_grounded_ai_assist_context"
+  },
+  {
+    "version": "20260915200000",
+    "name": "vpj_76_360_grounded_ai_assist_jobs"
+  },
+  {
+    "version": "20260916120000",
+    "name": "vpj_75_359_wiki_source_withdrawal"
+  },
+  {
+    "version": "20260917062305",
+    "name": "revoke_unreviewed_mobile_guard_rpc_acl"
+  },
+  {
+    "version": "20260917064821",
+    "name": "vpj_04_reapply_mobile_guard_start_chat"
+  },
+  {
+    "version": "20260917100000",
+    "name": "vpj_75_359_wiki_read_withdrawal_status"
+  },
+  {
+    "version": "20260917110000",
+    "name": "vpj_75_359_wiki_withdrawal_scan"
+  },
+  {
+    "version": "20260917131633",
+    "name": "vpj_37_ops_budget_member_read"
+  },
+  {
+    "version": "20260917140000",
+    "name": "vpj_62_research_intake"
+  },
+  {
+    "version": "20260918032847",
+    "name": "revoke_ai10_fault_trigger_public_acl"
+  },
+  {
+    "version": "20260921205157",
+    "name": "vpj_61_trip_archive"
+  },
+  {
+    "version": "20260922002626",
+    "name": "vpj_30_travel_reminders"
+  },
+  {
+    "version": "20260922004906",
+    "name": "vpj_57_service_case_grants"
+  },
+  {
+    "version": "20260922005110",
+    "name": "vpj_36_trip_deletion"
+  },
+  {
+    "version": "20260922014000",
+    "name": "vpj_48_community_review"
+  },
+  {
+    "version": "20260923090000",
+    "name": "vpj_07_hosted_text_worker"
+  },
+  {
+    "version": "20260923120000",
+    "name": "revoke_default_function_execute"
+  },
+  {
+    "version": "20260923140000",
+    "name": "places_provider_quota"
+  }
+]

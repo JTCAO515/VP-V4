@@ -1,5 +1,9 @@
 # Domain documentation
 
+> 当前执行定义已迁至 [Agent / iOS / Web 计划](../product/VPV10-MODULAR-001/current-overview.md)。旧 issue-plan.json 的83任务、20 replacements及旧生成正文保留为历史定义/证据；旧同步命令禁止恢复旧标题正文。当前用户结果、稳定ID、依赖和批次只从新源读取。
+
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 VP-V4 has one active product context: VPJ-00 #187. The [Program entry](../program/2026-09-05/README.md)
 maps product decisions, task planning, interfaces, runtime evidence and historical records.
 [ADR-0023](../adr/ADR-0023-vpj-integrated-native-journey-baseline.md) defines the native-first zh/en

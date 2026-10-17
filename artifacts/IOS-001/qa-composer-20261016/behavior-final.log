@@ -1,0 +1,25 @@
+Building for debugging...
+[Planning deferred tasks]
+[1 / 5]
+Build complete! (0.45秒)
+Test Suite 'All tests' started at 2026-10-16 15:36:24.400.
+Test Suite 'All tests' passed at 2026-10-16 15:36:24.401.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeQAComposerTests started.
+◇ Test utf16AndWhitespaceBoundaries() started.
+◇ Test staleBindingHidesAndCannotOverwriteNewScope() started.
+◇ Test preservesOriginalBytesAndOverLimitEdits() started.
+◇ Test inactiveAndPendingBindingsRejectWrites() started.
+◇ Test staleSendAndAllDenialsDoNotCallOwner() started.
+◇ Test sendsOnceWithoutClearingOrChangingBytes() started.
+✔ Test utf16AndWhitespaceBoundaries() passed after 0.001 seconds.
+✔ Test inactiveAndPendingBindingsRejectWrites() passed after 0.001 seconds.
+✔ Test staleBindingHidesAndCannotOverwriteNewScope() passed after 0.001 seconds.
+✔ Test preservesOriginalBytesAndOverLimitEdits() passed after 0.001 seconds.
+✔ Test staleSendAndAllDenialsDoNotCallOwner() passed after 0.001 seconds.
+✔ Test sendsOnceWithoutClearingOrChangingBytes() passed after 0.001 seconds.
+✔ Suite NativeQAComposerTests passed after 0.001 seconds.
+✔ Test run with 6 tests in 1 suite passed after 0.001 seconds.

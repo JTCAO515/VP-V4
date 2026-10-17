@@ -1,18 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 const root=resolve('.'),checker=resolve('deploy/hosted-worker/validate-qa-target.mjs');
 const endpoint='https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions';
-const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/3',pollIntervalMs:3000,maxLifetimeMs:60000,
+const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:3000,maxLifetimeMs:60000,
   drainMs:1000,concurrency:1,groupLimit:1,modes:['qa_session_history_v1'],planning:null,
   qwen:{priceVersion:'synthetic-price-v1',pricing:{mode:'flat',inputMicrosPerMillion:6000000,
     outputMicrosPerMillion:24000000,cachedInputMicrosPerMillion:null},reservedMicros:7000000,
     maxOutputTokens:1024,timeoutMs:60000,configurationId:randomUUID(),configurationVersion:1}});
-const target=()=>({schemaVersion:'qa-hosted-deployment-target/1',environment:'staging',
+const target=()=>({schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'dzqdzetcctkhbrhlxxgn',
   databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
   noticeHash:'a'.repeat(64),build:'abcdefabcdef',qwenEndpoint:endpoint,startupState:'disabled',restartPolicy:'no'});
 const node=(args,input)=>spawnSync(process.execPath,['--experimental-strip-types',checker,...args],{input,encoding:'utf8'});
@@ -32,6 +32,7 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
     const runtime=spawnSync(process.execPath,['--experimental-strip-types',checker,...paths,s.build,'--emit-runtime'],{env,encoding:'utf8'});
     assert.equal(runtime.status,imageBuild===s.build?0:1,'runtime image build must match');
     if(runtime.status!==0)assert.equal(runtime.stdout,'');
+    else assert.deepEqual(JSON.parse(runtime.stdout.split('\n')[2]),{schemaVersion:'qa-runtime-binding/1',projectRef:s.projectRef,ownerId:s.ownerId,policyId:s.policyId,scopeId:s.scopeId,noticeHash:s.noticeHash});
   }
   await writeFile(paths[0],bundle.profileJson.replace('"groupLimit":1','"groupLimit":2'));
   assert.equal(node(paths).status,1,'profile hash mismatch');
@@ -42,6 +43,28 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
     assert.equal(r.status,1);assert.equal(r.stdout,'');assert.ok(!r.stderr.includes('CANARY'));
   }
   assert.equal(node(['--prepare'],JSON.stringify({profile:p,target:{...s,qwenEndpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'}})).status,0);
+  for(const bad of [
+    {...s,schemaVersion:'qa-hosted-deployment-target/1'},
+    {...s,projectRef:undefined},
+    {...s,projectRef:'ABCDEFGHIJKLMNOPQRST'},
+    {...s,databaseUrl:'https://zyxwvutsrqponmlkjihg.supabase.co'},
+    {...s,databaseUrl:s.databaseUrl+'/'},
+    {...s,databaseUrl:s.databaseUrl+':443'},
+    {...s,databaseUrl:s.databaseUrl+'?project=CANARY'},
+    {...s,databaseUrl:s.databaseUrl+'#CANARY'},
+    {...s,databaseUrl:'https://CANARY@dzqdzetcctkhbrhlxxgn.supabase.co'},
+    {...s,jobDatabaseUrl:s.databaseUrl},
+  ]){
+    const denied=node(['--prepare'],JSON.stringify({profile:p,target:bad}));
+    assert.equal(denied.status,1,'unbound/alternate URL target rejected');
+    assert.equal(denied.stdout,'');assert.ok(!denied.stderr.includes('CANARY'));
+  }
+  for(const bad of [
+    {...p,schemaVersion:'vpj07-hosted-text-worker/3'},
+    {...p,projectRef:undefined},
+    {...p,projectRef:'zyxwvutsrqponmlkjihg'},
+  ])assert.equal(node(['--prepare'],JSON.stringify({profile:bad,target:s})).status,1,'profile target mismatch rejected');
+  assert.equal(node(['--prepare'],JSON.stringify({profile:{...p,projectRef:'abcdefghijklmnopqrst'},target:{...s,projectRef:'abcdefghijklmnopqrst',databaseUrl:'https://abcdefghijklmnopqrst.supabase.co'}})).status,1,'a self-consistent but unapproved project is not a trusted root');
   const secret='sb_secret_SYNTHETIC_CANARY';
   const denied=node(['--prepare'],JSON.stringify({profile:{...p,qwen:{...p.qwen,priceVersion:secret}},target:s}));
   assert.equal(denied.status,1);assert.equal(denied.stdout,'');assert.ok(!denied.stderr.includes(secret));
@@ -65,10 +88,10 @@ exit 0
 `,{mode:0o755});
   await writeFile(join(dir,'swapon'),'#!/bin/bash\nexit 0\n',{mode:0o755});
   // The real closed Python validator is covered by profile.test; this image has
-  // Node only. The target checker also runs the actual v3 TypeScript validator.
+  // Node only. The target checker also runs the actual v4 TypeScript validator.
   await writeFile(join(dir,'python3'),`#!/bin/bash
 if [[ $1 == - ]]; then
- exec /usr/local/bin/node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).build)' "$2"
+ exec /usr/local/bin/node -e 'const t=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));console.log(t.build+String.fromCharCode(10)+t.projectRef)' "$2"
 fi
 cat "$2"
 `,{mode:0o755});
@@ -96,4 +119,18 @@ mv /etc/visepanda/qa/qa-target.json /etc/visepanda/qa/saved; ln -s saved /etc/vi
     'node:22-bookworm-slim','bash','-c',script],{encoding:'utf8',timeout:60000});
   assert.equal(result.status,0,result.stderr+result.stdout);
   assert.ok(!result.stdout.includes('SYNTHETIC_CANARY'));assert.ok(!result.stderr.includes('SYNTHETIC_CANARY'));
+});
+
+test('actual QA installer parsing carries the validated closed tuple as one nonsecret env value',async()=>{
+  const s=target(),p=profile(),prepared=node(['--prepare'],JSON.stringify({profile:p,target:s}));assert.equal(prepared.status,0);
+  const binding={schemaVersion:'qa-runtime-binding/1',projectRef:s.projectRef,ownerId:s.ownerId,policyId:s.policyId,scopeId:s.scopeId,noticeHash:s.noticeHash};
+  const source=await readFile(resolve('deploy/hosted-worker/ecs-worker-files.sh'),'utf8');
+  const begin=source.indexOf('      profile_json=${validated%%',source.indexOf('qa_image=$(docker image inspect'));
+  const end=source.indexOf('\n    fi',begin);assert.ok(begin>0&&end>begin);
+  const hunk=source.slice(begin,end);
+  const run=validated=>spawnSync('bash',['-c',"set -eu; fail(){ exit 23; };"+hunk+"\nprintf '%s\\n' \"${extra_env[@]}\""],{env:{...process.env,validated,qa_project_ref:s.projectRef},encoding:'utf8'});
+  const good=run(JSON.stringify(p)+'\n'+endpoint+'\n'+JSON.stringify(binding));assert.equal(good.status,0,good.stderr);
+  const values=good.stdout.trim().split('\n');assert.equal(values.filter(x=>x.startsWith('VISEPANDA_QA_RUNTIME_BINDING=')).length,1);
+  assert.deepEqual(JSON.parse(values.find(x=>x.startsWith('VISEPANDA_QA_RUNTIME_BINDING=')).split('=').slice(1).join('=')),binding);
+  for(const bad of [JSON.stringify(p)+'\n'+endpoint,JSON.stringify(p)+'\n'+endpoint+'\n',JSON.stringify(p)+'\n'+endpoint+'\n'+JSON.stringify(binding)+'\nextra'])assert.equal(run(bad).status,23);
 });

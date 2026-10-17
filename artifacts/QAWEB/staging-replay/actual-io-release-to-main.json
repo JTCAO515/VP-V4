@@ -1,0 +1,31 @@
+{
+  "status": "FUTURE_ACTUAL_A_D_IO_EXPLICITLY_RELEASED_TO_MAIN",
+  "releasedBy": "original staging-replay owner",
+  "acceptedExecutor": "V10 Main 01a13311-9212-7db3-8c75-691eac0f03ea",
+  "sourceHead": "2c7bc4939a5a54e27da1085ab867347ee3f88ea3",
+  "actualCaptureStarted": false,
+  "actualAgeIdentityCreated": false,
+  "actualArchiveDecryptStarted": false,
+  "actualRestoreStarted": false,
+  "actualDataActionInFlight": false,
+  "actualDataActionPlatformDenialOccurred": false,
+  "historicalReadonlyMetadataChecksWereNotRealCapture": true,
+  "releasedFutureIoScope": [
+    "fixed target dzqdzetcctkhbrhlxxgn readonly capture",
+    "/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives",
+    "/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/identities",
+    "future actual-data owned offline restore clone and exact80 rehearsal"
+  ],
+  "retainedOriginalOwnerScope": [
+    "scripts/qa-agent-staging-replay/** source/refinement",
+    "artifacts/QAWEB/staging-replay/** owned evidence",
+    "existing synthetic fixture resource leases"
+  ],
+  "releaseDoesNotAuthorizeStart": true,
+  "windowStartedByThisOwner": false,
+  "mainStartWrittenByThisOwner": false,
+  "targetEWriter": "Main only after all conditions",
+  "ownedRestoreLabelInventoryAtHandoff": "no containers returned; not a global Docker inventory",
+  "packet": "shared-operator-authorized-blocked.json",
+  "requiredFieldsGuide": "shared-operator-scope.md"
+}

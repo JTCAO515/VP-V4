@@ -1,0 +1,25 @@
+✔ real Cookie prepare POST preserves exact body then reads exact receipt id without confirm (10.8975ms)
+✔ unknown POST recovery only GETs and never clears original bytes or fabricates receipt on empty read (0.712542ms)
+✔ original pending validation rejects wrong receipt/revision/base/digest/extra ops/forged after (0.215792ms)
+✔ actor/route replacement after await cannot adopt a POST receipt or pending diff (0.162833ms)
+✔ verified claims create ephemeral sub/session/generation root; unknown and late claims cannot restore it (0.487708ms)
+✔ claims expiry and 8s unknown claims timeout invalidate without late restore (0.36875ms)
+✔ only exact authoritative terminal token settles a handed intent; old epoch/reset/read-failure do not (0.082666ms)
+✔ hidden address review blocks original Confirm including restored pending with no local ledger (0.289042ms)
+✔ reload's new authoritative version with old nonstale pending keeps original Confirm locked (0.208333ms)
+✔ changed-head current read remains GET-only and never settles or clears the original unknown bytes (0.283417ms)
+✔ explicit local abandon clears only the confirmed same-scope unknown attempt and then reads without server undo (0.17ms)
+✔ current read refuses a new actor or route before callback and rejects late completion (0.092333ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (3.301667ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (13.914708ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (1.128125ms)
+✔ real Section starts fail closed until verified claims, without rendering stale item facts (0.495292ms)
+✔ actual diff renderer shows rollback removal, restored item and move target without any set operation (0.414917ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 270.448958

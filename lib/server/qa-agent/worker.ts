@@ -1,3 +1,4 @@
+import { requireQaTarget, type QaTarget } from "./target.ts";
 import { createProviderHttpTransport, type HttpProviderConfiguration, type HttpTransportDependencies } from "../model-gateway/adapters/http-transport.ts";
 import { createTextJobPrice, type TextJobPricing } from "../jobs/staging-text-job.ts";
 import { supabaseWorkerHeaders } from "../jobs/supabase-worker-headers.ts";
@@ -5,12 +6,17 @@ import { nativeRequestScope } from "../identity/native-request.ts";
 import type { TextWorkerConfig } from "../turn/text-worker.ts";
 import { executeQaWork, type QaExecutorDependencies, type QaWorkerRpc } from "./executor.ts";
 import { record, uuid } from "./service.ts";
+import { requireQaRuntimeBinding, type QaRuntimeBinding } from "./runtime-binding.ts";
+import { acceptanceDigest, type QaAcceptanceControl } from "./acceptance-journal.ts";
 
-export type QaWorkerConfiguration = Readonly<{
+export type LegacyQaWorkerConfiguration = Readonly<{
   schemaVersion: "qa-agent-worker/1"; databaseUrl: string; ownerId: string; policyId: string;
   budget: TextWorkerConfig; provider: HttpProviderConfiguration; pricing: TextJobPricing;
 }>;
+export type IndependentQaWorkerConfiguration = Omit<LegacyQaWorkerConfiguration, "schemaVersion"> & Readonly<{ schemaVersion: "qa-agent-worker/2"; projectRef: string | null }>;
+export type QaWorkerConfiguration = LegacyQaWorkerConfiguration | IndependentQaWorkerConfiguration;
 export type QaWorkerDependencies = Readonly<{
+  qaBinding?: QaRuntimeBinding;
   workerCredential: HttpTransportDependencies["credential"];
   providerCredential: HttpTransportDependencies["credential"];
   recordDestination: HttpTransportDependencies["recordDestination"];
@@ -18,6 +24,8 @@ export type QaWorkerDependencies = Readonly<{
   invokeContext: QaExecutorDependencies["invokeContext"];
   qwenEndpoint?: string;
   fetch?: typeof fetch;
+  /** Separately reviewed root grant + actual source pin, never job/discovery data. */
+  acceptance?: Readonly<{ control: QaAcceptanceControl; sourceCommit: string }>;
 }>;
 const RPCS = new Set(["qa_claim_work_v1", "qa_read_work_v1", "qa_authorize_dispatch_v1", "qa_complete_work_v1", "reserve_model_budget", "finish_model_budget"]);
 
@@ -25,23 +33,21 @@ const RPCS = new Set(["qa_claim_work_v1", "qa_read_work_v1", "qa_authorize_dispa
  * user-selectable model, environment secret lookup or second queue is created.
  * The deployment supplies existing secure credentials and reviewed tariff.
  */
-export function createQaWorker(configuration: QaWorkerConfiguration, dependencies: QaWorkerDependencies) {
-  if (typeof window !== "undefined" || process.env.VERCEL_ENV || configuration.schemaVersion !== "qa-agent-worker/1" || !uuid(configuration.ownerId) || !uuid(configuration.policyId)
-    || !uuid(configuration.budget.scopeId) || configuration.provider.timeoutMs !== configuration.budget.timeoutMs
-    || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function"
+export function createQaWorker(configuration: QaWorkerConfiguration, dependencies: QaWorkerDependencies, compositionTarget?: QaTarget) {
+  const config = validateQaWorkerJob(configuration, compositionTarget);
+  if (typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function"
     || typeof dependencies.recordDestination !== "function" || typeof dependencies.recordUsage !== "function" || typeof dependencies.invokeContext !== "function") throw unavailable();
-  let database: URL;
-  try { database = new URL(configuration.databaseUrl); } catch { throw unavailable(); }
-  const local = !process.env.VERCEL_ENV && database.protocol === "http:" && ["localhost", "127.0.0.1"].includes(database.hostname);
-  if ((!local && database.origin !== "https://dzqdzetcctkhbrhlxxgn.supabase.co") || database.username || database.password || database.search || database.hash || database.pathname !== "/") throw unavailable();
-  const config = Object.freeze({ ...configuration, databaseUrl: database.origin, budget: Object.freeze({ ...configuration.budget }),
-    provider: Object.freeze({ ...configuration.provider }), pricing: Object.freeze({ ...configuration.pricing }) });
+  const target = requireQaTarget(compositionTarget);
+  const binding = target.kind === "independent" ? requireQaRuntimeBinding(dependencies.qaBinding, target.projectRef) : null;
+  if (binding && (config.ownerId !== binding.ownerId || config.policyId !== binding.policyId || config.budget.scopeId !== binding.scopeId)) throw unavailable();
+  if (dependencies.acceptance) {
+    const accepted = dependencies.acceptance;
+    if (!binding || acceptanceDigest(accepted.control.binding) !== acceptanceDigest({ projectRef: binding.projectRef,
+      ownerId: binding.ownerId, policyId: binding.policyId, scopeId: binding.scopeId, noticeHash: binding.noticeHash,
+      configurationId: config.provider.configurationId, configurationVersion: config.provider.configurationVersion,
+      sourceCommit: accepted.sourceCommit, jobDigest: acceptanceDigest(config) })) throw unavailable();
+  }
   const price = createTextJobPrice(config.pricing);
-  // Full existing maximum model context reservation is deliberately conservative;
-  // no text length estimate, guessed token usage or assumed free retries.
-  const worst = (BigInt(1_048_576) * BigInt(Math.max(config.pricing.inputMicrosPerMillion, config.pricing.cachedInputMicrosPerMillion ?? 0))
-    + BigInt(config.budget.maxOutputTokens) * BigInt(config.pricing.outputMicrosPerMillion) + BigInt(999999)) / BigInt(1000000);
-  if (!Number.isSafeInteger(config.budget.reservedMicros) || config.budget.reservedMicros < 1 || BigInt(config.budget.reservedMicros) < worst) throw unavailable();
   const transport = createProviderHttpTransport(config.provider, { credential: dependencies.providerCredential,
     recordDestination: dependencies.recordDestination, qwenEndpoint: dependencies.qwenEndpoint, ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}) });
   const fetcher = dependencies.fetch ?? globalThis.fetch;
@@ -54,8 +60,12 @@ export function createQaWorker(configuration: QaWorkerConfiguration, dependencie
     try {
       const credential = await lifetime.run(() => Promise.resolve(dependencies.workerCredential(lifetime.signal)));
       if (!credential) throw unavailable();
-      const result = await lifetime.run(() => fetcher(config.databaseUrl + "/rest/v1/rpc/" + name, { method: "POST",
-        headers: supabaseWorkerHeaders(credential), body: JSON.stringify(params), redirect: "manual", cache: "no-store", credentials: "omit", signal: lifetime.signal }));
+      // Keep the context composer's logical v1 port, but authorize this deployment's
+      // exact tuple through the new protected adapter. Caller cannot override it.
+      const physicalName = binding && name === "qa_authorize_dispatch_v1" ? "qa_authorize_dispatch_v2" : name;
+      const physicalParams = binding && name === "qa_authorize_dispatch_v1" ? { ...params, p_owner_id: binding.ownerId, p_notice_hash: binding.noticeHash } : params;
+      const result = await lifetime.run(() => fetcher(config.databaseUrl + "/rest/v1/rpc/" + physicalName, { method: "POST",
+        headers: supabaseWorkerHeaders(credential), body: JSON.stringify(physicalParams), redirect: "manual", cache: "no-store", credentials: "omit", signal: lifetime.signal }));
       if (result.redirected || result.status !== 200 || result.headers.get("content-type")?.split(";")[0].trim() !== "application/json" || !result.body) {
         void result.body?.cancel().catch(() => {}); throw unavailable();
       }
@@ -74,6 +84,22 @@ export function createQaWorker(configuration: QaWorkerConfiguration, dependencie
   };
   return (signal: AbortSignal) => executeQaWork(config.ownerId, config.policyId, config.budget, { rpc,
     provider: { provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
-    invokeContext: dependencies.invokeContext, recordUsage: dependencies.recordUsage }, signal);
+    invokeContext: dependencies.invokeContext, recordUsage: dependencies.recordUsage,
+    ...(dependencies.acceptance ? { acceptance: dependencies.acceptance.control } : {}) }, signal);
+}
+/** Pure job/target/price validation for runtime and historical read-only audit.
+ * Validating a journal does not create or infer a trusted deployment binding. */
+export function validateQaWorkerJob(configuration: QaWorkerConfiguration, compositionTarget?: QaTarget) {
+  if (typeof window !== "undefined" || process.env.VERCEL_ENV || configuration.schemaVersion !== "qa-agent-worker/2" || !uuid(configuration.ownerId) || !uuid(configuration.policyId)
+    || !uuid(configuration.budget.scopeId) || configuration.provider.timeoutMs !== configuration.budget.timeoutMs) throw unavailable();
+  const target = requireQaTarget(compositionTarget);
+  if (configuration.projectRef !== target.projectRef || configuration.databaseUrl !== target.databaseUrl) throw unavailable();
+  const config = Object.freeze({ ...configuration, databaseUrl: target.databaseUrl, budget: Object.freeze({ ...configuration.budget }),
+    provider: Object.freeze({ ...configuration.provider }), pricing: Object.freeze({ ...configuration.pricing }) });
+  createTextJobPrice(config.pricing);
+  const worst = (BigInt(1_048_576) * BigInt(Math.max(config.pricing.inputMicrosPerMillion, config.pricing.cachedInputMicrosPerMillion ?? 0))
+    + BigInt(config.budget.maxOutputTokens) * BigInt(config.pricing.outputMicrosPerMillion) + BigInt(999999)) / BigInt(1000000);
+  if (!Number.isSafeInteger(config.budget.reservedMicros) || config.budget.reservedMicros < 1 || BigInt(config.budget.reservedMicros) < worst) throw unavailable();
+  return config;
 }
 function unavailable() { return new Error("QA worker configuration unavailable"); }

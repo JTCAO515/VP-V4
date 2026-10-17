@@ -20,6 +20,7 @@ struct NativeCredential: Codable {
     var attemptId: String
     var mobileEpoch: Int?
     var pendingAsk: NativePendingAsk? = nil
+    var canonicalPlaceAsk: NativeCanonicalPlaceAskDurable? = nil
 }
 
 @MainActor
@@ -48,6 +49,14 @@ final class NativeSession {
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
+    private(set) var canonicalPlaceAskReferenceGeneration = UUID()
+    private(set) var canonicalPlaceAskNavigation: NativeCanonicalPlaceAskCapture?
+    private(set) var canonicalPlaceAskSelection: NativeCanonicalPlaceAskCapture?
+    var canonicalPlaceAskPending: NativeCanonicalPlaceAskPending? {
+        guard let scope = dataScope, let stored = credential?.canonicalPlaceAsk, stored.matches(scope) else { return nil }
+        return try? NativeCanonicalPlaceAskPending.restoring(body: stored.body, scope: scope)
+    }
+    var canonicalPlaceAskRecoveryRequired: Bool { credential?.canonicalPlaceAsk != nil }
     private var deviceMaterialSignOutFence = false
     private var credential: NativeCredential?
     private let endpoint: URL?
@@ -68,6 +77,32 @@ final class NativeSession {
         let base = keychainService
         func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
         let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .qaCancellation: .init(service: NativeQACancellationJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                let inventory = try self.makeNativeQACancellationJournal().inventory(scope: actor.scope)
+                guard inventory.totalRecords > 0 else { return nil }
+                var record = metadata(.qaCancellation, boundary: "cancellation_count_epoch_tuple_state_only_no_body_credentials_or_private_identity")
+                record.qaCancellation = inventory
+                return record
+            }),
+            .qaSubmission: .init(service: NativeQAPendingJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.makeNativeQAPendingJournal().metadata(scope: actor.scope).map { pending in
+                    var record = metadata(.qaSubmission, operation: pending.requestID, action: "qa_submission",
+                                          boundary: "question_answer_body_and_credentials_excluded")
+                    record.objectID = pending.sessionID
+                    return record
+                }
+            }),
+            .translationRecovery: .init(service: NativeTranslationRecoveryJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.translationRecoveryPersistence().read(actor.scope).map { pending in
+                    var record = metadata(.translationRecovery, operation: pending.identity.idempotencyKey,
+                        action: "translate", boundary: "submission_identity_only_no_original_translation_or_credentials")
+                    record.objectID = pending.identity.turnId
+                    return record
+                }
+            }),
             .assistantEventsCursor: .init(service: service(".assistant-events-cursor."), read: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 return try self.assistantEventsCursorMetadata(actor: actor).map { value in
@@ -129,11 +164,18 @@ final class NativeSession {
                 let physical = try self.read(owner: actor.scope.subject)
                 guard physical.mobileEpoch == actor.scope.mobileEpoch, physical.pendingAsk == pending else { throw NativeDataError.staleSessionResponse }
                 return pending
+            }, canonicalAsk: {
+                guard let actor = try? self.communitySafetyActor(), let memory = self.credential else { throw NativeDataError.sessionUnavailable }
+                let physical = try self.read(owner: actor.scope.subject)
+                guard physical.canonicalPlaceAsk == memory.canonicalPlaceAsk,
+                      physical.mobileEpoch == actor.scope.mobileEpoch else { throw NativeDataError.staleSessionResponse }
+                return physical.canonicalPlaceAsk
             }, askAbsent: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 let physical = try self.read(owner: actor.scope.subject)
                 let memoryPending = try self.retainedPendingAsk()
                 return physical.mobileEpoch == actor.scope.mobileEpoch && physical.pendingAsk == nil && memoryPending == nil
+                    && physical.canonicalPlaceAsk == nil && self.credential?.canonicalPlaceAsk == nil
             }, companions: companions,
             evidence: { self.journalDataEvidence.completion($0, current: (try? self.communitySafetyActor()) == $1 ? $1 : nil) })
     }
@@ -169,9 +211,142 @@ final class NativeSession {
     }
 
     func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
-        guard handoff.scope==dataScope,handoff.valid else{return};exploreAskHandoff=handoff
+        guard handoff.scope==dataScope,handoff.valid else{return};canonicalPlaceAskReferenceGeneration=UUID();canonicalPlaceAskNavigation=nil;exploreAskHandoff=handoff
     }
-    func clearExploreAsk(){exploreAskHandoff=nil}
+    func clearExploreAsk(){exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil; canonicalPlaceAskReferenceGeneration=UUID()}
+    func invalidateCanonicalPlaceAskReference() { canonicalPlaceAskReferenceGeneration = UUID() }
+
+    // Typed navigation only. No automatic message, Goal, Task or provider eligibility.
+    func prepareCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) {
+        guard canonicalPlaceAskPending == nil, capture.current(scope: dataScope, locale: capture.expectation.locale) else { return }
+        let expected = capture.expectation
+        canonicalPlaceAskReferenceGeneration = UUID()
+        canonicalPlaceAskNavigation = capture
+        exploreAskHandoff = .init(scope: capture.scope, tripID: expected.tripId, tripVersion: expected.headVersion,
+                                 poiID: expected.selection.canonicalPoiId, provider: expected.selection.provider,
+                                 providerPoiID: expected.selection.providerPoiId, name: capture.title)
+    }
+    func recheckCanonicalPlaceAsk(_ original: NativeCanonicalPlaceAskCapture, locale: String) async throws -> NativeCanonicalPlaceAskRefresh {
+        guard let scope = dataScope, original.scope == scope, !canonicalPlaceAskRecoveryRequired,
+              ["zh", "en"].contains(locale) else { throw NativeDataError.staleSessionResponse }
+        guard original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration
+        let expected = original.expectation
+        let target = NativePlaceActionSelection(scope: scope, place: expected.selection, tripId: expected.tripId, baseVersion: expected.headVersion)
+        let started = ProcessInfo.processInfo.systemUptime
+        let contextBytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "context", "expectedTripVersion": target.baseVersion,
+            "selection": NativePlaceActionWire.place(target.place), "locale": locale]), actor: scope)
+        guard dataScope == scope, !Task.isCancelled, canonicalPlaceAskReferenceGeneration == generation,
+              original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
+        let context = try NativePlaceActionContext.decode(contextBytes, expected: target)
+        let bytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "ask", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place),
+            "expectedMappingDigest": context.mappingDigest, "locale": locale]), actor: scope)
+        guard dataScope == scope, !Task.isCancelled, canonicalPlaceAskReferenceGeneration == generation,
+              original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
+        return .init(original: original, capture: try NativeCanonicalPlaceAskCapture.decode(bytes, context: context, target: target, locale: locale, started: started), generation: generation)
+    }
+    @discardableResult func stageCanonicalPlaceAskRefresh(_ refresh: NativeCanonicalPlaceAskRefresh) -> Bool {
+        guard refresh.generation == canonicalPlaceAskReferenceGeneration,
+              refresh.original == canonicalPlaceAskNavigation || refresh.original == canonicalPlaceAskSelection,
+              refresh.original.scope == dataScope,
+              refresh.original.expectation.selection == refresh.capture.expectation.selection,
+              refresh.original.expectation.tripId == refresh.capture.expectation.tripId,
+              refresh.original.expectation.headVersion == refresh.capture.expectation.headVersion,
+              !canonicalPlaceAskRecoveryRequired else { return false }
+        prepareCanonicalPlaceAsk(refresh.capture)
+        return canonicalPlaceAskNavigation == refresh.capture
+    }
+    // A historical server proof names an exact reference to reread. It does not create current eligibility.
+    func recheckCanonicalPlaceAskHistory(_ proof: NativeCanonicalPlaceHistoryProof, locale: String) async throws -> NativeCanonicalPlaceAskHistoryRefresh {
+        guard let scope = dataScope, !canonicalPlaceAskRecoveryRequired, ["zh", "en"].contains(locale) else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration, expected = proof.expectation
+        let target = NativePlaceActionSelection(scope: scope, place: expected.selection, tripId: expected.tripId, baseVersion: expected.headVersion)
+        let started = ProcessInfo.processInfo.systemUptime
+        let contextBytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "context", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place), "locale": locale]), actor: scope)
+        guard dataScope == scope, canonicalPlaceAskReferenceGeneration == generation, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        let context = try NativePlaceActionContext.decode(contextBytes, expected: target)
+        let bytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "ask", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place),
+            "expectedMappingDigest": context.mappingDigest, "locale": locale]), actor: scope)
+        guard dataScope == scope, canonicalPlaceAskReferenceGeneration == generation, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        return .init(capture: try NativeCanonicalPlaceAskCapture.decode(bytes, context: context, target: target, locale: locale, started: started),
+                     generation: generation, operationID: proof.operationID, requestDigest: proof.requestDigest)
+    }
+    @discardableResult func stageCanonicalPlaceAskHistoryRefresh(_ refreshed: NativeCanonicalPlaceAskHistoryRefresh) -> Bool {
+        guard canonicalPlaceAskReferenceGeneration == refreshed.generation, refreshed.capture.scope == dataScope,
+              !canonicalPlaceAskRecoveryRequired else { return false }
+        prepareCanonicalPlaceAsk(refreshed.capture)
+        return canonicalPlaceAskNavigation == refreshed.capture
+    }
+    func adoptCanonicalPlaceAsk(navigationID: UUID, locale: String) throws {
+        guard canonicalPlaceAskPending == nil, let navigation = exploreAskHandoff, navigation.id == navigationID,
+              let capture = canonicalPlaceAskNavigation, capture.current(scope: dataScope, locale: locale),
+              capture.scope == navigation.scope, capture.expectation.tripId == navigation.tripID,
+              capture.expectation.headVersion == navigation.tripVersion,
+              capture.expectation.selection.canonicalPoiId == navigation.poiID,
+              capture.expectation.selection.provider == navigation.provider,
+              capture.expectation.selection.providerPoiId == navigation.providerPoiID else { throw NativeDataError.staleSessionResponse }
+        canonicalPlaceAskSelection = capture
+        clearExploreAsk()
+    }
+    func discardCanonicalPlaceAskSelection() { if canonicalPlaceAskPending == nil { canonicalPlaceAskSelection = nil; canonicalPlaceAskReferenceGeneration = UUID() } }
+
+    func retainCanonicalPlaceAsk(_ pending: NativeCanonicalPlaceAskPending, policy: NativeTextPolicy) throws {
+        guard askMode == .serviceTask, let capture = canonicalPlaceAskSelection, pending.scope == dataScope,
+              capture.current(scope: dataScope, locale: pending.expectation.locale),
+              capture.expectation == pending.expectation,
+              var updated = credential, updated.subject == pending.scope.subject,
+              updated.mobileEpoch == pending.scope.mobileEpoch, updated.pendingAsk == nil else { throw NativeDataError.staleSessionResponse }
+        let stored = try NativeCanonicalPlaceAskDurable(pending: pending, policy: policy)
+        if let existing = updated.canonicalPlaceAsk {
+            guard existing == stored else { throw NativeDataError.staleSessionResponse }
+            return
+        }
+        updated.canonicalPlaceAsk = stored
+        try save(updated) // The existing Root Keychain write precedes the only POST.
+        credential = updated // A failed physical readback cannot make a durable request look absent.
+        let physical = try read(owner: updated.subject)
+        guard physical.canonicalPlaceAsk == stored, physical.pendingAsk == nil else { throw NativeDataError.staleSessionResponse }
+        credential = updated
+    }
+    func canonicalPlaceAskRequest(_ pending: NativeCanonicalPlaceAskPending, beforeSend: @escaping () -> Bool) async throws -> Data {
+        guard askMode == .serviceTask, pending.scope == dataScope, canonicalPlaceAskPending == pending,
+              let stored = credential?.canonicalPlaceAsk, stored.matches(pending.scope),
+              try read(owner: pending.scope.subject).canonicalPlaceAsk == stored,
+              let capture = canonicalPlaceAskSelection, capture.expectation == pending.expectation,
+              capture.current(scope: dataScope, locale: pending.expectation.locale) else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration
+        let path = "api/chat/native/v7/place-ask"
+        return try await dataRequest(prefix: path, path: path, method: "POST", body: pending.body, beforeSend: {
+            !Task.isCancelled && self.dataScope == pending.scope && self.canonicalPlaceAskPending == pending
+                && self.canonicalPlaceAskReferenceGeneration == generation
+                && self.canonicalPlaceAskSelection == capture
+                && capture.current(scope: self.dataScope, locale: pending.expectation.locale) && beforeSend()
+        })
+    }
+    func readCanonicalPlaceAskReceipt(_ pending: NativeCanonicalPlaceAskPending) async throws -> Data {
+        guard pending.scope == dataScope, canonicalPlaceAskPending == pending else { throw NativeDataError.staleSessionResponse }
+        let path = "api/chat/native/v7/place-ask"
+        var query = [URLQueryItem(name: "operationId", value: pending.operationID),
+                     URLQueryItem(name: "scopeKind", value: pending.scopeKind),
+                     URLQueryItem(name: "scopeId", value: pending.scopeID)]
+        if let message = pending.messageID { query.append(.init(name: "messageId", value: message)) }
+        if let turn = pending.turnID { query.append(.init(name: "turnId", value: turn)) }
+        return try await dataRequest(prefix: path, path: path, method: "GET", queryItems: query)
+    }
+    func acknowledgeCanonicalPlaceAsk(_ pending: NativeCanonicalPlaceAskPending, receipt: Data) throws {
+        guard case .accepted = try NativeCanonicalPlaceAskResponse.decode(receipt, pending: pending, expectedDigest: pending.requestDigest) else { throw NativeDataError.invalidResponse }
+        guard pending.scope == dataScope, canonicalPlaceAskPending == pending else { throw NativeDataError.staleSessionResponse }
+        guard var updated = credential, updated.canonicalPlaceAsk?.body == pending.body else { throw NativeDataError.staleSessionResponse }
+        updated.canonicalPlaceAsk = nil
+        try save(updated)
+        guard try read(owner: updated.subject).canonicalPlaceAsk == nil else { throw NativeDataError.staleSessionResponse }
+        credential = updated; canonicalPlaceAskSelection = nil
+    }
+
 
     // Navigation pointers only; no conversation, result or Memory content cache.
     func assistantNavigationSelection() -> NativeAssistantNavigation? {
@@ -192,7 +367,7 @@ final class NativeSession {
                   url.user == nil, url.password == nil, url.query == nil, url.fragment == nil,
                   url.path.isEmpty || url.path == "/",
                   let host = url.host,
-                  (host == "staging.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
+                  (host == "staging.go2china.space" || host == "qatesting.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
             else { return nil }
             return URL(string: "https://" + host)
         }
@@ -231,7 +406,7 @@ final class NativeSession {
     }
 
     func retainPendingAsk(_ request: NativeTextSubmission, policy: NativeTextPolicy, mode: NativeAskMode) throws -> NativePendingAsk {
-        guard dataScope != nil, mode == askMode, policy.valid, policy.consentState == .accepted,
+        guard credential?.canonicalPlaceAsk == nil, dataScope != nil, mode == askMode, policy.valid, policy.consentState == .accepted,
               request.policyId == policy.id, var updated = credential, let epoch = updated.mobileEpoch else { throw NativeDataError.sessionUnavailable }
         let pending = NativePendingAsk(schemaVersion: 1, mobileEpoch: epoch, mode: mode,
                                        noticeVersion: policy.noticeVersion, noticeHash: policy.noticeHash, request: request)
@@ -1800,6 +1975,14 @@ final class NativeSession {
         return try await dataRequest(prefix:path,path:path,method:"POST",body:body)
     }
 
+    func journeyGoalReturnRequest(_ source: NativeJourneyGoalReturnWire.Scope, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard source.valid, try communitySafetyActor() == actor else { throw NativeDataError.sessionUnavailable }
+        let path = "api/chat/native/v5/goal-return"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: source.query)
+        guard try communitySafetyActor() == actor, bytes.count <= 16_384 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func fiveResultRequest(artifactID: String, revision: Int) async throws -> Data {
         guard UUID(uuidString: artifactID) != nil, (1...1000).contains(revision) else { throw NativeDataError.invalidResponse }
         let path = "api/results/native/v2"
@@ -1861,6 +2044,7 @@ final class NativeSession {
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
         let prefix = Self.askRequestPrefix(mode: askMode, path: path, method: method)
+        guard !prefix.isEmpty else { throw NativeDataError.invalidResponse }
         let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
@@ -1871,6 +2055,13 @@ final class NativeSession {
         let cancelID = path.hasPrefix(cancelPrefix) && path.hasSuffix("/cancel")
             ? String(path.dropFirst(cancelPrefix.count).dropLast("/cancel".count)) : ""
         let cancellation = method == "POST" && UUID(uuidString: cancelID) != nil
+        if mode == .serviceTask {
+            if path == "api/chat/native/v2/turns", ["GET", "POST"].contains(method) { return "api/chat/native/v2" }
+            if path == "api/chat/native/v1/policy" && method == "GET"
+                || path == "api/chat/native/v1/consent" && ["POST", "DELETE"].contains(method)
+                || cancellation { return "api/chat/native/v1" }
+            return "" // Fail before URLSession for every other path/method in this explicit mode.
+        }
         let assistantTaskHistory = mode == .assistant && method == "GET" && path == "api/chat/native/v2/turns"
         return (mode.usesTask || mode == .assistant) && cancellation ? "api/chat/native/v1"
             : assistantTaskHistory ? "api/chat/native/v2" : mode.base
@@ -1937,8 +2128,39 @@ final class NativeSession {
         try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
     }
 
+    /// The existing vault stays inside Session. A retained port never authorizes an old actor.
+    func translationRecoveryPersistence() -> any NativeTranslationRecoveryPersistence {
+        NativeTranslationSessionRecoveryPort(journal: .init(vault: vault), currentScope: { [weak self] in self?.dataScope },
+            observation: journalDataObservation(.translationRecovery))
+    }
+
     /// Translation always uses the current-input lane, independently of Ask mode.
     func translateRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
+        if path.hasPrefix("api/translate/recovery/") {
+            guard method == "GET", body == nil,
+                  let parts = URLComponents(string: path), parts.scheme == nil, parts.host == nil,
+                  parts.fragment == nil, let items = parts.queryItems,
+                  items.count == 7, Set(items.map(\.name)) == NativeTranslationRecoveryIdentity.keys.subtracting(["turnId"]),
+                  items.allSatisfy({ $0.value != nil }) else { throw NativeDataError.invalidResponse }
+            let fields = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0.value!) })
+            let turn = String(parts.path.dropFirst("api/translate/recovery/".count))
+            let identity = try NativeTranslationRecoveryIdentity(threadId: fields["threadId"]!, turnId: turn,
+                idempotencyKey: fields["idempotencyKey"]!, policyId: fields["policyId"]!, noticeHash: fields["noticeHash"]!,
+                sourceLocale: fields["sourceLocale"]!, targetLocale: fields["targetLocale"]!, inputHash: fields["inputHash"]!)
+            guard parts.percentEncodedPath == "api/translate/recovery/" + identity.turnId else { throw NativeDataError.invalidResponse }
+            let actor = try? communitySafetyActor()
+            if let actor { turnDataProjectionFence.bind(actor) }
+            let ticket = try actor.map { try turnDataProjectionFence.capture($0, turnID: identity.turnId) }
+            let legacyVersion = turnDataProjectionFence.readVersion(turnID: identity.turnId)
+            let data = try await dataRequest(prefix: "api/translate/recovery", path: parts.path, method: "GET", queryItems: items)
+            if let ticket {
+                guard try communitySafetyActor() == ticket.actor, turnDataProjectionFence.accepts(ticket) else { throw NativeDataError.staleSessionResponse }
+            } else {
+                guard turnDataProjectionFence.readVersion(turnID: identity.turnId) == legacyVersion else { throw NativeDataError.staleSessionResponse }
+            }
+            guard data.count <= 32_768 else { throw NativeDataError.invalidResponse }
+            return data
+        }
         let data = try await dataRequest(prefix: "api/translate", path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
@@ -1958,7 +2180,7 @@ final class NativeSession {
         return data
     }
 
-    private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
+    private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = [], beforeSend: (() -> Bool)? = nil) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         let directionsProjection = path.hasPrefix("api/chat/native/v5/planning/directions/")
         let guardsTurnProjection = directionsProjection || method == "GET" && path.hasPrefix("api/chat/native/")
@@ -1972,7 +2194,7 @@ final class NativeSession {
             }
             turnReadGeneration = turnDataProjectionFence.generation
         }
-        let guardsResultProjection = directionsProjection || path.hasPrefix("api/results/native/") ||
+        let guardsResultProjection = directionsProjection || path == "api/chat/native/v5/goal-return" || path.hasPrefix("api/results/native/") ||
             ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
         let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
         let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??
@@ -1999,6 +2221,7 @@ final class NativeSession {
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        guard beforeSend?() ?? true else { throw NativeDataError.staleSessionResponse }
         let (data, response) = try await transport.data(for: request)
         guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
         guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
@@ -2235,6 +2458,7 @@ final class NativeSession {
                 try ensureCurrent(generation)
                 let state = try JSONDecoder().decode(SessionReply.self, from: data)
                 guard state.subject == existing.subject else { throw SessionError.invalid }
+                guard existing.canonicalPlaceAsk == nil || state.mobileEpoch == existing.mobileEpoch else { throw SessionError.denied }
                 var updated = existing
                 updated.mobileEpoch = state.mobileEpoch
                 credential = updated
@@ -2310,7 +2534,8 @@ final class NativeSession {
 
     private func accept(_ reply: TokenReply, attempt: String) throws {
         let retained = credential?.subject == reply.subject && credential?.mobileEpoch == reply.mobileEpoch ? credential?.pendingAsk : nil
-        let value = NativeCredential(subject: reply.subject, accessToken: reply.accessToken, refreshToken: reply.refreshToken, expiresAt: reply.expiresAt, attemptId: attempt, mobileEpoch: reply.mobileEpoch, pendingAsk: retained)
+        let canonical = credential?.subject == reply.subject && credential?.mobileEpoch == reply.mobileEpoch ? credential?.canonicalPlaceAsk : nil
+        let value = NativeCredential(subject: reply.subject, accessToken: reply.accessToken, refreshToken: reply.refreshToken, expiresAt: reply.expiresAt, attemptId: attempt, mobileEpoch: reply.mobileEpoch, pendingAsk: retained, canonicalPlaceAsk: canonical)
         try save(value)
         credential = value
         subject = value.subject
@@ -2371,7 +2596,11 @@ final class NativeSession {
         guard let data = bytes, data.count <= 64_000 else { throw SessionError.storage(errSecDecode) }
         let value = try JSONDecoder().decode(NativeCredential.self, from: data)
         guard value.subject == owner,
-              value.pendingAsk == nil || (value.pendingAsk?.valid == true && value.pendingAsk?.mobileEpoch == value.mobileEpoch) else { throw SessionError.storage(errSecDecode) }
+              value.pendingAsk == nil || (value.pendingAsk?.valid == true && value.pendingAsk?.mobileEpoch == value.mobileEpoch),
+              value.pendingAsk == nil || value.canonicalPlaceAsk == nil,
+              value.canonicalPlaceAsk == nil || (value.canonicalPlaceAsk?.valid == true
+                  && value.canonicalPlaceAsk?.subject == owner && value.canonicalPlaceAsk?.mobileEpoch == value.mobileEpoch
+                  && value.canonicalPlaceAsk?.endpoint == endpoint?.absoluteString) else { throw SessionError.storage(errSecDecode) }
         return value
     }
     @discardableResult func prepareDeviceMaterials() -> Bool {
@@ -2399,6 +2628,14 @@ final class NativeSession {
     }
 
     @discardableResult private func clear(preservePendingJournals: Bool = false, preservingAnonymousResume: UUID? = nil) -> Bool {
+        // Canonical unknown requests remain in the original Root item on transient auth loss.
+        // No old credential authorizes I/O: local actor and projections are fenced immediately.
+        if preservePendingJournals, credential?.canonicalPlaceAsk != nil {
+            dataGeneration += 1; subject = nil; mobileEpoch = nil; displayName = nil
+            exploreAskHandoff = nil; canonicalPlaceAskNavigation = nil; canonicalPlaceAskSelection = nil; canonicalPlaceAskReferenceGeneration = UUID()
+            failureCode = "canonicalPlaceAskRecoveryRequired"; status = "storageError"
+            return false
+        }
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         assistantEventsInvalidation = nil
@@ -2450,7 +2687,7 @@ final class NativeSession {
         profileDataErasure=nil; profileDataProjectionFence.bind(nil)
         conversationDataErasure=nil
         memoryPreferences.clear()
-        exploreAskHandoff=nil
+        exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil; canonicalPlaceAskSelection=nil; canonicalPlaceAskReferenceGeneration=UUID()
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
             do { try eraseAssistantEventsCursor(owner: owner) }
             catch { failureCode="assistantEventsCursorCleanupRequired";status="storageError";return false }
@@ -2462,10 +2699,33 @@ final class NativeSession {
             catch { failureCode="communitySafetyJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeCommunityJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
             catch { failureCode="communityJournalCleanupRequired"; status="storageError"; return false }
+            if !preservePendingJournals {
+                let boundEndpoint = endpoint?.absoluteString ?? "disabled"
+                do {
+                    try NativeQAPendingJournal.erase(endpoint: boundEndpoint, owner: owner, vault: vault, authorized: {
+                        let cleanupOwner = self.credential?.subject ?? self.defaults.string(forKey: self.storageKey)
+                            ?? self.defaults.string(forKey: self.storageKey + ".pendingJournalCleanupOwner")
+                            ?? self.defaults.string(forKey: self.storageKey + ".recoveryCleanupOwner")
+                        return cleanupOwner == owner && (self.endpoint?.absoluteString ?? "disabled") == boundEndpoint
+                            && !preservePendingJournals
+                    })
+                } catch { failureCode = "qaPendingCleanupRequired"; status = "storageError"; return false }
+                do {
+                    try eraseNativeQACancellationCustody(endpoint: boundEndpoint, owner: owner, authorized: {
+                        let cleanupOwner = self.credential?.subject ?? self.defaults.string(forKey: self.storageKey)
+                            ?? self.defaults.string(forKey: self.storageKey + ".pendingJournalCleanupOwner")
+                            ?? self.defaults.string(forKey: self.storageKey + ".recoveryCleanupOwner")
+                        return cleanupOwner == owner && (self.endpoint?.absoluteString ?? "disabled") == boundEndpoint
+                            && !preservePendingJournals
+                    })
+                } catch { failureCode = "qaCancellationCleanupRequired"; status = "storageError"; return false }
+            }
             if preservePendingJournals {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeTranslationRecoveryJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="translationRecoveryJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeTurnDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="turnDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeResultDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
@@ -2564,6 +2824,41 @@ private struct NativeDataFailure: Decodable {
     let error: Failure
 }
 
+/// Session eligibility is live; journal owner/epoch identity alone is never a UI lease.
+@MainActor struct NativeTranslationSessionRecoveryPort: NativeTranslationRecoveryPersistence {
+    let journal: NativeTranslationRecoveryJournal
+    let currentScope: () -> NativeDataScope?
+    var observation: NativeJournalDataObservation? = nil
+
+    private func check(_ scope: NativeDataScope) throws {
+        guard currentScope() == scope else { throw NativeDataError.staleSessionResponse }
+    }
+    func read(_ scope: NativeDataScope) throws -> NativeTranslationRecoveryRecord? {
+        try check(scope)
+        let record = try journal.read(scope)
+        try check(scope)
+        return record
+    }
+    func retain(_ identity: NativeTranslationRecoveryIdentity, scope: NativeDataScope) throws -> NativeTranslationRecoveryRecord {
+        try check(scope)
+        let record = try journal.retain(identity, scope: scope)
+        try check(scope)
+        return record
+    }
+    func complete(_ original: NativeTranslationRecoveryRecord, verifiedReceipt: NativeTranslationRecoveryReceipt, scope: NativeDataScope) throws {
+        try check(scope)
+        let ticket = observation?.begin()
+        try journal.complete(original, verifiedReceipt: verifiedReceipt, scope: scope)
+        try check(scope)
+        observation?.finish(ticket, verifiedReceipt.identity.idempotencyKey)
+    }
+    func abandonLocally(_ original: NativeTranslationRecoveryRecord, scope: NativeDataScope) throws {
+        try check(scope)
+        try journal.abandonLocally(original, scope: scope)
+        try check(scope)
+    }
+}
+
 /// A synchronous storage boundary keeps write-before-send testable. Production
 /// always uses the existing owner/endpoint Keychain item, never UserDefaults text.
 @MainActor
@@ -2596,5 +2891,108 @@ struct NativeKeychainVault: NativeCredentialVault {
     }
     func remove(service: String, owner: String) -> OSStatus {
         SecItemDelete(query(service: service, owner: owner) as CFDictionary)
+    }
+}
+
+// QA uses its own finite wire while credentials stay in the original session.
+// The existing Ask transport, modes and pending-Ask journal are unchanged.
+@MainActor
+extension NativeSession {
+    var nativeQAProjectionGeneration: UUID { turnDataProjectionFence.generation }
+
+    func makeNativeQAPendingJournal() -> NativeQAPendingJournal {
+        NativeQAPendingJournal(vault: vault, currentScope: { [weak self] in self?.dataScope })
+    }
+
+    private func eraseNativeQACancellationCustody(endpoint: String, owner: String, authorized: () -> Bool) throws {
+        if NativeQAWire.uuid(owner) {
+            try NativeQACancellationJournal.erase(endpoint: endpoint, owner: owner, vault: vault, authorized: authorized)
+            return
+        }
+        // Existing non-QA identities cannot retain this strict UUID-only namespace.
+        // Preserve their original cleanup contract only after qualified physical absence.
+        // Any unexpected bytes or unavailable storage stays blocked, never erased or ignored.
+        guard !endpoint.isEmpty, endpoint.utf8.count <= 2048, authorized() else { throw NativeQACancellationError.stale }
+        let first = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized() else { throw NativeQACancellationError.stale }
+        let second = vault.read(service: NativeQACancellationJournal.service(endpoint), owner: owner)
+        guard authorized(), first.0 == errSecItemNotFound, first.1 == nil,
+              second.0 == errSecItemNotFound, second.1 == nil else { throw NativeQACancellationError.storageUnavailable }
+    }
+
+    func makeNativeQACancellationJournal(currentScope: (() -> NativeDataScope?)? = nil) -> NativeQACancellationJournal {
+        NativeQACancellationJournal(vault: vault, currentScope: currentScope ?? { [weak self] in self?.dataScope })
+    }
+
+    func makeNativeQATransport() -> NativeQASessionTransport {
+        NativeQASessionTransport(session: self, journal: makeNativeQAPendingJournal())
+    }
+
+    func nativeQARequest(_ command: NativeQARequest, scope expected: NativeDataScope) async throws -> NativeQAHTTPResponse {
+        guard !busy, dataScope == expected else { throw NativeQAError.stale }
+        let path = try command.path
+        let body = try command.body
+        let cancellationRequest: Bool
+        switch command {
+        case .requestCancellation, .readCancellation: cancellationRequest = true
+        default: cancellationRequest = false
+        }
+        let responseLimit = cancellationRequest ? 4096 : 1_000_000
+        if case .submit(let pending) = command {
+            guard pending.matches(expected) else { throw NativeQAError.stale }
+        }
+        if case .requestCancellation(let pending) = command {
+            let target = NativeQACancellationTarget(scope: expected, sessionID: pending.sessionID,
+                requestID: pending.requestID, canRequestStop: false)
+            guard pending.matches(target) else { throw NativeQAError.stale }
+        }
+        guard body.map({ $0.count <= 32768 }) ?? true else { throw NativeQAError.invalidResponse }
+        let deletionGeneration = turnDataProjectionFence.generation
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        try Task.checkCancellation()
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration,
+              let credential, let endpoint else { throw NativeQAError.stale }
+        let url = endpoint.appendingPathComponent(path)
+        var request = URLRequest(url: url)
+        request.httpMethod = command.method
+        request.httpBody = body
+        request.httpShouldHandleCookies = false
+        request.timeoutInterval = 15
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if body != nil { request.setValue("application/json", forHTTPHeaderField: "Content-Type") }
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        let remaining = max(0, 15 - (ProcessInfo.processInfo.systemUptime - started))
+        let task = stream.task
+        let deadline = Task { try await Task.sleep(for: .seconds(remaining)); task.cancel() }
+        defer { deadline.cancel() }
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration,
+              let http = response as? HTTPURLResponse, http.url == url,
+              (200..<600).contains(http.statusCode), !(300..<400).contains(http.statusCode),
+              http.value(forHTTPHeaderField: "Content-Type")?.split(separator: ";").first?.trimmingCharacters(in: .whitespaces).lowercased() == "application/json",
+              http.expectedContentLength <= Int64(responseLimit) else { throw NativeQAError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            try Task.checkCancellation()
+            guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
+            guard bytes.count < responseLimit else { throw NativeQAError.invalidResponse }
+            bytes.append(byte)
+        }
+        try Task.checkCancellation()
+        guard dataScope == expected, turnDataProjectionFence.generation == deletionGeneration else { throw NativeQAError.stale }
+        // Only the actual QA authentication denial invalidates the original session.
+        // A proxy HTML401, broken response or other status retains the pending request.
+        if !cancellationRequest, http.statusCode == 401,
+           let envelope = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+           envelope["version"] as? String == "qa-agent/1",
+           let error = envelope["error"] as? [String: Any],
+           error["code"] as? String == "UNAUTHENTICATED",
+           ["not_submitted", "unknown"].contains(error["ack"] as? String ?? "") {
+            handle(SessionError.denied)
+            throw NativeDataError.sessionUnavailable
+        }
+        return NativeQAHTTPResponse(status: http.statusCode, body: bytes)
     }
 }

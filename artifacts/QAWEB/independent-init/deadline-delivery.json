@@ -1,0 +1,23 @@
+{
+  "review": "shared-f16e4b76-exact80.md",
+  "findingCount": 1,
+  "proof": "proof-1791896326944.json",
+  "proofChecks": 9,
+  "contracts": {
+    "pass": 14,
+    "fail": 0,
+    "skip": 0
+  },
+  "targetWritten": false,
+  "deadlineCaps": {
+    "lockMs": 500,
+    "statementMs": 30000,
+    "transactionMs": 60000,
+    "remainingWindowReserveMs": 1000
+  },
+  "sourceSha256": "2005b1ae1736a4cd7481c91680a1f8698c44488b36bc40cd139e91d2675a6be5",
+  "originalMigrationBytesChanged": false,
+  "newPrivileges": false,
+  "ordinaryDmlPause": false,
+  "targetExecution": "UNRUN"
+}

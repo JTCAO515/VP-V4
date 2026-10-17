@@ -1,0 +1,20 @@
+[
+  {
+    "path": "lib/server/jobs/hosted-text-worker.ts",
+    "base": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+    "beforeSha256": "035c50e2421fd1094e03572658a75b10fb40f6781f1f024a78fac3dbc1b28978",
+    "afterSha256": "3931f90dd9449f0179d940f4da84e07ed80cc2f140683b15bc3a95eb297a7ba5"
+  },
+  {
+    "path": "lib/server/jobs/run-hosted-text-worker.mjs",
+    "base": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+    "beforeSha256": "af23881e1b03c2d32b92a359a043b94d7e8d08f1b3e68db4f595666ac42db59f",
+    "afterSha256": "33767056d730bc9197dc08d4d369affa473fbfe7cb7105269e40b6a7f639c1cf"
+  },
+  {
+    "path": "lib/server/jobs/hosted-usage-audit.ts",
+    "base": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+    "beforeSha256": "f76818183db494ad0dace2b54b6e3733548fac5d776ddaa52539183d910a462c",
+    "afterSha256": "245358b04c9b3356298feb402549e5078452daa3a810d534400e0bde576c4110"
+  }
+]

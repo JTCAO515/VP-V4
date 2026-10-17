@@ -1,0 +1,94 @@
+test_failure_in_pipeline_keeps_category_and_cleans_children (__main__.SafeDiagnostics) ... ok
+test_only_fixed_states_at_actual_header_are_public (__main__.SafeDiagnostics) ... FAIL
+test_permission_context_is_allowlisted_without_sql_or_names (__main__.SafeDiagnostics) ... ok
+test_success_preserves_output_and_has_no_failure_record (__main__.SafeDiagnostics) ... ok
+test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) ... test_verbose_actual_sqlstate_and_unknown_names_never_echo (__main__.SafeDiagnostics) ... ok
+test_verbose_and_object_names_do_not_override_error_header (__main__.SafeDiagnostics) ... FAIL
+
+======================================================================
+FAIL: test_only_fixed_states_at_actual_header_are_public (__main__.SafeDiagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 60, in test_only_fixed_states_at_actual_header_are_public
+    self.assertIsNone(d['sqlstate']);self.assertNotIn(token,str(d))
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (suffix=b"Command was: SELECT 'ERROR: TOKEN:';\n")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 41, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate'])
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (suffix=b'DETAIL: row value\nERROR: TOKEN: already exists\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 41, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate'])
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (suffix=b'CONTEXT: SQL statement\nERROR: 42P07: already exists\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 41, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate'])
+AssertionError: '42P07' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (suffix=b"Command was: SELECT 'value\npg_restore: error: could not execute query: ERROR: 42P07: already exists\n';\n")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 41, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate'])
+AssertionError: '42P07' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (raw=b'DETAIL: row\npg_restore: error: could not execute query: ERROR: 42501: permission denied\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 47, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate']);self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: '42501' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (raw=b"Command was: SELECT 'ERROR: TOKEN:';\n")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 47, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate']);self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (raw=b'ERROR: TOKEN: already exists\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 47, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate']);self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) (raw=b'pg_restore: creating TABLE "private ERROR: TOKEN: already exists"\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 47, in test_user_text_cannot_supply_sqlstate_or_failure_category
+    self.assertIsNone(d['sqlstate']);self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'TOKEN' is not None
+
+======================================================================
+FAIL: test_verbose_and_object_names_do_not_override_error_header (__main__.SafeDiagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 53, in test_verbose_and_object_names_do_not_override_error_header
+    self.assertEqual(d['category'],'RESTORE_PERMISSION_DENIED');self.assertIsNone(d['sqlstate'])
+AssertionError: 'RESTORE_OBJECT_EXISTS' != 'RESTORE_PERMISSION_DENIED'
+- RESTORE_OBJECT_EXISTS
++ RESTORE_PERMISSION_DENIED
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.026s
+
+FAILED (failures=10)

@@ -1,0 +1,30 @@
+✔ current source and manual addition retain separate provenance and original bytes (1.055834ms)
+✔ country/title do not grant Chinese observation and ambiguous lines stay unknown (0.159458ms)
+✔ stale versions/items, missing evidence, revoked, unmatched and expired sources fail closed (0.18825ms)
+✔ source transport failure differs from a successful empty/missing read (0.046833ms)
+✔ late response, route/actor change and unmount cannot publish into successor read (0.583708ms)
+✔ prepare uses only original versioned patch, preserves bytes, and never confirms or retries unknown ACK (0.50775ms)
+✔ online read binds exact item/version and preserves cookie GET/no-store/abort without model egress (11.22225ms)
+✔ real Cookie prepare POST preserves exact body then reads exact receipt id without confirm (12.485083ms)
+✔ unknown POST recovery only GETs and never clears original bytes or fabricates receipt on empty read (0.658458ms)
+✔ original pending validation rejects wrong receipt/revision/base/digest/extra ops/forged after (0.205209ms)
+✔ actor/route replacement after await cannot adopt a POST receipt or pending diff (0.149375ms)
+✔ verified claims create ephemeral sub/session/generation root; unknown and late claims cannot restore it (0.381417ms)
+✔ claims expiry and 8s unknown claims timeout invalidate without late restore (0.345625ms)
+✔ only exact authoritative terminal token settles a handed intent; old epoch/reset/read-failure do not (0.071042ms)
+✔ hidden address review blocks original Confirm including restored pending with no local ledger (0.0795ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (3.864333ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (12.932708ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (1.014167ms)
+✔ real Section starts fail closed until verified claims, without rendering stale item facts (0.317541ms)
+✔ manual value preserves supplied bytes and cannot acquire verified provenance (0.989667ms)
+✔ bounded address input rejects blank, controls, malformed Unicode and overflow without clipping (0.18575ms)
+✔ Chinese text observation uses only real address content and leaves ambiguous scripts unknown (0.158916ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 271.406167

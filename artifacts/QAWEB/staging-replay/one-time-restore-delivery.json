@@ -1,0 +1,43 @@
+{
+  "status": "PASS_LOCAL_ONE_TIME_RESTORE_CONTRACT_ONLY",
+  "base": "8941e5f2df7715125497330bec3e6c91c183b6b9",
+  "reviewedMainSource": "787a681f",
+  "fixedReviewFindings": [
+    "packet and START both absent UUID equality passed",
+    "repeat/concurrent restore-replay archive read without atomic stage consumption"
+  ],
+  "codeHashes": {
+    "capture": "f6062ac17d611f8c0ae21faba8c59534aa2d90413ae0e07690da2049c79539c5",
+    "restoreReplay": "58250f5aacfba48e9e0b83bc8c4c2c0d477adc3afdca9c3a93c9a7789808b05a"
+  },
+  "tests": {
+    "directHumanCanonicalUuidClaimConcurrencyFailure": 11,
+    "preservedSnapshotModeGates": 10,
+    "syntax": "PASS",
+    "diffWhitespace": "PASS",
+    "strictCaptureRestoreOriginalBytes": "UNCHANGED"
+  },
+  "claim": {
+    "root": "/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives",
+    "key": "approval-<canonical UUID>.restore-replay.used.json",
+    "primitive": "O_CREAT|O_EXCL|O_NOFOLLOW; private directory fd",
+    "binding": [
+      "approvalId",
+      "stage",
+      "target",
+      "manifestSha256",
+      "codeSha256"
+    ],
+    "failureBehavior": "marker retained even if claim write/fsync or subsequent restore fails; never unlinked",
+    "before": "first archive read/hash/decrypt/Docker in restore_bundle",
+    "concurrentFixture": "eight independent OS open contenders; one succeeds, seven reject"
+  },
+  "full155ReplayRerun": "UNRUN unchanged data engine; reuse proof15 scope",
+  "dockerRequiredForTheseTests": false,
+  "actualADIoLease": "remains Main only per8941 release",
+  "actualDataArchiveRead": false,
+  "actualIdentityOrArchiveDirectoryWritten": false,
+  "MainAuthorizationOrStartWritten": false,
+  "realTargetWritten": false,
+  "platformPermissionChange": false
+}

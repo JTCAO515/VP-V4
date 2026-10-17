@@ -1,0 +1,5 @@
+{
+  "status": "FAIL_SOURCE_SYNTAX_BEFORE_RESOURCE_CREATION",
+  "reason": "Nested import edit caused indentation error; corrected before any target or fixture access",
+  "targetRead": false
+}

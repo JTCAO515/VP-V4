@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } f
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { body, prepareBodyUpdates, preserveIssueProgress, validateRemoteTaskBody } from '../../../scripts/vpj-program.mjs';
+import { splitGeneratedIssueBody, currentTaskBody, body, prepareBodyUpdates, preserveIssueProgress, validateRemoteTaskBody } from '../../../scripts/vpj-program.mjs';
 
 const planDir = 'docs/program/2026-09-05';
 const plan = JSON.parse(readFileSync(`${planDir}/issue-plan.json`, 'utf8'));
@@ -247,6 +247,7 @@ function commandFixture(t, command, { parentDrift = false, successfulPublish = f
     delete tasks[1].url;
   }
   const fixturePlan = { ...plan, tasks, sourceSnapshot: 'snapshot.json', oldIssueSuccessors: {} };
+  delete fixturePlan.modularDirection; // This fixture exercises the legacy baseline without migration snapshots.
   for (const directory of ['scripts', 'bin', `${planDir}/issue-bodies`]) mkdirSync(path.join(fixtureRoot, directory), { recursive: true });
   cpSync('scripts/vpj-program.mjs', path.join(fixtureRoot, 'scripts/vpj-program.mjs'));
   mkdirSync(path.join(fixtureRoot, 'scripts/lib'), { recursive: true });
@@ -336,3 +337,64 @@ test('publish can add an unassigned task while preserving a completed Issue and 
 
 test('publish keeps acceptance links without recreating native blocking relationships', t =>
   commandFixture(t, 'publish', { successfulPublish: true, acceptanceOnly: true }));
+
+
+test('reviewed modular bodies retain completed criteria and append-only progress while refusing unknown scope drift', () => {
+  const migrated = plan.tasks.find(entry => entry.number === 195);
+  const snapshot = readFileSync('docs/product/VPV10-MODULAR-001/after/195.md', 'utf8');
+  assert.equal(body(migrated), snapshot);
+  assert.ok(snapshot.includes('- [x] '), 'historical completed criteria remain completed');
+  const remote = snapshot + '\n## Later verified evidence\nNew scoped result remains.\n';
+  const issue = { number: migrated.number, id: migrated.databaseId, title: `[${migrated.id}] ${migrated.title}`, body: remote };
+  assert.equal(prepareBodyUpdates([migrated], [issue])[0].body, remote);
+  assert.throws(() => body({ ...migrated, acceptance: [...migrated.acceptance, 'New unreviewed criterion'] }), /task definition changed/);
+  assert.throws(() => body({ ...migrated, modularDirection: { ...migrated.modularDirection, priority: 'P0' } }), /modular attribution drift/);
+  assert.throws(() => prepareBodyUpdates([migrated], [{ ...issue, body: remote.replace('## 当前目标与工程责任', '## Concurrently rewritten scope') }]), /body preflight failed/);
+});
+
+
+test('unchecking a reviewed completed item refuses the whole body-update batch without restoring completion', () => {
+  const migrated = plan.tasks.find(entry => entry.number === 195);
+  const snapshot = body(migrated);
+  const remote = snapshot.replace('- [x] ', '- [ ] ') + '\n## New evidence\nRetain the explicit reopened criterion.\n';
+  const issue = { number: migrated.number, id: migrated.databaseId, title: `[${migrated.id}] ${migrated.title}`, body: remote };
+  assert.throws(() => prepareBodyUpdates([migrated], [issue]), /previously checked acceptance is now unchecked/);
+  assert.equal(issue.body, remote, 'preflight is read-only, including the unchecked criterion and appended evidence');
+  assert.throws(() => prepareBodyUpdates([migrated], [issue], new Map([[migrated.id, snapshot.replace('- [x] ', '- [ ] ')]])), /refuse automatic restoration/, 'an older unchecked template cannot bypass the refusal');
+  const newlyChecked = snapshot.replace('- [ ] ', '- [x] ') + '\n## More evidence\nNew completion remains.\n';
+  assert.equal(prepareBodyUpdates([migrated], [{ ...issue, body: newlyChecked }])[0].body, newlyChecked);
+  // A duplicate checked statement elsewhere cannot override the explicit uncheck at its original position.
+  const duplicate = remote + '\n' + snapshot.split('\n').find(line => line.startsWith('- [x] ')) + '\n';
+  assert.throws(() => preserveIssueProgress(duplicate, snapshot, snapshot, migrated.id), /previously checked acceptance is now unchecked/);
+});
+
+
+test('legacy remote mutation commands fail before any GitHub access when the current plan is active', () => {
+  for (const command of ['publish','sync-bodies','sync-selected','close-old']) {
+    const result = spawnSync(process.execPath, ['scripts/vpj-program.mjs',command,'VPJ-07'], {encoding:'utf8',env:{...process.env,PATH:'/nonexistent-current-plan-test'}});
+    assert.notEqual(result.status,0);
+    assert.match(result.stderr,/Legacy remote mutation is disabled/);
+    assert.ok(!result.stderr.includes('spawnSync gh'), 'no GitHub subprocess may start');
+  }
+});
+
+
+test('current generated prefix accepts checked markers and preserves an opaque FAIL/UNRUN evidence tail', () => {
+  const currentPlan = JSON.parse(readFileSync('docs/product/VPV10-MODULAR-001/current-plan.json', 'utf8'));
+  const currentTask = currentPlan.tasks.find(t=>t.number===692);
+  const generated = currentTaskBody(currentTask,currentPlan);
+  const checked = generated.replace('- [ ] ', '- [X] ');
+  const evidence = '\n## Implementation evidence\nFAIL: target unavailable.\nUNRUN: provider and device.\n```text\n- [x] quoted example, not acceptance\n```\n';
+  const remote = checked + evidence;
+  const split = splitGeneratedIssueBody(remote,generated,currentTask.id);
+  assert.equal(split.prefix,checked.trimEnd());
+  assert.equal(split.suffix,checked.slice(checked.trimEnd().length)+evidence);
+  const regenerated = preserveIssueProgress(remote,generated,generated,currentTask.id);
+  assert.ok(regenerated.endsWith(evidence));
+  assert.equal(splitGeneratedIssueBody(regenerated,generated).suffix,split.suffix);
+  assert.ok(regenerated.includes('- [x] '), 'checked progress is retained on generation');
+  assert.equal(remote,checked+evidence,'validation never mutates the remote body');
+  assert.throws(()=>splitGeneratedIssueBody(remote.replace('## 用户结果','## Changed task scope'),generated),/unknown body drift/);
+  assert.throws(()=>splitGeneratedIssueBody(generated.trimEnd()+'same-paragraph injected tail',generated),/unknown body drift/);
+  assert.throws(()=>splitGeneratedIssueBody(checked.replace('Main','Unknown owner')+evidence,generated),/unknown body drift/);
+});

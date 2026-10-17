@@ -1,0 +1,36 @@
+{
+  "status": "FAIL_OWN_SHARED_SCHEMA_SIMULATION",
+  "target": "UNRUN",
+  "managedAuth": "UNRUN",
+  "provider": "UNRUN",
+  "schemaAcceptance": "PURE_PG_FIXTURE_ONLY",
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "actual newly created empty application database, no archive or imported data"
+    },
+    {
+      "result": "PASS",
+      "check": "exact original local Auth/role/engine fingerprints; empty Auth rows"
+    },
+    {
+      "result": "PASS",
+      "check": "unknown managed target engine/Auth profile refuses rather than normalization"
+    },
+    {
+      "result": "PASS",
+      "check": "exact original75 service schema with generated retained Auth/input/disabled budget, no real shared data import"
+    }
+  ],
+  "runId": "563003de-4ef9-4ca9-9d47-695cd519602d",
+  "reviewSource": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "sourceCount": 155,
+  "platform": {
+    "profile": "local-pg-fixture/1",
+    "authSdkAcceptance": "UNRUN_PURE_PG_ONLY"
+  },
+  "retainedSyntheticBeforeSha256": "75c1ea231abc52614fa66cba8619d0570ec1368ae15d75ff0a7498065ba528f0",
+  "reason": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '{\"text\": [{\"locale\": \"en\", \"turn_id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"hidden_at\": null, \"policy_id\": \"fdd4c6c3-bb61-4efa-80cb-eb1649ffc573\", \"thread_id\": \"27feac69-3645-460f-af7f-8301561da5bb\", \"consent_id\": \"cb36a742-fb6a-4cdf-80a4-89045a347d06\", \"created_at\": \"2026-10-13T11:33:48.503546+00:00\", \"input_text\": \"Retained synthetic shared-baseline input\", \"output_kind\": null, \"output_text\": null}], \"turn\": [{\"id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"status\": \"accepted\", \"trip_id\": null, \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"thread_id\": \"27feac69-3645-460f-af7f-8301561da5bb\", \"created_at\": \"2026-10-13T11:33:48.499308+00:00\", \"updated_at\": \"2026-10-13T11:33:48.499308+00:00\"}], \"user\": {\"id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\"}, \"work\": [{\"state\": \"queued\", \"attempt\": 0, \"turn_id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"lease_ms\": 120000, \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.504267+00:00\", \"expires_at\": null, \"session_id\": \"45bf8383-2516-4763-9ebc-0cbfa081b48d\", \"lease_token\": null, \"max_attempts\": 3, \"execution_mode\": \"text\"}], \"limit\": {\"model\": \"fixture-model\", \"enabled\": false, \"provider\": \"qwen\", \"scope_id\": \"5e714702-344e-452b-ac69-9a0e75674d08\", \"limit_micros\": 100000, \"price_version\": \"fixture-v1\", \"attempt_limit_micros\": 1000}, \"scope\": {\"id\": \"5e714702-344e-452b-ac69-9a0e75674d08\", \"frozen\": false, \"enabled\": false, \"currency\": \"CNY\", \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.431684+00:00\", \"expires_at\": \"2026-10-14T11:33:48.431684+00:00\", \"limit_micros\": 100000, \"concurrency_limit\": 2, \"task_limit_micros\": 10000, \"task_attempt_limit\": 5}, \"session\": {\"id\": \"45bf8383-2516-4763-9ebc-0cbfa081b48d\", \"user_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.431196+00:00\"}}'\n- '{\"text\": [{\"locale\": \"en\", \"turn_id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"hidden_at\": null, \"policy_id\": \"fdd4c6c3-bb61-4efa-80cb-eb1649ffc573\", \"thread_id\": \"27feac69-3645-460f-af7f-8301561da5bb\", \"consent_id\": \"cb36a742-fb6a-4cdf-80a4-89045a347d06\", \"created_at\": \"2026-10-13T11:33:48.503546+00:00\", \"input_text\": \"Retained synthetic shared-baseline input\", \"output_kind\": null, \"output_text\": null}], \"turn\": [{\"id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"status\": \"accepted\", \"trip_id\": null, \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"thread_id\": \"27feac69-3645-460f-af7f-8301561da5bb\", \"created_at\": \"2026-10-13T11:33:48.499308+00:00\", \"updated_at\": \"2026-10-13T11:33:48.499308+00:00\"}], \"user\": {\"id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\"}, \"work\": [{\"state\": \"queued\", \"attempt\": 0, \"turn_id\": \"6434c5dd-e5a6-42bd-9451-99e8d5607386\", \"lease_ms\": 120000, \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.504267+00:00\", \"expires_at\": null, \"session_id\": \"45bf8383-2516-4763-9ebc-0cbfa081b48d\", \"lease_token\": null, \"max_attempts\": 3}], \"limit\": {\"model\": \"fixture-model\", \"enabled\": false, \"provider\": \"qwen\", \"scope_id\": \"5e714702-344e-452b-ac69-9a0e75674d08\", \"limit_micros\": 100000, \"price_version\": \"fixture-v1\", \"attempt_limit_micros\": 1000}, \"scope\": {\"id\": \"5e714702-344e-452b-ac69-9a0e75674d08\", \"frozen\": false, \"enabled\": false, \"currency\": \"CNY\", \"owner_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.431684+00:00\", \"expires_at\": \"2026-10-14T11:33:48.431684+00:00\", \"limit_micros\": 100000, \"concurrency_limit\": 2, \"task_limit_micros\": 10000, \"task_attempt_limit\": 5}, \"session\": {\"id\": \"45bf8383-2516-4763-9ebc-0cbfa081b48d\", \"user_id\": \"d5bf92df-b9c2-4572-80a6-f59a1418b952\", \"created_at\": \"2026-10-13T11:33:48.431196+00:00\"}}'\n",
+  "cleanup": "PASS_OWN_ONLY",
+  "completedAt": "2026-10-13T11:33:55.545Z"
+}

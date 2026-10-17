@@ -1,0 +1,9 @@
+{
+  "status": "FAIL_LOCAL_RESTORE_REPLAY_PROOF",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [],
+  "reason": "SYNTHETIC_ONLY",
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 0.0
+}

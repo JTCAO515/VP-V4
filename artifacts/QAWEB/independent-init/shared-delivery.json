@@ -1,0 +1,30 @@
+{
+  "direction": "existing-shared-approved",
+  "oldIndependentDirection": "CANCELLED",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "sourceBase": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "latestProof": "proof-1791891335222.json",
+  "ownedSharedSimulationChecks": 8,
+  "contractTests": {
+    "pass": 8,
+    "fail": 0,
+    "skip": 0
+  },
+  "actualTarget": "UNRUN",
+  "managedAuthFingerprint": "UNREVIEWED_FAILCLOSED",
+  "actualDataCompatibility": "UNRUN",
+  "dbConnectionApplyCapability": false,
+  "sources": {
+    "scripts/qa-agent-independent-init/README.md": "0842b0318ddfdc754db98e34b30fc3633c950c0cfb68729246b444f8c496500d",
+    "scripts/qa-agent-independent-init/local-pg-bootstrap.sql": "9dcedddb223099ab59a31d8e870b965cae701af68d742859b87c24f965c971ee",
+    "scripts/qa-agent-independent-init/migration-sources.json": "0b8ff8c6100544e82c3ecb50f54f5baa82f8c9b0fc875cc9d825ec6bcb631767",
+    "scripts/qa-agent-independent-init/platform-pins.json": "727e2d84c18ef97239af7a80171b6ad5ae1613070a3696325ad391b1034dc6c8",
+    "scripts/qa-agent-independent-init/platform-probe.sql": "93b47f9b567a7572d8e213e63a8c14635e8d5de83cc48e100dcaf01893fd3d99",
+    "scripts/qa-agent-independent-init/postconditions.sql": "f166a581ee26e5a61591b93512eacaf0e89d494a3ee46354f1977a460b6b9f09",
+    "scripts/qa-agent-independent-init/prepare.mjs": "630604fa483dd89b8f479a4200e9ff244f906805ef04fc5c06ab62e7c9836de3",
+    "scripts/qa-agent-independent-init/prove-empty-pg.mjs": "c576755e1b549d5ec5274580f689c8da5193f4163471dfc543cc6adb016eb0f4",
+    "scripts/qa-agent-independent-init/prove-shared-pg.mjs": "f033a4e3593c0b89314bfe77a0b78ad5ea055d3a9cd6d718234345d20073e73a",
+    "scripts/qa-agent-independent-init/shared-baseline.json": "9dacfb610ebe597d2fe74d642cdf0f9e8f2983fa329da5adb0044d9aa1781b78"
+  },
+  "oldFreshEvidencePreserved": true
+}

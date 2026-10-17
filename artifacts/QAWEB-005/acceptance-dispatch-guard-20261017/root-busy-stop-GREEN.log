@@ -1,0 +1,25 @@
+✔ durability fault initial-directory-sync stays stopped for a separate process, with no successor claim or send (189.423792ms)
+✔ durability fault release-directory-sync stays stopped for a separate process, with no successor claim or send (204.747333ms)
+✔ durability fault terminal-file-sync stays stopped for a separate process, with no successor claim or send (208.480375ms)
+✔ durability fault unlink stays stopped for a separate process, with no successor claim or send (212.187ms)
+✔ canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses (1067.177708ms)
+✔ actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage (1292.95525ms)
+✔ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7263.819417ms)
+✔ two original worker dispatches survive actual process restart; third has no claim/reserve/provider (161.088083ms)
+✔ concurrent worker instances and a separate process cannot overlap the same journal run (124.645334ms)
+✔ first failure or unknown ACK/usage is sticky across restart, with original pending holds (766.175666ms)
+✔ crash after durable enter retains original lock and denies a restarted worker without auto-recovery (154.7905ms)
+✔ root stop intent persists without stealing an active permit and vetoes its not-yet-sent request (104.679666ms)
+✔ expiry during authorized SQL dispatch prevents physical send and preserves pending budget (20.837208ms)
+✔ wrong actor/policy/config/source/job binding refuses construction before any RPC or send (8.9185ms)
+✔ empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending (39.8165ms)
+✔ uncontrolled original worker and an independent authorized run do not inherit another run stop (37.666875ms)
+✔ truncated journal, altered grant, and symlink refuse without provider or silent file replacement (24.910125ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9723.23575

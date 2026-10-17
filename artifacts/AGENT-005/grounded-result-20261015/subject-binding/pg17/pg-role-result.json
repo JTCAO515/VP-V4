@@ -1,0 +1,9 @@
+{
+  "actors": 2,
+  "bindingProducer": "existing guide_place_v1 under its existing postgres permission, synthetic claims",
+  "ordinaryContextWorkRole": "authenticated",
+  "ordinaryGuideIngress": "DENIED_UNCHANGED",
+  "model": "one controlled response, no provider network",
+  "initial": "succeeded",
+  "replay": "succeeded"
+}

@@ -1,0 +1,18 @@
+{
+  "base": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "writer": "unique integration owner only",
+  "candidates": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeQASessionTransport.swift",
+      "before_sha256": "d55c311c78705cfd75e0985716e241d3b644b3e86ca1433a04735c60aaaee53f",
+      "after_sha256": "aea3ce9cfed95dbc4c2360859d6b56af0b76a8f865d6fd8da671a6e8de7bc97d",
+      "status": "CANDIDATE_NOT_APPLIED"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeQAEntryView.swift",
+      "before_sha256": "8ccc7519eab5bab91595192024d9e63e7cd50aa21d18d9070abce3d37d317917",
+      "after_sha256": "6fbf1ff249150921dcf83dc1d0289078e55045f807393ad2f9efa5f33e55aa71",
+      "status": "CANDIDATE_NOT_APPLIED"
+    }
+  ]
+}

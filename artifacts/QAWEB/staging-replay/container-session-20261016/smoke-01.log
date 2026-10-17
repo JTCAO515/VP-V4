@@ -1,0 +1,22 @@
+test_typed_error_and_role_preserved (__main__.ContainerSession) ... ERROR
+
+======================================================================
+ERROR: test_typed_error_and_role_preserved (__main__.ContainerSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/test_adapter.py", line 22, in test_typed_error_and_role_preserved
+    owner=self.container()
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/test_adapter.py", line 16, in container
+    owner=m.SyntheticContainer()
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/adapter.py", line 88, in __init__
+    hello=read_reply(r,30)
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/adapter.py", line 54, in read_reply
+    result=json.loads(line);require('error' not in result,'CONTAINER_SERVICE_FAILED')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/container-diagnostic/adapter.py", line 17, in require
+    if not ok:raise ValueError(message)
+ValueError: CONTAINER_SERVICE_FAILED
+
+----------------------------------------------------------------------
+Ran 1 test in 0.338s
+
+FAILED (errors=1)

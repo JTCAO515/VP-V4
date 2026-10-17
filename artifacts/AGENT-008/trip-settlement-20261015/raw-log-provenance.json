@@ -1,0 +1,90 @@
+{
+  "preservedOriginals": [
+    {
+      "log": "continuation-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "continuation-typecheck-first.log.raw.gz"
+    },
+    {
+      "log": "continuation-typecheck-second.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "continuation-typecheck-second.log.raw.gz"
+    },
+    {
+      "log": "continuation-typecheck-third.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "continuation-typecheck-third.log.raw.gz"
+    },
+    {
+      "log": "export-flow-third.log",
+      "originalSHA256": "adbd9bee0b3f367f44f9b8667ce5182a60013cb7e82d3f4f4f5abf9db0ed74ea",
+      "rawArchive": "export-flow-third.log.raw.gz"
+    },
+    {
+      "log": "export-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "export-typecheck-first.log.raw.gz"
+    },
+    {
+      "log": "final-typecheck.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "final-typecheck.log.raw.gz"
+    },
+    {
+      "log": "full-legacy-native-first.log",
+      "originalSHA256": "a2001b563ee0c896daa42feb3735de11fcbb73cb25bba210ed75ce21f158d096",
+      "rawArchive": "full-legacy-native-first.log.raw.gz"
+    },
+    {
+      "log": "p2-core-r2.log",
+      "originalSHA256": "9bd84dc0548b27b43c19b5d0d030ab7d5bba45d4b7998003f48f8c662fe1d3d1",
+      "rawArchive": "p2-core-r2.log.raw.gz"
+    },
+    {
+      "log": "p2-typecheck-final.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "p2-typecheck-final.log.raw.gz"
+    },
+    {
+      "log": "p2-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "p2-typecheck-first.log.raw.gz"
+    },
+    {
+      "log": "phase2-typecheck.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "phase2-typecheck.log.raw.gz"
+    },
+    {
+      "log": "privacy-flow-fifth.log",
+      "originalSHA256": "517f6cbb6ab025aeca981816786157ffd4722eb3316df441110aab8bb4cd4233",
+      "rawArchive": "privacy-flow-fifth.log.raw.gz"
+    },
+    {
+      "log": "privacy-flow-fourth.log",
+      "originalSHA256": "77398bc498b7a13b03d6d1b0ac3f2da59de7b670e01750d8d79be0ae85e16561",
+      "rawArchive": "privacy-flow-fourth.log.raw.gz"
+    },
+    {
+      "log": "privacy-flow-third.log",
+      "originalSHA256": "4b5fc22f652f43ae0186815766a6440dced1b3d81388fb29dbc67f8e18de754e",
+      "rawArchive": "privacy-flow-third.log.raw.gz"
+    },
+    {
+      "log": "privacy-http-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "privacy-http-typecheck-first.log.raw.gz"
+    },
+    {
+      "log": "repair-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "repair-typecheck-first.log.raw.gz"
+    },
+    {
+      "log": "trip-privacy-typecheck-first.log",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawArchive": "trip-privacy-typecheck-first.log.raw.gz"
+    }
+  ],
+  "note": "Only display trailing whitespace normalized; original bytes retained in gzip. Existing tracked historical evidence untouched."
+}

@@ -1,5 +1,9 @@
 # Practical development workflow
 
+> 当前执行定义已迁至 [Agent / iOS / Web 计划](../product/VPV10-MODULAR-001/current-plan.json)。旧 issue-plan.json 的83任务、20 replacements及旧生成正文保留为历史定义/证据；旧同步命令禁止恢复旧标题正文。当前用户结果、稳定ID、依赖和批次只从新源读取。
+
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 ADR-0024, merged and effective. Shared workflow for VPJ work and explicitly requested maintenance; ADR-0023 defines
 product scope and safety. Development-stage approvals follow
 [the integration policy](development-integration-policy.md) (JT, 2026-09-12): available
@@ -20,7 +24,7 @@ Authority classes, merge rules and the operator queue live in
 
 ## 1. Pick a visible result in the current stage
 
-`issue-plan.json` is the only task-definition source; the six
+`docs/product/VPV10-MODULAR-001/current-plan.json` is the current task-definition source. The historical six
 [delivery stages](../program/2026-09-05/DELIVERY-STAGES.md) group its Issues into user-observable
 results. A stage demonstration is evidence for its stated slice, not closure of the Issues in it.
 

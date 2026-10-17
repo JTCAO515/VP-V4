@@ -1,0 +1,25 @@
+test_absolute_deadline_is_anchored_once_not_per_phase (__main__.DeadlineGuards) ... ok
+test_after_deadline_cleanup_fences_container_not_just_exec_client (__main__.DeadlineGuards) ... ok
+test_execute_unknown_nonce_fence_propagates_to_active_window_guard (__main__.DeadlineGuards) ... ok
+test_inflight_command_capped_and_no_data_after_expiry (__main__.DeadlineGuards) ... ok
+test_label_conflict_never_removes_foreign_container_and_cleanup_unknown (__main__.DeadlineGuards) ... ok
+test_launch_timeout_before_created_flag_still_fences_own_nonce (__main__.DeadlineGuards) ... ok
+test_private_module_budget_restores_all_references_and_hash_is_cancellable (__main__.DeadlineGuards) ... ok
+test_subprocess_and_sql_paths_share_same_proxy_budget (__main__.DeadlineGuards) ... ok
+test_unknown_cleanup_keeps_future_active_consumption_guard (__main__.DeadlineGuards) ... ok
+test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (__main__.DeadlineGuards) ... FAIL
+test_validation_latency_cannot_extend_approved_window (__main__.DeadlineGuards) ... ok
+test_clock_crosses_window_between_decrypt_and_postdata_no_later_io (__main__.DeadlineIntegration) ... ok
+
+======================================================================
+FAIL: test_utc_forward_jump_expires_even_when_monotonic_does_not_advance (__main__.DeadlineGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-diagnostic-window-deadline.py", line 185, in test_utc_forward_jump_expires_even_when_monotonic_does_not_advance
+    with self.assertRaises(deadline.WindowExpired):budget.check()
+AssertionError: WindowExpired not raised
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.069s
+
+FAILED (failures=1)

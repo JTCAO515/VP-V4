@@ -1,60 +1,65 @@
-# QAWEB-005 offline activation review kit
+# 当前共享目标 QA activation review kit
 
-Owned scope: #680/#682/#683; base e51cd9b9bec94afebed06ef6cf695224c3d24492.
-No installer, apply command, database connection, provider transport, credential lookup or worker runner exists here. Node >=22.18 with native TypeScript stripping is required. Run from the repository root:
+最新共享目标决定覆盖独立库方向。默认入口只准备原共享 dzt 目标；原独立规范保留为历史方向。独占 scripts/qa-agent-activation、对应契约 tests 和 artifacts/QAWEB/activation；没有 provisioning/apply/预算启用/provider/worker 运行命令。
+
+## 目标来源与命令
+
+operator 单独提供 `operator-target.template.json` 的两个字段：`projectRef`（20位小写字母或数字，本轮仅允许 dzqdzetcctkhbrhlxxgn）与 `supabaseUrl`（严格 `https://<ref>.supabase.co`，无斜杠路径、默认端口、认证、query、fragment）。这是 CLI/服务端配置输入，不能由浏览器、请求、cookie、job 决定。空值不能推导、回退或创建项目；URL 必须与 operator明确批准的固定ref完全一致。
 
 ```sh
-node scripts/qa-agent-activation/cli.mjs generate /absolute/operator-input.json /absolute/new-review-package.json
-node scripts/qa-agent-activation/cli.mjs preflight /absolute/new-review-package.json /absolute/new-report.json /absolute/observation.json
+node scripts/qa-agent-activation/cli.mjs generate /absolute/operator-input.json /absolute/new-package.json /absolute/operator-target.json
+node scripts/qa-agent-activation/cli.mjs preflight /absolute/package.json /absolute/new-report.json /absolute/observation.json /absolute/operator-target.json
 node --test tests/contract/qa-agent-activation/toolkit.test.mjs
 ```
 
-Output paths must not exist (exclusive creation, mode 0600). Exit 0 means generation or offline review checks succeeded; preflight exit 2 means blocked, exit 1 means invalid input. None means activation. Do not put secrets in input. Errors never echo values. The secret field/pattern filter is defense in depth, not a general-purpose secret detector.
+preflight 最后可加单独 approved checkout 的绝对路径，唯读其 supabase/migrations；不能改变 pinned hash/目标。输出独占创建，0600，不覆盖已有文件。退出0只表示离线检查通过，2表示preflight阻断，1表示输入无效。任何输出 activationAllowed 均 false；reviewReady不是资源、资金或运行授权。Node>=22.18/native TS stripping；真实host验证由deployment owner用审核过的worker image Node、无网络/credential mount完成，不安装host Node。
 
-## Operator input and trustworthy evidence
+旧共享策略/75→155、profile /3 和旧源pins保存在 `historical-*`，旧说明为 `HISTORICAL.md`。只有明确执行 `historical-cli.mjs` 才进入旧模式；当前入口不import/fallback旧工具。空库→155准备保留在 `independent-historical-*` 和 `INDEPENDENT-HISTORICAL.md`，仅显式使用该CLI可做历史fixture回放；不是当前就绪证据。当前ref的现有owned slot可以复用，仍需确切role/holder/slot证据；旧policy和consent不得自动复活。旧工作树未reset或清理。
 
-Start with `input.template.json`; nulls intentionally fail validation. Supply actual owner and existing configuration identity, actual Qwen recipient and endpoint, current terms/source/processing/storage/retention disclosures. Unsupported providers or endpoints fail closed; the server model is pinned by the accepted `PROTOCOL_MODELS` import. The browser cannot choose it. GLM and older current_input/task_history/knowledge_intent policies cannot be upgraded by this kit.
+## 当前输入与公开来源
 
-Unknown terms, regions and supplier retention may be explicitly `unknown` or `not disclosed`, per the accepted development integration policy. Do not claim zero retention or infer processing location from hostname. Recipient and exact endpoint must be known for a real destination binding. Notices include the accepted bilingual template, limits, retention/hiding semantics and terms version. Fresh policy UUID and noticeVersion are generated on every invocation. SHA-256 covers canonical sorted-key JSON of the complete `notice` object, including source evidence. Preserve those exact bytes/fields, not a translated or reconstructed hash. Changing any disclosure requires a new policy/version/hash and new QA UI consent; never copy historical consent.
+`input.template.json` 是 /2，空 owner/configuration/targetReceipts/budget/日期继续拒绝。input项目和URL还要匹配单独operator target。targetReceipts必须绑定当前同一ref、owner、configuration及预算证据hash，带一小时内观察时间和账户证据hash。这个非secret回执是operator审阅证据，不是供应商/数据库的认证证明。
 
-Each supplier, pricing and budget evidence record needs an HTTPS source URL without auth/query/fragment, observation timestamp, explicit recheck expiry and SHA-256 of the reviewed secret-free source. Public documentation, console metadata or current configuration records suffice; no supplier ticket, contract receipt or exact retention TTL is required. For budget caps use the actual authorized operator cap record, not the supplier tariff. For a source behind login, record a safe URL and digest of a redacted excerpt, never its tokenized URL or credentials.
+供应商披露、价目/预算可信来源、有效期和BigInt边界沿原实现：固定Qwen快照、endpoint、官方覆盖1000000、保守金额输入乘数1048576，6/24不扣优惠的公开候选不变。未知region/terms/storage/留存仍如实unknown；recipient和endpoint不能未知。公开supplier-price-candidate.json写明当前目标，但不含已核实际owner/配置/预算回执，不可直接生成。不会把方向同意、Pro组织现状或cost API不可用当作免费容量/创建/资金授权。
 
-The kit checks evidence shape, freshness (at most seven days), expiry, exact model/currency and safe positive integer rates. It cannot authenticate source truth or fetch prices. Main must inspect the source and approve the exact package hash; synthetic tests are not source verification. September observations cannot be made current by relabeling their version. The price must conservatively cover all billable components and tiers in the official range through 1,000,000 input tokens and the configured output cap (<=4096), in the scope currency, including any applicable surcharges. Currency conversion or discounts are not inferred. Unsupported tariff forms must be conservatively converted by the operator with recorded evidence, or stay blocked.
+新policy/scope UUID及noticeVersion每次生成全新。notice摘要包括projectRef，policy+hash精确绑定当前目标，改变目标、披露或内容必须新生成并重新同意。package包含 /4 mandatory projectRef profile、canonical hostedProfileHash、targetBinding、禁用server环境、原model_budget参数映射、project绑定的consent/attempt、sourceEvidence和targetReceipts。参数映射的每个数据库操作目标来自外层targetBinding，不允许独立目标override。
 
-Reservation = ceil((1,048,576 × max(input,cached input rate) + output cap × output rate)/1,000,000), using BigInt arithmetic. All values are currency micros; no free retry or text-byte token estimate. Attempts <=8, concurrency=1, and attempt/task/provider/scope limits are bounded and consistent. Scope can exhaust before eight turns; eight is a maximum, not a promise. Validity is capped to seven days and evidence expiries. Output embeds the existing v3 hosted profile and runs its accepted offline validator. It never invokes the worker.
+初始policy不发布，预算scope/provider disabled，Web=false、workerEnabled=false。policy没有可复活enabled字段，任何实际插入/撤销由Main按独立批准范围进行。终端用户必须在当前目标QA UI认证并同意确切policyId+noticeHash，不能迁移共享账号或同意；kit不会创造这些回执。
 
-## Review package and policy publication semantics
+## 共享基线、source pin与恢复
 
-The output contains exact column parameter maps for:
+当前manifest恢复为已实测75基线＋已审缺失80＝精确全部155版本及源码hash；未升级的75仍阻断。full155与missing80分别比较固定集合，不以计数通过；缺失、额外、乱序、source缺失或内容漂移均失败。`initialization`记录共享Production库和必须验证backup/restore。旧空库记录不能替代当前同库基线。
 
-- `turn_private.text_policies` (`policyInsertParameters`), **not inserted**;
-- `public.model_budget_scopes` (`scopeInsertParameters`, enabled=false);
-- `public.model_budget_provider_limits` (`providerLimitInsertParameters`, enabled=false).
+`metadata.sql`只读已升级目标的实际v2 signature/ACL/迁移等元数据；前置版本、备份与恢复证据由原replay/backup owner提供。`initialization-metadata.sql`仅历史空库fixture说明。连接器中的project_id必须等于operator明确绑定的dzt，current_database()不是project identity。kit本轮不执行目标查询、copy或DDL。
 
-This is the reviewable change package; no executable write SQL is emitted. Main can bind the explicit values to parameterized INSERTs after target readiness and the applicable activation authorization. No UPSERT/UPDATE of existing policy/scope is supported. Unique collisions fail, never overwrite. Original RLS/grants remain unchanged. There is no `enabled` column on text policies, and their only allowed update is terminal revocation. Therefore “disabled policy” here means unpublished: inserting the supplied policy with its effective timestamp **is a separate publication action**. Inserting a revoked policy and later clearing revocation is forbidden. Do not insert it as a staging workaround.
+当前 `qaReadyGroupsAcl` 检查实际 `public.qa_ready_groups_v2(integer,text,text,text)`，service_role=true且PUBLIC/anon/authenticated=false；旧v1/缺参数/公开execute失败。schema/lifecycle/RLS/fingerprint仍需Main证据；JS固定profile model/price/endpoint，金额仍在原reserve/dispatch核验。不得为了使用slot创建genericRole grants。
 
-All outer switches remain disabled; extracting a hosted profile does not install or start it. The package is not itself a runtime config or activation permission. No consent is generated. End user must authenticate in QA UI, read the exact policy notice, and submit the exact policyId + noticeHash through `qa_accept_policy_v1`. Owner/session/RLS and original service task identity remain enforced by the existing RPCs. `checkBinding` is an offline diagnostic only and must never replace those checks.
+现有ECS owned slot如已由operator准备且属于dzt可使用。本包不读取其值，也不要求新project/newkey；只收当前ref、source ref、授权事实、service_role RPC身份、purpose、slotId、holderId及新观察/evidence hash。accessRequirements不提供路径或key值。实际高权限copy/DDL/maintenance窗口/费用仍按确切单包另批，不因方向同意或本地测试通过而执行。
 
-## Readiness input
+## preflight observation
 
-Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081919ff47de24ca53b0f` and project `dzqdzetcctkhbrhlxxgn`. It only reads metadata/IDs/hash inventories; no session text. Map its results into an observation JSON (empty SQL arrays -> []). Add Main's separately verified evidence:
+inventory记录发布新policy/scope前的共享现存IDs/notice版本/hash；后续consent/identity是当前精确policy读回。旧策略和scope可存在，候选必须新ID/新notice；不得沿用旧授权。下面空值/false只是未验模板：
 
 ```json
 {
-  "projectId": "dzqdzetcctkhbrhlxxgn",
+  "projectId": null,
+  "supabaseUrl": null,
   "linkId": "link_6acdbe0471c081919ff47de24ca53b0f",
-  "observedAt": "ACTUAL_ISO_TIMESTAMP",
+  "observedAt": null,
   "migrations": [],
   "reviewedMigrations": [],
-  "migrationManifestHash": "5973a4845dff0d5698860894079c2f87e17c6cc2d25acd1014c9669816e67a98",
+  "migrationManifestHash": null,
   "qaRpcPresent": false,
-  "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v2(integer,text,text,text)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
   "turnDataPrivatePresent": false,
   "qaSchemaFingerprintMatches": false,
-  "restorePoint": {"ready": false, "evidenceHash": null},
+  "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v2(integer,text,text,text)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
+  "backupRestore": {"projectRef":null,"backupVerified":false,"restoreVerified":false,"backupEvidenceHash":null,"restoreEvidenceHash":null,"baselineVersionSetHash":null,"observedAt":null},
+  "accessBinding": {"projectRef":null,"sourceProjectRef":null,"authorizedForTarget":false,"rpcRole":null,"slotId":null,"holderId":null,"purpose":"qa_hosted_worker","evidenceHash":null,"observedAt":null},
+  "identityReceipts": {"projectRef":null,"ownerId":null,"policyId":null,"noticeHash":null,"scopeId":null,"configurationId":null,"hostedProfileHash":null,"endpoint":null,"evidenceHash":null},
+  "exactConsent": {"projectRef":null,"ownerId":null,"authSessionId":null,"consentId":null,"policyId":null,"noticeHash":null,"accepted":false,"revoked":false,"evidenceHash":null},
   "workerStopped": false,
   "webDisabled": false,
-  "ownerId": "ACTUAL_OWNER_UUID",
+  "ownerId": null,
   "existingPolicyIds": [],
   "existingNoticeVersions": [],
   "existingNoticeHashes": [],
@@ -63,36 +68,18 @@ Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081
 }
 ```
 
-`reviewedMigrations` must be Main's reviewed **exact missing 80 version set**, not an invented list, remote count or a copied remote list claimed as reviewed. `migrations` must contain the complete 155 applied versions, in ascending order. Both lists must exactly match the immutable `migration-manifest.json` pinned by SHA-256 in code; counts, duplicates, extra/missing versions or reordered lists fail. The manifest combines the official plugin read of the actual 75 baseline versions with the 80 missing versions cross-checked against the existing staging replay evidence. It pins all 155 source file hashes, including QA version 20261013050429; source drift also blocks readiness and requires a new Main-reviewed manifest/code revision. QA RPC presence means the complete reviewed signature set, not merely a prefix match; `qaSchemaFingerprintMatches` means Main's staging replay/fingerprint comparison succeeded, including grants/lifecycle guards. The read-only metadata inventory alone cannot prove those fields. Restore point must refer to a verified recovery artifact and its digest, not backup initiation. Host stopped and Web disabled require actual host/deployment evidence. Observations expire after one hour. Evidence booleans are operator assertions, not attestations; offline `reviewReady=true` is never runtime readiness/permission. Live authorization, provider, auth and deployment remain UNRUN.
+所有回执projectRef必须与当前dzt一致；accessBinding是安全审阅元数据，不输入key/JWT。其他ref、缺slot/holder、无当前授权或错误RPC role失败；属于dzt的现有slot不会因被标作“old access”而拒绝。backupRestore必须是原owner确切backup验证和恢复验证的两个新digest，baselineVersionSetHash=digest(manifest.baseline75)，观察不超过一小时；旧空库fixture/未完成备份不能当恢复ready。
 
-## Minimal Main integration and stop order
+观察/targetReceipts过期、来源/预算证据过期均失败；operator布尔/摘要仍需对应真实证据，不替代live actor/RLS。实际发布和同意另经原授权路径，缺精确同意仍阻断，旧policy不可复活。保留原未知费用pending/不可免费重试/停用顺序。
 
-1. Verify fixed account/project, exact baseline 75 + reviewed missing 80 = 155 migrations and QA schema/grants fingerprint; verify recovery point. Reuse existing staging replay/deployment owners. Keep original hosted worker stopped and Web disabled.
-2. Inspect current supplier/tariff/cap sources. Generate a fresh package, review its exact hash, run preflight against fresh target metadata. Old 8 policies and 3 scopes are not selected or modified.
-3. After authorized publication, insert only the reviewed new policy and disabled scope/provider parameters through the existing protected operator path; read back exact fields/hash. Bind the existing dedicated hosted worker v3 profile/endpoint/configuration identity. Never create another Vercel/edge/in-process worker or credentials.
-4. Perform authenticated QA UI exact consent; verify actor and Session isolation and server-side scope selection. Actual budget enablement and host/Web activation belong to Main's separately authorized bounded target test. Each physical send must follow original reserve -> QA dispatch authorization -> usage receipt -> settlement; attempt_id is leaseToken, task_id is the leased turnId in the accepted executor. Unknown dispatch/usage/settlement remains reserved/pending, never manually reset to zero or retried for free.
-5. To stop: disable admission/Web, disable the new budget scope/provider limits so reservation/dispatch fail closed, stop polling and drain the original hosted worker under its existing timeout/lease rules, terminally revoke the new policy to block further use, reconcile in-flight/pending attempts with actual usage. Keep ledger/consents/content and recovery evidence. Do not delete rows, clear frozen, erase pending spend, reopen a revoked policy or revive old policies. Runtime dispatch already sent cannot be undone by disabling switches.
+## backend接缝与运行边界
 
-No target write, budget enablement, provider call, deployment or restore was executed by this kit. Main owns integration and exact-head review; no shared source or HANDOFF edits are included.
+已接Main稳定backend接口：使用正式 `parseQaHostedProfile` 验证闭合 /4，使用 `readApprovedQaTarget` 获取明确operator目标，再经 `requireQaProfileTarget` 核对trusted composition binding。私有 /3 shim已从当前工具删除。生成和preflight都会重新执行正式验证，输出profileValidation=BACKEND_TYPED_VALIDATED；这只表示源码接口验证。
 
-## Current public-source candidate
+package同时包含 `workerJobCandidate`（正式 `qaJobConfig` 生成 /2）、canonical workerJobHash/profileHash，绑定同一ref/URL/owner/policy/scope/endpoint。preflight复算job并拒绝缺ref、/3、其他project/URL和policy/scope替换。hosttarget /2、image/build和owned-slot mount仍由原package owner审核，kit不启用它们。
 
-`artifacts/QAWEB/activation/supplier-price-candidate.json` is an explicitly disabled review wrapper with an incomplete `inputCandidate`, supported by `provider-source-review.md` and `official-source-digests.json`. It records the fixed Qwen snapshot/legacy endpoint and current public upper-tier rates. It cannot generate until actual account/budget/configuration gaps are resolved. Do not remove its wrapper and fill gaps with synthetic test values.
+历史工具允许离线parse /3留证；正式runtime root拒绝 /3或旧job /1，不能把旧helper或历史candidate当作实际执行入口。PROFILE_VALIDATION_PENDING接缝已解决；缺真实actor/role/owned-slot、full155、backup/restore、policy同意或预算证据仍各自阻断。
 
+运行和停用沿原账本/生命周期：每次leaseToken对应原attempt，在同目标reserve→dispatch→真实usage→settle。unknown费用仍pending；不抹零或免费重试。停止先禁用Web admission与新预算，停止poll并drain现有host，再终端撤销policy，核账；不删除ledger/consent/data、不复活撤销policy。
 
-## Stable Main migration repin
-
-The manifest records Main revision `095fe420` and QA migration SHA-256 `73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v2(integer,text,text,text)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). The `qaReadyGroupsAcl` property now explicitly represents actual v3 consumption of v2: profile-owned limit/model/priceVersion/endpoint, fully qualified before LIMIT and requiring one matching scope. Legacy v1 remains compatible in the source; a v1 ACL cannot satisfy this requirement. Monetary caps remain checked by the original reserve/dispatch path. Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
-
-This owned branch deliberately does not import Main's shared source. Before integration its default preflight correctly reports SOURCE_MIGRATION_DRIFT. To read a separate approved checkout without altering either tree, the CLI accepts a final optional absolute repository root after observation.json. All 155 source hashes are still verified; this parameter never changes expected hashes or the database target. After Main cherry-picks this kit onto its matching source, omit the option. Contract tests read matching checkout bytes, or the pinned Main Git object into their own disposable temporary fixture; an integrated CI checkout uses its matching local bytes and needs no historical Git object. Tests never modify repository migrations.
-
-
-## Tariff coverage versus reservation basis
-
-`pricing.coverage.inputTokens=1000000` describes the documented tariff range. For the fixed snapshot, [official specifications](https://help.aliyun.com/zh/model-studio/qwen3-7-plus) list maximum non-thinking input 991808 and total context 1000000 tokens. Legal model inputs are therefore within the quoted range. `allBillableComponentsIncluded=true` in the public candidate only confirms coverage for this current QA text-only request shape; it does not verify the account or authorize any spend.
-
-The current QA consumer separately enforces content <=16384 UTF-8 bytes and the complete messages JSON, including system prompt, <=32768 bytes. That is not the complete HTTP body and bytes are not token counts. Do not use the internal `tokenUpperBound` field as an independently verified tokenizer measurement. The official model bound supplies the tariff argument; consumer/real PostgreSQL byte-boundary evidence adds a tighter application constraint.
-
-The original 1048576 input multiplier remains unchanged as a monetary safety margin. With 4096 output tokens and 6/24 upper-tier rates, the documented maximum input costs at most 6049152 micros under this conservative calculation, below the unchanged reservation of 6389760 micros. No budget cap is lowered, no invoice amount inferred, and unknown usage remains pending.
-
-[Official cache rules](https://help.aliyun.com/zh/model-studio/context-cache) distinguish opt-in explicit cache creation (surcharge) from automatic implicit caching (creation at standard input price; hits discounted). The current serializer sends plain string messages, no explicit cache_control, tools, search or multimodal inputs, and the QA profile does not enable thinking. Flat 6/24 pricing counts all reported input without cache savings and covers output; it makes no free-reasoning or free-cache assumption. A request-shape/model/endpoint change requires revisiting this coverage evidence. Missing or false coverage still rejects generation.
+本轮没有target/provisioning/role/credential/provider/fee/deploy动作，真实current-target Auth/Session/provider/multi-turn及host image验收UNRUN。

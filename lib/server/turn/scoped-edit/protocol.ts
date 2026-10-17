@@ -1,8 +1,9 @@
+import { omitOnlineUserAddresses } from "../../trip/address/egress.ts";
 import { createHash } from 'node:crypto';
 import { exact, record, uuid, digest, integer, type CandidateEdit } from '../../trip/scoped-edit/contract.ts';
 import { parseScopedContext, sameValue, type ScopedEditContext } from '../../trip/scoped-edit/wire.ts';
 import { candidateScopedEditsPatch, selectedItems, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
-import { parseScopedModelOutput, SCOPED_TRIP_EDIT_PROMPT, type ScopedModelOutput } from './model-output.ts';
+import { parseScopedModelOutput, SCOPED_TRIP_EDIT_PROMPT, TRIP_SERVICE_TASK_PROMPT, type ScopedModelOutput } from './model-output.ts';
 import { PROTOCOL_MODELS, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
 import { isQwenEndpoint } from '../../model-gateway/adapters/provider-endpoints.ts';
 import type { DurableTurnLease } from '../durable-worker.ts';
@@ -12,7 +13,7 @@ export type ScopedBinding = Readonly<{
   policyId: string; scopeId: string; attemptId: string; provider: 'qwen'; model: string; priceVersion: string;
 }>;
 export type ScopedInput = Readonly<{
-  kind: 'scoped_edit_input/1'; binding: ScopedBinding; context: ScopedEditContext; text: string; locale: 'zh' | 'en';
+  kind: 'scoped_edit_input/1'; taskMode?: 'trip_modification'; binding: ScopedBinding; context: ScopedEditContext; text: string; locale: 'zh' | 'en';
   profile: Readonly<Record<string, unknown>> | null; memory: readonly Readonly<Record<string, unknown>>[];
   endpoint: string; reservedMicros: number; timeoutMs: number; maxOutputTokens: number;
 }>;
@@ -22,7 +23,7 @@ export function validBinding(v: unknown): v is ScopedBinding {
     && v.taskId !== v.turnId && [v.contextDigest,v.sourceDigest].every(digest) && integer(v.baseVersion) && v.provider === 'qwen' && v.model === PROTOCOL_MODELS.qwen && typeof v.priceVersion === 'string' && /^[A-Za-z0-9._-]{1,100}$/.test(v.priceVersion);
 }
 export function parseInput(v: unknown, lease: DurableTurnLease, now: number): ScopedInput | null {
-  if (!record(v) || !exact(v, ['kind','binding','context','text','locale','profile','memory','endpoint','reservedMicros','timeoutMs','maxOutputTokens']) || v.kind !== 'scoped_edit_input/1' || !validBinding(v.binding)) return null;
+  if (!record(v) || !exact(v, ['kind','binding','context','text','locale','profile','memory','endpoint','reservedMicros','timeoutMs','maxOutputTokens',...(Object.hasOwn(v,'taskMode')?['taskMode']:[])]) || v.kind !== 'scoped_edit_input/1' || Object.hasOwn(v,'taskMode') && v.taskMode !== 'trip_modification' || !validBinding(v.binding)) return null;
   const b = v.binding, context = parseScopedContext(v.context, b.tripId, now);
   if (!context || b.ownerId !== lease.ownerId || b.turnId !== lease.turnId || b.leaseToken !== lease.leaseToken || b.contextId !== context.contextId || b.contextDigest !== context.contextDigest || b.sourceDigest !== context.sourceBasis.sourceDigest || b.baseVersion !== context.baseVersion
     || typeof v.text !== 'string' || !v.text.trim() || v.text.length > 4000 || v.text.includes('\0') || !['en','zh'].includes(String(v.locale)) || !isQwenEndpoint(v.endpoint)
@@ -36,15 +37,15 @@ export function parseInput(v: unknown, lease: DurableTurnLease, now: number): Sc
 }
 /** Identity and recipient keys stay outside the prompt. Sources are never citations. */
 export function promptInput(input: ScopedInput): string {
-  return JSON.stringify({ask: input.text, locale: input.locale, trip: input.context.snapshot, scope: input.context.scope,
+  return JSON.stringify({ask: input.text, locale: input.locale, trip: omitOnlineUserAddresses(input.context.snapshot), scope: input.context.scope,
     lockedItemIds: input.context.lockedItemIds, fixedItemIds: input.context.fixedItemIds, profile: input.profile, memory: input.memory});
 }
 export function authorized(v: unknown, binding: ScopedBinding, effect: 'reserve' | 'dispatch' | 'publish'): boolean {
   return record(v) && exact(v, ['kind','effect','binding']) && v.kind === 'authorized' && v.effect === effect && validBinding(v.binding) && sameValue(v.binding, binding);
 }
 export type SavedOutput = Readonly<{kind:'saved_output'; binding:ScopedBinding; output:ScopedModelOutput; usage:ProtocolUsage; actualMicros:number; accounting:'settled'|'pending'}>;
-export function savedOutput(v: unknown, b: ScopedBinding): SavedOutput | null {
-  if (!record(v) || !exact(v,['kind','binding','output','usage','actualMicros','accounting']) || v.kind !== 'saved_output' || !validBinding(v.binding) || !sameValue(v.binding,b) || !parseScopedModelOutput(v.output) || !record(v.usage) || !integer(v.actualMicros) || !['settled','pending'].includes(String(v.accounting))) return null;
+export function savedOutput(v: unknown, b: ScopedBinding, tripTask = false): SavedOutput | null {
+  if (!record(v) || !exact(v,['kind','binding','output','usage','actualMicros','accounting']) || v.kind !== 'saved_output' || !validBinding(v.binding) || !sameValue(v.binding,b) || !parseScopedModelOutput(v.output,tripTask) || !record(v.usage) || !integer(v.actualMicros) || !['settled','pending'].includes(String(v.accounting))) return null;
   if(!validUsage(v.usage))return null;
   return JSON.parse(JSON.stringify(v)) as SavedOutput;
 }
@@ -67,7 +68,7 @@ export function candidatePatch(input: ScopedInput, edits: readonly CandidateEdit
 
 /** Closed tuple bytes are independent of JSONB/object property serialization. */
 export function scopedRequestIdentity(input: ScopedInput) {
-  const body=JSON.stringify({model:PROTOCOL_MODELS.qwen,messages:[{role:'system',content:SCOPED_TRIP_EDIT_PROMPT},{role:'user',content:promptInput(input)}],stream:false,max_tokens:input.maxOutputTokens,enable_thinking:false,response_format:{type:'json_object'}});
+  const body=JSON.stringify({model:PROTOCOL_MODELS.qwen,messages:[{role:'system',content:input.taskMode==='trip_modification'?TRIP_SERVICE_TASK_PROMPT:SCOPED_TRIP_EDIT_PROMPT},{role:'user',content:promptInput(input)}],stream:false,max_tokens:input.maxOutputTokens,enable_thinking:false,response_format:{type:'json_object'}});
   const payloadDigest=createHash('sha256').update(body,'utf8').digest('hex');
   const tuple=bindingKeys.filter(k=>k!=='leaseToken').map(k=>input.binding[k]);
   return {requestId:input.binding.attemptId,body,payloadDigest,requestDigest:createHash('sha256').update(JSON.stringify(['scoped-trip-edit-request/1',tuple,payloadDigest])).digest('hex')};

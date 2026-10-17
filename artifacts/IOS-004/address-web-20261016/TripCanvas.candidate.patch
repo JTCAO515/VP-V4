@@ -1,0 +1,55 @@
+--- a/components/canvas/TripCanvas.tsx
++++ b/components/canvas/TripCanvas.tsx
+@@ -11,6 +11,8 @@
+ import { TripContentEditor, type LocalTripRead } from "./TripContentEditor";
+ import type { PendingProposalRead } from "@/lib/server/identity/user-data-adapter";
+ import { matchesPlaceProposalReference, type PlaceProposalReference } from "@/lib/server/explore/proposal-review-reference";
++import { TripItemAddress, type TripItemAddressProps } from "@/components/trip-address/TripItemAddress";
++import { AddressProposalDiff } from "@/components/trip-address/AddressProposalDiff";
+ import styles from "./TripCanvas.module.css";
+
+ type TripVersion = { id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied" | "unverified"; title: string | null; createdAt: string; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
+@@ -20,7 +22,9 @@
+ type Notice = "proposalUnavailable" | "proposalRefreshed" | "unavailable" | "proposalConflict";
+ type Mutation = "preparing" | "confirming" | "rejecting" | "revising" | null;
+
+-export function TripCanvas({ tripId, localTripEnabled = false, initialProposalReference }: { tripId: string; localTripEnabled?: boolean; initialProposalReference?: PlaceProposalReference }) {
++type AddressBinding = Omit<TripItemAddressProps, "context" | "locale"> & { actorKey: string };
++
++export function TripCanvas({ tripId, localTripEnabled = false, initialProposalReference, addressBinding }: { tripId: string; localTripEnabled?: boolean; initialProposalReference?: PlaceProposalReference; addressBinding?: AddressBinding }) {
+   const [locale, setLocale] = useState<Locale>("zh");
+   const [data, setData] = useState<TripRead | null>(null);
+   const [pendingProposal, setPendingProposal] = useState<PendingProposalRead | null>(null);
+@@ -32,6 +36,8 @@
+   const [notice, setNotice] = useState<Notice | null>(null);
+   const confirmKeys = useRef(new Map<string, string>());
+   const requestGeneration = useRef(0);
++  const addressFence = useRef({ actorKey: addressBinding?.actorKey, tripId, version: data?.trip.headVersion });
++  addressFence.current = { actorKey: addressBinding?.actorKey, tripId, version: data?.trip.headVersion };
+   const copy = tripCanvasCopy[locale];
+
+   useEffect(() => {
+@@ -201,6 +207,23 @@
+     <p className={styles.notice}>{copy.rollbackNotice}</p>
+     <TripComparisonResult tripId={tripId} tripVersion={data.trip.headVersion} locale={locale} />
+     <TripDirectionsResult tripId={tripId} tripVersion={data.trip.headVersion} locale={locale} bindBlocked={mutation !== null || pendingProposal !== null || pendingRollback !== null || initialProposalReference !== undefined} onProposalCreated={proposal => { setPendingProposal(proposal); setDraftTitle(proposal.proposal.titleDiff.after); if (proposal.proposal.patch) setManualPatch(JSON.stringify(proposal.proposal.patch, null, 2)); }} />
++    {addressBinding && (locale === "zh" || locale === "en") ? data.content.days.map(day => (day.items ?? []).map(item => {
++      const context = { actorKey: addressBinding.actorKey, tripId, tripVersion: data.trip.headVersion, dayId: day.id, itemId: item.id };
++      return <section key={`${day.id}:${item.id}`} aria-label={item.title}>
++        <h2>{item.title}</h2>
++        <TripItemAddress context={context} locale={locale} blocked={addressBinding.blocked || mutation !== null || pendingProposal !== null || pendingRollback !== null || initialProposalReference !== undefined} settledEpoch={addressBinding.settledEpoch} read={addressBinding.read} prepare={async request => {
++          const generation = requestGeneration.current;
++          const current = () => generation === requestGeneration.current && addressFence.current.actorKey === request.context.actorKey && addressFence.current.tripId === request.context.tripId && addressFence.current.version === request.context.tripVersion;
++          if (!current()) throw new Error("ADDRESS_CONTEXT_CHANGED");
++          await addressBinding.prepare(request);
++          if (!current()) throw new Error("ADDRESS_CONTEXT_CHANGED");
++          const pending = await readPendingProposal(generation);
++          if (!current() || !pending || pending.trip.id !== tripId || pending.proposal.baseTripVersion !== request.context.tripVersion || !pending.proposal.digest) throw new Error("ADDRESS_PROPOSAL_READ_UNAVAILABLE");
++          setPendingProposal(pending);
++        }} />
++        {pendingProposal ? <AddressProposalDiff pending={pendingProposal} context={context} locale={locale} /> : null}
++      </section>;
++    })) : null}
+     <div className={styles.live} aria-live="polite">{notice === "proposalUnavailable" ? tripProposalNoticeCopy[locale] : notice ? copy[notice] : null}</div>
+     {localTripEnabled ? <TripContentEditor key={tripId} data={data} pending={pendingProposal} locale={locale} onReload={() => reloadAll()} onPending={setPendingProposal} /> : null}
+     {!localTripEnabled && (pendingProposal ? <section className={styles.proposal} aria-labelledby="pending-proposal-title"><p className={styles.eyebrow}>{copy.pendingEyebrow}</p><h2 id="pending-proposal-title">{copy.pendingTitle} · v{pendingProposal.proposal.revision}</h2><p>{copy.pendingBody}</p><dl className={styles.diff}><div><dt>{copy.before}</dt><dd>{pendingProposal.proposal.titleDiff.before}</dd></div><div><dt>{copy.after}</dt><dd>{pendingProposal.proposal.titleDiff.after}</dd></div></dl>{pendingProposal.proposal.dayDiffs?.map((day) => <details key={day.dayId}><summary>{day.date}</summary><ul>{day.items.map((item) => <li key={item.itemId}>{item.title}</li>)}</ul></details>)}{pendingProposal.proposal.evidence === "not_recorded" ? <p className={styles.missing}>{copy.evidenceMissing}</p> : null}{pendingProposal.proposal.assumptions === "not_recorded" ? <p className={styles.missing}>{copy.assumptionsMissing}</p> : null}<p className={styles.meta}>{copy.proposalBase} v{pendingProposal.proposal.baseTripVersion} · {copy.expires} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(pendingProposal.proposal.expiresAt))}</p><div className={styles.proposalActions}><button className={styles.primary} type="button" disabled={mutation !== null} onClick={() => void confirmPendingProposal()}>{mutation === "confirming" ? copy.confirming : copy.confirm}</button><button className={styles.secondary} type="button" disabled={mutation !== null} onClick={() => void rejectPendingProposal()}>{mutation === "rejecting" ? copy.rejecting : copy.reject}</button></div>{pendingProposal.proposal.dayDiffs ? <form className={styles.revision} onSubmit={(event) => void reviseStructuredProposal(event)}><label htmlFor="proposal-patch">{copy.reviseLabel}</label><textarea id="proposal-patch" value={manualPatch} disabled={mutation !== null} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null}>{mutation === "revising" ? copy.revising : copy.revise}</button></form> : <form className={styles.revision} onSubmit={(event) => void revisePendingProposal(event)}><label htmlFor="proposal-title">{copy.reviseLabel}</label><input id="proposal-title" value={draftTitle} maxLength={160} required disabled={mutation !== null} onChange={(event) => setDraftTitle(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || !draftTitle.trim()}>{mutation === "revising" ? copy.revising : copy.revise}</button></form>}</section> : <section className={styles.noProposal}><strong>{copy.noPendingTitle}</strong><p>{copy.noPendingBody}</p><form className={styles.revision} onSubmit={(event) => void createManualProposal(event)}><label htmlFor="manual-proposal-patch">{copy.reviseLabel}</label><textarea id="manual-proposal-patch" value={manualPatch} disabled={mutation !== null} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null}>{copy.revise}</button></form></section>)}

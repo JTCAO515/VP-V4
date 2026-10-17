@@ -1,0 +1,26 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ migration apply rollback leaves no schema, old table/functions/policy/data unchanged (11.393958ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (6.415875ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.383959ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.698792ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.705292ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.834625ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.470584ms)
+  ✔ expiry is server time and unknown/future state never active (0.597792ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (2.168375ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.5915ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (6.0675ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (0.937792ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.554ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (1.984333ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (1.018375ms)
+  ✔ legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent (0.572584ms)
+✔ subscription private PG17 persistence and denial vectors (866.91425ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 911.065

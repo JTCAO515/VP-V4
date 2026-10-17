@@ -13,6 +13,14 @@
 /* End PBXVariantGroup section */
 
 /* Begin PBXBuildFile section */
+		A20600000000000000000013 /* NativeCanonicalPlaceAskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000003; };
+		A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000001; };
+		A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000002; };
+        F10C15000000000000000401 = {isa = PBXBuildFile; fileRef = F10C15000000000000000301; };
+        F10C15000000000000000203 /* NativeLocalVoiceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000103; };
+        F10C15000000000000000202 /* NativeLocalVoiceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000102; };
+        F10C15000000000000000201 /* NativeLocalVoiceContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000101; };
+        1241CFC7C5B0D7FC4D1E48BD /* NativeExperienceSampleHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C4956B0AA9DFB178BE5816; };
 		200000000000000000000001 /* VisePandaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000001 /* VisePandaApp.swift */; };
 		200000000000000000000002 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* AppSettings.swift */; };
 		200000000000000000000003 /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000003 /* AppShellView.swift */; };
@@ -476,6 +484,86 @@
 		B203200000000000000000002 = {isa = PBXBuildFile; fileRef = B203100000000000000000002; };
 		B203200000000000000000003 = {isa = PBXBuildFile; fileRef = B203100000000000000000003; };
 		B203200000000000000000004 = {isa = PBXBuildFile; fileRef = B203100000000000000000004; };
+		C58EE6E1A4B017C923DFA1FB /* NativeFrontendAssistantDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F273A2955B6342EE3A163218; };
+		0E7276F3CC2C92F31B39C7F0 /* NativeFrontendAssistantPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F517CC044611481FA35D38BF; };
+		0474D97F07F73D3A10FABD50 /* NativeFrontendExpressionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50D8131706FE8433F9F2A51; };
+		BD0C4BA050C2C41F666539CB /* NativeFrontendJourneysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E53A4DAA5AD2C917ED34E81; };
+		0F7276DB4ACCDDD24D23145A /* NativeFrontendLibraryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DEBC408272E3C6FA40FFD6D; };
+		A7D71AB3F98D25E3CAD4731B /* NativeFrontendLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDAE1F32E22BE6E5E1225E2F; };
+		56915B432DB289AD80A5FB8A /* NativeFrontendMemoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8A59B2C1B046BEFA414910; };
+		406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE1D6B4AF3D60A1022D717E; };
+		56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C027A0CA31619C39F379AD; };
+		61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE9310E83BFCDC2C2EB2FBB; };
+		7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = EE8E10754415F6908C96606A; };
+		978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D37EA77E5D1627B5624ADAB; };
+		8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = BD61B35EC4CB25C3A885DB1E; };
+		3A5982167C911CAF4ABB3CCB /* NativeMuseChatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41312944767B6D88ABB8702; };
+		684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861DB024CEB0412EB5ADA936; };
+		899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C56C774FBFC1973FE21F1E; };
+		F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F435C61FA87AE46F7E1A1F03; };
+		B203200000000000000000005 = {isa = PBXBuildFile; fileRef = B203100000000000000000005; };
+		B203200000000000000000006 = {isa = PBXBuildFile; fileRef = B203100000000000000000006; };
+		B203200000000000000000007 = {isa = PBXBuildFile; fileRef = B203100000000000000000007; };
+		B203200000000000000000008 = {isa = PBXBuildFile; fileRef = B203100000000000000000008; };
+		FA6A421D582B399F50F05233 /* NativeTripAddressValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8513E7A3528A9A2244ED4E; };
+		C8A14024885F896B221DE8DF /* NativeTripAddressRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CE93C8228C37D0BF7B53C4; };
+		29DFCA554630AF47A463C2F3 /* NativeTripAddressCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64BCE3B5B6E59FC9A493E14; };
+		550EF24C4FEB113C236711E6 /* NativeTripAddressEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 753AFA2C27496500C724806C; };
+		F576C92FB976ABC73273D941 /* NativeTripAddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390DF01D7C2628FDA7DDBCDE; };
+		5EFDF87D2268445ECDDF3E5D /* NativeTripAddressReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8F45B9C64A4DF4419024AF; };
+		2BF657C1524A203A481EEEDD /* NativeTripAddressReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278B2D8E4E70515BA7732925; };
+		E216C0000000000000000001 /* NativeTranslationRecoveryIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000001; };
+		E216C0000000000000000002 /* NativeTranslationRecoveryJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000002; };
+		E216C0000000000000000003 /* NativeTranslationRecoveryReceipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000003; };
+		E216C0000000000000000004 /* NativeTranslationRecoveryJournalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000004; };
+		E216C0000000000000000005 /* NativeTranslationRecoveryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000005; };
+		E216C0000000000000000006 /* NativeTranslationSessionRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E216B0000000000000000006; };
+        396814A397F1728D9A29CC5A = {isa = PBXBuildFile; fileRef = 4D06FC82064CAF216E650079; };
+        3D86D8AE4CD7B52444E354C1 = {isa = PBXBuildFile; fileRef = 6A95FBCECD66814380FCB5B3; };
+        0E71B9DE04882AA146A73912 = {isa = PBXBuildFile; fileRef = 2E7A39A677945001F1D5C9BB; };
+        7367F2444AB4FC0A40C1FE20 = {isa = PBXBuildFile; fileRef = 8FF2161D7E26BB07FBB1A40B; };
+        0348E1255BF2FCEB98A81278 = {isa = PBXBuildFile; fileRef = E0219957A2514B7FA19A32C8; };
+        53F4F2F2948144E6E7489CEC = {isa = PBXBuildFile; fileRef = 8E7B3149168E0DEAED0489C8; };
+        729C29D3BE766F4323D9846C = {isa = PBXBuildFile; fileRef = F3E88A444B31D0D2FE27CE6F; };
+        8D22CE2637C793999702A0F6 = {isa = PBXBuildFile; fileRef = BB65E9F990FA8078AEA570E7; };
+        A3E6E95A2F9C85C59858A38D = {isa = PBXBuildFile; fileRef = 26BA2DEEFDCA0D48D935F3FD; };
+        B0A004012FA3B5A990E2B44F = {isa = PBXBuildFile; fileRef = 08CB1E42747F8284AD836334; };
+        D148B89C71A1274BDDBA4A87 = {isa = PBXBuildFile; fileRef = 05A00CC9EB8BCF02F3552643; };
+        F5ECB1DA69B8AD65C2013152 = {isa = PBXBuildFile; fileRef = E1D7EB11C92A08D7A201494A; };
+        DA16B0000000000000000001 = {isa = PBXBuildFile; fileRef = DA16A0000000000000000001; };
+		BDCE48B4CCFBCA273D935982 /* NativeRealServiceEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925AD465515CAC93D0391791; };
+		AFBE85D5B86722F68E13E490 /* NativeRealServiceDisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C390266BDC45198E3CCF4A93; };
+		4863BE8C9EBB064C592E33E5 /* NativeRealServiceEntryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A93621F5B4C6132819E321; };
+		97C7B17BDD0DAE61F0261800 /* NativeQAContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A4948FB912791261FDD7E; };
+		73E332BEC307139F8CD423BF /* NativeQAStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3096EE0D0AB565BC4069E346; };
+		8ADC1330226F997B45A49BC7 /* NativeQAServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4BEE0ADCD5AFEAF774AAB5; };
+		B47B6CEA07B5EE93775C0D12 /* NativeQAPendingJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDE781A3F683D8F4BB0A4A2; };
+		BECB9DA83FC1D574F90BFBD5 /* NativeQASessionTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4FFC6211CD9456FD0B7B09; };
+		73D322DD527F2059614D645D /* NativeQAEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF7B225F3D2803D81EB134C; };
+		4E726840B03F2F990D550565 /* NativeQAConsumerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF58C7992BE3D31ABF2A371; };
+		C75CF50B38AC6608DCA50FF8 /* NativeQAPendingJournalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143A6642FF4283E80CF21617; };
+		8CCC2C78C20BEF866C8A0E09 /* NativeQASessionTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C383F76E92C81838F9AA99CD; };
+		B03E4E1760F819A305325191 /* NativeQARootUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8155A346FEF2AE6644F8B112; };
+		51F702009D36D5AB3625AB67 /* NativeQAOperatorAcceptanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452A0F73218718193F00308C; };
+		D35C74898B53C64EEA7DA2C7 /* NativeQAWorkPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3D3D378E0706C1025B9F48; };
+		B7D3DD42D167C9967AA5B92F /* NativeQAWorkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22405570CE0B09EEA9850869; };
+		436DEFF5E33E0559CB0B7074 /* NativeQAComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E938C4FB1493AF65C3E943A; };
+		33B2DC1852362BA5DC1DB441 /* NativeQAComposerAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4D268FDC8610A4474EFC5; };
+		9D2859311AF8B2D7FE5A284E /* NativeQAHistoryPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2EA835238A27D1F19C049E; };
+		EBA69F0E3E86B41B8A463091 /* NativeQAHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E105FA4349B29D9596558DC7; };
+		2899960F646AE3F10ED3888C /* NativeQAMessagePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B8CA2A93997E237C22F8ED; };
+		4D0486B2B4BF3EB3984BEF6E /* NativeQAMessageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE798089FBDAD3F6C3D6A5F; };
+		AFE9B9617B76078F70C05992 /* NativeQAComposerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD5844B87800E100A1C08D2; };
+		66F191A768ABC5729288000E /* NativeQAHistoryPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218F1EDCBD2773D015B887; };
+		2C27ACEE97D5071EF28D1228 /* NativeQAMessagePresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B380894ECBEDDA32BC55A4; };
+		A01600000000000000000001 /* NativeQAIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01600000000000000000002; };
+		CA1600000000000000000001 /* NativeQACancellationContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000002; };
+		CA1600000000000000000011 /* NativeQACancellationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000012; };
+		CA1600000000000000000021 /* NativeQACancellationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000022; };
+		CA1600000000000000000031 /* NativeQACancellationJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000032; };
+		CA1600000000000000000041 /* NativeQACancellationConsumerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000042; };
+		CA1600000000000000000051 /* NativeQACancellationJournalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000052; };
+		CA1600000000000000000061 /* NativeQACancellationIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1600000000000000000062; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -490,6 +578,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A20600000000000000000003 /* NativeCanonicalPlaceAskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ../../tests/contract/ios003-place-ui/canonical/NativeCanonicalPlaceAskTests.swift; sourceTree = SOURCE_ROOT; };
+		A20600000000000000000001 /* NativeCanonicalPlaceAskCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskCapture.swift; sourceTree = SOURCE_ROOT; };
+		A20600000000000000000002 /* NativeCanonicalPlaceAskPending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskPending.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000301 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../../tests/contract/ios-local-voice/NativeLocalVoiceTests.swift"; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000103 /* NativeLocalVoiceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceSheet.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000102 /* NativeLocalVoiceCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceCapture.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000101 /* NativeLocalVoiceContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceContext.swift; sourceTree = SOURCE_ROOT; };
+        11C4956B0AA9DFB178BE5816 /* NativeExperienceSampleHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/NativeExperienceSamples/NativeExperienceSampleHub.swift; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* VisePandaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaApp.swift; sourceTree = "<group>"; };
 		300000000000000000000002 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		300000000000000000000003 /* AppShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellView.swift; sourceTree = "<group>"; };
@@ -958,6 +1054,86 @@
 		B203100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift; sourceTree = SOURCE_ROOT; };
+		F273A2955B6342EE3A163218 /* NativeFrontendAssistantDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Assistant/NativeFrontendAssistantDetail.swift; sourceTree = SOURCE_ROOT; };
+		F517CC044611481FA35D38BF /* NativeFrontendAssistantPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Assistant/NativeFrontendAssistantPresentation.swift; sourceTree = SOURCE_ROOT; };
+		B50D8131706FE8433F9F2A51 /* NativeFrontendExpressionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Expression/NativeFrontendExpressionView.swift; sourceTree = SOURCE_ROOT; };
+		5E53A4DAA5AD2C917ED34E81 /* NativeFrontendJourneysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Journeys/NativeFrontendJourneysView.swift; sourceTree = SOURCE_ROOT; };
+		9DEBC408272E3C6FA40FFD6D /* NativeFrontendLibraryActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryActions.swift; sourceTree = SOURCE_ROOT; };
+		FDAE1F32E22BE6E5E1225E2F /* NativeFrontendLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryView.swift; sourceTree = SOURCE_ROOT; };
+		7D8A59B2C1B046BEFA414910 /* NativeFrontendMemoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendMemoryView.swift; sourceTree = SOURCE_ROOT; };
+		8EE1D6B4AF3D60A1022D717E /* NativeFrontendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/NativeFrontendState.swift; sourceTree = SOURCE_ROOT; };
+		12C027A0CA31619C39F379AD /* NativeFrontendChatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatSheet.swift; sourceTree = SOURCE_ROOT; };
+		EDE9310E83BFCDC2C2EB2FBB /* NativeFrontendChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift; sourceTree = SOURCE_ROOT; };
+		EE8E10754415F6908C96606A /* coverage-producer-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-producer-v11.json; sourceTree = SOURCE_ROOT; };
+		6D37EA77E5D1627B5624ADAB /* coverage-cancelled-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-cancelled-v11.json; sourceTree = SOURCE_ROOT; };
+		BD61B35EC4CB25C3A885DB1E /* native-catalog-current-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/NotificationData/native-catalog-current-v11.json; sourceTree = SOURCE_ROOT; };
+		E41312944767B6D88ABB8702 /* NativeMuseChatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeMuseChatHeader.swift; sourceTree = SOURCE_ROOT; };
+		861DB024CEB0412EB5ADA936 /* NativeMuseChatComposerPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatComposer/NativeMuseChatComposerPolicy.swift; sourceTree = SOURCE_ROOT; };
+		E5C56C774FBFC1973FE21F1E /* NativeMuseChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatComposer/NativeMuseChatComposerView.swift; sourceTree = SOURCE_ROOT; };
+		F435C61FA87AE46F7E1A1F03 /* NativeMuseChatSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatSidebar/NativeMuseChatSidebarView.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnWire.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnView.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTests/IOS001GoalReturnContinuationTests.swift; sourceTree = SOURCE_ROOT; };
+		9C8513E7A3528A9A2244ED4E /* NativeTripAddressValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressValue.swift; sourceTree = SOURCE_ROOT; };
+		75CE93C8228C37D0BF7B53C4 /* NativeTripAddressRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressRead.swift; sourceTree = SOURCE_ROOT; };
+		C64BCE3B5B6E59FC9A493E14 /* NativeTripAddressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressCard.swift; sourceTree = SOURCE_ROOT; };
+		753AFA2C27496500C724806C /* NativeTripAddressEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressEditor.swift; sourceTree = SOURCE_ROOT; };
+		390DF01D7C2628FDA7DDBCDE /* NativeTripAddressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripAddressTests.swift; sourceTree = "<group>"; };
+		CA8F45B9C64A4DF4419024AF /* NativeTripAddressReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressReview.swift; sourceTree = SOURCE_ROOT; };
+		278B2D8E4E70515BA7732925 /* NativeTripAddressReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TripAddress/NativeTripAddressReviewView.swift; sourceTree = SOURCE_ROOT; };
+		E216B0000000000000000001 /* NativeTranslationRecoveryIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryIdentity.swift; sourceTree = "<group>"; };
+		E216B0000000000000000002 /* NativeTranslationRecoveryJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryJournal.swift; sourceTree = "<group>"; };
+		E216B0000000000000000003 /* NativeTranslationRecoveryReceipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryReceipt.swift; sourceTree = "<group>"; };
+		E216B0000000000000000004 /* NativeTranslationRecoveryJournalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryJournalTests.swift; sourceTree = "<group>"; };
+		E216B0000000000000000005 /* NativeTranslationRecoveryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationRecoveryStoreTests.swift; sourceTree = "<group>"; };
+		E216B0000000000000000006 /* NativeTranslationSessionRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationSessionRecoveryTests.swift; sourceTree = "<group>"; };
+        4D06FC82064CAF216E650079 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionCodec.swift"; sourceTree = SOURCE_ROOT; };
+        6A95FBCECD66814380FCB5B3 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionCopy.swift"; sourceTree = SOURCE_ROOT; };
+        2E7A39A677945001F1D5C9BB = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionModels.swift"; sourceTree = SOURCE_ROOT; };
+        8FF2161D7E26BB07FBB1A40B = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionPort.swift"; sourceTree = SOURCE_ROOT; };
+        E0219957A2514B7FA19A32C8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionStore.swift"; sourceTree = SOURCE_ROOT; };
+        8E7B3149168E0DEAED0489C8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/Subscriptions/NativeSubscriptionView.swift"; sourceTree = SOURCE_ROOT; };
+        F3E88A444B31D0D2FE27CE6F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/App/NativeSubscriptionComposition.swift"; sourceTree = SOURCE_ROOT; };
+        BB65E9F990FA8078AEA570E7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeSubscriptionTests.swift"; sourceTree = SOURCE_ROOT; };
+        26BA2DEEFDCA0D48D935F3FD = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeSubscriptionCompositionTests.swift"; sourceTree = SOURCE_ROOT; };
+        08CB1E42747F8284AD836334 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "../../docs/commercial/subscription-development/presentation.en.json"; sourceTree = SOURCE_ROOT; };
+        05A00CC9EB8BCF02F3552643 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "../../docs/commercial/subscription-development/presentation.zh.json"; sourceTree = SOURCE_ROOT; };
+        E1D7EB11C92A08D7A201494A = {isa = PBXFileReference; lastKnownFileType = folder; path = "../../tests/contract/subscription-native/Fixtures"; sourceTree = SOURCE_ROOT; };
+        DA16A0000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaUITests/NativeSubscriptionUITests.swift"; sourceTree = SOURCE_ROOT; };
+		925AD465515CAC93D0391791 /* NativeRealServiceEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeRealServiceEntryTests.swift; sourceTree = "<group>"; };
+		C390266BDC45198E3CCF4A93 /* NativeRealServiceDisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeRealServiceDisconnectedView.swift"; sourceTree = SOURCE_ROOT; };
+		92A93621F5B4C6132819E321 /* NativeRealServiceEntryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaUITests/NativeRealServiceEntryUITests.swift"; sourceTree = SOURCE_ROOT; };
+		312A4948FB912791261FDD7E /* NativeQAContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift"; sourceTree = SOURCE_ROOT; };
+		3096EE0D0AB565BC4069E346 /* NativeQAStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQAStore.swift"; sourceTree = SOURCE_ROOT; };
+		BD4BEE0ADCD5AFEAF774AAB5 /* NativeQAServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQAServiceView.swift"; sourceTree = SOURCE_ROOT; };
+		8DDE781A3F683D8F4BB0A4A2 /* NativeQAPendingJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAPersistence/NativeQAPendingJournal.swift"; sourceTree = SOURCE_ROOT; };
+		CB4FFC6211CD9456FD0B7B09 /* NativeQASessionTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/App/NativeQASessionTransport.swift"; sourceTree = SOURCE_ROOT; };
+		5DF7B225F3D2803D81EB134C /* NativeQAEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/App/NativeQAEntryView.swift"; sourceTree = SOURCE_ROOT; };
+		CEF58C7992BE3D31ABF2A371 /* NativeQAConsumerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAConsumerTests.swift"; sourceTree = SOURCE_ROOT; };
+		143A6642FF4283E80CF21617 /* NativeQAPendingJournalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAPendingJournalTests.swift"; sourceTree = SOURCE_ROOT; };
+		C383F76E92C81838F9AA99CD /* NativeQASessionTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQASessionTransportTests.swift"; sourceTree = SOURCE_ROOT; };
+		8155A346FEF2AE6644F8B112 /* NativeQARootUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaUITests/NativeQARootUITests.swift"; sourceTree = SOURCE_ROOT; };
+		452A0F73218718193F00308C /* NativeQAOperatorAcceptanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaUITests/NativeQAOperatorAcceptanceUITests.swift"; sourceTree = SOURCE_ROOT; };
+		8A3D3D378E0706C1025B9F48 /* NativeQAWorkPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQAWorkPresentation.swift"; sourceTree = SOURCE_ROOT; };
+		22405570CE0B09EEA9850869 /* NativeQAWorkCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQAWorkCard.swift"; sourceTree = SOURCE_ROOT; };
+		7E938C4FB1493AF65C3E943A /* NativeQAComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/Composer/NativeQAComposer.swift"; sourceTree = SOURCE_ROOT; };
+		6EB4D268FDC8610A4474EFC5 /* NativeQAComposerAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/Composer/NativeQAComposerAccess.swift"; sourceTree = SOURCE_ROOT; };
+		6C2EA835238A27D1F19C049E /* NativeQAHistoryPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/History/NativeQAHistoryPresentation.swift"; sourceTree = SOURCE_ROOT; };
+		E105FA4349B29D9596558DC7 /* NativeQAHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/History/NativeQAHistoryView.swift"; sourceTree = SOURCE_ROOT; };
+		54B8CA2A93997E237C22F8ED /* NativeQAMessagePresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/Messages/NativeQAMessagePresentation.swift"; sourceTree = SOURCE_ROOT; };
+		EBE798089FBDAD3F6C3D6A5F /* NativeQAMessageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQAUI/Messages/NativeQAMessageCard.swift"; sourceTree = SOURCE_ROOT; };
+		3DD5844B87800E100A1C08D2 /* NativeQAComposerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAComposerTests.swift"; sourceTree = SOURCE_ROOT; };
+		6E218F1EDCBD2773D015B887 /* NativeQAHistoryPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAHistoryPresentationTests.swift"; sourceTree = SOURCE_ROOT; };
+		E2B380894ECBEDDA32BC55A4 /* NativeQAMessagePresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAMessagePresentationTests.swift"; sourceTree = SOURCE_ROOT; };
+		A01600000000000000000002 /* NativeQAIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQAIntegrationTests.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000002 /* NativeQACancellationContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationContract.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000012 /* NativeQACancellationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationStore.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000022 /* NativeQACancellationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/NativeQAUI/Cancellation/NativeQACancellationView.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000032 /* NativeQACancellationJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationJournal.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000042 /* NativeQACancellationConsumerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQACancellationConsumerTests.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000052 /* NativeQACancellationJournalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQACancellationJournalTests.swift"; sourceTree = SOURCE_ROOT; };
+		CA1600000000000000000062 /* NativeQACancellationIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisePandaTests/NativeQACancellationIntegrationTests.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -972,6 +1148,31 @@
 		600000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                8F6BA1434F801B0C1A37A0E3,
+                A20600000000000000000003,
+                A20600000000000000000001,
+                A20600000000000000000002,
+			F10C15000000000000000301,
+F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
+
+                F435C61FA87AE46F7E1A1F03,
+                E5C56C774FBFC1973FE21F1E,
+                861DB024CEB0412EB5ADA936,
+                E41312944767B6D88ABB8702,
+                BD61B35EC4CB25C3A885DB1E,
+                6D37EA77E5D1627B5624ADAB,
+                EE8E10754415F6908C96606A,
+                EDE9310E83BFCDC2C2EB2FBB,
+                12C027A0CA31619C39F379AD,
+                8EE1D6B4AF3D60A1022D717E,
+                7D8A59B2C1B046BEFA414910,
+                FDAE1F32E22BE6E5E1225E2F,
+                9DEBC408272E3C6FA40FFD6D,
+                5E53A4DAA5AD2C917ED34E81,
+                B50D8131706FE8433F9F2A51,
+                F517CC044611481FA35D38BF,
+                F273A2955B6342EE3A163218,
+                11C4956B0AA9DFB178BE5816,
 				B197100000000000000000001,
 				B197100000000000000000002,
 				B197100000000000000000003,
@@ -979,6 +1180,9 @@
 				B197100000000000000000005,
 				B197100000000000000000006,
 				B197100000000000000000007,
+				B203100000000000000000005,
+				B203100000000000000000006,
+				B203100000000000000000007,
 				B203100000000000000000004,
 				B203100000000000000000001,
 				B203100000000000000000002,
@@ -1031,17 +1235,17 @@
 		600000000000000000000004 /* Navigation */ = {isa = PBXGroup; children = (300000000000000000000004, 300000000000000000000005, 300000000000000000000006); path = Navigation; sourceTree = "<group>"; };
 		600000000000000000000005 /* DesignSystem */ = {isa = PBXGroup; children = (570000000000000000000004, 300000000000000000000007); path = DesignSystem; sourceTree = "<group>"; };
 		600000000000000000000006 /* Components */ = {isa = PBXGroup; children = (300000000000000000000008, 300000000000000000000009, 30000000000000000000000A); path = Components; sourceTree = "<group>"; };
-		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (242E819308B722FBA88FAFE1, 0B54AAA0BEC9EBD7C8E720A4, 6F3563F7CEB915B46683B687, 08F6243EA4A655CA130CF30E, 2B9323FA251768AD8A3E58E7, 382762886C7814EF0811E55B, 32B231693DD46DDC77F92AEF, 254708D1683ECFB32BD931DB, F15803000000000000000001, F14892000000000000000001, F16405200000000000000001, F14805200000000000000001, EC906874DA684AC083A1908F, B9462B5B763B33146221939E, F25505000000000000000007, F25506200000000000000002, F25505000000000000000006, F25505000000000000000004, F25505000000000000000003, F25505000000000000000002, F25505000000000000000001, F15505200000000000000001, 68A6D21260366D32D3948B05, E22405300000000000000001, E22405300000000000000002, E22405300000000000000003, E22405100000000000000001, E22405100000000000000002, E22405100000000000000003, E22405100000000000000004, E22405100000000000000005, E22405100000000000000006, E22405100000000000000007, AC3026200000000000000001, AC820500000000000000000B, AC820500000000000000000C, AC820500000000000000000A, AC8205000000000000000001, AC8205000000000000000002, AC8205000000000000000003, AC8205000000000000000004, AC8205000000000000000005, AC8205000000000000000006, AC8205000000000000000007, AC8294000000000000000003, AC8294000000000000000001, AC8293000000000000000001, AC8293000000000000000003, AC8293000000000000000005, AC8293000000000000000007, D98300000000000000000002, D98300000000000000000001, E21600000000000000000301, 600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C, 22500D3EA2164BC4AEC0DEE0, A21460000000000000000001, AC1051980000000000000001); path = Features; sourceTree = "<group>"; };
+		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (CA8F45B9C64A4DF4419024AF, 278B2D8E4E70515BA7732925, 9C8513E7A3528A9A2244ED4E, 75CE93C8228C37D0BF7B53C4, C64BCE3B5B6E59FC9A493E14, 753AFA2C27496500C724806C, 242E819308B722FBA88FAFE1, 0B54AAA0BEC9EBD7C8E720A4, 6F3563F7CEB915B46683B687, 08F6243EA4A655CA130CF30E, 2B9323FA251768AD8A3E58E7, 382762886C7814EF0811E55B, 32B231693DD46DDC77F92AEF, 254708D1683ECFB32BD931DB, F15803000000000000000001, F14892000000000000000001, F16405200000000000000001, F14805200000000000000001, EC906874DA684AC083A1908F, B9462B5B763B33146221939E, F25505000000000000000007, F25506200000000000000002, F25505000000000000000006, F25505000000000000000004, F25505000000000000000003, F25505000000000000000002, F25505000000000000000001, F15505200000000000000001, 68A6D21260366D32D3948B05, E22405300000000000000001, E22405300000000000000002, E22405300000000000000003, E22405100000000000000001, E22405100000000000000002, E22405100000000000000003, E22405100000000000000004, E22405100000000000000005, E22405100000000000000006, E22405100000000000000007, AC3026200000000000000001, AC820500000000000000000B, AC820500000000000000000C, AC820500000000000000000A, AC8205000000000000000001, AC8205000000000000000002, AC8205000000000000000003, AC8205000000000000000004, AC8205000000000000000005, AC8205000000000000000006, AC8205000000000000000007, AC8294000000000000000003, AC8294000000000000000001, AC8293000000000000000001, AC8293000000000000000003, AC8293000000000000000005, AC8293000000000000000007, D98300000000000000000002, D98300000000000000000001, E21600000000000000000301, 600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C, 22500D3EA2164BC4AEC0DEE0, A21460000000000000000001, AC1051980000000000000001); path = Features; sourceTree = "<group>"; };
 		600000000000000000000008 /* Today */ = {isa = PBXGroup; children = (30000000000000000000000B); path = Today; sourceTree = "<group>"; };
 		600000000000000000000009 /* Ask */ = {isa = PBXGroup; children = (AC8133000000000000000009, AC8133000000000000000003, AC8133000000000000000002, AC8133000000000000000001, AC8123000000000000000002, AC8123000000000000000001, AC8113000000000000000003, AC8113000000000000000002, AC8113000000000000000001, AC810300000000000000000B, AC8103000000000000000001, AC8103000000000000000002, AC8103000000000000000003, AC7100000000000000000001, AC7100000000000000000002, AC7100000000000000000003, A77700000000000000000002, 300000000000000000000047, 300000000000000000000078, 300000000000000000000042, 300000000000000000000041, 300000000000000000000040, 30000000000000000000000C); path = Ask; sourceTree = "<group>"; };
 		60000000000000000000000A /* Trip */ = {isa = PBXGroup; children = (221000000000000000000002, 300000000000000000000069, 300000000000000000000067, 300000000000000000000064, 300000000000000000000061, 300000000000000000000060, 300000000000000000000032, 300000000000000000000031, 300000000000000000000030, 30000000000000000000000D); path = Trip; sourceTree = "<group>"; };
 		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000006D, 300000000000000000000052, 300000000000000000000051, 300000000000000000000050, 30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (AC8253000000000000000001, AC8253000000000000000003, AC8253000000000000000005, AC8253000000000000000001, AC8253000000000000000003, AC8253000000000000000005, AC8243000000000000000001, AC8243000000000000000003, AC8243000000000000000005, AC8213000000000000000003, AC8213000000000000000005, AC8213000000000000000001, AC8233000000000000000003, AC8233000000000000000005, AC8233000000000000000001, AC8223000000000000000001, AC8203000000000000000001, AC8183000000000000000001, AC8183000000000000000002, AC8193000000000000000003, AC8193000000000000000004, AC8193000000000000000001, AC8173000000000000000005, AC8173000000000000000002, AC8173000000000000000001, AC8163000000000000000001, AC8153000000000000000001, B97900000000000000000001, B97900000000000000000002, B97900000000000000000003, D91100000000000000000001, D91100000000000000000002, 570000000000000000000002, 30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011, 300000000000000000000018, 300000000000000000000019); path = Resources; sourceTree = "<group>"; };
-		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (611E9CEBB132A76CF9F2E7A4, E3535BE1272B6134A7787953, 7300BC8DF88786F92DEEAAD7, 2ED1B23E5A5189B5AD2B67FD, E561793B1EDE3CCB15E227C8, C80D8ACDF6135D52380AF5ED, 7F7AFAE84466ADE295B390C7, EF3C8570B11E8FF14E93E768, 2A525727CA005BEF82EA10D9, F2961E0F8CA1D9EEF3C9FCD7, 53206FE86ADF098DB9AF1341, BAEC69F8BF7F77F43BD5C33A, DC4FDC059F9DFB31A8808C69, 82394BBBF17D51C371FB19E4, FD8FE8134F0CD5677F208629, 9F0C8D63C19043C6EDF24D5C, 6892B13D0B7A6BFFA95CC483, CE03F13D70CB28FE6883F0F8, 777945367F2274B363D2D413, B40FDA7860213E278983B3EF, 7FBB391B185FA6F48FA3E408, F158010000000000000000F1, F158010000000000000000F2, F158010000000000000000F3,F1489000000000000000000C, F16405000000000000000009, F14805000000000000000009, 724AB2DC475DF49B167C3C86, 74B36CE8E21BB92F13838221, 07ED425D3E4A2F152915B0B4, 9A18CFE38B40074C02F56E5D, F25505000000000000000005, F15505000000000000000008, F15505000000000000000007, A990F2F6CCB2FFDC598C1FF0, E22405100000000000000008, AC3026300000000000000001, AC8205000000000000000009, AC8293000000000000000009, AC8243000000000000000007, AC8213000000000000000007, AC8233000000000000000007, AC8223000000000000000005, AC8183000000000000000005, AC8193000000000000000007, AC8173000000000000000007, AC8163000000000000000002, AC8153000000000000000002, AC8143000000000000000003, AC8133000000000000000004, AC8123000000000000000003, AC8113000000000000000009, AC8113000000000000000004, AC8103000000000000000004, AC7100000000000000000004, B97900000000000000000004, D98300000000000000000003, D91100000000000000000003, 30000000000000000000006F, D8E665A1A99C49B7A7A7184C, 30000000000000000000006C, 30000000000000000000006B, 30000000000000000000006A, 300000000000000000000068, 300000000000000000000065, 300000000000000000000062, 300000000000000000000055, 300000000000000000000053, 300000000000000000000046, 300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021, E21600000000000000000203, A21430000000000000000007, A21430000000000000000006, AC1051980000000000000032); path = VisePandaTests; sourceTree = "<group>"; };
+		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (925AD465515CAC93D0391791, E216B0000000000000000004, E216B0000000000000000005, E216B0000000000000000006, 390DF01D7C2628FDA7DDBCDE, B203100000000000000000008, 611E9CEBB132A76CF9F2E7A4, E3535BE1272B6134A7787953, 7300BC8DF88786F92DEEAAD7, 2ED1B23E5A5189B5AD2B67FD, E561793B1EDE3CCB15E227C8, C80D8ACDF6135D52380AF5ED, 7F7AFAE84466ADE295B390C7, EF3C8570B11E8FF14E93E768, 2A525727CA005BEF82EA10D9, F2961E0F8CA1D9EEF3C9FCD7, 53206FE86ADF098DB9AF1341, BAEC69F8BF7F77F43BD5C33A, DC4FDC059F9DFB31A8808C69, 82394BBBF17D51C371FB19E4, FD8FE8134F0CD5677F208629, 9F0C8D63C19043C6EDF24D5C, 6892B13D0B7A6BFFA95CC483, CE03F13D70CB28FE6883F0F8, 777945367F2274B363D2D413, B40FDA7860213E278983B3EF, 7FBB391B185FA6F48FA3E408, F158010000000000000000F1, F158010000000000000000F2, F158010000000000000000F3,F1489000000000000000000C, F16405000000000000000009, F14805000000000000000009, 724AB2DC475DF49B167C3C86, 74B36CE8E21BB92F13838221, 07ED425D3E4A2F152915B0B4, 9A18CFE38B40074C02F56E5D, F25505000000000000000005, F15505000000000000000008, F15505000000000000000007, A990F2F6CCB2FFDC598C1FF0, E22405100000000000000008, AC3026300000000000000001, AC8205000000000000000009, AC8293000000000000000009, AC8243000000000000000007, AC8213000000000000000007, AC8233000000000000000007, AC8223000000000000000005, AC8183000000000000000005, AC8193000000000000000007, AC8173000000000000000007, AC8163000000000000000002, AC8153000000000000000002, AC8143000000000000000003, AC8133000000000000000004, AC8123000000000000000003, AC8113000000000000000009, AC8113000000000000000004, AC8103000000000000000004, AC7100000000000000000004, B97900000000000000000004, D98300000000000000000003, D91100000000000000000003, 30000000000000000000006F, D8E665A1A99C49B7A7A7184C, 30000000000000000000006C, 30000000000000000000006B, 30000000000000000000006A, 300000000000000000000068, 300000000000000000000065, 300000000000000000000062, 300000000000000000000055, 300000000000000000000053, 300000000000000000000046, 300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021, E21600000000000000000203, A21430000000000000000007, A21430000000000000000006, AC1051980000000000000032); path = VisePandaTests; sourceTree = "<group>"; };
 		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (F25506000000000000000001, 300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
 		600000000000000000000011 = {isa = PBXGroup; children = (AC8103000000000000000009, B97900000000000000000009, A77D00000000000000000002, D98300000000000000000004, 300000000000000000000066, 300000000000000000000063, 300000000000000000000054, 300000000000000000000044, 300000000000000000000035, 300000000000000000000015, 300000000000000000000022, A9AE0A5F84264B519E771326); path = VisePandaUITests; sourceTree = "<group>"; };
-		E21600000000000000000301 = {isa = PBXGroup; children = (E21600000000000000000201, E21600000000000000000202); path = Translation; sourceTree = "<group>"; };
+		E21600000000000000000301 = {isa = PBXGroup; children = (E216B0000000000000000001, E216B0000000000000000002, E216B0000000000000000003, E21600000000000000000201, E21600000000000000000202); path = Translation; sourceTree = "<group>"; };
 		22500D3EA2164BC4AEC0DEE0 /* Hotels */ = {isa = PBXGroup; children = (1AA36A5EDB2B47F2B6033233, AE5046CDB2E340BAA93D9194); path = Hotels; sourceTree = "<group>"; };
 		A21460000000000000000001 = {isa = PBXGroup; children = (A21430000000000000000001, A21430000000000000000002, A21430000000000000000003, A21430000000000000000004, A21430000000000000000005); path = Reservations; sourceTree = "<group>"; };
 		AC3026200000000000000001 /* Notifications */ = {isa = PBXGroup; children = (AC302600000000000000000A, AC3026000000000000000001, AC3026000000000000000002, AC3026000000000000000003, AC3026000000000000000004, AC3026000000000000000005, AC3026000000000000000006, AC3026000000000000000007, AC3026000000000000000008, AC3026000000000000000009); name = Notifications; sourceTree = "<group>"; };
@@ -1069,6 +1273,8 @@
 		541C4A7662005C1FCE8B757B /* GuideCacheData */ = {isa = PBXGroup; children = (888B4B0A91E5548A09C37C11, 0BCCC553B21229B4E730955A, B5CF2667A5B8D2C33188E839, C4478C92C24D0CDB8CD07CEF); name = GuideCacheData; sourceTree = "<group>"; };
 		919274CE6EB07948C71E2647 /* JournalData */ = {isa = PBXGroup; children = (666C6EE8933254195C86DE34, C87F8A45A625D8B7C9B8007B, 8ED66BDDFDAFC75F8BF30AD5, B7E29974E6174A387C1ACA2A, 0E9DD9B7D6FB81A72531D9E1, 4966FCCBA39198F070B25015); name = JournalData; sourceTree = "<group>"; };
 		242E819308B722FBA88FAFE1 /* AssistantEvents */ = {isa = PBXGroup; children = (8B381433AF7ADD6A0DC18A0D, AB757B121B62A807C0DF67EE, A1AA98DE50F6FCF39FFCD35C, 0A5DF5DDE9BCB2E13369F9DD, 0C6353DEC34DD0712D8A9A36, 2F4AA538EFA68AD7F109A5A1); path = AssistantEvents; sourceTree = "<group>"; };
+		8F6BA1434F801B0C1A37A0E3 /* Native QA */ = {isa = PBXGroup; children = (CA1600000000000000000062, CA1600000000000000000052, CA1600000000000000000042, CA1600000000000000000032, CA1600000000000000000022, CA1600000000000000000012, CA1600000000000000000002, 8A3D3D378E0706C1025B9F48, 22405570CE0B09EEA9850869, 7E938C4FB1493AF65C3E943A, 6EB4D268FDC8610A4474EFC5, 6C2EA835238A27D1F19C049E, E105FA4349B29D9596558DC7, 54B8CA2A93997E237C22F8ED, EBE798089FBDAD3F6C3D6A5F, 3DD5844B87800E100A1C08D2, 6E218F1EDCBD2773D015B887, E2B380894ECBEDDA32BC55A4, 452A0F73218718193F00308C, 8155A346FEF2AE6644F8B112, C383F76E92C81838F9AA99CD,
+				A01600000000000000000002, 312A4948FB912791261FDD7E, 3096EE0D0AB565BC4069E346, BD4BEE0ADCD5AFEAF774AAB5, 8DDE781A3F683D8F4BB0A4A2, CB4FFC6211CD9456FD0B7B09, 5DF7B225F3D2803D81EB134C, CEF58C7992BE3D31ABF2A371, 143A6642FF4283E80CF21617); name = "Native QA"; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1135,8 +1341,8 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
+		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (D148B89C71A1274BDDBA4A87, B0A004012FA3B5A990E2B44F, 200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (F5ECB1DA69B8AD65C2013152, 8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */, 978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */, 7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */, 0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
 				3E202B16F8CA949052172819,
 73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -1162,7 +1368,39 @@
 		800000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
+			files = (CA1600000000000000000031, CA1600000000000000000021, CA1600000000000000000011, CA1600000000000000000001, D35C74898B53C64EEA7DA2C7, B7D3DD42D167C9967AA5B92F, 436DEFF5E33E0559CB0B7074, 33B2DC1852362BA5DC1DB441, 9D2859311AF8B2D7FE5A284E, EBA69F0E3E86B41B8A463091, 2899960F646AE3F10ED3888C, 4D0486B2B4BF3EB3984BEF6E, 97C7B17BDD0DAE61F0261800, 73E332BEC307139F8CD423BF, 8ADC1330226F997B45A49BC7, B47B6CEA07B5EE93775C0D12, BECB9DA83FC1D574F90BFBD5, 73D322DD527F2059614D645D, AFBE85D5B86722F68E13E490, 729C29D3BE766F4323D9846C, 53F4F2F2948144E6E7489CEC, 0348E1255BF2FCEB98A81278, 7367F2444AB4FC0A40C1FE20, 0E71B9DE04882AA146A73912, 3D86D8AE4CD7B52444E354C1, 396814A397F1728D9A29CC5A,
+				E216C0000000000000000001 /* NativeTranslationRecoveryIdentity.swift in Sources */,
+				E216C0000000000000000002 /* NativeTranslationRecoveryJournal.swift in Sources */,
+				E216C0000000000000000003 /* NativeTranslationRecoveryReceipt.swift in Sources */,
+
+				5EFDF87D2268445ECDDF3E5D,
+				2BF657C1524A203A481EEEDD,
+
+				FA6A421D582B399F50F05233,
+				C8A14024885F896B221DE8DF,
+				29DFCA554630AF47A463C2F3,
+				550EF24C4FEB113C236711E6,
+
+                A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */,
+                A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */,
+                F10C15000000000000000201,
+                F10C15000000000000000202,
+                F10C15000000000000000203,
+                F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */,
+                899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */,
+                684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */,
+                3A5982167C911CAF4ABB3CCB /* NativeMuseChatHeader.swift in Sources */,
+                61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */,
+                56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */,
+                406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */,
+                56915B432DB289AD80A5FB8A /* NativeFrontendMemoryView.swift in Sources */,
+                A7D71AB3F98D25E3CAD4731B /* NativeFrontendLibraryView.swift in Sources */,
+                0F7276DB4ACCDDD24D23145A /* NativeFrontendLibraryActions.swift in Sources */,
+                BD0C4BA050C2C41F666539CB /* NativeFrontendJourneysView.swift in Sources */,
+                0474D97F07F73D3A10FABD50 /* NativeFrontendExpressionView.swift in Sources */,
+                0E7276F3CC2C92F31B39C7F0 /* NativeFrontendAssistantPresentation.swift in Sources */,
+                C58EE6E1A4B017C923DFA1FB /* NativeFrontendAssistantDetail.swift in Sources */,
+                1241CFC7C5B0D7FC4D1E48BD,
 				B197200000000000000000001,
 				B197200000000000000000002,
 				B197200000000000000000003,
@@ -1170,6 +1408,9 @@
 				B197200000000000000000005,
 				B197200000000000000000006,
 				B197200000000000000000007,
+				B203200000000000000000005,
+				B203200000000000000000006,
+				B203200000000000000000007,
 				B203200000000000000000004,
 				B203200000000000000000001,
 				B203200000000000000000002,
@@ -1264,7 +1505,8 @@ FAAB3A946EA0F180D0C047FA, 39679E2115C244EBC0A2E7B1, 2E678B6E23FFBB6AC16AF3E3, 29
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B19720000000000000000000A,
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (CA1600000000000000000061, CA1600000000000000000051, CA1600000000000000000041, AFE9B9617B76078F70C05992, 66F191A768ABC5729288000E, 2C27ACEE97D5071EF28D1228, 8CCC2C78C20BEF866C8A0E09,
+				A01600000000000000000001, 4E726840B03F2F990D550565, C75CF50B38AC6608DCA50FF8, BDCE48B4CCFBCA273D935982, A3E6E95A2F9C85C59858A38D, 8D22CE2637C793999702A0F6, E216C0000000000000000004, E216C0000000000000000005, E216C0000000000000000006, F576C92FB976ABC73273D941, A20600000000000000000013, F10C15000000000000000401, B203200000000000000000008, B19720000000000000000000A,
 				0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */,
 AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
 210A5218D6BDE6B5029405EA,
@@ -1276,7 +1518,7 @@ AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
 				BF0DD31803EB8545FF26193F,
 				2CF7B0A9EFA2FEAFC95C2F03,
 71A90D913FBDEA4F5433743A, A64D0A11E3D04CAF2EB787C1, 32C2B2995F555C82E7640723, FD41E1ECD8A620F9CA55B0C7, D21E4AAC463EFEB441C2487D, 1E84D6E7B31E4354A1697726, 2AE33A25269179EFC5EFBFB6, 322D27174D52152351B264A8, F37E6FD70D0A67B300012052, 45F7ABD0BDCB5FDB0669A547, F158020000000000000000F1,F1489100000000000000000C, F16405100000000000000009, F14805100000000000000009, 8A67C965FFBD10A165415F6F, 3E024577903A98F6EFFD1991, 51BD4D0B8E4A1C51E46F4A07, 7F51379DB9B5121C157DA13A, F25505100000000000000005, F15505100000000000000008, F15505100000000000000007, 19C2EFD51E4BD138A4E7EE1F, E22405200000000000000008, AC3026400000000000000001, AC8205000000000000010009, AC829300000000000000000A, AC8243000000000000000008, AC8213000000000000000008, AC8233000000000000000008, AC8223000000000000000006, AC8183000000000000000006, AC8193000000000000000008, AC8173000000000000000008, AC8163000000000000000004, AC8153000000000000000004, AC8143000000000000000006, AC8133000000000000000008, AC8123000000000000000006, AC811300000000000000000A, AC8113000000000000000008, AC8103000000000000000008, AC7100000000000000000008, B97900000000000000000008, A98320000000000000000103, B98300000000000000000003, B91100000000000000000003, 20000000000000000000006F, D679092AC75040D3B7FC3E03, 20000000000000000000006C, 20000000000000000000006B, 20000000000000000000006A, 200000000000000000000068, 200000000000000000000065, 200000000000000000000062, 200000000000000000000055, 200000000000000000000053, 200000000000000000000046, 200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021, E21600000000000000000103, A21420000000000000000007, A21420000000000000000006, AC1051980000000000000033, AC10524000000000000000E0); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AC810300000000000000000A, AC710000000000000000000A, B9790000000000000000000A, A77D00000000000000000001, B98300000000000000000004, B70096DFB59F47A2A16D06BD, 200000000000000000000066, 200000000000000000000063, 200000000000000000000054, 200000000000000000000044, 200000000000000000000035, 200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (51F702009D36D5AB3625AB67, B03E4E1760F819A305325191, 4863BE8C9EBB064C592E33E5, DA16B0000000000000000001, AC810300000000000000000A, AC710000000000000000000A, B9790000000000000000000A, A77D00000000000000000001, B98300000000000000000004, B70096DFB59F47A2A16D06BD, 200000000000000000000066, 200000000000000000000063, 200000000000000000000054, 200000000000000000000044, 200000000000000000000035, 200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
         F25506800000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (F25506100000000000000001, F25506100000000000000002, F25506100000000000000003); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 

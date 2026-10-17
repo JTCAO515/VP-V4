@@ -1,0 +1,34 @@
+✔ claimed answered cannot hide an unresolved required claim or add free prose (11.366ms)
+✔ complete OPS_CONFLICT cannot display succeeded (0.621208ms)
+✔ zh: complete multiple obligations cannot be refused by a model no-content assertion (0.362708ms)
+✔ en: complete multiple obligations cannot be refused by a model no-content assertion (0.365958ms)
+✔ unknown fact (0.357667ms)
+✔ wrong quote (0.225792ms)
+✔ wrong subject cannot satisfy an exact required triple (0.224667ms)
+✔ display recheck excludes expired evidence (0.1755ms)
+✔ display recheck excludes source-revoked evidence (0.198958ms)
+✔ display recheck excludes missing evidence (0.632666ms)
+✔ display recheck excludes wrong-scope evidence (0.193ms)
+✔ different wording for one triple is not a contradiction classifier (0.200625ms)
+✔ unlocalized model disagreement retains reliable statements with explicit uncertainty and no free model conflict prose (0.164708ms)
+✔ same fact with two agreeing published evidence chains stays answerable (0.130541ms)
+✔ conditions and exclusions cannot be removed by model summary or quote (0.195208ms)
+✔ completion error: no successful display, one model call and one completion only (0.184167ms)
+✔ completion throw: no successful display, one model call and one completion only (0.141875ms)
+✔ completion unknown: no successful display, one model call and one completion only (0.113709ms)
+✔ completion wrong job: no successful display, one model call and one completion only (0.15725ms)
+✔ completion wrong status: no successful display, one model call and one completion only (0.207666ms)
+✔ completion cancelled: no successful display, one model call and one completion only (0.298291ms)
+✔ explicit receipt succeeds; a subsequent done poll does not run the model again (0.323708ms)
+✔ cancellation after model reply never completes successfully (0.234958ms)
+✔ done answer is rechecked after source withdrawal without a new model or completion (0.164334ms)
+✔ done legacy invented summary is replaced with current evidence text without running the model (0.174584ms)
+✔ unknown completion followed by a server pending poll does not repeat model or complete (0.1785ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.750833

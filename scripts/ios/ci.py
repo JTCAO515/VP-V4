@@ -19,6 +19,11 @@ XCODE_VERSIONS = frozenset({
     "Xcode 26.6\nBuild version 17F113",
     "Xcode 27.0\nBuild version 27A266a",
 })
+# Simulator CI additionally qualifies this exact installed runner build. Keep
+# XCODE_VERSIONS unchanged: archive.py imports that historical release gate.
+CI_XCODE_VERSIONS = XCODE_VERSIONS | frozenset({
+    "Xcode 27.1\nBuild version 27A9275",
+})
 RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
 DEVICE = "iPhone 17 Pro"
 
@@ -120,8 +125,8 @@ def main():
         return result.stdout
 
     version = run(["xcodebuild", "-version"], "xcode-version").strip()
-    if version not in XCODE_VERSIONS:
-        raise RuntimeError(f"Expected one of {sorted(XCODE_VERSIONS)!r}, found {version!r}; no automatic fallback")
+    if version not in CI_XCODE_VERSIONS:
+        raise RuntimeError(f"Expected one of {sorted(CI_XCODE_VERSIONS)!r}, found {version!r}; no automatic fallback")
     run(["xcodebuild", "-list", "-project", PROJECT], "project")
     matches = []
     udid = None

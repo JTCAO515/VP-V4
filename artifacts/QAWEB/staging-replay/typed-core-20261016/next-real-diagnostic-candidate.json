@@ -1,0 +1,81 @@
+{
+  "status": "CANDIDATE_ONLY_NOT_AUTHORIZATION_NOT_EXECUTED",
+  "proposalOnly": true,
+  "candidateProductHead": "23e3fc0f2c70200d9fddea2f903d07bae5fdaa7e",
+  "mode": "same-copy-typed-postdata/1",
+  "sourceLockSha256": "7e54cf13d678ea98ac81fa99316c3b850b269f6430a091cf3cb0a2c657b9f421",
+  "runtimePinsSha256": "a18a7c08017dde0cac00e50b397c95ae814ac9365c782bbbb751bbdb7c4b479f",
+  "derivedImageId": "sha256:74699ee2438a45c748fb5e82bde5cafa4c8e2c39879d107ac8b6c0d43a0b1451",
+  "baseImageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "postgresBinarySha256": "3d4c9002a1add7973bf07bf17c6773e5c805dd45cfd2d8b5ca01f6afd4ac034a",
+  "helperCommit": "4a3879517d26d86126a1ce45076e090060fcc691",
+  "helperSha256": "566f06bd8f86e3885fc2972df6e9d042bfd080d6df5c6971167abe76f06917b7",
+  "entry": "reviewed_entry.run(core, original_args, configuration); unchanged original require_configured/validate/claim/finish gates",
+  "configurationTemplate": {
+    "mode": "same-copy-typed-postdata/1",
+    "sourceLockSha256": "7e54cf13d678ea98ac81fa99316c3b850b269f6430a091cf3cb0a2c657b9f421",
+    "windowBindingSha256": null
+  },
+  "materials": {
+    "sourceOfIdentifiers": "Unchanged public reviewed-diagnostic-window.py constants; protected originals not read or revalidated this task",
+    "captureId": "f97d05db-c706-4ce9-82d8-579cbb0b9310",
+    "manifestSha256": "668f0bb3a34319310a7bee2a07e514f47c11442d08cd78fe4e772856c3f61085",
+    "exactFiles": [
+      "roles.sql.age.partial",
+      "schema-all.dump.age.partial",
+      "data14.dump.age.partial",
+      "platform-ledger.dump.age.partial"
+    ],
+    "perFileCipherHashesAndBytes": "Must be read from and matched to original qualified manifest by the authorized operator; not reconstructed here",
+    "identity": "Reuse original approved identity; path hash/reference must be supplied by existing qualified owner. No new key or identity.",
+    "existingFailureAndConsumedRecords": "Preserve original bytes and original one-time/attempt chain; no reset, overwrite or expiry extension"
+  },
+  "copy": {
+    "countThisSubmission": 1,
+    "factory": "One newly created nonce-owned offline copy, bound immutable container ID and original server lifetime; no attach",
+    "phases": "Original pre-data, data14, ledger, post-data and checks share that one copy",
+    "imageAuthority": "New derived image requires explicit new review; never treated as historical approved image",
+    "bootstrap": "Original selected bootstrap role and validated locale; original pg_restore flags/session/transaction preserved"
+  },
+  "window": {
+    "historical795": "Both attempts exhausted permanently; never reused, reset, extended or given a third attempt",
+    "newWindowId": null,
+    "windowStartUTC": null,
+    "windowEndUTC": null,
+    "durationMinutes": 60,
+    "unchangedMaximumCopies": 2,
+    "thisSubmissionAttempt": 1,
+    "automaticSecondAttempt": false,
+    "originalCleanupReserveSeconds": 120,
+    "originalCleanupBudgetSeconds": 60
+  },
+  "outputPolicy": [
+    "ErrorResponse.C allowlist and fixed stage; query/backend HMAC tokens only",
+    "Command/object class unknown unless independently proven; no stderr inference",
+    "No SQL, object names, rows, raw errors, role credentials, keys or backend cancel secret in output/artifacts",
+    "Separate caller metadata remains labeled separate; not SECURITY DEFINER proof"
+  ],
+  "cleanup": "Original parent UTC+monotonic Budget controls all dispatch; conservative child snapshot only shortens; exact backend exit readback and factory-owned fallback; immutable-ID copy cleanup and absence readback; unknown identity/backend retains resources/results and active guard, no retry/release",
+  "requiredBeforeActualUse": [
+    "Independent final source/runtime review and final integrated QA source head qualification",
+    "New genuine direct-human evidence and Main-start pins under original gate",
+    "Concrete new window UUID/start/end and separately reviewed windowBindingSha256",
+    "reviewed_code_hash(core, final configuration) must match new approval/start/source pins",
+    "Original material/identity and preserved consumed/failure chain must be qualified by the existing authorized operator",
+    "Any source/image/configuration change requires refreshed pins/review; candidate files do not self-authorize"
+  ],
+  "unverified": [
+    "Actual protected archive restoration",
+    "Actual incident first SQLSTATE/command/object: UNKNOWN",
+    "Managed Auth/Storage/vault roles/ACL and complete extension equivalence",
+    "ICU archive restoration; current ICU proof covers initialization/readback only",
+    "Target E/Native163, ECS/Vercel, provider, Production and TestFlight"
+  ],
+  "excluded": [
+    "New capture or identity",
+    "Any actual attempt in this task",
+    "Historical window795 reuse or third attempt",
+    "Shared/target DB write or grants",
+    "External fees/accounts/production/release actions"
+  ]
+}

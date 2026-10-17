@@ -1,0 +1,31 @@
+✔ only bounded documentation pull requests use the smaller check set (0.402167ms)
+✔ runtime, contracts, unknown files and both sides of moves retain full checks (0.220459ms)
+✔ the known product-planning set uses documentation checks, while a single runtime change retains full checks (0.083792ms)
+✔ actual Git comparison includes both sides of a runtime-to-document rename (315.200875ms)
+✔ missing, invalid or unavailable comparison inputs fall back to the complete gate (11.572167ms)
+✔ affected selector docs/backend/native/UI/SQL matrices preserve required real checks (1.179417ms)
+✔ CI policy changes and unknown/unavailable/manual inputs fail closed to the full superset (20.735625ms)
+✔ actual registered test lane is selected while known Web failure coverage cannot be narrowed away (6.426417ms)
+✔ wiki source imports select native PostgreSQL persistence and Ops readers without making all server full (0.157875ms)
+✔ every gated integration test file is in a DB integration lane or on the reasoned allowlist (11.660042ms)
+✔ a DB integration lane fails on skip, todo, cancel, failure, non-zero exit or a missing summary (0.567917ms)
+✔ DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification (10.414583ms)
+✔ deduplicated four PG workflows keep manual commands covered by the selected postgres step (0.92975ms)
+✔ every workflow declares least-privilege token permissions (1.103166ms)
+✔ the self-hosted iOS runner never executes fork pull request code (0.161417ms)
+✔ stable DB aggregate executes strict result predicates for empty/full/error/cancel states (26.5665ms)
+✔ native PR uses unsigned build or affected permission/data code tests; manual remains full (43.689292ms)
+✔ changed noncritical native test classes and unknown native sources are never omitted (36.271917ms)
+✔ bounded CI shards preserve every logical step exactly once and reject malformed partitions (0.7675ms)
+✔ CI matrix CLI and actual workflow projection fail before emitting an output on bad plans (500.907583ms)
+✔ pinned images pull only exact official GHCR digests and fail closed (76.326709ms)
+✔ security workflows prepare the exact official Node fixture before offline tests (23.31475ms)
+✔ hosted worker prepares the identical GHCR database pin without ECR network access (7.619083ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 789.776209

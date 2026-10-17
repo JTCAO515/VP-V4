@@ -1,0 +1,19 @@
+{
+  "base": "00d2fd3ed4ab064875459266f6b9af3ee47de89b",
+  "status": "ROUTE_AND_LEGACY_REGISTRY_FIX_SOURCE_COMPLETE_FINAL_PHYSICAL_PENDING",
+  "red": "context-dispatch-red.log reproduces fixed00d using recorded fake handles only; no daemon or data dispatch. Original unhashable legacy failure preserved in test-diagnostic-window-deadline.log.",
+  "green": {
+    "receipt-dispatch-contracts-02.log": 12,
+    "deadline-regression-fixed.log": 25
+  },
+  "changes": [
+    "Every data/control dispatch uses recorded Unix endpoint and immutable container ID; mutable db fields are only conflict checks",
+    "Restoration argv reconstructed from receipt; malicious supplied consumer never starts protected producer",
+    "Actual launch response obtained directly from Docker, no caller callback capable of supplying foreign ID; full original launch argv validated",
+    "Optional typed start preserves original base image qualification, bootstrap/locale arguments and isolation; ordinary start unchanged",
+    "Budget registration uses id plus strong original-object is identity; unhashable legacy fixtures retain original path",
+    "Explicit reviewed_entry library preserves unchanged original gate and consumes original Budget/claim; no CLI/env activation"
+  ],
+  "remaining": "Run full5 strict physical cases on this final dispatch implementation; source-review delta; final approval-ready material. No real actions enabled.",
+  "imageId": "sha256:5abad441bc337ae4bd1d8348f562d8d4b453eb0ba3453b4f67b9eb3d67191723"
+}

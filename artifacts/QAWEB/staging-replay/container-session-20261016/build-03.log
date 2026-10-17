@@ -1,0 +1,51 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load remote build context
+#1 DONE 0.0s
+
+#2 copy /context /
+#2 DONE 0.0s
+
+#3 [internal] load metadata for public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#3 DONE 0.0s
+
+#4 [1/4] FROM public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b
+#4 resolve public.ecr.aws/supabase/postgres@sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b done
+#4 CACHED
+
+#5 [2/4] RUN printf '%s\n' https://dl-cdn.alpinelinux.org/alpine/v3.23/main > /etc/apk/repositories  && apk add --no-cache gdbm=1.26-r0 libbz2=1.0.8-r6 libexpat=2.8.5-r0 libffi=3.5.2-r0 libgcc=15.2.0-r2 libpanelw=6.5_p20251123-r0 libstdc++=15.2.0-r2 mpdecimal=4.0.1-r0 pyc=3.12.15-r0 python3=3.12.15-r0 python3-pyc=3.12.15-r0 python3-pycache-pyc0=3.12.15-r0 sqlite-libs=3.53.4-r0 xz-libs=5.8.4-r0  && mkdir -p /opt/homebrew/opt/postgresql@17 /private/tmp /opt/qaw  && ln -s /nix/var/nix/profiles/default/bin /opt/homebrew/opt/postgresql@17/bin  && ln -s /nix/var/nix/profiles/default/share /opt/homebrew/opt/postgresql@17/share  && ln -s "$(pg_config --pkglibdir)" /opt/homebrew/opt/postgresql@17/lib  && chown postgres:postgres /private/tmp  && chmod 700 /private/tmp  && apk info -v | sort > /opt/qaw/runtime-packages.txt
+#5 0.783 ( 1/14) Installing gdbm (1.26-r0)
+#5 0.839 ( 2/14) Installing libbz2 (1.0.8-r6)
+#5 0.894 ( 3/14) Installing libexpat (2.8.5-r0)
+#5 0.956 ( 4/14) Installing libffi (3.5.2-r0)
+#5 1.010 ( 5/14) Installing libgcc (15.2.0-r2)
+#5 1.070 ( 6/14) Installing libpanelw (6.5_p20251123-r0)
+#5 1.124 ( 7/14) Installing libstdc++ (15.2.0-r2)
+#5 1.243 ( 8/14) Installing mpdecimal (4.0.1-r0)
+#5 1.301 ( 9/14) Installing pyc (3.12.15-r0)
+#5 1.301 (10/14) Installing xz-libs (5.8.4-r0)
+#5 1.363 (11/14) Installing sqlite-libs (3.53.4-r0)
+#5 1.439 (12/14) Installing python3 (3.12.15-r0)
+#5 1.689 (13/14) Installing python3-pycache-pyc0 (3.12.15-r0)
+#5 2.149 (14/14) Installing python3-pyc (3.12.15-r0)
+#5 2.149 Executing busybox-1.37.0-r30.trigger
+#5 2.151 OK: 65.1 MiB in 54 packages
+#5 2.160 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/main/aarch64/APKINDEX.tar.gz: No such file or directory
+#5 DONE 2.2s
+
+#6 [3/4] COPY owned-pg-diagnostic-session.py typed-pg-diagnostic-proxy.py diagnostic-window-deadline.py /opt/qaw/
+#6 DONE 0.0s
+
+#7 [4/4] COPY container-diagnostic/service.py /opt/qaw/service.py
+#7 DONE 0.0s
+
+#8 exporting to image
+#8 exporting layers
+#8 exporting layers 0.7s done
+#8 exporting manifest sha256:486c5548b7f3c58bff04c59d064d88b47b80d1b36f2cbb636031349a0d973f3c done
+#8 exporting config sha256:2f0c561aac3d0442b64833d0d80ebbf01ad964e51eecccf9391b7309b791182d done
+#8 naming to docker.io/library/qaw683-diagnostic:synthetic-edec done
+#8 unpacking to docker.io/library/qaw683-diagnostic:synthetic-edec
+#8 unpacking to docker.io/library/qaw683-diagnostic:synthetic-edec 0.2s done
+#8 DONE 0.8s
+{"builtImage": "sha256:486c5548b7f3c58bff04c59d064d88b47b80d1b36f2cbb636031349a0d973f3c", "postgresBinaryUnchanged": true}

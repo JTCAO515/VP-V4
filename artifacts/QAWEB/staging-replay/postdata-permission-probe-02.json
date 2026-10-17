@@ -1,0 +1,26 @@
+{
+  "status": "FAIL_LOCAL_POSTDATA_PROBE",
+  "realArchiveRead": false,
+  "targetWritten": false,
+  "pre-data": {
+    "exitCode": 0
+  },
+  "post-data": {
+    "exitCode": 0
+  },
+  "permissionDenied": false,
+  "tocEventBeforeAcl": false,
+  "diagnosticSha256": "dfa881b384015b62b682a8c182c008d9305aafbfa373fe1ade7e9ea225e2f0d8",
+  "reason": "POSTDATA_PERMISSION_NOT_REPRODUCED",
+  "cleanup": "PASS",
+  "sanitizedSyntheticDiagnostic": {
+    "category": "LOCAL_RESTORE_CONSUMER_FAILED",
+    "sqlstate": null,
+    "tocEntryId": null,
+    "objectClass": "EVENT TRIGGER",
+    "permissionObjectClass": null,
+    "operation": null,
+    "phase": "post-data"
+  },
+  "rawSyntheticDiagnosticRemoved": "raw never derived from real data; original FAIL/hypothesis outcome retained"
+}

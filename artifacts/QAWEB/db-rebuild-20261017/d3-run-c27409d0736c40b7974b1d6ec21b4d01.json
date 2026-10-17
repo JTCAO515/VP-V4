@@ -1,0 +1,21 @@
+{
+  "status": "FAIL",
+  "checks": [],
+  "cleanup": "PASS",
+  "realTarget": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d3_verify.py": "e6acb37b21633c348c6bfa043fa5aeb3250d8241629b8e18bf5bbffd856b5ca9",
+    "scripts/qa-agent-db-baseline/target-delta/d3_transaction.py": "b8debd8c1f8b9086ee5a1ba2df019bec41246600ff8b2d980c0b8b46ce0f6f8d",
+    "scripts/qa-agent-db-baseline/target-delta/local_fixture.py": "008d4d611a6d501c463cc0e0e3ba73148532a4d2ad5f2c1e53d27c0d04e1a4e0"
+  },
+  "phase": "rollback",
+  "error": "SQL_P0304",
+  "identity": {
+    "kind": "LOCAL_SYNTHETIC_ONLY",
+    "nonce": "c27409d0736c40b7974b1d6ec21b4d01",
+    "containerId": "92f5bb7e03c078e70f29688ab13f01e8fcd49ae7ae36f3362162a8123a2ea7a0",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "database": "d3_targetlike",
+    "targetReplica": false
+  }
+}

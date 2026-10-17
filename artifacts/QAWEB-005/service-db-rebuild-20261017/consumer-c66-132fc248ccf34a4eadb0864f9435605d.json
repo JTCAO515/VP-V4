@@ -1,0 +1,121 @@
+{
+  "source": "c66a58b8ba63f7107663a5b63fbcae66bdc4e6eb",
+  "kind": "SYNTHETIC_EMPTY_PG_API_CONSUMER",
+  "status": "PASS_DECLARED_READ_SLICE",
+  "checks": [
+    {
+      "name": "new owned empty PG + original synthetic login epoch and profile RLS",
+      "status": "PASS"
+    },
+    {
+      "name": "actual route + original Bearer SDK + QaStore consume PG policy/consent/create/list/read",
+      "status": "PASS"
+    },
+    {
+      "name": "unimplemented actual submit SQL42883 => technical503/unknown, zero admission and original bytes retained",
+      "status": "PASS"
+    },
+    {
+      "name": "fixture-seeded persistent SQL results reopen through original API; unknown projection retains exact input and no answer",
+      "status": "PASS"
+    },
+    {
+      "name": "original actor RLS and stale epoch fail closed on actual PG",
+      "status": "PASS"
+    },
+    {
+      "name": "missing cancellation/worker ports stay technical; zero provider, usage or budget attempts",
+      "status": "PASS"
+    },
+    {
+      "name": "actual withdrawal is policy403; actual revoked Native session is401, not a technical stub disguise",
+      "status": "PASS"
+    }
+  ],
+  "databaseErrorCodes": [
+    {
+      "name": "qa_native_session_v1",
+      "action": "qa_submit_message_v1",
+      "code": "42883"
+    },
+    {
+      "name": "qa_native_session_v1",
+      "action": "read",
+      "code": "P0001"
+    },
+    {
+      "name": "qa_native_session_v1",
+      "action": "qa_cancellation_v1",
+      "code": "42883"
+    },
+    {
+      "name": "native_session_v2",
+      "action": "session",
+      "code": "P0001"
+    }
+  ],
+  "realAuth": "UNRUN",
+  "provider": "UNRUN",
+  "target": "UNRUN",
+  "firstAnswer": "UNRUN",
+  "cleanup": "PASS",
+  "executionPins": [
+    {
+      "path": "tests/security/qa-agent-service/db-baseline-bridge.py",
+      "sha256": "acbe50498e8c469ea17c5cc044c959aaa4e5727b68accebde6a4974292c82a39"
+    },
+    {
+      "path": "tests/security/qa-agent-service/db-baseline-native-api.test.mjs",
+      "sha256": "442604096e082a0d7463c380ab5e27def41a1c9585567402a6f73d5df77d2a15"
+    },
+    {
+      "path": "lib/server/qa-agent/native-http.ts",
+      "sha256": "590bb6fcc14ef73749d868b26576f23622c1008db09d65ee250734c974ac4ef3"
+    },
+    {
+      "path": "lib/server/qa-agent/native-store.ts",
+      "sha256": "b2b49c1bfcd5c37d2ca7ae7fffdc5ae9926d3a92dfe84e43289ae6e13297d9c9"
+    },
+    {
+      "path": "lib/server/qa-agent/service.ts",
+      "sha256": "06a6cfb6114efe56f97cb96699355482662cf688db62490b1f1eb68e8f069000"
+    },
+    {
+      "path": "lib/server/qa-agent/executor.ts",
+      "sha256": "78a26edcdc434886cdf4d6a15c46b0c2536f7fefdb52b9aec94760b76afd559a"
+    }
+  ],
+  "workerSqlErrorCode": "42883",
+  "seededAnswerOnly": true,
+  "unimplementedWriteAck": "503 PROVIDER_UNAVAILABLE unknown",
+  "providerCalls": 0,
+  "preservedInputSha256": "7e036c802c1622ddd859ce93414e5df112f7565a85cfa8b16c6c097c1ae6574e",
+  "rpcCount": 46,
+  "sourceUnchanged": true,
+  "resource": {
+    "event": "ready",
+    "source": "c66a58b8ba63f7107663a5b63fbcae66bdc4e6eb",
+    "nonce": "132fc248ccf34a4eadb0864f9435605d",
+    "containerId": "ccdf900ac7d903aed2644d28eed66434fa68c4afeb304338c17afc0f607bf9fe",
+    "name": "qa-db-baseline-132fc248ccf3",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "snapshot": "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/qa-service-c66-fixed-hrdy6jvx",
+    "baselineSha256": "b110c0f2ef5408d7c8a1a7331a8a0eb89112b223a66c3822ff8a6dd8cc1b48f7",
+    "networkNone": true,
+    "noMounts": true,
+    "noPorts": true,
+    "sourcePins": {
+      "scripts/qa-agent-db-baseline/README.md": "5395eedafd5a10cfd2bef9da4d20f60e326653cb70e3d76e20c3b868d1954791",
+      "scripts/qa-agent-db-baseline/acl.sql": "3ae461a785319c828d1c977acf9ad9feb9c4ed721605432ce561eda2f6047d63",
+      "scripts/qa-agent-db-baseline/assemble.py": "b9103bc7d3fc48e23d81b3d364b961b8476c7fde0dbf1f4e0de38a31bd6cff84",
+      "scripts/qa-agent-db-baseline/baseline.sql": "b110c0f2ef5408d7c8a1a7331a8a0eb89112b223a66c3822ff8a6dd8cc1b48f7",
+      "scripts/qa-agent-db-baseline/contracts.py": "d5a73f0ed0f3b92a043fb3baa340e4b7741f56fc60b8abc18f19505859bfccb9",
+      "scripts/qa-agent-db-baseline/platform.sql": "b8f1cea2563fd7e67a7662e6f55e729be5cc7d6b01b54973e53c612e1a6ff48e",
+      "scripts/qa-agent-db-baseline/port-coverage.json": "69a84454bd64127cb16e2786f8b6a45d9d44bb5e123ab1d2f1ccadfb7389f5ab",
+      "scripts/qa-agent-db-baseline/reuse-map.json": "3de5e7fa2cb8068a2722d5e64469033cfe82f636e42af62f663ddbee61424fd6",
+      "scripts/qa-agent-db-baseline/run.py": "0c4ab627206092a10e7a955b834e98e1a2befeced634c5d09372c5ef549fa3ad",
+      "scripts/qa-agent-db-baseline/schema-overlay.sql": "481b5b6969abc622d426b08731d662e0aae024a61056d72c24e88927f130b4e6",
+      "scripts/qa-agent-db-baseline/service-ports.json": "aa19302219d8a4474022a4e1d7cb9b97009e9539c4bfad1e1f4ba89a2b882571"
+    }
+  }
+}

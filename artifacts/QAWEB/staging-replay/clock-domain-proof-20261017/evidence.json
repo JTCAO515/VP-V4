@@ -1,0 +1,407 @@
+{
+  "task": "683",
+  "sourceHead": "fc45a7db75a9397801b126cbb6876278ae6dde94",
+  "previousSourceHead": "9943efb7db6fd6856c56d2328b41cf749a84c3d2",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE; evidence-only descendant of sourceHead",
+  "sourceAndDriverFrozen": true,
+  "sourceBlobs": {
+    "9943efb7db6fd6856c56d2328b41cf749a84c3d2": {
+      "directive-scope-v1/profile.py": {
+        "gitBlob": "96c5e50bf147514561e8bb472fcee03cb38af9f5",
+        "sha256": "5afd3a9d78a3b6f6307efe6eb4370273ff16f0bab870439ac12aa2a8328d5313"
+      },
+      "directive-scope-v1/entry.py": {
+        "gitBlob": "e63ae12a308f1cd04fbe1e43eec87fd6404284f3",
+        "sha256": "d6189bf3eef8913145650190a8ef9fb4c7a7b61180ff1996b0d8217cca26daae"
+      },
+      "directive-scope-v1/test_profile.py": {
+        "gitBlob": "dbfa08e6f233852ca280c002258c4566133c6d0b",
+        "sha256": "713d9347174d6a7a38c1a124e7af578a01196acc3430c2fcea28f86f817f0951"
+      },
+      "directive-scope-v1/source-lock.json": {
+        "gitBlob": "4f7ae9431a3d2a628d823026f276fe88ba669a59",
+        "sha256": "039e635ee4fd392da112bcfe3519eb165855a427737de835c7841a2decf326d2"
+      },
+      "diagnostic-window-deadline.py": {
+        "gitBlob": "a5ad1e5777da5fed24960033a288f7dd2d22ba67",
+        "sha256": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb"
+      },
+      "reviewed-diagnostic-window.py": {
+        "gitBlob": "16bcd2841a7dd19ad8bed34c099f7ef42ba1ce96",
+        "sha256": "f68852d6e69d847c87480f2c0c145e1bb17d6c79cf889f80e2cde7b18d85f500"
+      },
+      "test-reviewed-diagnostic-window.py": {
+        "gitBlob": "cf19dbb69f6d2e12138ddbc394dda586c6796889",
+        "sha256": "8de9d79b601a5e3b7845dabfe8a94bf229a28775377853e4e134c333443f5513"
+      },
+      "test-diagnostic-window-deadline.py": {
+        "gitBlob": "5f1efce4822f4df60422f8b6364fd9870f9b3513",
+        "sha256": "5cd285a27f5cc7fe27dcfea76e362d4d81a8b228dab0fa28708b0b10d549dbc4"
+      },
+      "test-snapshot-mode.py": {
+        "gitBlob": "667ad8cfb7ce2236c3a735135392e6093a9fa041",
+        "sha256": "d07178f8e2942618789524e238415c52981ddd591ae30131042b2840a5699099"
+      },
+      "test-controlled-restore.py": {
+        "gitBlob": "53180465dcd998aa0dbd00f2aa8db964d4a5332a",
+        "sha256": "e4a2005c677a3e48d386ebfe352e7b06eac826c8258d45be8453b224e0215bdd"
+      }
+    },
+    "fc45a7db75a9397801b126cbb6876278ae6dde94": {
+      "directive-scope-v1/profile.py": {
+        "gitBlob": "ffd61ef3005541fbf5aee0984d86bcd13d6711cf",
+        "sha256": "368c332731661673fef7ad9ffe7a36f7d1b7f4f78e23aa970fee8a4a6bf40d6a"
+      },
+      "directive-scope-v1/entry.py": {
+        "gitBlob": "e63ae12a308f1cd04fbe1e43eec87fd6404284f3",
+        "sha256": "d6189bf3eef8913145650190a8ef9fb4c7a7b61180ff1996b0d8217cca26daae"
+      },
+      "directive-scope-v1/test_profile.py": {
+        "gitBlob": "a5a760a65fa6c9bc48875b72545424ab1a05ec2d",
+        "sha256": "f936b9032d8d4a18804f72fee4623078d787df8fb7ea453797029a233547d2c2"
+      },
+      "directive-scope-v1/source-lock.json": {
+        "gitBlob": "abfdf38423c16578d4da2f7bfeba83bc83243fdf",
+        "sha256": "64fc9e81881a74a3951c7cdbb7740f18ae1b7c055c113c325d16cf8de55fa039"
+      },
+      "diagnostic-window-deadline.py": {
+        "gitBlob": "a5ad1e5777da5fed24960033a288f7dd2d22ba67",
+        "sha256": "e58182f89d3cf8ed189d72559283b811ed47fded98c50e7aed008fa66e017ccb"
+      },
+      "reviewed-diagnostic-window.py": {
+        "gitBlob": "16bcd2841a7dd19ad8bed34c099f7ef42ba1ce96",
+        "sha256": "f68852d6e69d847c87480f2c0c145e1bb17d6c79cf889f80e2cde7b18d85f500"
+      },
+      "test-reviewed-diagnostic-window.py": {
+        "gitBlob": "cf19dbb69f6d2e12138ddbc394dda586c6796889",
+        "sha256": "8de9d79b601a5e3b7845dabfe8a94bf229a28775377853e4e134c333443f5513"
+      },
+      "test-diagnostic-window-deadline.py": {
+        "gitBlob": "5f1efce4822f4df60422f8b6364fd9870f9b3513",
+        "sha256": "5cd285a27f5cc7fe27dcfea76e362d4d81a8b228dab0fa28708b0b10d549dbc4"
+      },
+      "test-snapshot-mode.py": {
+        "gitBlob": "667ad8cfb7ce2236c3a735135392e6093a9fa041",
+        "sha256": "d07178f8e2942618789524e238415c52981ddd591ae30131042b2840a5699099"
+      },
+      "test-controlled-restore.py": {
+        "gitBlob": "53180465dcd998aa0dbd00f2aa8db964d4a5332a",
+        "sha256": "e4a2005c677a3e48d386ebfe352e7b06eac826c8258d45be8453b224e0215bdd"
+      }
+    }
+  },
+  "historicalLogs": [
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/driver-start-final-fixed.log",
+      "originalLogSha256": "bfddd208dab9951b3b9fd133a882f1641789f47cbf39468f6d3f3d2c3941282c",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 2 tests in 0.013s",
+        "OK"
+      ],
+      "sourceAssociation": "PRIVATE_DRIVER_C8AF_ON_SOURCE_9943_RECORDED_IN_PRIOR_DELIVERY"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/driver-start-green.log",
+      "originalLogSha256": "bfddd208dab9951b3b9fd133a882f1641789f47cbf39468f6d3f3d2c3941282c",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 2 tests in 0.013s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/driver-start-red.log",
+      "originalLogSha256": "320a714f4737703cad8e4e76dac8f9395615b69da219864d899495e7817cc6e9",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 2 tests in 0.013s",
+        "FAILED (failures=4)"
+      ],
+      "sourceAssociation": "OLD_PRIVATE_DRIVER_PRESERVED_SHA_IN_PRIVATE_RECORD_ONLY"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/final-test-controlled-restore.log",
+      "originalLogSha256": "0d7740fa68cd5c3f7d5afdc05e293e6bc544ecc1272cb5f27a3572e2fc416f80",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 7 tests in 0.009s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/final-test-diagnostic-window-deadline.log",
+      "originalLogSha256": "fad5636f90de377ee9826c6c5ed7bc65fc2af9ed14bc92896f7f804aca255642",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 25 tests in 0.179s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/final-test-reviewed-diagnostic-window.log",
+      "originalLogSha256": "cfdc9e45ed6604c99e383a6b56db7ca4add830f1104cfb3af7b4431d7a33b016",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 26 tests in 0.164s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/final-test-snapshot-mode.log",
+      "originalLogSha256": "ee195b5083de0257a37c4375c74a97dde17aeaf32479dfa1d59c3c89878e2117",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 10 tests in 0.008s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-01.log",
+      "originalLogSha256": "99979d51d097dc29604066de321e288f488a96d62f00ae39ef27a51c6a2962db",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 15 tests in 0.085s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-02.log",
+      "originalLogSha256": "ed2587a4ef7e7cfa30e9ad99647ffb225ab21e578bd4bf69c9d0fa8b4d78d5d9",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 15 tests in 0.086s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-03.log",
+      "originalLogSha256": "8e074dd640d1bfd6aea88df51788d039936f6a51ad5abb9fe4428cfd33a5796d",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 17 tests in 0.099s",
+        "FAILED (failures=1)"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-04.log",
+      "originalLogSha256": "9dab668e0ba18b0bbd67710ed7d385826c921a0197435c235cd8742a06451910",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 17 tests in 0.102s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-05.log",
+      "originalLogSha256": "d2b650cf496381d5f16fb13a62800084ce2be7130574acab04e22ec44fef1363",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 19 tests in 0.107s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-06.log",
+      "originalLogSha256": "2be855ea0f6a80031b1c46af0239e12463480661a520047401d294d320d27789",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 20 tests in 0.112s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/profile-tests-final.log",
+      "originalLogSha256": "63272faaba32a20e2ba4f8e325e14386fcdc8684412be98d8fb016a542fa48dd",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 20 tests in 0.110s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-budget-source-tests-01.log",
+      "originalLogSha256": "ddc722162e243ac323d0faf80eb747acc0245032b7d856aea6410b926e1d1086",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 31 tests in 0.241s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-budget-source-tests-02.log",
+      "originalLogSha256": "f17c26ac2f3571d7df5050d030cf2af68e5f125745ef4b64b5a6e50b498b0ce4",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 33 tests in 0.256s",
+        "OK"
+      ],
+      "sourceAssociation": "9943efb7db6fd6856c56d2328b41cf749a84c3d2"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-controlled-restore.log",
+      "originalLogSha256": "a6ff8c1944cacf7ca746cf1f55fd184664d90fb117269d702d77d4cbee831114",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 7 tests in 0.010s",
+        "OK"
+      ],
+      "sourceAssociation": "9943efb7db6fd6856c56d2328b41cf749a84c3d2"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-diagnostic-window-deadline.log",
+      "originalLogSha256": "21fd3914c0a6f927f7b2c1cd1a4b72b069c5125e0a39833a3df8cbcdbbfef799",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 25 tests in 0.190s",
+        "OK"
+      ],
+      "sourceAssociation": "9943efb7db6fd6856c56d2328b41cf749a84c3d2"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-reviewed-diagnostic-window.log",
+      "originalLogSha256": "3e65fd78f51b21c6ddd19c6178e2acbf9b9c1e10fe9734a59fd14e16126dad1a",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 26 tests in 0.189s",
+        "OK"
+      ],
+      "sourceAssociation": "9943efb7db6fd6856c56d2328b41cf749a84c3d2"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/start-cap-test-snapshot-mode.log",
+      "originalLogSha256": "a5cf3a199e098285fe86b271f7db2c850751326a5f9aad67ca4b87636cc2b384",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 10 tests in 0.007s",
+        "OK"
+      ],
+      "sourceAssociation": "9943efb7db6fd6856c56d2328b41cf749a84c3d2"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/test-controlled-restore.log",
+      "originalLogSha256": "0d7740fa68cd5c3f7d5afdc05e293e6bc544ecc1272cb5f27a3572e2fc416f80",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 7 tests in 0.009s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/test-diagnostic-window-deadline.log",
+      "originalLogSha256": "fad5636f90de377ee9826c6c5ed7bc65fc2af9ed14bc92896f7f804aca255642",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 25 tests in 0.179s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/test-reviewed-diagnostic-window.log",
+      "originalLogSha256": "0367d2239e6f1b16a8c35e23cadc1a4d545af99e2c5abadd8e57ebe6e8251f5a",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 26 tests in 0.166s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    },
+    {
+      "originalLogLocator": "artifacts/QAWEB/staging-replay/directive-scope-v1-20261016/test-snapshot-mode.log",
+      "originalLogSha256": "ee195b5083de0257a37c4375c74a97dde17aeaf32479dfa1d59c3c89878e2117",
+      "rawLogPublished": false,
+      "summary": [
+        "Ran 10 tests in 0.008s",
+        "OK"
+      ],
+      "sourceAssociation": "UNKNOWN_EXACT_EXECUTION_HEAD"
+    }
+  ],
+  "checks": {
+    "previous33plus68": {
+      "counts": [
+        33,
+        26,
+        25,
+        10,
+        7
+      ],
+      "evidence": "Existing start-budget/start-cap logs; source association from retained start-budget-delivery.json; logs themselves do not embed head."
+    },
+    "new85": {
+      "counts": [
+        34,
+        26,
+        25
+      ],
+      "result": "PASS_OBSERVED_IN_EXEC_TOOL_OUTPUT",
+      "sourceHead": "fc45a7db75a9397801b126cbb6876278ae6dde94",
+      "persistentRawLogPath": null,
+      "persistentRawLogSha256": null,
+      "limitation": "No raw log file was saved. Do not reconstruct a transcript or invent a log hash. Run occurred before commit; committed tested source is unchanged.",
+      "earlierFixtureFailures": {
+        "firstRunFailures": 3,
+        "secondRunErrors": 2,
+        "finalRun": "PASS",
+        "rawLogPath": null,
+        "reason": "Fixtures recreated Budget or changed packet code binding; fixed fixture reuse and registration order, no weakened source guard."
+      }
+    },
+    "driver": {
+      "tests": 2,
+      "scenarios": 4,
+      "sha256": "c8af4e71a2bc8980d967e35a2dfdfc0cbdcd8d1cec1ef0032e21e1437439ef54",
+      "log": "driver-start-final-fixed.log",
+      "oldRedFailures": 4
+    },
+    "clockDomain": {
+      "checks": 3,
+      "result": "PASS_DIAGNOSIS_ONLY",
+      "evidenceReceipt": "clock-domain-proof-v2.json",
+      "actualWallRollbackProven": false
+    },
+    "diffCheck": "PASS",
+    "matrixRerunForPackaging": false
+  },
+  "privateEvidenceReceiptHashes": {
+    "actual-attempt1-safe-summary.json": "05500fd021770975bca7b0f324df92fc804f68777c5dc8c03304558999595a3f",
+    "monotonic-domain-audit.json": "32b4161b6db6ad20a3f1f5bb08ac64ba4c5bda3b8e8b957e3c2c721cc2ff4076",
+    "clock-domain-proof-v2.json": "614af31fb81f9f6f3a44d366bd17487fbbc4dd55b39e932524b67affd0667ea2",
+    "clock-domain-source-delivery-fc45a7db.json": "2ee0206826548e3bdf1686938e24c064d341df763697ce52e26c8fae4a7fc649",
+    "metadata-permission-hypotheses-v1.json": "9ab76918fafbf853691115380a77c90283ebcca4808b1ce3b2221523aa0c02af"
+  },
+  "actualRestore": {
+    "sourceHead": "9943efb7db6fd6856c56d2328b41cf749a84c3d2",
+    "status": "FAIL_LOCAL_RESTORE",
+    "stage": "SCHEMA_POST_DATA",
+    "sqlstate": "42501",
+    "specificCause": "UNKNOWN",
+    "cleanup": "PASS",
+    "usedAndGrantPreserved": true,
+    "secondAttempt": "UNRUN_INELIGIBLE",
+    "targetWritten": false,
+    "newWindow": false
+  },
+  "metadataRead": {
+    "exactPinnedMetadataCheck": "PASS",
+    "specificCauseProven": false,
+    "additionalRestoreOrTargetQuery": false
+  },
+  "review": "Independent review/integration routed by Main; not claimed complete",
+  "publicSafety": "No raw logs, message bodies, SQL, rows, role/object names, credentials or sensitive absolute material paths published."
+}

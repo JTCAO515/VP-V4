@@ -1,0 +1,15 @@
+{
+  "status": "PASS_CONSERVATIVE_WHOLE_CLIENT_FRAME_REPAIR_ONLY",
+  "base": "e5441f4e4fd45afdbd28d794972846d2daa57ac4",
+  "oldOracleTests": 12,
+  "expectedOldFailures": 6,
+  "newFocusedTests": 12,
+  "restoreCodeSha256": "2bd12cdfea88b5ffce7d01ede7fd6df7f29cedefb3160bd5f78da32a186ba6df",
+  "framing": "whole stderr validated before attribution; multi fatal/repeated or embedded PROCESSING/TOC/unexplained owner-name continuations invalidate all error-derived fields; generic fail + null attribution; valid single frame retained",
+  "pipelineCallerTimeoutCleanupStrictBase": "UNCHANGED",
+  "actualIo": "STOP",
+  "newWindowOrAttemptOrMarkerChange": false,
+  "full80SyntheticEvidence": "reused unchanged successful path; no full80 rerun",
+  "futureWindowPreparation": "untracked reviewed-diagnostic-window.py preserved; not part of this parser commit",
+  "actualRootCause": "UNKNOWN unchanged"
+}

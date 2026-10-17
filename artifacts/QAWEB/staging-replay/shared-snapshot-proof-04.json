@@ -1,0 +1,9 @@
+{
+  "status": "FAIL_SYNTHETIC_SNAPSHOT_ONLY",
+  "targetRead": false,
+  "realCredentialsOrKeys": false,
+  "stages": [],
+  "reason": "SNAPSHOT_SESSION_LOST",
+  "cleanup": "PASS",
+  "elapsedSeconds": 1.968
+}

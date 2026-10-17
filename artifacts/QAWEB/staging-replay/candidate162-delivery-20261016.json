@@ -1,0 +1,56 @@
+{
+  "status": "PASS_SOURCE_BOUND_162_CANDIDATE_AND_SYNTHETIC_CATALOG_GATE_TESTS",
+  "base": "89d38045865392929bf8e4493020a63e719b7699",
+  "candidateSource": "4abeeb41e87f2ac36f0efdb9ba94780ce0049a13",
+  "candidateManifestSha256": "c61012425c7468d7ec67258462d70991c88a71e497f82baf73ab446fa13a4688",
+  "restoreCodeSha256": "f1bcf8c94c3a265b61c703c7cba99d8e50d054d3c0cca4d6f9deb3d864ad94e4",
+  "counts": {
+    "appliedBaseline": 75,
+    "source": 162,
+    "missing": 87,
+    "targetOnly": 0
+  },
+  "addedMigration": {
+    "file": "20261016040522_qa_runtime_binding.sql",
+    "sha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
+    "source": "actual merged QA Git object PR731, not unmerged source guess"
+  },
+  "freshMetadataSha256": "9428747d5e6506f98706716c0693b26ce794a6c503a018c62fdaa2a06912bb6e",
+  "freshMetadataCoverage": "official current75 baseline exactly equals original capture75; all162 Git hashes matchQA4abe; no new actualdata observation",
+  "old161Evidence": "retained under priorSourceMetadataEvidence; never asserted complete162",
+  "sourceBeforeAfter": [
+    {
+      "path": "scripts/qa-agent-staging-replay/owned-replay-hook.py",
+      "beforeSha256": "9f46d62d9a6a8addda83d5fe77cbaf125ce47d06366ba9bbbd0e54aa2eaa41f3",
+      "afterSha256": "3cbe57c456058aa0024bb5593e24c6f381a25cf1fddda1a03cd1c7d0a588fbe6"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/test-candidate-migration-manifest.py",
+      "beforeSha256": "05438a1e0fe2bce08aa9f37fce4353db67a85b6e8ac2167b5e8a4df957dca98e",
+      "afterSha256": "759eefe2301e7a6fb0863bd471c14abf9c332e6ec9ef9262be4a8684a4dd26fd"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/test-runtime-port-metadata.py",
+      "beforeSha256": null,
+      "afterSha256": "aa78ff336a51499cfec2c20de50cb422ccdea3a5d64f1c67050949461ade0c19"
+    },
+    {
+      "path": "scripts/qa-agent-staging-replay/test-replay-journal.py",
+      "beforeSha256": "9448648e7dbed643098f30efb4025807916f595557cc0dd798668b73323741db",
+      "afterSha256": "ab1714413f7570a58d436f1f0261a41e6f37b4065d1c0d37af3c20aee8cd1a60"
+    }
+  ],
+  "focusedTests": {
+    "manifestSourceCountsDrift": 4,
+    "runtimePortMetadataAndAcl": 5,
+    "legacyGolden": "PASS exact old89/new no-journal result and SQL sequence"
+  },
+  "runtimeGate": "candidate only after original gates and exact87 completed; query pg_catalog metadata only; v3ready/v2authorize ownerIsPostgres/securityDefiner/emptySearchPath/serviceExecute true, anon/authenticated/publicExecute false",
+  "journal": "only actually returned boolean observations, before require; no roles/config values or plannedPASS",
+  "legacy155ManifestAuthorityStrictParserClaims": "UNCHANGED",
+  "reusedProofs": "old25+5 scoped evidence retained, no matrix rerun",
+  "actualProtectedCopy87ReplayAndPortCatalogExecution": "UNRUN; no clone/liveSQL/AGE/identity/provider/host actions",
+  "newApprovalPins": "allNone; no window/claim/slot opened",
+  "actualIo": "STOP",
+  "issuesClosed": false
+}

@@ -1,3 +1,4 @@
+import { readIndependentQaTarget } from "../qa-agent/target.ts";
 import { qaJobConfig } from "../qa-agent/hosted-profile.ts";
 import { auditQaUsage } from "../qa-agent/usage-audit.ts";
 import type { QaWorkerConfiguration } from "../qa-agent/worker.ts";
@@ -38,10 +39,10 @@ export function auditHostedUsageJournal(rawRows: unknown) {
         || !record(row.job) || groups.has(row.jobDigest) || groups.size >= 150) invalid();
       const job = row.job;
       const mode: HostedMode = job.inputMode === undefined ? "current_input_v1" : job.inputMode as HostedMode;
-      if ((profile.schemaVersion === "vpj07-hosted-text-worker/3" ? job.schemaVersion !== "qa-agent-worker/1" : !profile.modes.includes(mode)) || typeof job.ownerId !== "string" || !UUID.test(job.ownerId)
+      if ((profile.schemaVersion === "vpj07-hosted-text-worker/4" ? job.schemaVersion !== "qa-agent-worker/2" : profile.schemaVersion === "vpj07-hosted-text-worker/3" ? job.schemaVersion !== "qa-agent-worker/1" : !profile.modes.includes(mode)) || typeof job.ownerId !== "string" || !UUID.test(job.ownerId)
         || typeof job.policyId !== "string" || !UUID.test(job.policyId)
         || !record(job.budget) || typeof job.budget.scopeId !== "string" || !UUID.test(job.budget.scopeId)) invalid();
-      const expected = profile.schemaVersion === "vpj07-hosted-text-worker/3"
+      const expected = profile.schemaVersion === "vpj07-hosted-text-worker/3" || profile.schemaVersion === "vpj07-hosted-text-worker/4"
         ? qaJobConfig(profile, job.ownerId, job.policyId, job.budget.scopeId, first.qwenEndpoint)
         : jobConfig(profile, mode, job.ownerId, job.policyId, job.budget.scopeId, first.qwenEndpoint);
       if (JSON.stringify(job) !== JSON.stringify(expected)
@@ -73,7 +74,7 @@ export function auditHostedUsageJournal(rawRows: unknown) {
   }
   const result = [];
   for (const [digest, group] of groups) {
-    const validate = (rows: readonly unknown[]) => group.job.schemaVersion === "qa-agent-worker/1" ? auditQaUsage(group.job, rows) : stagingUsageReconciliation(group.job, rows);
+    const validate = (rows: readonly unknown[]) => (group.job.schemaVersion === "qa-agent-worker/1" || group.job.schemaVersion === "qa-agent-worker/2") ? auditQaUsage(group.job, rows, profile.schemaVersion === "vpj07-hosted-text-worker/4" ? readIndependentQaTarget(profile.projectRef) ?? undefined : undefined) : stagingUsageReconciliation(group.job, rows);
     validate([]);
     const receipts = new Map<string, ValidatedUsageReceipt>();
     for (let i = 0; i < group.receipts.length; i += 100) {

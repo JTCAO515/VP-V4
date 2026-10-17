@@ -1,0 +1,17 @@
+{
+  "review": "shared-2a6f2fa5-deadline-review.md",
+  "proof": "proof-1791945981569.json",
+  "proofChecks": 6,
+  "affectedContracts": {
+    "pass": 7,
+    "fail": 0,
+    "skip": 0
+  },
+  "actualDatabaseError": "TRANSACTION_TIMEOUT",
+  "inboundTimerMs": 120000,
+  "scope": "LOCAL only",
+  "persistentDefaultAfterCommit": "2min",
+  "target": "UNRUN",
+  "sourceSha256": "2e02abadf58d6aa3d60723aa3fdbcd5fe4016b08621348de5be78ade9f188cc8",
+  "migrationSourceBytesChanged": false
+}

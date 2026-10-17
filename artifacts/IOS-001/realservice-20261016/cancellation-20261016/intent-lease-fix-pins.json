@@ -1,0 +1,12 @@
+{
+  "reviewed_product_base": "d1e69058c1319425236fa5f114c4ca2e7d15a310",
+  "fixed_product": "84c67dbb90ed5d9f19ed7ae813de4021a9d0990a",
+  "persistent_contract_unchanged": true,
+  "sha256": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationStore.swift": "992510f3ead4f701ba800c382c2e57e3caf05a30a6b9d81ae35fdf8b51e87437",
+    "ios/VisePanda/VisePanda/Features/NativeQAUI/Cancellation/NativeQACancellationView.swift": "6bf2434e46201fc6e144443d3c47b8617ee66f8dd12cf40b4bf7aca063ff2148",
+    "ios/VisePanda/VisePandaTests/NativeQACancellationConsumerTests.swift": "8a11b71bf13bb003bdf415b7840eed4c809feecf0750c236e8d27299e63a4c83",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "76650dae6fdabdffdfdff4b8b2e6088316f7485b1587ef4514841384a99fd941",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationContract.swift": "bf8fd073f8054f35126726e5a8a8695cc38eec572e14298ec689d0759319b70a"
+  }
+}

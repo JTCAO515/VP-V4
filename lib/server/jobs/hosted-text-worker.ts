@@ -1,5 +1,8 @@
-import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
-import { parseQaHostedProfile, planQaGroup, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { planCanonicalPlaceHostedJob, createCanonicalPlaceGroupPoll } from "../knowledge/place-ask/hosted-scheduling.ts";
+import { createQaWorker, type QaWorkerConfiguration, type QaWorkerDependencies } from "../qa-agent/worker.ts";
+import { requireQaRuntimeBinding, type QaRuntimeBinding } from "../qa-agent/runtime-binding.ts";
+import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, requireQaAcceptanceTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { acceptanceDigest, QaAcceptanceBusy } from "../qa-agent/acceptance-journal.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
 import { setTimeout as delay } from "node:timers/promises";
 import { createHash } from "node:crypto";
@@ -69,7 +72,7 @@ export type HostedEvent = Readonly<{
 
 /** Strict, closed profile. Non-secret and content-free; secrets never enter it. */
 export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
-  if (record(raw) && raw.schemaVersion === "vpj07-hosted-text-worker/3") return parseQaHostedProfile(raw);
+  if (record(raw) && (raw.schemaVersion === "vpj07-hosted-text-worker/3" || raw.schemaVersion === "vpj07-hosted-text-worker/4")) return parseQaHostedProfile(raw);
   if (!record(raw) || (raw.schemaVersion === "vpj07-hosted-text-worker/1"
     ? Object.keys(raw).length !== 8 || Object.hasOwn(raw,"planning")
     : raw.schemaVersion !== "vpj07-hosted-text-worker/2" || Object.keys(raw).length !== 9 || !Object.hasOwn(raw,"planning")
@@ -111,7 +114,7 @@ export function jobConfig(profile: LegacyHostedWorkerProfile, mode: HostedMode, 
 
 /** Select exactly one qualifying scope; anything else is a skipped group. */
 export function planGroup(profile: HostedWorkerProfile, raw: unknown, qwenEndpoint: string): StagingTextJobConfig | null {
-  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") return null;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3" || profile.schemaVersion === "vpj07-hosted-text-worker/4") return null;
   if (!record(raw) || typeof raw.ownerId !== "string" || !UUID.test(raw.ownerId) || typeof raw.policyId !== "string" || !UUID.test(raw.policyId)
     || !profile.modes.includes(raw.contextMode as HostedMode) || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint
     || !Array.isArray(raw.scopes)) return null;
@@ -270,6 +273,10 @@ export type HostedJournal = Readonly<{
   planningUsage?: (digest: string, receipt: ValidatedPlanningUsageReceipt, signal: AbortSignal) => Promise<void>;
 }>;
 export type HostedWorkerDependencies = Readonly<{
+  /** Operator composition binding; never read from discovery/job payloads. */
+  qaProjectRef?: string;
+  qaBinding?: QaRuntimeBinding;
+  qaAcceptance?: QaWorkerDependencies["acceptance"];
   workerId: string;
   build: string;
   startedAt: string;
@@ -288,9 +295,24 @@ export type HostedWorkerDependencies = Readonly<{
   fetch?: typeof globalThis.fetch;
 }>;
 
+export function getHostedWorkerDatabaseTarget(profile: HostedWorkerProfile, operatorProjectRef?: string): string {
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/4") return requireQaProfileTarget(profile, operatorProjectRef ?? profile.projectRef).databaseUrl;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") throw unavailable();
+  return HOSTED_STAGING_DATABASE_URL;
+}
+
 /** Compose the loop with the real Staging service RPCs and existing scoped jobs. */
 export function createHostedTextWorker(profile: HostedWorkerProfile, dependencies: HostedWorkerDependencies) {
   profile = parseHostedWorkerProfile(profile);
+  const databaseUrl = getHostedWorkerDatabaseTarget(profile, dependencies.qaProjectRef);
+  const qaTarget = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? requireQaProfileTarget(profile, dependencies.qaProjectRef) : undefined;
+  const qaBinding = qaTarget ? requireQaRuntimeBinding(dependencies.qaBinding, qaTarget.projectRef) : undefined;
+  const acceptance = profile.schemaVersion === "vpj07-hosted-text-worker/4"
+    ? requireQaAcceptanceTarget(profile, qaBinding!, dependencies.qwenEndpoint, dependencies.build) : null;
+  if (acceptance ? !dependencies.qaAcceptance
+    || dependencies.qaAcceptance.sourceCommit !== acceptance.binding.sourceCommit
+    || acceptanceDigest(dependencies.qaAcceptance.control.binding) !== acceptanceDigest(acceptance.binding)
+    : dependencies.qaAcceptance !== undefined) throw unavailable();
   if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
     || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
@@ -333,12 +355,13 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   }
   const fetcher = dependencies.fetch ?? globalThis.fetch;
   const journaled = new Set<string>();
-  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v2" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
+  const pollPlaceGroup = createCanonicalPlaceGroupPoll(profile.groupLimit);
+  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v3" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
     if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
     const secret = await dependencies.workerCredential(timeout);
     if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
-    const response = await fetcher(HOSTED_STAGING_DATABASE_URL + "/rest/v1/rpc/" + name, {
+    const response = await fetcher(databaseUrl + "/rest/v1/rpc/" + name, {
       method: "POST", headers: supabaseWorkerHeaders(secret),
       body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: timeout,
     });
@@ -350,46 +373,90 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     if (text.length > 262144) throw unavailable();
     return JSON.parse(text) as unknown;
   };
-  return (signal: AbortSignal) => runHostedTextLoop({ ...profile, requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
+  const rootStage = async <T,>(signal: AbortSignal, work: () => Promise<T>): Promise<T> => {
+    if (!acceptance) return work();
+    let permit;
+    // Mutex waiting repeats no RPC/provider operation and never reclaims a lock.
+    // A root cannot experience an external failure outside a durable run permit.
+    for (;;) {
+      if (signal.aborted || Date.now() >= acceptance.expiresAt) throw unavailable();
+      try { permit = await dependencies.qaAcceptance!.control.enter(signal); break; }
+      catch (error) {
+        if (!(error instanceof QaAcceptanceBusy)) throw error;
+        await delay(20, undefined, { signal }).catch(() => {});
+      }
+    }
+    try {
+      const value = await work(); await permit.finish("empty"); return value;
+    } catch (error) {
+      // Any failed append/fsync retains this stage's original mutex. Never
+      // release a root-stage failure and rely solely on a separately created veto.
+      await permit.finish("stopped").catch(() => {}); throw error;
+    }
+  };
+  return async (signal: AbortSignal) => {
+  const result = await runHostedTextLoop({ ...profile,
+    ...(acceptance ? { maxLifetimeMs: Math.max(1, Math.min(profile.maxLifetimeMs, acceptance.expiresAt - Date.now())), maxConsecutiveFailures: 1, drainMs: 0 } : {}),
+    requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
     heartbeat: async (state, stop) => {
+      const value = await rootStage(stop, async () => {
       const value = await rpc("hosted_worker_heartbeat", {
         p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,
         p_phase: state.phase, p_result: state.result, p_polls: state.polls, p_finished: state.finished,
         p_unavailable: state.unavailable, p_skipped: state.skipped, p_stop_reason: state.stopReason,
-      }, stop).catch(() => null);
+      }, stop);
+      if (!record(value) || value.kind !== "ok" || typeof value.enabled !== "boolean") throw unavailable();
+      return value;
+      }).catch(() => null);
       const ok = record(value) && value.kind === "ok" && typeof value.enabled === "boolean";
+      if (!ok && acceptance) await dependencies.qaAcceptance!.control.requestStop();
       try { dependencies.onHeartbeat?.(ok, ok ? value.enabled as boolean : null); } catch { /* observer only */ }
       return ok ? { enabled: value.enabled as boolean } : null;
     },
     readyGroups: async stop => {
       // SQL qualifies the exact provider binding and unique matching scope
       // before LIMIT; an unexecutable group cannot occupy the sole QA slot.
-      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/3";
-      const discovery = qa ? "qa_ready_groups_v2" : "hosted_worker_ready_groups";
+      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/4";
+      const discovery = qa ? "qa_ready_groups_v3" : "hosted_worker_ready_groups";
       const parameters = qa ? { p_limit: profile.groupLimit, p_model: PROTOCOL_MODELS.qwen,
-        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint } : { p_limit: profile.groupLimit };
-      const value = await rpc(discovery, parameters, stop);
+        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint,
+        p_owner_id: qaBinding!.ownerId, p_policy_id: qaBinding!.policyId, p_scope_id: qaBinding!.scopeId,
+        p_notice_hash: qaBinding!.noticeHash } : { p_limit: profile.groupLimit };
+      const value = await rootStage(stop, async () => {
+        const value = await rpc(discovery, parameters, stop);
+        if (!(record(value) && value.kind === "disabled") && (!record(value) || value.kind !== "groups"
+          || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit)) throw unavailable();
+        return value;
+      });
       if (record(value) && value.kind === "disabled") return "disabled";
-      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
+      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) {
+        if (acceptance) await dependencies.qaAcceptance!.control.requestStop();
+        return null;
+      }
       // This exact object is internal, never accepted from discovery JSON. The
       // same owner lane serializes planning after that owner's text groups.
       return planningTarget ? [...value.groups,planningTarget] : value.groups;
     },
     workerFor: group => {
       if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
-      if (profile.schemaVersion === "vpj07-hosted-text-worker/3") {
-        const job = planQaGroup(profile, group, dependencies.qwenEndpoint);
+      if (profile.schemaVersion === "vpj07-hosted-text-worker/4") {
+        const job = planQaGroup(profile, group, dependencies.qwenEndpoint, qaBinding);
         if (!job) return null;
         const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
         const poll = createQaWorker(job, {
+          qaBinding,
           workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
           qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
           recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
           invokeContext: createQaContextInvoker(),
+          ...(dependencies.qaAcceptance ? { acceptance: dependencies.qaAcceptance } : {}),
           ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
-        });
+        }, qaTarget);
         return { ownerId: job.ownerId, poll: async stop => {
-          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+          if (!journaled.has(digest)) {
+            try { await rootStage(stop, () => dependencies.journal.job(digest, job)); journaled.add(digest); }
+            catch (error) { if (acceptance) await dependencies.qaAcceptance!.control.requestStop(); throw error; }
+          }
           const result = await poll(stop);
           // Existing heartbeat vocabulary remains unchanged. SQL retains the
           // dispatched attempt for explicit reconciliation, never a second send.
@@ -398,26 +465,37 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       }
       const job = planGroup(profile, group, dependencies.qwenEndpoint);
       if (!job) return null;
-      const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
-      const poll = createStagingTextJob(job, {
-        workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
-        qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
-        recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
-        recordKnowledgeValidation: receipt => dependencies.journal.knowledge(digest, receipt),
-        ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
-      });
-      return {
-        ownerId: job.ownerId,
-        // The exact job (ids, tariff; no secret/content) is journaled before its
-        // first claim so any later usage receipt is reconcilable against it.
-        poll: async stop => {
-          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+      const makePoll = (config: StagingTextJobConfig) => {
+        const digest = createHash("sha256").update(JSON.stringify(config)).digest("hex");
+        const poll = createStagingTextJob(config, {
+          workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
+          qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
+          recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
+          recordKnowledgeValidation: receipt => dependencies.journal.knowledge(digest, receipt),
+          ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+        });
+        return async (stop: AbortSignal) => {
+          if (!journaled.has(digest)) { await dependencies.journal.job(digest, config); journaled.add(digest); }
           return poll(stop);
-        },
+        };
       };
+      const ordinary = makePoll(job), selectedJob = planCanonicalPlaceHostedJob(profile, group, job);
+      if (!selectedJob) return { ownerId: job.ownerId, poll: ordinary };
+      const selected = makePoll(selectedJob), key = createHash("sha256").update(JSON.stringify(job)).digest("hex");
+      return { ownerId: job.ownerId, poll: stop => pollPlaceGroup(key, ordinary, selected, stop) };
     },
-    record: dependencies.journal.event,
+    record: acceptance ? async event => {
+      try { await rootStage(signal, () => dependencies.journal.event(event)); }
+      catch (error) { await dependencies.qaAcceptance!.control.requestStop(); throw error; }
+    } : dependencies.journal.event,
   }, signal);
+  if (acceptance && result.reason === "unavailable") {
+    // An admission mutex refusal is transient, not a durable stop. Persist a
+    // veto that does not need the active attempt's lock; never steal that lock.
+    await dependencies.qaAcceptance!.control.requestStop();
+  }
+  return result;
+  };
 }
 
 function int(value: unknown, minimum: number, maximum: number): value is number {

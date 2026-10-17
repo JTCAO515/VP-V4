@@ -1,0 +1,33 @@
+{
+  "status": "FAIL_LOCAL_RESTORE_REPLAY_PROOF",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [
+    "PASS exact75 original-source baseline with fake auth/trip/revoked-consent/budget rows",
+    "PASS four encrypted archives share75/ledger snapshot; no target/archive input"
+  ],
+  "currentStage": "owned restore and80 replay before cleanup",
+  "restoreReplay": {
+    "status": "FAIL_LOCAL_RESTORE",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "failedStage": "schema owner ACL policy trigger verification",
+    "reason": "SCHEMA_OWNER_ACL_OR_PLATFORM_MISMATCH",
+    "cleanup": "PASS",
+    "captureMode": "shared-readonly-snapshot/1",
+    "dispatchAuthority": "NONE",
+    "liveRestoreAuthority": "NONE"
+  },
+  "reason": "OWNED_RESTORE_REPLAY_PROOF_FAILED",
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 9.768
+}

@@ -1,0 +1,10 @@
+--- a/ios/VisePanda/VisePanda/App/NativeQASessionTransport.swift
++++ b/ios/VisePanda/VisePanda/App/NativeQASessionTransport.swift
+@@ -11,0 +12,3 @@
++#if NATIVE_QA_ACCEPTANCE
++    var acceptanceObservation: NativeQAAcceptanceObservation?
++#endif
+@@ -50,0 +54,3 @@
++#if NATIVE_QA_ACCEPTANCE
++        acceptanceObservation?.record(command, scope: expected)
++#endif

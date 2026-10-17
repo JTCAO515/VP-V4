@@ -1,0 +1,606 @@
+{
+  "schemaVersion": "qa-database-review-plan/2",
+  "mode": "existing-shared",
+  "operation": "dry-run-review-only",
+  "network": false,
+  "apply": false,
+  "target": {
+    "mode": "existing-shared",
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
+    "url": "https://dzqdzetcctkhbrhlxxgn.supabase.co",
+    "bindingDigest": "e2d24d5cc7ff4e9785b2c1a0f1e870a0626b7f34498cf01ca42b8e7a44346ff6",
+    "targetExists": "KNOWN_REF_LIVE_METADATA_UNRUN"
+  },
+  "reviewSource": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "migrationCount": 155,
+  "sourceManifestSha256": "0b8ff8c6100544e82c3ecb50f54f5baa82f8c9b0fc875cc9d825ec6bcb631767",
+  "baselineManifestSha256": "9dacfb610ebe597d2fe74d642cdf0f9e8f2983fa329da5adb0044d9aa1781b78",
+  "fromVersions": [
+    "20260824101500",
+    "20260824104424",
+    "20260824104547",
+    "20260824105759",
+    "20260825052328",
+    "20260825153534",
+    "20260825153613",
+    "20260825160314",
+    "20260825160458",
+    "20260825161535",
+    "20260827030717",
+    "20260828153000",
+    "20260828160000",
+    "20260828170000",
+    "20260828180000",
+    "20260828190000",
+    "20260828193000",
+    "20260828194000",
+    "20260828200000",
+    "20260828210000",
+    "20260829191000",
+    "20260830100000",
+    "20260830210000",
+    "20260830211000",
+    "20260909033302",
+    "20260909184816",
+    "20260909223841",
+    "20260910002858",
+    "20260910163426",
+    "20260910171836",
+    "20260910174748",
+    "20260910190526",
+    "20260910190658",
+    "20260910200522",
+    "20260910213151",
+    "20260911072414",
+    "20260911200339",
+    "20260911205200",
+    "20260912042452",
+    "20260912183000",
+    "20260912190000",
+    "20260913080000",
+    "20260913090000",
+    "20260913100000",
+    "20260913145239",
+    "20260914001000",
+    "20260914040000",
+    "20260914041000",
+    "20260914080000",
+    "20260914090000",
+    "20260914100000",
+    "20260914110000",
+    "20260914120000",
+    "20260914130000",
+    "20260914140000",
+    "20260914150000",
+    "20260915180000",
+    "20260915190000",
+    "20260915200000",
+    "20260916120000",
+    "20260917062305",
+    "20260917064821",
+    "20260917100000",
+    "20260917110000",
+    "20260917131633",
+    "20260917140000",
+    "20260918032847",
+    "20260921205157",
+    "20260922002626",
+    "20260922004906",
+    "20260922005110",
+    "20260922014000",
+    "20260923090000",
+    "20260923120000",
+    "20260923140000"
+  ],
+  "missingVersions": [
+    "20260922033000",
+    "20260926113804",
+    "20260926132008",
+    "20260926150000",
+    "20260926170000",
+    "20260926180000",
+    "20260927010000",
+    "20260927021000",
+    "20260927030000",
+    "20260927040000",
+    "20260927050000",
+    "20260927055000",
+    "20260927060000",
+    "20260930010000",
+    "20260930020000",
+    "20261001010000",
+    "20261002010000",
+    "20261002020000",
+    "20261002030000",
+    "20261002040000",
+    "20261002050000",
+    "20261002060000",
+    "20261002080000",
+    "20261002110000",
+    "20261002120000",
+    "20261002130000",
+    "20261002200000",
+    "20261003020000",
+    "20261003030000",
+    "20261003040000",
+    "20261003050000",
+    "20261003060000",
+    "20261003090000",
+    "20261003110000",
+    "20261003120000",
+    "20261003130000",
+    "20261003150000",
+    "20261003160000",
+    "20261003170000",
+    "20261003180000",
+    "20261003190000",
+    "20261003200000",
+    "20261003210000",
+    "20261003220000",
+    "20261003230000",
+    "20261004000000",
+    "20261004010000",
+    "20261004020000",
+    "20261004030000",
+    "20261004040000",
+    "20261005010000",
+    "20261005020000",
+    "20261005030000",
+    "20261005040000",
+    "20261005050000",
+    "20261005060000",
+    "20261005070000",
+    "20261005080000",
+    "20261005081000",
+    "20261005090000",
+    "20261005091000",
+    "20261005092000",
+    "20261006010000",
+    "20261006011000",
+    "20261006020000",
+    "20261006030000",
+    "20261006040000",
+    "20261006050000",
+    "20261006060000",
+    "20261007010000",
+    "20261007020000",
+    "20261007030000",
+    "20261007040000",
+    "20261007050000",
+    "20261008000000",
+    "20261010010000",
+    "20261010020000",
+    "20261010030000",
+    "20261010040000",
+    "20261013050429"
+  ],
+  "ddlOrder": [
+    {
+      "version": "20260922033000",
+      "file": "supabase/migrations/20260922033000_vpj_11_travel_pace_control.sql",
+      "sha256": "a13cc3d1b950f40b25b84219f5d53dff894fe9bca1bdd397665489a31e3364ab"
+    },
+    {
+      "version": "20260926113804",
+      "file": "supabase/migrations/20260926113804_vpj34_storekit_grants.sql",
+      "sha256": "9c283d9228200138918b792c22d25e8c3da62cd67d48a4b3a422d6124ecdef90"
+    },
+    {
+      "version": "20260926132008",
+      "file": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+      "sha256": "c8465ff6aee2903f3e9038078d235e68c25b242788dc0b4a61125c0256b779ee"
+    },
+    {
+      "version": "20260926150000",
+      "file": "supabase/migrations/20260926150000_vpj36_trip_deletion_queue_reader.sql",
+      "sha256": "cd3a626eae0ebad3d58c46ae4e0aa3fc37b09745ea334d2e61c2ca220b8e8887"
+    },
+    {
+      "version": "20260926170000",
+      "file": "supabase/migrations/20260926170000_vpj35_u2_trip_confirmation_receipt.sql",
+      "sha256": "cf14d2ca56174a3090aaf974ec7e5bd630bd0e84e1515658fb23fd5c9d0a9552"
+    },
+    {
+      "version": "20260926180000",
+      "file": "supabase/migrations/20260926180000_vpj35_u2_text_capacity_boundary.sql",
+      "sha256": "bd351027e6f635baccfa0147db599ca6349b451832b501aa0e4c1ccee4b15b23"
+    },
+    {
+      "version": "20260927010000",
+      "file": "supabase/migrations/20260927010000_vpj11_explicit_memory_create_undo.sql",
+      "sha256": "db18aeab79085741379b79582caa09695df32a61ccea56915a09666873c5e55f"
+    },
+    {
+      "version": "20260927021000",
+      "file": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+      "sha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3"
+    },
+    {
+      "version": "20260927030000",
+      "file": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+      "sha256": "d998622c2611dd1f1c8d9cd1c487d43f4900810f59ab274ce1e282fd8d789b73"
+    },
+    {
+      "version": "20260927040000",
+      "file": "supabase/migrations/20260927040000_vpj80_planning_action_receipts.sql",
+      "sha256": "b473dff39b063c7889ed5498d38931d2de335eb47c72d7e850339019d1dca5d9"
+    },
+    {
+      "version": "20260927050000",
+      "file": "supabase/migrations/20260927050000_vpj78_goal_trip_link.sql",
+      "sha256": "7ef73b962ebe4a9dcaa04fc2825bba7a29d8eed5631df059216b1ad855be2f9f"
+    },
+    {
+      "version": "20260927055000",
+      "file": "supabase/migrations/20260927055000_vpj79_exact_trip_results.sql",
+      "sha256": "c28813d89fade5d3a3377193b8c672077188c55a817d9342996f912ed2f334aa"
+    },
+    {
+      "version": "20260927060000",
+      "file": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+      "sha256": "1d0bf3dcc94d2fbf6477a45ea3f3f6040f2fd80a0e291733e182d02a3a6555f6"
+    },
+    {
+      "version": "20260930010000",
+      "file": "supabase/migrations/20260930010000_vpj82_result_search.sql",
+      "sha256": "78067b6d01a7f15b47a18fb7fd62eee364dd1d80024e0dee50f765bf8b31e2c7"
+    },
+    {
+      "version": "20260930020000",
+      "file": "supabase/migrations/20260930020000_vpj80_hosted_planning_target.sql",
+      "sha256": "273bd319b4a8a4b32729e12f17ccf69a04ae14929a403da5dcd2eacc4003a26d"
+    },
+    {
+      "version": "20261001010000",
+      "file": "supabase/migrations/20261001010000_vpj79_task_result_reference.sql",
+      "sha256": "d8d16342d2d9ec046b8b8a7b4b91efa9b624ee5e9b89d0913db16c912bf1b7a2"
+    },
+    {
+      "version": "20261002010000",
+      "file": "supabase/migrations/20261002010000_vpj78_conversation_export.sql",
+      "sha256": "81f3d4cbf80fba50bd3ee516dbc44f76db3e039520dd1397dd48ed5e541d02d9"
+    },
+    {
+      "version": "20261002020000",
+      "file": "supabase/migrations/20261002020000_vpj81_conversation_selection.sql",
+      "sha256": "f8d955a662f20de923f7cfd7505f3fd9c717c9775bfedfaa5f952447bc4bd514"
+    },
+    {
+      "version": "20261002030000",
+      "file": "supabase/migrations/20261002030000_vpj79_result_export.sql",
+      "sha256": "8f7d604820435e9637accf405e7638ab1b885ceaed006e0aea207dc0532d2678"
+    },
+    {
+      "version": "20261002040000",
+      "file": "supabase/migrations/20261002040000_vpj83_journeys_pages.sql",
+      "sha256": "384638001e4feaf9f8d78bd9084c5ebabfff1b8442437461c88961d04e70c0ec"
+    },
+    {
+      "version": "20261002050000",
+      "file": "supabase/migrations/20261002050000_vpj82_translation_history.sql",
+      "sha256": "91e98d022c219ce5422918f9ac0e4e5cf5c53e5ed0502c7045a52434931e8a72"
+    },
+    {
+      "version": "20261002060000",
+      "file": "supabase/migrations/20261002060000_vpj81_conversation_task_history.sql",
+      "sha256": "47f8a7eeff1c8ee290834944bc66c913f23bd667a86cc7f7b7d2d95969c4d2bc"
+    },
+    {
+      "version": "20261002080000",
+      "file": "supabase/migrations/20261002080000_vpj80_owner_task_activity.sql",
+      "sha256": "34b2fd61a6756207353c8f48ce5cb5418ae36b5e613fdce8a94296ebcafa5f78"
+    },
+    {
+      "version": "20261002110000",
+      "file": "supabase/migrations/20261002110000_vpj79_change_proposal_reference.sql",
+      "sha256": "54b5f54f50c9bce7008289eea806028a2fc3d70beba052df901d5fc14f7878d8"
+    },
+    {
+      "version": "20261002120000",
+      "file": "supabase/migrations/20261002120000_journeys_goal_index.sql",
+      "sha256": "038ea8aa30566afead70dc8d6d3f3ab9a731a68031254bc2e311ad3a9c64e92f"
+    },
+    {
+      "version": "20261002130000",
+      "file": "supabase/migrations/20261002130000_vpj79_trip_proposal_reference_discovery.sql",
+      "sha256": "1d58dc6a50d2a87780f992441426a8ecfd7653b6a3b58ed0e8148a34abbd3cdc"
+    },
+    {
+      "version": "20261002200000",
+      "file": "supabase/migrations/20261002200000_vpj78_explicit_travel_intake.sql",
+      "sha256": "9253e8375e61a72a3e6a8c98b2c990655d10d79b611c9eeb7af7193ead697f78"
+    },
+    {
+      "version": "20261003020000",
+      "file": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+      "sha256": "12add9b54fa7739541c50d0f53d34b043c3a3185d27cb63153e7defc2e779cfa"
+    },
+    {
+      "version": "20261003030000",
+      "file": "supabase/migrations/20261003030000_vpj79_private_qualified_comparison.sql",
+      "sha256": "2086d93f6378bf933e674bda3d14b86f5cc8b8ccf73250d22adaeca676465c9b"
+    },
+    {
+      "version": "20261003040000",
+      "file": "supabase/migrations/20261003040000_vpj78_v2_durable_checkpoints.sql",
+      "sha256": "3a8ff1dc288549ae7bb9a6ce72bd3d32771bfb8f8ba1ef28b7c7ded3e3622e01"
+    },
+    {
+      "version": "20261003050000",
+      "file": "supabase/migrations/20261003050000_vpj78_v2_model_attempt_binding.sql",
+      "sha256": "124c1b37b33f8c89edcb3a0f65c8896add98fe9a47d69ff4dacd368d673f257c"
+    },
+    {
+      "version": "20261003060000",
+      "file": "supabase/migrations/20261003060000_vpj78_v2_model_local_journal.sql",
+      "sha256": "6120eafe95fc529cfbc95050038e727d1bde82145f64dbbdec2923d07fd80563"
+    },
+    {
+      "version": "20261003090000",
+      "file": "supabase/migrations/20261003090000_vpj78_selected_message_sources.sql",
+      "sha256": "4e7d2cd56be437c0325dc8087938cc6ae4778416e3946b4aca87c7ec1b4c256e"
+    },
+    {
+      "version": "20261003110000",
+      "file": "supabase/migrations/20261003110000_vpj79_five_result_lifecycle.sql",
+      "sha256": "4332903ba58da8ba7ca98f2eb8b6cec5c2e102415d3553612739b7e0510ff77e"
+    },
+    {
+      "version": "20261003120000",
+      "file": "supabase/migrations/20261003120000_vpj78_result_v2_context_compat.sql",
+      "sha256": "271a770010e66a38d6b33d3670d9565694cf56b39a02c58441edbe5be8f66ee6"
+    },
+    {
+      "version": "20261003130000",
+      "file": "supabase/migrations/20261003130000_vpj81_native_memory_commands.sql",
+      "sha256": "40a65cb611dcc29425bb3dc317a5a560940fd16eaabe0ef16b21fdd37099cc27"
+    },
+    {
+      "version": "20261003150000",
+      "file": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "sha256": "91f9da2d2399bbfacf3ea400b226f209397bb8bd449cdf6a3639aa30da493ab7"
+    },
+    {
+      "version": "20261003160000",
+      "file": "supabase/migrations/20261003160000_vpj25_controlled_offline_text_provenance.sql",
+      "sha256": "4346364671e6e628a82f51a1e935137e262d5564d5cddb5bf3a68be50e14f48b"
+    },
+    {
+      "version": "20261003170000",
+      "file": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+      "sha256": "5a4fc34e436dc17ae822dc3a213e953b1226efc301cab84a2d6663c2f9fe11b2"
+    },
+    {
+      "version": "20261003180000",
+      "file": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+      "sha256": "c80ca1ecc0106bba26e942231ce3ed96ce02812363f26defec445d9dccc0ed0d"
+    },
+    {
+      "version": "20261003190000",
+      "file": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+      "sha256": "9fe92a25d8d0524e8099f2f63e406d4edc21bc92c9967cfd60fec452292c448c"
+    },
+    {
+      "version": "20261003200000",
+      "file": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+      "sha256": "1d19fabf88f118c9857b51e05e89e9afbe9ea4b888e597d724a546644ef4c18c"
+    },
+    {
+      "version": "20261003210000",
+      "file": "supabase/migrations/20261003210000_vpj36_memory_export_source_fence.sql",
+      "sha256": "204200258c4bbc1cef67cbfebe09adbf2a508ba82d39bbedea1cec28308bbdf2"
+    },
+    {
+      "version": "20261003220000",
+      "file": "supabase/migrations/20261003220000_vpj36_entitlement_export_source_fence.sql",
+      "sha256": "2c8ddf4420d25a4956e82f283606b64039a9dce9b0c2260ce271b148c40b3420"
+    },
+    {
+      "version": "20261003230000",
+      "file": "supabase/migrations/20261003230000_vpj36_memory_bulk_delete_d4.sql",
+      "sha256": "6da3b6b6b631c5a585e653522cb0e4cceac24ede20b5a270ee3a11f288adb50a"
+    },
+    {
+      "version": "20261004000000",
+      "file": "supabase/migrations/20261004000000_readiness_declarations.sql",
+      "sha256": "a9e8db8cd4581f32b79c1c110463bd3b8f4bf78ced0bd086ed0b05da0d933089"
+    },
+    {
+      "version": "20261004010000",
+      "file": "supabase/migrations/20261004010000_vpj23_reviewed_lodging_classification.sql",
+      "sha256": "82aff2d0aa0c5a25e5aa134b17f451a8f3ad29a1b80bcd744203227e4b92bee8"
+    },
+    {
+      "version": "20261004020000",
+      "file": "supabase/migrations/20261004020000_reservation_ledger.sql",
+      "sha256": "ac0e2b1ad8371f03bdd3da1f19cfcc3b945cf63dc70ffea101d5bd9ec3525fe2"
+    },
+    {
+      "version": "20261004030000",
+      "file": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+      "sha256": "f4cd8db5f1682a3908494715c601b164db9ab1a9f2a313780fb9bf9d05d8b088"
+    },
+    {
+      "version": "20261004040000",
+      "file": "supabase/migrations/20261004040000_foreground_traffic_authority.sql",
+      "sha256": "97844fca279fd5cf8a9db6509848ccf0fff3483025a23294e0b9337f00bcb728"
+    },
+    {
+      "version": "20261005010000",
+      "file": "supabase/migrations/20261005010000_vpj20_place_actions.sql",
+      "sha256": "fbfc81129bef773411bc873d62c0d2f15c60673df7edc9660d04116af9554a4c"
+    },
+    {
+      "version": "20261005020000",
+      "file": "supabase/migrations/20261005020000_scoped_edit.sql",
+      "sha256": "999d376403fe8d6c159a4dcf7438debacae80a61d6b5a9abd2cc526b91391a65"
+    },
+    {
+      "version": "20261005030000",
+      "file": "supabase/migrations/20261005030000_reminder_delivery.sql",
+      "sha256": "deb196b483d196451b3bd28f6b5e905d347c012bb6cb8c189d889c8f539b6e10"
+    },
+    {
+      "version": "20261005040000",
+      "file": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+      "sha256": "9c79f65484366aa5c69c8d01094afe76ea2edae412c1db8a69e149e743c75630"
+    },
+    {
+      "version": "20261005050000",
+      "file": "supabase/migrations/20261005050000_service_operations.sql",
+      "sha256": "6a58e78a892699d14d43bf21e80cca7ccb0a7c0ba41ae03c2768f3f2084622b7"
+    },
+    {
+      "version": "20261005060000",
+      "file": "supabase/migrations/20261005060000_traveler_brief.sql",
+      "sha256": "bb39317153e96e55592e4e016c2056dd4926285d851417df9dd674a44ea40767"
+    },
+    {
+      "version": "20261005070000",
+      "file": "supabase/migrations/20261005070000_pdf_intake.sql",
+      "sha256": "cc672c2d0afbc9651b97f3f054a72c673a1cbc9e61d1af2e41ed3d06182274e7"
+    },
+    {
+      "version": "20261005080000",
+      "file": "supabase/migrations/20261005080000_place_guide.sql",
+      "sha256": "087d6b254d035106ee6b5ace7390e70d501067deb4852f790f285cb0022c9147"
+    },
+    {
+      "version": "20261005081000",
+      "file": "supabase/migrations/20261005081000_traveler_brief_export_clock.sql",
+      "sha256": "a210990a81f47ff57e6313eae73b2e0d356cab37da9cca43812c03887a17883b"
+    },
+    {
+      "version": "20261005090000",
+      "file": "supabase/migrations/20261005090000_community_submission_j1.sql",
+      "sha256": "7a27a768dc48e99770f9f82ef4bbd09579cba2004a34a321f0aecfe526326468"
+    },
+    {
+      "version": "20261005091000",
+      "file": "supabase/migrations/20261005091000_community_safety_j2.sql",
+      "sha256": "600cda44514ef046b77cf0ce14a9a412da25ec3c80d2119dbc6128ef455ffc7f"
+    },
+    {
+      "version": "20261005092000",
+      "file": "supabase/migrations/20261005092000_community_publication_j3j4.sql",
+      "sha256": "ad91f81a102353d8b0cd0a10d4a7cbb769e15c9266bdb1abda0680815302db8c"
+    },
+    {
+      "version": "20261006010000",
+      "file": "supabase/migrations/20261006010000_owner_module_export.sql",
+      "sha256": "ae1d79b5bbe804e8039809cf58bf199bc8ac2bb6af2cf97f5931fe4326d7a8fd"
+    },
+    {
+      "version": "20261006011000",
+      "file": "supabase/migrations/20261006011000_community_safety_frontier_lock.sql",
+      "sha256": "e9ec10defe315db9038eb1dafdf411dc763a3f1de2282b78ae6374330b018809"
+    },
+    {
+      "version": "20261006020000",
+      "file": "supabase/migrations/20261006020000_material_reference_data.sql",
+      "sha256": "facf7657da20198bb0dc10481446f6b0b072f15ce5efc2420ede72009a14d8e9"
+    },
+    {
+      "version": "20261006030000",
+      "file": "supabase/migrations/20261006030000_notification_data_exit.sql",
+      "sha256": "58797f9ceaf09c43f007a523238cf554dc30b302ac1ae4f5d8a52f178000787a"
+    },
+    {
+      "version": "20261006040000",
+      "file": "supabase/migrations/20261006040000_coverage_progress_data.sql",
+      "sha256": "bb1c89c79826e16b2e69a6a353835d1d52a506880e0cd11f707e58fae117fa1c"
+    },
+    {
+      "version": "20261006050000",
+      "file": "supabase/migrations/20261006050000_archive_data.sql",
+      "sha256": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617"
+    },
+    {
+      "version": "20261006060000",
+      "file": "supabase/migrations/20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763"
+    },
+    {
+      "version": "20261007010000",
+      "file": "supabase/migrations/20261007010000_result_data.sql",
+      "sha256": "3a87c300ecc448238071472b52a2a7d513cc60a8d92dea95a03098b33dddccf9"
+    },
+    {
+      "version": "20261007020000",
+      "file": "supabase/migrations/20261007020000_profile_data.sql",
+      "sha256": "aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3"
+    },
+    {
+      "version": "20261007030000",
+      "file": "supabase/migrations/20261007030000_conversation_guide_invalidation_compat.sql",
+      "sha256": "708d01f0f57c8347b122139ec214691712dff2345d7df2dc9ceb0c48405dfc25"
+    },
+    {
+      "version": "20261007040000",
+      "file": "supabase/migrations/20261007040000_profile_core_export.sql",
+      "sha256": "5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989"
+    },
+    {
+      "version": "20261007050000",
+      "file": "supabase/migrations/20261007050000_turn_data.sql",
+      "sha256": "33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d"
+    },
+    {
+      "version": "20261008000000",
+      "file": "supabase/migrations/20261008000000_result_reference_parser_cost.sql",
+      "sha256": "6a94c0613895e7126108e2f44d0dd2fa5762c63a71ae04ef3858fc6c03d5c3a4"
+    },
+    {
+      "version": "20261010010000",
+      "file": "supabase/migrations/20261010010000_profile_web_lock_error.sql",
+      "sha256": "ea6c9128f3576e03e5b3940ebd0cb5a89926e54da732091cc092a8845c1b7413"
+    },
+    {
+      "version": "20261010020000",
+      "file": "supabase/migrations/20261010020000_assistant_events.sql",
+      "sha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062"
+    },
+    {
+      "version": "20261010030000",
+      "file": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "sha256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584"
+    },
+    {
+      "version": "20261010040000",
+      "file": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+      "sha256": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0"
+    },
+    {
+      "version": "20261013050429",
+      "file": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d"
+    }
+  ],
+  "observation": null,
+  "readiness": {
+    "readyToApply": false,
+    "reasons": [
+      "FRESH_MAIN_OBSERVATION_REQUIRED",
+      "MANAGED_PLATFORM_UNREVIEWED",
+      "ACTUAL_DATA_COMPATIBILITY_UNRUN",
+      "MAINTENANCE_APPROVAL_REQUIRED"
+    ]
+  },
+  "preconditions": [
+    "EXACT_FRESH_75_BASELINE",
+    "SEALED_OPERATOR_BINDING",
+    "REVIEWED_MANAGED_AUTH_ENGINE_ROLE_FP",
+    "NONDESTRUCTIVE_DATA_COMPATIBILITY",
+    "APPROVED_RECOVERY_WINDOW"
+  ],
+  "postconditions": [
+    "EXACT_155_LEDGER",
+    "TEN_ORIGINAL_LIFECYCLE_GATES",
+    "QA_V2_SERVICE_ONLY_ACL",
+    "ORIGINAL_EXPORT_DELETE_SOURCE_GUARDS",
+    "QA_CONSUMER_AND_RECONTRACT"
+  ],
+  "targetWrite": "UNRUN_NOT_AUTHORIZED",
+  "managedAuth": "UNRUN",
+  "provider": "UNRUN"
+}

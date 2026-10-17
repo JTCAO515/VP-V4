@@ -1,0 +1,137 @@
+[
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": "Sandbox",
+      "localTest": false,
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": "2026-10-15T00:00:00.000Z",
+      "lifetimeMs": 0,
+      "state": "none",
+      "period": null,
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  },
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": "Sandbox",
+      "localTest": false,
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": "2026-10-15T00:00:00.000Z",
+      "lifetimeMs": 300000,
+      "state": "active",
+      "period": {
+        "transactionId": "1001",
+        "originalTransactionId": "1000",
+        "productId": "test.monthly",
+        "subscriptionGroupId": "123",
+        "purchaseAt": "2026-10-01T00:00:00.000Z",
+        "expiresAt": "2026-11-01T00:00:00.000Z",
+        "revokedAt": null,
+        "descriptorId": "Sandbox:1001",
+        "catalogVersion": 3,
+        "policyVersion": "subscription-development-policy/1"
+      },
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  },
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": "Sandbox",
+      "localTest": false,
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": "2026-10-15T00:00:00.000Z",
+      "lifetimeMs": 0,
+      "state": "expired",
+      "period": {
+        "transactionId": "1001",
+        "originalTransactionId": "1000",
+        "productId": "test.monthly",
+        "subscriptionGroupId": "123",
+        "purchaseAt": "2026-10-01T00:00:00.000Z",
+        "expiresAt": "2026-10-10T00:00:00.000Z",
+        "revokedAt": null,
+        "descriptorId": "Sandbox:1001",
+        "catalogVersion": 3,
+        "policyVersion": "subscription-development-policy/1"
+      },
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  },
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": "Sandbox",
+      "localTest": false,
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": "2026-10-15T00:00:00.000Z",
+      "lifetimeMs": 0,
+      "state": "revoked",
+      "period": {
+        "transactionId": "1001",
+        "originalTransactionId": "1000",
+        "productId": "test.monthly",
+        "subscriptionGroupId": "123",
+        "purchaseAt": "2026-10-01T00:00:00.000Z",
+        "expiresAt": "2026-11-01T00:00:00.000Z",
+        "revokedAt": "2026-10-14T00:00:00.000Z",
+        "descriptorId": "Sandbox:1001",
+        "catalogVersion": 3,
+        "policyVersion": "subscription-development-policy/1"
+      },
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  },
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": null,
+      "localTest": false,
+      "ownerId": null,
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": null,
+      "lifetimeMs": 0,
+      "state": "reconciliation_required",
+      "period": null,
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  },
+  {
+    "data": {
+      "schemaVersion": "subscription-entitlement/1",
+      "sourceEnvironment": null,
+      "localTest": false,
+      "ownerId": null,
+      "catalogVersion": 3,
+      "policyVersion": "subscription-development-policy/1",
+      "checkedAt": null,
+      "lifetimeMs": 0,
+      "state": "unavailable",
+      "period": null,
+      "remainingCapacity": null,
+      "purchaseEnabled": false,
+      "runtimeCapacityEnabled": false
+    }
+  }
+]

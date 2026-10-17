@@ -63,3 +63,5 @@ export function validCandidateEdit(v: unknown): v is CandidateEdit {
   if (v.kind === "replace_item") return exact(v, ["kind", "itemId", "sourceItemId"]) && identifier(v.itemId) && identifier(v.sourceItemId);
   return v.kind === "add_item" && exact(v, ["kind", "sourceItemId", "toDayId"]) && identifier(v.sourceItemId) && identifier(v.toDayId);
 }
+
+export { parseTripTaskRequest, parseTripTaskControl, parseTripTaskContinuation } from '../../service-task-trip/contract.ts';

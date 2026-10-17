@@ -1,0 +1,15 @@
+C0 native PostgreSQL adapter: original SQL suites unchanged; no Docker/target17.6/GoTrue claim.
+✔ fixed current binding yields exact TS projection in en/zh, no action/storage/execution authority and transactional migration rollback (11690.463917ms)
+ℹ {"dependencies":"all current checkout migrations","network":"none","container":"vpj79-qualified-a84b7342"}
+✔ wrong owner/source/lease/digests/locale and observation source/time/schema/ranges never produce a valid projection (1453.982833ms)
+ℹ {"generatedAt":"2026-10-15T13:31:28.447Z","observedAt":"2026-10-15T13:32:28.447Z","serverAfter":"2026-10-15T13:31:28.543Z","futureDeltaMs":59903.303955078125,"unchangedMaxFutureMs":5000}
+✔ ordinary explicit correction, source hide and consent withdrawal invalidate the old bridge binding without historical fallback (1410.658792ms)
+✔ all API roles cannot execute private functions and valid preparation cannot remove v2 completion hard fences (935.963417ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15797.40375

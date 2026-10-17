@@ -1,0 +1,42 @@
+test_writable_closed_flag_cannot_authorize_live_directory_removal (__main__.OwnedSession) ... FAIL
+test_stopped_child_wrong_nonce_or_replaced_root_cannot_authorize_removal (__main__.OwnedSession) ... FAIL
+test_gc_of_registered_owner_never_recursively_deletes_directory (__main__.OwnedSession) ... /Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/tempfile.py:817: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/private/tmp/qaw-session-wpri57__'>
+  _warnings.warn(warn_message, ResourceWarning)
+FAIL
+
+======================================================================
+FAIL: test_writable_closed_flag_cannot_authorize_live_directory_removal (__main__.OwnedSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 150, in test_writable_closed_flag_cannot_authorize_live_directory_removal
+    removal.assert_not_called()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/unittest/mock.py", line 868, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected 'rmtree' to not have been called. Called 2 times.
+Calls: [call('/private/tmp/qaw-session-ak8u_993', onerror=<function TemporaryDirectory._rmtree.<locals>.onerror at 0x108135700>),
+ call(PosixPath('/private/tmp/qaw-session-ak8u_993'))].
+
+======================================================================
+FAIL: test_stopped_child_wrong_nonce_or_replaced_root_cannot_authorize_removal (__main__.OwnedSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 163, in test_stopped_child_wrong_nonce_or_replaced_root_cannot_authorize_removal
+    removal.assert_not_called()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/unittest/mock.py", line 868, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected 'rmtree' to not have been called. Called 2 times.
+Calls: [call('/private/tmp/qaw-session-ov3fe6o3', onerror=<function TemporaryDirectory._rmtree.<locals>.onerror at 0x108193e50>),
+ call(PosixPath('/private/tmp/qaw-session-ov3fe6o3'))].
+
+======================================================================
+FAIL: test_gc_of_registered_owner_never_recursively_deletes_directory (__main__.OwnedSession)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-owned-pg-diagnostic-session.py", line 181, in test_gc_of_registered_owner_never_recursively_deletes_directory
+    self.assertIsNone(reference());self.assertTrue(root.exists())
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.388s
+
+FAILED (failures=3)

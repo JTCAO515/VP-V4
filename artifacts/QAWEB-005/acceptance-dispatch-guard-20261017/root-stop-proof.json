@@ -1,0 +1,80 @@
+{
+  "kind": "ROOT_PRELEASE_BUSY_STOP_REPAIR_AND_NODE22_QUALIFICATION",
+  "sourceCommit": "6048c4e68086803aa953d5f0fdddf8e3fcf92c8c",
+  "supersedesSource": "c2c9a27a48ee38f06b95df90719e9318ce2648fc",
+  "sourcePins": [
+    {
+      "path": "lib/server/qa-agent/acceptance-journal.ts",
+      "sha256": "e5db1e42d4d5a42ac69db877f62e97476f5e05f41fcba658164a9048428174b4"
+    },
+    {
+      "path": "lib/server/jobs/hosted-text-worker.ts",
+      "sha256": "a583a4dac3149f4cb90480149a3e80866c0c2f92162b61f3dc497e9446501b9d"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-hosted.test.mjs",
+      "sha256": "02544220f63bd6ddb3513e728a2ed89e71707cff5641fe46238b150cfd4ebfdd"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-journal.test.mjs",
+      "sha256": "fc82715d10ff2c91467a172bad570474d653199724de1d065a2fa738652a17ac"
+    }
+  ],
+  "finding": "A owns attempt mutex/send1; B prelease heartbeat/discovery unavailable tried enter/finish but EEXIST swallowed its stop; A success then C could dispatch2.",
+  "red": {
+    "status": "FAIL",
+    "case": "real hosted root",
+    "log": "root-busy-stop-RED.log",
+    "result": "C successfully finished rather than unavailable after B prelease error; old root dropped stop intent while A lock held",
+    "source": "c2 production code plus new test scenario before fix"
+  },
+  "green": {
+    "status": "17/17 PASS zero skip",
+    "log": "root-busy-stop-GREEN.log",
+    "cases": "A locked send1/B prelease fail/A success/C no claim/provider; separate-process successor same grant/job no claim/provider; stop veto during pre-send permit denies request without stealing lock; previous durability/restart/concurrency/binding/ordinary-path cases retained"
+  },
+  "fix": "Canonical private run .stop veto created exclusively and fsynced without requiring active attempt mutex. Root heartbeat/discovery failures persist it before returning failure, job/event journal errors persist it, tail unavailable does not rely on transient enter. Startup, enter, pre/post durable dispatch intent and terminal finish consult veto; never unlink/reset veto, cancel active business result or release original holds. Existing SQL ledger remains money authority.",
+  "checks": {
+    "typecheck": "PASS",
+    "policyLint": "PASS902files",
+    "candidateDiffFrom728": "PASS after log-only trailing whitespace normalization",
+    "originalRawFailures": "Retained privately with recorded hashes; public failure facts remain",
+    "unaffectedEvidence": "C2 98PASS/3DBoptinSKIP and2canonical-installerPASS reused, not added to17"
+  },
+  "node22": {
+    "status": "17/17 PASS zero skip",
+    "actualRuntime": "v22.23.3",
+    "sourceOverlay": "6048c4e68086803aa953d5f0fdddf8e3fcf92c8c",
+    "archiveSha256": "017ec42b4f4004afde0164afdc544ffb91a0f7279c0b17cdd95ca066fd3a5e03",
+    "all584ExportedFilesMatchFixedGitObjects": true,
+    "baseImage": "sha256:f807ed1a79297604bc54e9558cb344da21dc9c5d779269459feeba0f42a7f0c2",
+    "imageAlreadyPresent": true,
+    "imagePlatform": "linux/amd64",
+    "commandScope": "Node22 --experimental-strip-types --test acceptance-journal,acceptance-hosted,acceptance-durability; actual original CLI entry and canonical profile propagation exercised with deliberate mock secret-stage stop",
+    "isolation": "--pull=never --network none --read-only --user1000:1000 --cap-dropALL --security-optno-new-privileges; readonly lib/tests/validator mounts from Git archive, private/tmp tmpfs only; no secret/profile/credential/host-resource mounts, no daemon start/install/pull",
+    "container": "qa-acceptance-node22-6048-ujizwctw",
+    "cleanup": "PASS expected --rm; own exact-name readback had no container",
+    "log": "node22-qualified-6048.log",
+    "limit": "Existing older image supplies Node runtime/dependencies ONLY. Readonly mounted6048 source is not a final same-source baked image. Final source image/build identity/deployment/real provider still UNRUN."
+  },
+  "logs": [
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/root-busy-stop-RED.log",
+      "sha256": "560e0296593b4321581a7e7fe49b6338dc79f78f1effd6e0a94125f8f2e2f2fc"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/root-busy-stop-GREEN.log",
+      "sha256": "658870ff019f7528384b1f89e8119a9bf696d9ac0a4016de9eec3977f12a8a74"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/node22-qualified-6048.log",
+      "sha256": "c53bb2dfc9a0c3fe57a1ea415adc9c08c7c42667dd57289816d80f83f8c6662f"
+    }
+  ],
+  "publication": "Local only; remote branch staysc2 and rejected PR command/body unchanged. No new push/PR retry performed.",
+  "privateFinancialApproval": "Not copied into source/artifact; grantJSON is configuration, not human fee authority.",
+  "realTargetCalls": 0,
+  "realProviderCalls": 0,
+  "realSecretReads": 0,
+  "workerActivation": false
+}

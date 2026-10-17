@@ -1,3 +1,5 @@
+import { validExpectation, parseRecoveryKey, sameId } from "../../knowledge/place-ask/contract.ts";
+import {TRIP_PRIVATE_SOURCE_KEYS,TRIP_OBJECTIVE_REDACTION_KEY} from '../../service-task-trip/privacy-contract.ts';
 import { createHash } from 'node:crypto';
 import { exact, record, hash } from '../../guide/contract.ts';
 import { identifier, positive, sortedIds, validSourceAuthorities, type SourceAuthority } from '../conversation-data/contract.ts';
@@ -78,4 +80,35 @@ export function validBinding(v: Record<string, unknown>, now: number, decided = 
     && (decided || now < v.expiresAt) && record(boundaries) && exact(boundaries, ['eraseFields', 'redactFields', 'retained', 'missing'])
     && Object.entries(TURN_BOUNDARIES[v.scope as TurnScope]).every(([k, values]) => JSON.stringify(boundaries[k]) === JSON.stringify(values))
     && v.allUserDataCompleted === false;
+}
+
+/** Explicit Trip privacy version only; original v1 count vectors are unchanged. */
+export const TRIP_ERASED_KEYS=[...ERASED_KEYS,...TRIP_PRIVATE_SOURCE_KEYS] as const;
+export const TRIP_REDACTED_KEYS=[...REDACTED_KEYS,TRIP_OBJECTIVE_REDACTION_KEY] as const;
+
+/** Stored original admission evidence; never fresh authority to dispatch. */
+export function validPlaceRequestProof(v: unknown, row: Record<string, unknown>): boolean {
+  if (!record(v) || !exact(v, ['schemaVersion','operationId','scopeKind','scopeId','operation','requestDigest','expectation','basis','originalReceipt'])
+    || v.schemaVersion !== 'canonical-place-proof/1' || !identifier(v.operationId) || v.scopeKind !== 'thread' || !identifier(v.scopeId)
+    || !hash(v.requestDigest) || !validExpectation(v.expectation) || !record(v.basis) || !record(v.originalReceipt)) return false;
+  const op = parseRecoveryKey(v.operation), b = v.basis, r = v.originalReceipt;
+  return !!op && op.scopeKind === 'thread' && sameId(op.operationId,v.operationId) && sameId(op.scopeId,v.scopeId) && sameId(op.turnId,row.turn_id)
+    && exact(b,['subjectId','city','scene','sourceDigest']) && typeof b.subjectId === 'string' && [...b.subjectId].length >= 1 && [...b.subjectId].length <= 160
+    && ['shanghai','beijing','guangzhou','chongqing'].includes(String(b.city)) && b.city === row.city
+    && typeof b.scene === 'string' && [...b.scene].length >= 1 && [...b.scene].length <= 80 && hash(b.sourceDigest)
+    && v.expectation.locale === row.locale && exact(r,['version','kind','turnId','reused','serviceTaskId','scopeVersion','relationship','parentTurnId'])
+    && r.version === 2 && r.kind === 'accepted' && r.reused === false && sameId(r.turnId,row.turn_id) && sameId(r.serviceTaskId,row.task_id)
+    && r.scopeVersion === 1 && ['new_goal','clarification','repair'].includes(String(r.relationship))
+    && (r.parentTurnId === null || identifier(r.parentTurnId)) && (r.relationship === 'new_goal') === (r.parentTurnId === null);
+}
+export function validPlaceAnswerBasis(v: unknown): boolean {
+  if (v === null) return true;
+  if (!record(v) || !exact(v,['publications','claims']) || !Array.isArray(v.publications) || v.publications.length > 50 || !Array.isArray(v.claims) || v.claims.length > 6) return false;
+  if (!v.publications.every(p => record(p) && exact(p,['factId','assertionId','revision','payloadHash']) && identifier(p.factId) && identifier(p.assertionId)
+    && Number.isSafeInteger(p.revision) && Number(p.revision) >= 1 && Number(p.revision) <= 2147483647 && hash(p.payloadHash))) return false;
+  const facts = new Set(v.publications.map(p => p.factId));
+  return v.claims.every(c => record(c) && exact(c,['id','status','reasons','factIds']) && ['place_address','opening_hours'].includes(String(c.id))
+    && ['covered','unavailable','unresolved_variants'].includes(String(c.status)) && Array.isArray(c.reasons) && c.reasons.length <= 8
+    && c.reasons.every(r => ['missing','expired','revoked','unreviewed','unresolved_variants'].includes(String(r)) && typeof r === 'string')
+    && Array.isArray(c.factIds) && c.factIds.length <= 50 && c.factIds.every(f => identifier(f) && facts.has(f)));
 }

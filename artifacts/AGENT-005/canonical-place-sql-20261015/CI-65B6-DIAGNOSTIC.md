@@ -1,0 +1,8 @@
+# PR715/65b6 CI diagnosis, not functional resolution
+
+The two remote failures are retained by Main's exact completed-job logs. The source before this diagnostic is198c66bf/eea0b13f. This diagnostic does not declare the CI failures fixed.
+
+1. Original subject before-hook filters out40456, then loads later707 and083120. The latter correctly refuses its missing40456 grounded_ai_assist_work dependency. An owned PG17 replay of that exact omission reproduces the same BEFORE_DEFINITION_MISMATCH. The original265-table/16-case fixture belongs to the original subject owner; Main assigned its chronological-prefix repair there. This owner changed none of its tests, artifacts, assertions or grants.
+2. Real disposable Supabase full startup reaches the final canonical guard and fails before tests. Existing logs lack the false vector. The unique un-applied canonical seed now changes only the existing failing exception message: all original IF predicates and the same failure remain byte-identical. Added output is exactly eleven guard names with boolean/null values plus server_version. No rows, SQL bodies, credentials, owner/ACL values or new allowed hash are emitted or accepted.
+
+Self-owned nativePG17 validation: normal full append and rollback PASS; intentionally missing new CHECK still rejects, emits the bounded vector, and rolls back its whole catalog. This demonstrates diagnostic safety, not the managed Supabase cause. The latter remains UNKNOWN until Main's official composed-head CI supplies its actual vector. No Docker daemon, borrowed cluster, target database or GoTrue substitute was used. Existing21 and legacy59 evidence does not cover this unresolved remote environment failure and was not rerun for message-only changes.

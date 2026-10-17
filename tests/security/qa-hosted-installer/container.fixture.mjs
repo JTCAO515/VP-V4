@@ -12,15 +12,15 @@ test('Linux host without Node validates in real offline containers; worker creat
  const id=randomUUID(),volume=`qa-validator-${id}`,name=`qa-installer-${id}`;
  const dir=await mkdtemp(join(root,'.qa-validator-'));
  t.after(()=>{docker(['volume','rm',volume]);return rm(dir,{recursive:true,force:true});});
- const image=ok(docker(['image','inspect','--format','{{.Id}}','vp-qa-validator-fixture:20261013']));
+ const image=ok(docker(['image','inspect','--format','{{.Id}}','vp-qa-bound-validator-fixture:20261013']));
  ok(docker(['volume','create',volume]));
  const mountpoint=ok(docker(['volume','inspect','--format','{{.Mountpoint}}',volume]));
- const profile={schemaVersion:'vpj07-hosted-text-worker/3',pollIntervalMs:3000,maxLifetimeMs:60000,
+ const profile={schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:3000,maxLifetimeMs:60000,
   drainMs:1000,concurrency:1,groupLimit:1,modes:['qa_session_history_v1'],planning:null,
   qwen:{priceVersion:'synthetic-price-v1',pricing:{mode:'flat',inputMicrosPerMillion:6000000,
   outputMicrosPerMillion:24000000,cachedInputMicrosPerMillion:null},reservedMicros:7000000,
   maxOutputTokens:1024,timeoutMs:60000,configurationId:randomUUID(),configurationVersion:1}};
- const target={schemaVersion:'qa-hosted-deployment-target/1',environment:'staging',
+ const target={schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'dzqdzetcctkhbrhlxxgn',
   databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
   noticeHash:'a'.repeat(64),build:'abcdefabcdef',qwenEndpoint:'https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',startupState:'disabled',restartPolicy:'no'};
  const prep=spawnSync(process.execPath,['--experimental-strip-types','deploy/hosted-worker/validate-qa-target.mjs','--prepare'],{input:JSON.stringify({profile,target}),encoding:'utf8'});
@@ -85,6 +85,10 @@ assert len(runs)==2 and runs[0][runs[0].index('--name')+1]!=runs[1][runs[1].inde
 w=[json.loads(x) for x in open('/tmp/worker-calls')]
 assert len(w)==2 and w[0][0]=='create' and w[1]==['start','vp-hosted-text-worker']
 assert w[0][-1]==os.environ['FIXTURE_IMAGE']
+assert 'VISEPANDA_QA_SUPABASE_PROJECT_REF=dzqdzetcctkhbrhlxxgn' in w[0]
+assert w[0].count('type=bind,src=/run/vp-worker-secrets,dst=/run/vp-worker-secrets,readonly')==1
+assert '--tmpfs' not in w[0]
+assert not any('/run/vp-worker-secrets/qa-' in a for a in w[0])
 assert w[0].count('VISEPANDA_QWEN_ENDPOINT=https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions')==1
 assert w[0][w[0].index('--restart')+1]=='no'
 assert 'SYNTHETIC_CANARY' not in str(calls) and '--env-file' not in str(calls)
@@ -92,6 +96,20 @@ PYCHECK
 rm /tmp/worker-calls
 reject() { if bash "$wrapper" "$@" >/tmp/rejected 2>&1; then cat /tmp/rejected; exit 21; fi; test ! -f /tmp/worker-calls; }
 reject start abcdefabcdee --qa
+python3 - <<'PYNEG'
+import json
+p='/etc/visepanda/qa/qa-target.json'
+t=json.load(open(p));t['projectRef']='zyxwvutsrqponmlkjihg';t['databaseUrl']='https://zyxwvutsrqponmlkjihg.supabase.co'
+open(p,'w').write(json.dumps(t,separators=(',',':'))+'\n')
+PYNEG
+reject preflight --qa
+reset_package
+sed -i 's@vpj07-hosted-text-worker/4@vpj07-hosted-text-worker/3@' /etc/visepanda/hosted-profile.json
+reject preflight --qa
+reset_package
+sed -i 's@qa-hosted-deployment-target/2@qa-hosted-deployment-target/1@' /etc/visepanda/qa/qa-target.json
+reject preflight --qa
+reset_package
 sed -i 's/"groupLimit":1/"groupLimit":2/' /etc/visepanda/hosted-profile.json
 reject preflight --qa
 reset_package
@@ -104,7 +122,7 @@ reset_package
 sed -i 's/"groupLimit":1/"groupLimit":1,"groupLimit":1/' /etc/visepanda/hosted-profile.json
 reject preflight --qa
 reset_package
-for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/db.key; do
+for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/db.key /run/vp-worker-secrets/qwen.key; do
  original=$(stat -c %a "$file")
  chmod 644 "$file"; reject preflight --qa; chmod "$original" "$file"
  ln "$file" "$file.link"; reject preflight --qa; rm "$file.link"

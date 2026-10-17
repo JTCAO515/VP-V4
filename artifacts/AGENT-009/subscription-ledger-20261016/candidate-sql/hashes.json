@@ -1,0 +1,33 @@
+{
+  "sourceHead": "1eac98ec2173ebbd05739092c2ad577b01524f79",
+  "candidatePath": "lib/server/entitlements/subscription-ledger/development-schema.sql",
+  "previousUnappliedPath": "supabase/migrations/20261016051000_subscription_development_ledger.sql",
+  "candidateSha256": "1c5b582b9b0ee890da9aa881f041baf4768360949894a6c66b540b2679f604f0",
+  "byteIdenticalToPreMoveSource": true,
+  "automaticMigrationTreeUnchangedFrom": "61caa52a03cb59ff0075b8cf59c63994c30821e1",
+  "source": [
+    {
+      "path": "lib/server/entitlements/subscription-ledger/development-schema.sql",
+      "sha256": "1c5b582b9b0ee890da9aa881f041baf4768360949894a6c66b540b2679f604f0"
+    },
+    {
+      "path": "lib/server/entitlements/subscription-ledger/WIRE.md",
+      "sha256": "ae42906e47c907dbde4a9b24e9e2f2465edf435a13ff1e140138ea12018a0fa0"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/selected-cases.mjs",
+      "sha256": "d65383c1e68e8033afed3f6f84501bb3b0d116c4e83011366cac6739fae5a682"
+    },
+    {
+      "path": "tests/integration/subscription-ledger/snapshot-concurrency.mjs",
+      "sha256": "e9a0b37c7036287843d0a8c1e5a56a8827bb2fbfd4b1acdcc179e14e8cfe0a87"
+    }
+  ],
+  "dedicatedTestEntry": "tests/integration/subscription-ledger/postgres.test.mjs",
+  "gate": "SUBSCRIPTION_LEDGER_PG=1",
+  "classificationOwner": "Main",
+  "standaloneCandidate": "NOT_DEPLOYABLE",
+  "sharedSchema": "NOT_APPLIED",
+  "legacyRuntimeComposition": "NOT_READY",
+  "crossLedgerBidirectionalUniqueness": "NOT_READY"
+}

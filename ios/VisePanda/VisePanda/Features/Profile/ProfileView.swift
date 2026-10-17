@@ -32,6 +32,7 @@ private struct NativePassClaim: Decodable {
 }
 
 struct ProfileView: View {
+    var showSubscriptionEntry = true
     @Environment(AppSettings.self) private var settings
 
     @State private var email = ""
@@ -111,6 +112,17 @@ struct ProfileView: View {
                         Button(chinese ? "重试会话" : "Retry session") { Task { await settings.nativeSession.validate() } }
                     }
                 }.disabled(settings.nativeSession.busy)
+            }
+
+            if showSubscriptionEntry {
+                Section(chinese ? "订阅" : "Subscription") {
+                    NavigationLink(chinese ? "月订阅与权益状态" : "Monthly subscription and status") {
+                        NativeSubscriptionView(scope: settings.nativeSession.subscriptionReadScope,
+                            chinese: chinese, port: settings.nativeSession.subscriptionDevelopmentPort,
+                            legacyEntitlements: { ProfileView(showSubscriptionEntry: false) },
+                            dataControls: { NativeDataCoverageView() })
+                    }.accessibilityIdentifier("profile.subscription.open")
+                }
             }
 
             if settings.nativeSession.dataScope != nil {

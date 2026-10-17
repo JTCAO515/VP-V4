@@ -1,0 +1,1061 @@
+[
+  {
+    "number": 683,
+    "title": "[QAWEB-DEPLOY P0] Authenticated qatesting QA delivery on Vercel",
+    "engineeringOwner": "Web",
+    "priority": "P0",
+    "userOutcome": "交付可登录且真实问答的 QA Web",
+    "deltaAndReuse": "复用既有 Vercel QA 分支和域名，补目标 Auth/provider/刷新/多轮完整读回；当前只记录部署适配计划",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "e2f5990811e9b23b38af5c316d3f7009e7c0ae053d017072023f5c312e06fb08",
+    "afterSha256": "cf7105b6e8a7d77a55a27adc98b5ca9d4003914d563c6d8c4cb0ed46338db76d"
+  },
+  {
+    "number": 682,
+    "title": "[QAWEB-03 P0] Bounded real same-Session multi-turn context",
+    "engineeringOwner": "Agent",
+    "priority": "P0",
+    "userOutcome": "同 Session 的追问真正使用许可内历史",
+    "deltaAndReuse": "复用 qa-context/1 消费者；补真实 provider 多轮、隔离、纠正、拒绝与超时证据",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "2bee99cbdce245b0fd94186a65533e6ab807fc39d6ebdd68d5c8429fa4f23c48",
+    "afterSha256": "8f857fa474cda1dbfc4ef5aa79dab90bc3ef80b4e8040a702f1dd887f3b37b47"
+  },
+  {
+    "number": 681,
+    "title": "[QAWEB-02 P0] Minimal persistent Session Web chat",
+    "engineeringOwner": "Web",
+    "priority": "P0",
+    "userOutcome": "用户新建切换 Session 并刷新恢复消息",
+    "deltaAndReuse": "复用 /qa 与已合会话界面；补真实登录、首答和浏览器恢复证据",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "8c0834e49053f24c39f210c35989c22efc435b56d6a33aa46d1067283b1adb7c",
+    "afterSha256": "e95ff4ae488c8a96acb2ac012157dc58fa3d1035e5e05cde386d8e650787f736",
+    "plannedSampleWorkUnit": {
+      "entry": "/qa/demo",
+      "allowedPaths": [
+        "app/qa/demo/**",
+        "components/qa-demo/**"
+      ],
+      "owner": "Main assigns an independent chat after direction phase",
+      "implemented": false,
+      "doesNotCloseRealAcceptance": true
+    }
+  },
+  {
+    "number": 680,
+    "title": "[QAWEB-01 P0] Browser authenticated real Agent answer",
+    "engineeringOwner": "Agent",
+    "priority": "P0",
+    "userOutcome": "浏览器请求获得可持久读回的真实回答",
+    "deltaAndReuse": "复用 qa-agent、ModelGateway、持久 worker 与预算；补获准目标的真实首答和失败幂等证据",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "9207f19aaa6777d4e35a86db9be99e4b8baf912008dbefa6a591456b0b9df802",
+    "afterSha256": "1ee05ffc2406a597c9793925a610fb64311ad91af43a46dbb64e400948a615a7"
+  },
+  {
+    "number": 507,
+    "title": "[VPJ-12 切片 I1] 单张截图接入真实同Trip确认链",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "单图经校正和明确确认加入同一 Trip",
+    "deltaAndReuse": "复用 Photo Picker/Vision 与 PR472/474；补真实登录→收件箱→Proposal→确认→双端重载",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "fbb2a86b622637eb32d51e1eaed168af09f9d067506e3c14fa6ad4b87185ba0c",
+    "afterSha256": "27dc4a2b28048f5a5f575ad074eab6a8eea7c1a4075b67805a368a5f95a367a5"
+  },
+  {
+    "number": 506,
+    "title": "[VPJ-25 切片 T1] 确认Trip的Today与中文地址",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "Today 展示同版本日程和中文地址",
+    "deltaAndReuse": "复用 Today 证据函数；核中文地址 producer 和原 owner 交接，补确认 Trip 的原生展示",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "44f069b67fb04362bb0b99408270313a2ef238aa6f5a30ef86fb006842fe2978",
+    "afterSha256": "0f47432e94279aeb0e51b0a98176b26c7f9aa45f80380d1ddae8416b9f1d4d4a"
+  },
+  {
+    "number": 504,
+    "title": "[VPJ-36 切片 D1] Trip删除请求、执行与原生回执",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "用户删除 Trip 后收到可信回执",
+    "deltaAndReuse": "复用删除请求、执行与原生消费者；补真实取消/跨端/迟到响应和删除状态一致性",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "a32463ad6e3b85119c24c6a20360bd033935c6d02757905ca5f5a2a73082893c",
+    "afterSha256": "d57e7b1e41c8f171d1e9920fd26e2c8e635b7f6ce8fac4858d6e9ca34bf89a0e",
+    "category": "business-data",
+    "lead": "删除与数据生命周期原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 503,
+    "title": "[VPJ-34 切片 Q2] 一次官方测试购买到两端有效grant",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "一次官方测试购买在两端产生同源 grant",
+    "deltaAndReuse": "复用 StoreKit 与权益投影；补官方测试购买链，不以本地 StoreKit 代替真实交易",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "b4c3fa2e2930e756dbd237af3e5022ba2a6e385323449306e2d4ee39034844d5",
+    "afterSha256": "a274d08399ad3dc74a04a85b60f9973afaecec4494557e59d96f96eabaa9102e",
+    "category": "business-data",
+    "lead": "购买与权益原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
+  },
+  {
+    "number": 367,
+    "title": "[VPJ-18 切片] 腾讯补查与双供应商受控降级",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "地图主供应商失败时受控补查",
+    "deltaAndReuse": "复用高德/腾讯适配与原父票；补用途、成本、归因与降级实测",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "0689e020e73fc68cd57946d220ef34f417c16d0cd23ba0f236a3659f6887b4dd",
+    "afterSha256": "b25f956bfd4616a2a8e55068428fa715d5f8350150cfd64c794e80c9fc2599a6"
+  },
+  {
+    "number": 364,
+    "title": "[VPJ-19 切片] 步行公交驾车比较与准确目的地导航交接",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "用户比较路线并导航到准确目的地",
+    "deltaAndReuse": "复用路线入口；补步行/公交/驾车与坐标实体的实际交接验证",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "3d6c289e990b6e0981441b3b2293c49f1a10c6e207fb126f64ddade390449448",
+    "afterSha256": "e83cf5212ff115a9482b04c69745f63b1ebf9ff83c2e17cb733d06a6ae76e962"
+  },
+  {
+    "number": 363,
+    "title": "[VPJ-19 切片] 中英地点搜索、准确实体与地图同选中闭环",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "搜索地点与地图始终选中同一实体",
+    "deltaAndReuse": "复用地点消歧、双语输入与地图；补跨语言实体同选中闭环",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "e3edcd0927586ee8181df6349475c8d5c368b05be1915326d65324c286dcd01c",
+    "afterSha256": "8ced512d45557dd6b8821c643dd1ede73994dc9275fffdac567ddd72138cce4e"
+  },
+  {
+    "number": 360,
+    "title": "[VPJ-76] Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "回答引用已发布 Wiki 和原子声明并说明缺口",
+    "deltaAndReuse": "复用知识检索与来源资格；补真实 consumer 的证据完整性和不可访问拒绝",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-75"
+      ],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "1aaf2e22cdd5b5f532f655c506055a4598543658ceaf69f83b674e2bff5ac899",
+    "afterSha256": "88eb351a3dbe2da2aaeb7879237a5d0fb2191faebeb71858189d019568cfe696",
+    "taskDefinitionSha256": "ed167a48b5c62c1713ce5e9ac22e8d0f84fb8cbd3cc6b274278c7e3b91ea244d"
+  },
+  {
+    "number": 359,
+    "title": "[VPJ-75] 新来源经LLM Wiki整理为可审查并可发布的知识变更",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "新来源形成可审查并可发布的知识变更",
+    "deltaAndReuse": "复用现有 Wiki 生成和审核；补来源到发布版本链，不自动发布模型候选",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-74"
+      ],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "9d848080675cdce0c9c295e99f747acea4e537017f3825c4f2208c038b061836",
+    "afterSha256": "3ee0099667f58929424690ce05d003b8728970a656f6d4ea39a1fff59939dbd4",
+    "taskDefinitionSha256": "ea0067458257fb67150f1868d572d3a694560cb5635f3ceb763eb14892fccbd0"
+  },
+  {
+    "number": 268,
+    "title": "[VPJ-71] Harness：核心任务发布判定与能力停用恢复验收",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "按核心任务证据判断发布与停用恢复",
+    "deltaAndReuse": "复用 Harness 和运营合同；补实际候选/恢复证据，不能用矩阵通过冒充目标可用",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-69",
+        "VPJ-70"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-37",
+        "VPJ-63",
+        "VPJ-83"
+      ]
+    },
+    "beforeSha256": "0dc3d614c20644ef4b030ecacd92c0c6a275636f81f7e9db73c0927f5784dc08",
+    "afterSha256": "bdc7c2492d9085acc974e1abc999503f176f216363f97c503194fb2aa2828bf7",
+    "taskDefinitionSha256": "1a29594b288236681abea28855012b88b75eaf10c9cdbe7cf89abe99b436ad36"
+  },
+  {
+    "number": 267,
+    "title": "[VPJ-70] Harness：只读模型或提示词候选的配对评测与校准",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "对模型或提示词候选做可比评测",
+    "deltaAndReuse": "复用冻结案例与配对工具；补实际许可 provider 输入、usage 与校准，不改客户模型选择",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-67",
+        "VPJ-72"
+      ]
+    },
+    "beforeSha256": "1504171555fcbf58c44d5ee2d4f86b453d6a505b2c6de09a7b8f28ef9705f3c6",
+    "afterSha256": "5fbb4855c0ed418b29d0ab0f1c3dbfcda4f3a4b6589d3c873b65998009df5531",
+    "taskDefinitionSha256": "2d8ce1def88e4c78832d56ffc22004d66644e33d1ab0efe98e58fd5b1ccaf8f5"
+  },
+  {
+    "number": 266,
+    "title": "[VPJ-69] Harness：故障取消与重连不伪造成功或重复提交",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "取消与重连不伪造完成或重复提交",
+    "deltaAndReuse": "复用故障 Harness 与持久执行；补 #265 和规划恢复输入上的取消/未知结果链",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-68"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-80"
+      ]
+    },
+    "beforeSha256": "6d2c2383dc15e872069db8a08780c739b13c2dfa96fac0345951406783028afb",
+    "afterSha256": "3d0fcb719bbaca3e98b130f380620e97ba7cbc3cd29b6699be5a9847e536e288",
+    "taskDefinitionSha256": "d968dfd4b73913b27adbcff4afb2e79c6c1c895eeef80496d012703b4f1c48ff"
+  },
+  {
+    "number": 265,
+    "title": "[VPJ-68] Harness：少走路且保留已确认晚餐的局部改稿闭环",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "少走路改稿保留已确认晚餐",
+    "deltaAndReuse": "复用 scoped-edit、TripProposal 和 Memory；补真实已有 Trip 的候选→diff→确认闭环",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-65"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-67",
+        "VPJ-10",
+        "VPJ-11",
+        "VPJ-79"
+      ]
+    },
+    "beforeSha256": "3d81289871ba2786285a097d2611ade16e5511f2d8c05c8396936988290dbae4",
+    "afterSha256": "5762016a0e3965d5cd08e55e9d71e94a896440a939d41dc7893905e2d1c4ee71",
+    "taskDefinitionSha256": "3bba15cdfd11daba74c4f4a493f5d01f995a121228c761ae9d79f52b390906ac"
+  },
+  {
+    "number": 264,
+    "title": "[VPJ-67] Harness：真实只读问答产生有依据的结果与回执",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "只读问答返回有依据结果与回执",
+    "deltaAndReuse": "复用文本 Harness 和知识消费者；补真实许可 provider 的来源、结果和拒绝证据",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-66",
+        "VPJ-16"
+      ]
+    },
+    "beforeSha256": "0e26a9c47ab6302495dadc2a1282ec2c745df6c3061156bb554ff35b83450dd1",
+    "afterSha256": "448f41a787895c3793ee2575d0c7f824556f4fab05fd921ea2ea49373c8d664b",
+    "taskDefinitionSha256": "4c69959afcb1571f327be461a87fc62b374ff697505387cf6cf4665a744546fe"
+  },
+  {
+    "number": 252,
+    "title": "[VPJ-54] 年订阅与交易深度升级的证据决策",
+    "engineeringOwner": "shared",
+    "priority": "P2",
+    "userOutcome": "凭经营证据决定年订阅与交易扩展",
+    "deltaAndReuse": "保留 activationEvidence；不把商业全矩阵前置到 QA 首答",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-45",
+        "VPJ-47"
+      ],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "c727b1d74d42d0672cbf896bb517aab9c80606e6397bdf2b0a264a8cf2ebf853",
+    "afterSha256": "71af0e22848577cd2439469f267bb6e5b4e963d52274923f4381f8ae3d6f54ea",
+    "taskDefinitionSha256": "c04bf501ec91228e37977c228519b3a9b05c43ec56589b624f9260063fa03576",
+    "category": "product-operations",
+    "lead": "产品商业策略负责人（沿原决策归属）",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 251,
+    "title": "[VPJ-53] Android 与新增语言的需求触发设计",
+    "engineeringOwner": "shared",
+    "priority": "P2",
+    "userOutcome": "有需求证据时再设计 Android 与新语言",
+    "deltaAndReuse": "保留 activationEvidence；本轮不新建 Android/SDK 工程",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-45",
+        "VPJ-47"
+      ],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "22601625432139d88ca302e13542854b520888877e4b4b0c4869beddd10655d9",
+    "afterSha256": "0af147af5cdb87fceb77a101456ba21372582179b840f816450cb78ef0838e6a",
+    "taskDefinitionSha256": "be4387f48e01e32b5b2bcb628122f1e51ff8c5d4ad50eac0a81d8da94ebba868",
+    "category": "product-operations",
+    "lead": "产品需求与语言范围负责人（沿原决策归属）",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
+  },
+  {
+    "number": 250,
+    "title": "[VPJ-52] 授权航班状态与相关行程重验",
+    "engineeringOwner": "Agent",
+    "priority": "P2",
+    "userOutcome": "授权航班变化触发相关行程重验",
+    "deltaAndReuse": "复用来源和影响合同；等待本票激活证据及 #249 实际数据，不制造状态",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-51"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-17",
+        "VPJ-29"
+      ]
+    },
+    "beforeSha256": "743223f4d50e78f19b0bab16039cc389730a0748c6e157d98116acdba8e31b3b",
+    "afterSha256": "2b25a43026d22c1f679e0ae5b4c3f0121039fc24092f90c7f8457244490b799c",
+    "taskDefinitionSha256": "c1f118fc39c2c674ce58c95755a64cca3f658f618e301b57f557f46bc3a84c96"
+  },
+  {
+    "number": 249,
+    "title": "[VPJ-51] 航班来源与中国航线对照（证据触发）",
+    "engineeringOwner": "Agent",
+    "priority": "P2",
+    "userOutcome": "有证据时验证中国航线来源",
+    "deltaAndReuse": "保留来源用途、授权和激活条件；不把数据采购前置到三工程入口",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-39"
+      ]
+    },
+    "beforeSha256": "446a6e37613c2df2ec9f2bbedcb8320f74962b7279ac7dc1df0400ff8941650c",
+    "afterSha256": "0b18f4e9b546e4c14f28d004d0c83afb8cbefc84c34bd3c1338b31714a1a0d8d",
+    "taskDefinitionSha256": "2ea2c44e9d894e4b0479dd9bfdb86cd26438d15f906ec7cc0a74b9c4f2c3382c"
+  },
+  {
+    "number": 248,
+    "title": "[VPJ-50] 有真实召回失败才启用混合 RAG 与重排",
+    "engineeringOwner": "Agent",
+    "priority": "P2",
+    "userOutcome": "真实召回失败时引入混合检索与重排",
+    "deltaAndReuse": "复用现有知识索引；先保留失败证据和 activationEvidence，不预先换架构",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-76"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-16",
+        "VPJ-17"
+      ]
+    },
+    "beforeSha256": "2e5b2f4c05f75e19c09755f0ddad7ff918d18296d7a5c8df008f97fa6c9dc6a3",
+    "afterSha256": "5b126718d1c525d7fe701c8e713295178dcbcab59a22a4fbba2c3f482a69c8c1",
+    "taskDefinitionSha256": "562d5fdc0efcb119f853359e6e22bfed62237f2e1e87ed0ae7aacce5df9dd599"
+  },
+  {
+    "number": 247,
+    "title": "[VPJ-47] 真实激活、付费与人工成本的经营观察",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "观察真实激活、付费与人工成本",
+    "deltaAndReuse": "复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-44"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-42",
+        "VPJ-46"
+      ]
+    },
+    "beforeSha256": "3d238e473c45f2fb99a6e15da8eaada8f557869372ad58ec1585561df147e76f",
+    "afterSha256": "c93ab1ee45e50fe4891f0362c91ae4a774b094e34f2a41f1253334ddc34e58cc",
+    "taskDefinitionSha256": "509634d0c8536fb5bd9d375782f73fe6a97e2e9c32d1f42a923b39421d04b4a2",
+    "category": "product-operations",
+    "lead": "经营观察原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 246,
+    "title": "[VPJ-46] 两周客户发现试点与后续运营交接",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "两周客户发现产生可执行结论",
+    "deltaAndReuse": "复用既有试点和访谈定义；保留真人与对外联系授权边界",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "7be5d1c3bee099c68759f66dd3b292570bf70d36d6051edac581e30860015978",
+    "afterSha256": "d628842aa56d3246656e8cbefea986492e00ba6a0f2d275c58d0adaff72ca985",
+    "taskDefinitionSha256": "37433828f1c8fe0acf1b704949c1b491f384f9b54d12f07925aaa0362916fdc6",
+    "category": "product-operations",
+    "lead": "客户发现原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
+  },
+  {
+    "number": 245,
+    "title": "[VPJ-45] 客户收到产品后的观察、支持与发布关账",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "用户收到产品后有支持和关账证据",
+    "deltaAndReuse": "复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-42",
+        "VPJ-44"
+      ],
+      "acceptanceDependencies": []
+    },
+    "beforeSha256": "ae96ac65b34063a803fb795f8b17d195e5ed588aa505bb1d3e699fa7aaf4957a",
+    "afterSha256": "d986397c17834e7b4db01ba46ff58803ed2f03f08a1fa13ecdf2797aad92d84c",
+    "taskDefinitionSha256": "06b2ee4a3ba37276a276f0d3571f15a5ce2c1342ec8cb41954e9d94da079f230",
+    "category": "quality-delivery",
+    "lead": "发布交付与支持原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 244,
+    "title": "[VPJ-44] 正式 App Store 1.0 提交与数字商品审核",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "提交可审核的 App Store 1.0",
+    "deltaAndReuse": "复用已验签名/隐私/商品材料；补真实提交与审核权限，方向阶段不提交",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-34",
+        "VPJ-40",
+        "VPJ-43"
+      ]
+    },
+    "beforeSha256": "363035e2a06c8fc1983bcac647ebbfb8975fc109236eef71749122113ec658f3",
+    "afterSha256": "2c2474519697a46b6551c6a3c6a26b3321664aabc059fc26a568f9e34806c9c0",
+    "taskDefinitionSha256": "d143383ebab114ecbc663c483beac6eb92fe3f87fdaf73f1469f18b2b2a16b65"
+  },
+  {
+    "number": 243,
+    "title": "[VPJ-43] 独立 Production 与可回滚的客户服务环境",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "客户环境具备明确隔离与回滚能力",
+    "deltaAndReuse": "保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-38",
+        "VPJ-42"
+      ]
+    },
+    "beforeSha256": "5fc34792a57e0c2840ea3ced779e3d170bd5d4ee4ea1deccff6708b35fe651b4",
+    "afterSha256": "be2cc82b51aa4b0ff5225fe7b18774b81311485e4934e66d263753ddedbda24c",
+    "taskDefinitionSha256": "61f563e07f401afb0c24b5cb529bc7a346cefef7413c40c6a4384af478f7276c",
+    "category": "quality-delivery",
+    "lead": "Production 环境与回滚原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 242,
+    "title": "[VPJ-42] TestFlight 实机贯通 Plan、Ready、Travel 三段",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "TestFlight 真机贯通规划准备与旅途",
+    "deltaAndReuse": "复用四 Tab 和已合功能；补真实设备整链，不把 iOS 总验收设为 Web 独立交付前置",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-49"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-08",
+        "VPJ-16",
+        "VPJ-21",
+        "VPJ-24",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-32",
+        "VPJ-35",
+        "VPJ-36",
+        "VPJ-37",
+        "VPJ-38",
+        "VPJ-39",
+        "VPJ-40",
+        "VPJ-41",
+        "VPJ-48",
+        "VPJ-55",
+        "VPJ-56",
+        "VPJ-58",
+        "VPJ-61",
+        "VPJ-64",
+        "VPJ-65",
+        "VPJ-83"
+      ]
+    },
+    "beforeSha256": "4f4eaab063d13e8b68ddc0c0b80f98912e60cd0539954dcadcb2c2428f7441b1",
+    "afterSha256": "1a1dc25700143f6a12527f3b21cb895fcb8c321b419e3d26de6a84552bd20f50",
+    "taskDefinitionSha256": "63a8d4718d6ecb3744990bcbbc5d7bf3875d13ab377e9ddbefd9c23edae9c4e6"
+  },
+  {
+    "number": 237,
+    "title": "[VPJ-56] 原生 CI、签名 Archive 与首个 TestFlight 安装包",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "获得签名 Archive 与可安装 TestFlight 包",
+    "deltaAndReuse": "复用已关闭 #508 的 unsigned Archive/CI 成果；补签名、上传与安装原范围",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-01"
+      ]
+    },
+    "beforeSha256": "67ce225857f365424574697f0c2ce3ef5d69ea45557601740ede36593cc8a83e",
+    "afterSha256": "40cb66311b9ed9f72380f6c24a097b9da4b896016dad9fa6937a9044a367c3d0",
+    "taskDefinitionSha256": "72d3750137c80be5c511315b893c870a56acc0c303c7fca42cddcd0c48249ef8"
+  },
+  {
+    "number": 234,
+    "title": "[VPJ-41] 精简 Web Planning Studio 的最终体验验收",
+    "engineeringOwner": "Web",
+    "priority": "P1",
+    "userOutcome": "Web 用户独立完成同 Trip 规划与确认",
+    "deltaAndReuse": "复用 TripCanvas、成果工作区及既有 Web 验收；QA 首体验由 #680–#683 承担，不要求复制全套 iOS UI",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-20",
+        "VPJ-34",
+        "VPJ-79"
+      ]
+    },
+    "beforeSha256": "3980aa3f2b1bc55f95d8fa52dd08760b713c1c38c755f8ca57eb21a4c67a2462",
+    "afterSha256": "385bf943b6d0da235ac38201a44c4a50a98545c08b84bed92c82bb39df1bc832",
+    "taskDefinitionSha256": "3f91526abf844869c9b46e45c2ea038fd2c3e1dbd4778e1e628dcb7210038acc"
+  },
+  {
+    "number": 233,
+    "title": "[VPJ-40] 原生视觉动效、无障碍与性能整链复验",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "原生完整体验可访问且性能可接受",
+    "deltaAndReuse": "复用已合原生四 Tab/动效/组件；补实体 VoiceOver、性能与整链观察",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-49"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-13",
+        "VPJ-20",
+        "VPJ-21",
+        "VPJ-23",
+        "VPJ-25",
+        "VPJ-27",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-30",
+        "VPJ-34",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-55",
+        "VPJ-61",
+        "VPJ-36",
+        "VPJ-83"
+      ]
+    },
+    "beforeSha256": "a5513f9402e96bedb9b02b66d0b140260fb8f414e1260a4c245311c1d410d448",
+    "afterSha256": "2a29b7c9ead2c1f3bfaf7d1f7907bb293791f35e57d7936a28ab56e8d9c15603",
+    "taskDefinitionSha256": "3a3d48b778c17d3f0cf29d7753cb1ca6a78c64c0add4d645dd8d913df5a4f36f"
+  },
+  {
+    "number": 232,
+    "title": "[VPJ-39] 境内外媒体、酒店跳转、IAP 与通知网络验收",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "用户在境内外网络得到真实可用服务",
+    "deltaAndReuse": "按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-19",
+        "VPJ-27",
+        "VPJ-63",
+        "VPJ-23",
+        "VPJ-34",
+        "VPJ-30",
+        "VPJ-55"
+      ]
+    },
+    "beforeSha256": "600c77b1b78b4c46bc2e782d65e7d9b799b0a15c97646baaa72eeeebde10453f",
+    "afterSha256": "5472c99857b4535a0d61376dc6b275afb852a1b5f0b6627ad3d5af85ef5dc08f",
+    "taskDefinitionSha256": "3093ebffd0efe71244fd568e005390134db75f3f7fefe8343d2ffbf635c7b59a",
+    "category": "quality-delivery",
+    "lead": "跨端网络验收原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 230,
+    "title": "[VPJ-38] 数据库、对象与删除状态的恢复演练",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "恢复演练保持对象和删除状态一致",
+    "deltaAndReuse": "复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-02"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-36"
+      ]
+    },
+    "beforeSha256": "6eb3cf5334baf130fc354f2ffcfce233706a73b8121f1f0b18d60095e846dc1c",
+    "afterSha256": "5a970e4997a822bfa838d7189ff675b041e3f8e8c55bbf09b713c44d59aec117",
+    "taskDefinitionSha256": "39671f293d42521d6ba8d88df0e217492278e80055a9c3dc612f3d169a26b3a7",
+    "category": "quality-delivery",
+    "lead": "恢复演练与数据生命周期原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 229,
+    "title": "[VPJ-37] 运营看见质量、成本和故障并能停用能力",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "运营看见质量成本故障并安全停用",
+    "deltaAndReuse": "保留 PR679/W2 安全暂停及全部未完成证据；不前置恢复整票到 QA 首答",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-35"
+      ]
+    },
+    "beforeSha256": "a803e32df86f62a7e8a2c5cc80a25f24852575118a1aceb6a86b80ad7fe47a0c",
+    "afterSha256": "2d340c0b6203c5c3852d34cca8211aa593805ba4d8d47e2e6ef9d1c8d156e105",
+    "taskDefinitionSha256": "272d18ac51b02652db0f6c4771c918fd23cd664e7d2280baa0c20f5e110126cd"
+  },
+  {
+    "number": 227,
+    "title": "[VPJ-35] Free/Pass 额度与完整任务成本控制",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "完整任务额度与实际尝试成本受控",
+    "deltaAndReuse": "复用 durable budget/ServiceTask 账本；补消费与恢复边界，不重建账本或扩大收费",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-06",
+        "VPJ-08",
+        "VPJ-34"
+      ]
+    },
+    "beforeSha256": "74710af9681fbd435cb4ea89bd0a9eae31aa1e5746785360fb6bfb9527ca83cb",
+    "afterSha256": "317acdc274c276af1bccc3833c6158d8c5136b34112c36b9d0a71e7d6a9a3222",
+    "taskDefinitionSha256": "e2ecc2e576efb87b2edf602025160f13f87ed9b4aefc91c0acf1cfb28a650111"
+  },
+  {
+    "number": 226,
+    "title": "[VPJ-34] 官方购买、订阅兼容与同源权益",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "官方购买与旧订阅得到同源权益",
+    "deltaAndReuse": "复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-33"
+      ]
+    },
+    "beforeSha256": "6868e2699c82f437fcaf9598fa9cec07f89dd5cbc10386af21426f740af65085",
+    "afterSha256": "672c38f39b6be3dc56dd5134a1ed404ee0ab2b983def400c5d28149969b486bf",
+    "taskDefinitionSha256": "0691837be6803bac312ab86e42937045d6865cb674051955480623f3e3b264b0",
+    "category": "business-data",
+    "lead": "购买与权益原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
+  },
+  {
+    "number": 225,
+    "title": "[VPJ-33] Free与订阅服务边界、商品策略和旧Pass兼容",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "用户理解 Free/订阅和旧 Pass 边界",
+    "deltaAndReuse": "复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
+    },
+    "beforeSha256": "7c1d96a7b4abfb0d77ecc50c6db6354f43b1e9f81a7456b5a3eb3f11ff52e21f",
+    "afterSha256": "4327353cc5a6ba326cdb11a7739d6f48d1945ef84d0ed80819146d071b2a1b80",
+    "taskDefinitionSha256": "f31d3609ecf71d7108eab05dda81c5875af65d3e7f393cfeda4ab81e889f3d4a",
+    "category": "product-operations",
+    "lead": "商品策略原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 222,
+    "title": "[VPJ-57] 用户服务请求与按任务授予资料访问",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "人工服务只访问按任务授予的资料",
+    "deltaAndReuse": "复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-14"
+      ]
+    },
+    "beforeSha256": "62ac9ee41738f5178001486cc11a989f7471889b4d4218b658d75c05db23ec8f",
+    "afterSha256": "4bb6e05c8859ba9ac59a1cae7833c3765a9d0564ace71d9598ec12c49ebd7c0a",
+    "taskDefinitionSha256": "f0b8aa03e6d0c7d28a004b12a923147e70df153a4c79df5cef55d99c917e7d60",
+    "category": "business-data",
+    "lead": "ServiceCase 与资料许可原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 216,
+    "title": "[VPJ-26] 中英现场表达与大字展示",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "旅途中展示可信中英表达与大字卡",
+    "deltaAndReuse": "复用原生卡片和文本能力；补实际来源/语言/失败处理，媒体能力单独验证",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-16"
+      ]
+    },
+    "beforeSha256": "bd55332b61be0052340cd71956d5a5d9d1d8bee8ef02966a04aca2cdc8f688f2",
+    "afterSha256": "4c1361407f0a35eb9551780ec29fed74cf6e87373190ffa9ccb7dddb7780c4cd",
+    "taskDefinitionSha256": "2b64fe4b45de4d8b89857d2d6ae88cab3731500346ea5e5e6a899eae4b25bf6d"
+  },
+  {
+    "number": 212,
+    "title": "[VPJ-22] 酒店官方出口、参数落地与联盟归因验证",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "酒店需求通过可信官方出口交接",
+    "deltaAndReuse": "复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
+    },
+    "beforeSha256": "bf2a6731914538a56bd7ab2a8eed3321f35960e3a39e9fb9fc25e90f249cdd57",
+    "afterSha256": "1966de3f47c23e83ed8f98e3570e32cbd23cc72cbe83c67aea04a257b8421097",
+    "taskDefinitionSha256": "c8e8b1fcb32146aa5ec74ed2cc2d46b2c658dde6216a7aeba8bb97378e4c1ea5",
+    "category": "business-data",
+    "lead": "iOS 酒店交接原 owner（与 Web consumer owner 协作）",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
+  },
+  {
+    "number": 210,
+    "title": "[VPJ-20] 全局探索中的地点发现、保存和交给VP",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "用户发现保存地点并交给 VP",
+    "deltaAndReuse": "复用 Explore/地点/目标入口；补真实成果交接，不改 Trip 确认路径",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-09",
+        "VPJ-15",
+        "VPJ-19"
+      ]
+    },
+    "beforeSha256": "d6eb11d435032d61913183e5645bc4dfabf2997e865ceebb1bb5379b4d17dde0",
+    "afterSha256": "415e71938b6895605f80fe29befdad97b50eb439924db701fe7a4e7d5603093a",
+    "taskDefinitionSha256": "349c0d8d5a2ec055589fdff2fcee22b58024ef550e7cd7776ac7d161f79e649c"
+  },
+  {
+    "number": 209,
+    "title": "[VPJ-19] 地点消歧、地图展示与路线出口",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "地点消歧地图和路线出口保持一致",
+    "deltaAndReuse": "复用地图接口和 #363/#364；补准确实体/坐标/导航证据，provider 资格归 #208",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-18"
+      ]
+    },
+    "beforeSha256": "0bddcc5dc5dfbf43c81c927aa5ea626001ab587bebc976c1bdcd3c0f1aed30c9",
+    "afterSha256": "922808c89776fc04a65493b94d016d50eef72bad78ebb427d2b88e87bc92c85b",
+    "taskDefinitionSha256": "664cca6fb13f177620339bdbcea10d2ac6868e276692269e296e278a46272f2f"
+  },
+  {
+    "number": 208,
+    "title": "[VPJ-18] 高德主选与腾讯补充的实测、用途与成本边界",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "高德主选腾讯补充具有用途与成本证据",
+    "deltaAndReuse": "复用既有供应商适配和 #367；补真实输入和许可范围，不额外采购",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
+    },
+    "beforeSha256": "66c9588d8e81d2ea8a186a84731246d3ee6427bee5468648f1b66302ad31f01e",
+    "afterSha256": "fe81553456cf82a49c90ef393778f01ff5aa817eaa9313861020faa20d8bb9cf",
+    "taskDefinitionSha256": "bf01cd8c9f759abe5070bd107c92dcb4244bc44b6fb72a926ae43121738d0f1a"
+  },
+  {
+    "number": 206,
+    "title": "[VPJ-16] 有依据的回答、诚实部分答案与知识缺口",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "回答有依据且诚实显示部分答案和缺口",
+    "deltaAndReuse": "复用 evidence/eligibility/receipt；补当前 consumer 的真实引用与拒绝，文本成功不等于知识合格",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-15"
+      ]
+    },
+    "beforeSha256": "81ff60f2f024db6da8cf81fb5f3a6440bc3cd61020932ee6088dcb22b4e5732f",
+    "afterSha256": "d0b0f82453cacdbc2141d25918ab2725806571ce50184b44ae71cd8dc572c7d4",
+    "taskDefinitionSha256": "c49eac19071e88bb1f201b99f2a065c4ef8c7f396829b33df7e67bd0b51ccf9f"
+  },
+  {
+    "number": 205,
+    "title": "[VPJ-15] 首批旅程内容从来源登记到已审核可用",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "旅程内容从登记来源到审核可用",
+    "deltaAndReuse": "复用来源和编辑审核工具；补真实来源权利、定位和发布收据，保留作者审核分离",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-14"
+      ]
+    },
+    "beforeSha256": "86e1ede5ec67e9ee6df99361d62429efc1f1ad1dbf783be562ccc9a09aa9d53f",
+    "afterSha256": "459e7d2847e2a4a13571345ed652025d1191da17ec1592fe685bbc9b3feed296",
+    "taskDefinitionSha256": "870f41bdd07c8afaa9a2a64ce9e1a8c06462726b788ad1c45382027305b9c01c"
+  },
+  {
+    "number": 203,
+    "title": "[VPJ-13] VP首访、委托与回访的连续体验",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "首访委托与回访继续同一目标",
+    "deltaAndReuse": "复用 VPJ77 四 Tab 与 JourneyEntry；保留 E2 生命周期安全暂停，真实回访缺口不前置为全部 QA 阻塞",
+    "dependencies": {
+      "blockedBy": [
+        "VPJ-62"
+      ],
+      "acceptanceDependencies": [
+        "VPJ-09",
+        "VPJ-11",
+        "VPJ-12"
+      ]
+    },
+    "beforeSha256": "f11347fdc4163c6285db8e4c30519ec6299802f9e3b7d6459874983c75e41ceb",
+    "afterSha256": "1ccbc19d4b53c850b8582a2bbcfc718e55323ffb2267395c7128a191d9c95ba4",
+    "taskDefinitionSha256": "31ec3506c726757ffc4cceba77ca2bbb13c9d3027f13b29c21dc94a4970e8671"
+  },
+  {
+    "number": 201,
+    "title": "[VPJ-12] 单张旅行截图导入、校正与加入 Trip",
+    "engineeringOwner": "iOS",
+    "priority": "P1",
+    "userOutcome": "单张旅行截图经校正加入 Trip",
+    "deltaAndReuse": "复用单图解析审阅及 #507；补许可内材料与确认链，不重做已否决 Docling",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-01",
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-07",
+        "VPJ-60"
+      ]
+    },
+    "beforeSha256": "ff33767055bdc462eea76b597369de01d95e91d33e524b091174524614d1beda",
+    "afterSha256": "282fe6e8862585d89fb27aa642373c5e3e5c1a307d40fc3bcda3401a10ffca26",
+    "taskDefinitionSha256": "e006551904422b0eb38d0165c99ff0c3037b71c7dac9bac80ece9d3d8f7fce06"
+  },
+  {
+    "number": 200,
+    "title": "[VPJ-60] 图片和语音 Provider 的中英质量与数据流验收",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "图片语音 provider 中英数据流可验收",
+    "deltaAndReuse": "复用 C0 适配器；保留 DeepSeek HTTP400 与真实 Qwen UNRUN，文本资格不代媒体资格",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-06"
+      ]
+    },
+    "beforeSha256": "700ca601e5d3a44c3e4fc80c6cbe3da7c554c4b85595aa1b6c6e1ea1c559a77f",
+    "afterSha256": "76f9ab91b55cee53ca8d47f1cd0b460f1c1f4e45d8ce0cbcfca77038b23870b2",
+    "taskDefinitionSha256": "842f06de33472b8870b5f7545bef4666e8664bba5c6039d08a28be4b2fbf700d"
+  },
+  {
+    "number": 199,
+    "title": "[VPJ-11] 可见Memory与真实偏好消费、纠正和遗忘",
+    "engineeringOwner": "shared",
+    "priority": "P1",
+    "userOutcome": "显式 Memory 影响结果且可纠正遗忘",
+    "deltaAndReuse": "复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-05",
+        "VPJ-07"
+      ]
+    },
+    "beforeSha256": "81cfea288ff5524104333ec251f22ab8e04e0605e544284a2e289a029be7a8ff",
+    "afterSha256": "bdeb197033be76dfd7c2871b75bc4eaac97a858a03014d72e68aabeb90300bdf",
+    "taskDefinitionSha256": "9cf979a346d6ee08de84d5f53f8fd85044c0acb53cf7cf857148a51d84160398",
+    "category": "business-data",
+    "lead": "Profile/Memory 原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  },
+  {
+    "number": 195,
+    "title": "[VPJ-07] 真实文本与持久任务执行基础",
+    "engineeringOwner": "Agent",
+    "priority": "P1",
+    "userOutcome": "持久文本任务执行并可恢复",
+    "deltaAndReuse": "复用完成文本纵切、hosted queue 和 worker；补剩余真实执行/恢复，QAWEB 是消费者不另建执行系统",
+    "dependencies": {
+      "blockedBy": [],
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-06",
+        "VPJ-59"
+      ]
+    },
+    "beforeSha256": "6ac5ecaa23480b0b38071d53967180e0a2d6b9225ab52c41fa4a7824a77465ed",
+    "afterSha256": "27f3057f854e18a50845669589409fdbc5427cfe484ab5a1b0e19b64a3c3f0c6",
+    "taskDefinitionSha256": "6c329ffb22d334b9ba1c873909def6b32735fc31da245e3077fc1d83bd4504e4"
+  },
+  {
+    "number": 187,
+    "title": "[VPJ-00] VisePanda 一站式 Journey Agent 全项目统筹与交付 Program",
+    "engineeringOwner": "shared",
+    "priority": "P0",
+    "userOutcome": "统筹三工程与首个真实可体验交付",
+    "deltaAndReuse": "保留全部历史成果；先方向/文档/开放票重排，再由唯一 Main 接续真实 ready 前沿",
+    "dependencies": {
+      "retainedInOriginalBody": true
+    },
+    "beforeSha256": "955535db1924352f270fd5166fb9ca207315f27032b672f94e5613151b22a2e9",
+    "afterSha256": "2a3670f867d32b2187509ea1a9c92d90ffb08bd74afc2bb4b82622d2769cb42a",
+    "category": "product-operations",
+    "lead": "唯一 Main 统筹，产品取舍沿 BestJ/CoolJ/JT 原职责",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
+  }
+]

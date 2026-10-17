@@ -1,0 +1,11 @@
+test_every_override_presence_rejects_before_any_gate_or_claim (__main__.QaGateCompatibility) ... ok
+test_no_override_preserves_unconfigured_before_input_rejection (__main__.QaGateCompatibility) ... ok
+test_old_lock_configuration_is_not_accepted (__main__.QaGateCompatibility) ... ok
+test_original_gate_receives_scoped_hash_and_original_budget (__main__.QaGateCompatibility) ... ok
+test_rebound_sources_pass_with_only_fake_runtime_preflight (__main__.QaGateCompatibility) ... ok
+test_upstream_gate_byte_pin_is_exact_qa177 (__main__.QaGateCompatibility) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.006s
+
+OK

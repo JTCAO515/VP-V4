@@ -1,0 +1,2 @@
+RED: exact QA177 combination rejects old source lock: TYPED_SOURCE_PIN_CONFLICT
+RED: old typed entry delegates with Docker override before its late Plan guard; gate mocked, zero private IO/claims/Docker calls

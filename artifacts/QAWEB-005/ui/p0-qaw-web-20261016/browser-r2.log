@@ -1,0 +1,84 @@
+(node:27262) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:27278) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:27286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27286) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:27286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px (174ms)
+(node:27304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27304) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:27304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 390px (153ms)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px
+
+    Error: expect.toContainText: Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert">…</div> aka getByText('The request could not be completed. Check the original request status.Reload')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+      829 |   await page.setViewportSize({width,height:900});const seen=[];
+      830 |   await fixture(page,context,async(route,{method})=>{seen.push(method);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;},{ready:false,select:false});
+    > 831 |   await expect(page.getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
+          |                                         ^
+      832 |   await expect(page.getByRole('log')).not.toContainText('Saved answer');await page.getByRole('button',{name:'Reload',exact:true}).click();
+      833 |   await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('alert')).toContainText('The request could not be completed.');expect(seen.every(method=>method==='GET')).toBe(true);
+      834 |  });
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:831:41
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-46413-or-automatic-POST-at-1440px/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-46413-or-automatic-POST-at-1440px/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-46413-or-automatic-POST-at-1440px/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 390px
+
+    Error: expect.toContainText: Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert">…</div> aka getByText('The request could not be completed. Check the original request status.Reload')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+      829 |   await page.setViewportSize({width,height:900});const seen=[];
+      830 |   await fixture(page,context,async(route,{method})=>{seen.push(method);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;},{ready:false,select:false});
+    > 831 |   await expect(page.getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByLabel('Message',{exact:true})).toBeDisabled();
+          |                                         ^
+      832 |   await expect(page.getByRole('log')).not.toContainText('Saved answer');await page.getByRole('button',{name:'Reload',exact:true}).click();
+      833 |   await expect.poll(()=>seen.length).toBeGreaterThanOrEqual(4);await expect(page.getByRole('alert')).toContainText('The request could not be completed.');expect(seen.every(method=>method==='GET')).toBe(true);
+      834 |  });
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-qaw-web-20261016/tests/e2e/qa-agent-ui/workspace.spec.mjs:831:41
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-fc35a--or-automatic-POST-at-390px/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-fc35a--or-automatic-POST-at-390px/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-P0-unavailable50-fc35a--or-automatic-POST-at-390px/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 1440px
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:3318:3 › P0 unavailable503 shows recovery without an answer or automatic POST at 390px

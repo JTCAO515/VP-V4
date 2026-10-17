@@ -1,0 +1,20 @@
+{
+  "schema": "ios-nativeqa-canary/1",
+  "product_revision": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "project_ref": "dzqdzetcctkhbrhlxxgn",
+  "native_environment": "staging",
+  "origin": null,
+  "actor_subject": null,
+  "policy_id": null,
+  "notice_hash": null,
+  "budget_scope_id": null,
+  "maximum_questions": 1,
+  "maximum_cost_micros": null,
+  "not_before": null,
+  "expires_at": null,
+  "resource_udid": null,
+  "authorization_reference": null,
+  "run_id": null,
+  "bundle_identifier": "space.go2china.VisePanda",
+  "question_utf8_sha256": null
+}

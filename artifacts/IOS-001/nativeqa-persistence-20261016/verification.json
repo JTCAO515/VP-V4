@@ -1,0 +1,25 @@
+{
+  "synthetic": true,
+  "exitCode": 0,
+  "arguments": [
+    "--filter",
+    "journalDataCompanionUsesSameAddressForEveryOperation|retainPhysicallyReadsBeforeReturningAndIsIdempotent|eraseCorruptCustodyChecksScopeAndFixedKeyAndAbsence|explicitCleanupAfterLogoutNeedsIndependentAuthority"
+  ],
+  "log": "swift-test-affected.log",
+  "sourceHashes": {
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "e42862ebf8b65e93d5f1f6d2a3649b140125989220e126b4f227b2a103548c44",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQAPersistence/NativeQAPendingJournal.swift": "f60879adbc7b84fe00e9672466af32e5c2024659035c15123bdb1f614bebd883",
+    "ios/VisePanda/VisePandaTests/NativeQAPendingJournalTests.swift": "cfcc408d66de42768bb638146eb8e5e3faff363b2b6b2630fecdd8b3a411c4d1"
+  },
+  "extractedPrimitivesSHA256": "d9e7c425ef2574e51e87fb21e1d7270938110ab25af86380ca2b7daad509ab98",
+  "unrun": [
+    "real Keychain IO",
+    "iOS app/PBX integration",
+    "target/provider/auth",
+    "device"
+  ],
+  "sourceCommit": "8791a727a7abbd3e49d981aafa190eb0b9804d45",
+  "affectedSwiftTestingFunctions": 4,
+  "priorUnchangedEvidence": "baseline-verification.json + swift-test.log (20 functions at 61dac653)",
+  "result": "PASS"
+}

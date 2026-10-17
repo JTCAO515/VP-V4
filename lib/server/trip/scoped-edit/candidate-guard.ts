@@ -74,6 +74,7 @@ export function manualScopedPatch(base: TripSnapshot, edit: ManualEdit, constrai
     if (edit.kind === "move_item") {
       if (!base.days.some(d => d.id === edit.toDayId) || edit.toDayId === item!.dayId) fail("INVALID_DESTINATION");
       operations.push({ kind: "delete_item", itemId: item!.id, dayId: item!.dayId }, { kind: "upsert_item", itemId: item!.id, dayId: edit.toDayId, title: item!.title, ...(item!.startsAt ? { startsAt: item!.startsAt } : {}), ...(item!.endsAt ? { endsAt: item!.endsAt } : {}) });
+      if (item!.chineseAddress) operations.push({ kind: "set_item_chinese_address", dayId: edit.toDayId, itemId: item!.id, text: item!.chineseAddress.text });
     } else operations.push({ kind: "upsert_item", itemId: item!.id, dayId: item!.dayId, title: item!.title, ...(edit.startsAt !== null ? { startsAt: edit.startsAt } : {}), ...(edit.endsAt !== null ? { endsAt: edit.endsAt } : {}) });
   }
   const patch = { expectedVersion: base.version, operations };

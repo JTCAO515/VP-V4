@@ -1,0 +1,523 @@
+{
+  "functions": [
+    {
+      "original": "conversation_data_private.input_v1(jsonb,text,boolean)",
+      "before": "ed74b32f750028f44c9d8425f012031f2c51763e8b543f9eddc6f29a788adea9",
+      "newFunction": "turn_private.trip_privacy_c_input_v1",
+      "after": "e5c6a74a50c0286b6a88f79fa914b1e21a9e36b127e65325678d1b56ef7428d7"
+    },
+    {
+      "original": "conversation_data_private.zero_counts_v1(text)",
+      "before": "cd1ba99b4bad1f1f5b8bac1de24e2a87a9e6a462d06a8107454de2cfa85de67f",
+      "newFunction": "turn_private.trip_privacy_c_zero_counts_v1",
+      "after": "7ee376967c765ed61e83f45aee21205c63deca3345baac4fc19e459b820bb5c5"
+    },
+    {
+      "original": "conversation_data_private.source_v1(uuid,text,uuid)",
+      "before": "8f002fe25c4984f48cd0e4cbda27a4dc8acacad60a84432bc4b3407b269ef737",
+      "newFunction": "turn_private.trip_privacy_c_source_v1",
+      "after": "c1408c268c42f91f43f7ad1b74794785b3518312da573fcd5fc7dedf379dab61"
+    },
+    {
+      "original": "conversation_data_private.lock_source_v1(uuid,jsonb)",
+      "before": "1adde2d4411d621e5e4f96f26e4049e9dbe281f48920340ca5d7618ecc11429d",
+      "newFunction": "turn_private.trip_privacy_c_lock_source_v1",
+      "after": "80c1e50bc27350bd5f7571f04f5b1d4757be7a8142ec468a5f781edb8940f6cb"
+    },
+    {
+      "original": "conversation_data_private.erase_source_v1(uuid,jsonb)",
+      "before": "9a55ad875a988dd32ee49acd8032adf1c415b20c609d091ba630f4e5db48bb21",
+      "newFunction": "turn_private.trip_privacy_c_erase_source_v1",
+      "after": "b59a83e58963df635f79ea701677eb641af7fa3abce80aa747242f6e62f39e8a"
+    },
+    {
+      "original": "conversation_data_private.binding_v1(conversation_data_private.operations_v1)",
+      "before": "3a32edc0ddd0d6e8115f550085b4c001e644f3f4c5e1a0a37e7566f3d63d1872",
+      "newFunction": "turn_private.trip_privacy_c_binding_v1",
+      "after": "b4e68c59d62000570e8828f97b77023c973ef734dbc3e9e57a761b597b3171fd"
+    },
+    {
+      "original": "conversation_data_private.preview_v1(conversation_data_private.operations_v1)",
+      "before": "807c45b171e4c94ba1d691a5ece28292184cbc1b20be2e3a5d923217ef4ebb6d",
+      "newFunction": "turn_private.trip_privacy_c_preview_v1",
+      "after": "5cedf322ee5b91bccb9eb58b6d0179081e456d19db8359fb33d6dc6038da4fad"
+    },
+    {
+      "original": "conversation_data_private.receipt_v1(conversation_data_private.operations_v1)",
+      "before": "e6533b0cf050163b056b74a99853f87d5cb39ff1a55419752f9c2a43c0bc4541",
+      "newFunction": "turn_private.trip_privacy_c_receipt_v1",
+      "after": "552300cfb8a4de3dd2b75140a03e0d6c9ce057f18fd690d762ec98259c3721dd"
+    },
+    {
+      "original": "public.privacy_conversation_data_v1(text,text,bigint)",
+      "before": "d12be4b2514d9cbe49cb978c1e0499138bcf99c99ab495c73e5f50b292bb8e7d",
+      "newFunction": "turn_private.trip_privacy_c_api_v1",
+      "after": "c36c4eba59e39792404f86cbb8b8e7f2775fa9a0ab1689b2c260784454bba50a"
+    },
+    {
+      "original": "turn_data_private.zero_counts_v1(text)",
+      "before": "3a63c325ab99c6fc41673f0b0076d49e9427f7c1cc3f4b6c994cf315a92e2a30",
+      "newFunction": "turn_private.trip_privacy_t_zero_counts_v1",
+      "after": "af569cc7138504274eee2e9d3afd9e6b9fc91afba17f91424adca2f973eb36c3"
+    },
+    {
+      "original": "turn_data_private.graph_source_v1(uuid,uuid)",
+      "before": "62ebeff358c9d9c4b374254c20e8065ed2b96d3c4b2a0f80d23d69db4f2b23dd",
+      "newFunction": "turn_private.trip_privacy_t_graph_source_v1",
+      "after": "3d0353c7d03f6a6d454c9313a1d49ae1881f2331ce3ba2acea7a12ad72a2bb1d"
+    },
+    {
+      "original": "turn_data_private.source_v1(uuid,uuid)",
+      "before": "bede26d0bcf75e37d6d46ee1add4ac22108febacc2e37224d5769d1358a014f2",
+      "newFunction": "turn_private.trip_privacy_t_source_v1",
+      "after": "f30294d3babf1fbb9c871a6b2dc6b6ef8261bee8ebabbbffba7cf2f7111fe6f9"
+    },
+    {
+      "original": "turn_data_private.binding_v1(turn_data_private.operations_v1)",
+      "before": "b964d829a819ffa992c113a1b8834da618e10c39e9860f7ccec41a2c84495139",
+      "newFunction": "turn_private.trip_privacy_t_binding_v1",
+      "after": "941f7faa8f1901752921cb3d02465b4caf9967605c62e7826e5f49ae880cae31"
+    },
+    {
+      "original": "turn_data_private.preview_v1(turn_data_private.operations_v1)",
+      "before": "88458c5deb38f093f915e98bbf3e83abc165627830b363133ed09388cb13276f",
+      "newFunction": "turn_private.trip_privacy_t_preview_v1",
+      "after": "036af124420f9323dcf06411bb61f145f9fcd6c1a8d971d351d8452a5ad84b9e"
+    },
+    {
+      "original": "turn_data_private.receipt_v1(turn_data_private.operations_v1)",
+      "before": "e210adc36160b3b1ea797871ddfbe7791223d18fd1f309b46708c8a725e9bfed",
+      "newFunction": "turn_private.trip_privacy_t_receipt_v1",
+      "after": "027254463fd070aa3e043bcc701f29b4e831862d5e208ffd531883700fa3cc64"
+    },
+    {
+      "original": "turn_data_private.input_v1(jsonb,text,boolean)",
+      "before": "16427918a455f5643d0277b7f9a9a0e810315a826811a30500da66b484bb8e38",
+      "newFunction": "turn_private.trip_privacy_t_input_v1",
+      "after": "99170d42480e6b0ab38189cfacf3e7b6c8ee9c2566a2b9457245f7609c443cfb"
+    },
+    {
+      "original": "turn_data_private.lock_source_v1(uuid,jsonb)",
+      "before": "7824c13733f10b2a6b0f8efe9953e71c765a35f1e83b6e7680ad206a21515892",
+      "newFunction": "turn_private.trip_privacy_t_lock_source_v1",
+      "after": "30a34dabf84c743fa94b723e8d229ef4b137a3b93537374d72541e488c3f0c5a"
+    },
+    {
+      "original": "turn_data_private.erase_source_v1(uuid,jsonb)",
+      "before": "2ff0c07b0276ac8cd5f73682262374b0ea310fde7fb18e74e7721e5dced4effd",
+      "newFunction": "turn_private.trip_privacy_t_erase_source_v1",
+      "after": "cbc85d8213a3c2f2f9d25cd8f9d56daa2f7d072b3ec720ba7333e104351d5475"
+    },
+    {
+      "original": "public.privacy_turn_data_v1(text,text,bigint)",
+      "before": "ce159b71757dcd2ebfd224425111866048a572bff0a49c76e0e0a7fedb5389aa",
+      "newFunction": "turn_private.trip_privacy_t_api_v1",
+      "after": "3755afa756fe8b07ab06fe91cbac93d734c21a95923dd5da82e35b076a215173"
+    },
+    {
+      "original": "turn_data_private.export_source_v1(uuid)",
+      "before": "95fe4f39bf662c84a008181442bf05c8df0232ebf643c360dc58b11410151e78",
+      "newFunction": "turn_private.trip_privacy_t_export_source_v1",
+      "after": "e5fd3397e147bd41d65a7ddc2bc388f46688386eac36ffa3435ef0aa359a0acc"
+    },
+    {
+      "original": "public.privacy_conversation_data_v1(text,text,bigint)",
+      "before": "d12be4b2514d9cbe49cb978c1e0499138bcf99c99ab495c73e5f50b292bb8e7d",
+      "after": "08911b36b9b2b697137340ce703e0f7f34123fa0d3f2d4ffcc207969238e1f38",
+      "legacyOnlyTripRecordRefusal": true
+    },
+    {
+      "original": "public.privacy_turn_data_v1(text,text,bigint)",
+      "before": "ce159b71757dcd2ebfd224425111866048a572bff0a49c76e0e0a7fedb5389aa",
+      "after": "fcce2e5d1fd62ff7b8df12d9b802ab6e544970218db7d44b7de7f6852178b506",
+      "legacyOnlyTripRecordRefusal": true
+    },
+    {
+      "original": "turn_data_private.export_source_v1(uuid)",
+      "before": "95fe4f39bf662c84a008181442bf05c8df0232ebf643c360dc58b11410151e78",
+      "after": "672ca50f4665b4e5c0d3042b5bbcf466014e003c624337b59836c9a9916a1122",
+      "legacyOnlyTripRecordRefusal": true,
+      "tripOnlyExportDispatch": true
+    },
+    {
+      "original": "export_private.core_turn_page_v1(jsonb)",
+      "before": "04e0b4a8d5d1a9fa6416b8a71884e550a84d86ca43e1dee8b36097ab1a5ff199",
+      "after": "9638fd1974c989dc6ea0b33b96418bd98ee2e60b2b603afcfdaedb668a79c93c",
+      "legacyOnlyTripRecordRefusal": true,
+      "tripOnlyExportPageVersion": true
+    }
+  ],
+  "extraSources": [
+    {
+      "relation": "scoped_edit_private.contexts_v1",
+      "countKey": "tripContexts",
+      "effect": "erase",
+      "pk": [
+        "id"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "trip_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "base_version",
+          "type": "integer",
+          "notNull": true
+        },
+        {
+          "name": "input",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "snapshot",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "actor_basis",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "source_basis",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "locked_ids",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "fixed_ids",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "digest",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "notNull": true
+        }
+      ],
+      "hasOwner": true,
+      "tripOnly": true
+    },
+    {
+      "relation": "scoped_edit_private.work_v1",
+      "countKey": "tripWork",
+      "effect": "erase",
+      "pk": [
+        "turn_id"
+      ],
+      "columns": [
+        {
+          "name": "turn_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "trip_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "task_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "operation_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "context_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "policy_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "scope_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "attempt_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "binding",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "output",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "usage",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "actual_micros",
+          "type": "bigint",
+          "notNull": false
+        },
+        {
+          "name": "paused_reason",
+          "type": "text",
+          "notNull": false
+        },
+        {
+          "name": "completion",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "candidate_id",
+          "type": "uuid",
+          "notNull": false
+        },
+        {
+          "name": "candidate_patch",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "known_usage",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "known_actual_micros",
+          "type": "bigint",
+          "notNull": false
+        },
+        {
+          "name": "known_outcome",
+          "type": "text",
+          "notNull": false
+        }
+      ],
+      "hasOwner": true,
+      "tripOnly": true
+    },
+    {
+      "relation": "scoped_edit_private.requests_v1",
+      "countKey": "tripRequests",
+      "effect": "erase",
+      "pk": [
+        "turn_id"
+      ],
+      "columns": [
+        {
+          "name": "turn_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "trip_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "binding",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "request_id",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "request_digest",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "payload_digest",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "destination",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true
+        }
+      ],
+      "hasOwner": true,
+      "tripOnly": true
+    },
+    {
+      "relation": "scoped_edit_private.operations_v1",
+      "countKey": "tripOperations",
+      "effect": "erase",
+      "pk": [
+        "owner_id",
+        "operation_id"
+      ],
+      "columns": [
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "operation_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "trip_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "mutation",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "digest",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "actor_basis",
+          "type": "jsonb",
+          "notNull": true
+        },
+        {
+          "name": "context_id",
+          "type": "uuid",
+          "notNull": false
+        },
+        {
+          "name": "receipt",
+          "type": "jsonb",
+          "notNull": false
+        },
+        {
+          "name": "cancelled",
+          "type": "boolean",
+          "notNull": true
+        },
+        {
+          "name": "proposal_id",
+          "type": "uuid",
+          "notNull": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true
+        }
+      ],
+      "hasOwner": true,
+      "tripOnly": true
+    },
+    {
+      "relation": "scoped_edit_private.lineage_v1",
+      "countKey": "tripLineage",
+      "effect": "erase",
+      "pk": [
+        "proposal_id"
+      ],
+      "columns": [
+        {
+          "name": "proposal_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "trip_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "operation_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "context_id",
+          "type": "uuid",
+          "notNull": true
+        },
+        {
+          "name": "proposal_digest",
+          "type": "text",
+          "notNull": true
+        },
+        {
+          "name": "proposal_revision",
+          "type": "integer",
+          "notNull": true
+        },
+        {
+          "name": "base_version",
+          "type": "integer",
+          "notNull": true
+        },
+        {
+          "name": "patch",
+          "type": "jsonb",
+          "notNull": true
+        }
+      ],
+      "hasOwner": true,
+      "tripOnly": true
+    }
+  ]
+}

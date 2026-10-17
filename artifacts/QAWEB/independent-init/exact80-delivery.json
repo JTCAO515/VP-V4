@@ -1,0 +1,23 @@
+{
+  "status": "CODE_PREPARED_TARGET_UNRUN",
+  "base": "fcaade5a1d39cdfaacfbad9a5486e94220575247",
+  "humanScopeRecordSha256": "5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c",
+  "cliObservedVersion": "2.117.0",
+  "officialInterface": "supabase db query --project-ref --file",
+  "actualTargetTransport": "UNRUN",
+  "actualRealDataRestoreAndReplayEvidence": "PENDING_MAIN_CONTROLLED_INPUT",
+  "proof": "proof-1791894531713.json",
+  "proofChecks": 8,
+  "contractTests": {
+    "pass": 12,
+    "fail": 0,
+    "skip": 0
+  },
+  "targetWriter": "Main only",
+  "sources": {
+    "scripts/qa-agent-independent-init/exact80.mjs": "bcb2a4429da078fc0f9ed6c816110897349f6fc8e1ead7c82964b9340d622764",
+    "scripts/qa-agent-independent-init/prepare-exact80.mjs": "a4bcb0e264162189e1a27ebd60b61f333a4a7f539f8df203d89f548c8274d84d",
+    "scripts/qa-agent-independent-init/prove-exact80-pg.mjs": "fbf8889bd7f14beff869f6c4bb2f37d50d108b17db4544e0b677d96557c88e6f",
+    "tests/contract/qa-agent-independent-init/exact80.test.mjs": "90c89f02270d21e911bca06ec4d6d05ff2e9cb155080ad9a15c84473bf97ec81"
+  }
+}

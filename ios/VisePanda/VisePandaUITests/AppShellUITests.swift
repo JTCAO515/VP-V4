@@ -129,6 +129,12 @@ final class AppShellUITests: XCTestCase {
         fallback.buttons["shell.entry.done"].tap()
         fallback.buttons["shell.entries.open"].tap()
         fallback.buttons["shell.entry.memory"].tap()
+        XCTAssertTrue(fallback.navigationBars["Memory"].waitForExistence(timeout: 3))
+        let savedPace = fallback.buttons["Saved travel pace"]
+        XCTAssertTrue(savedPace.waitForExistence(timeout: 3))
+        if !savedPace.isHittable { fallback.swipeUp() }
+        XCTAssertTrue(savedPace.isHittable)
+        savedPace.tap()
         XCTAssertTrue(fallback.navigationBars["Saved travel pace"].waitForExistence(timeout: 3))
     }
 
@@ -341,6 +347,7 @@ final class AppShellUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = [
+            "-VisePandaLegacyShell",
             "-VisePandaLocale", locale,
             "-AppleLanguages", "(\(locale))",
             "-AppleLocale", locale == "zh-Hans" ? "zh_CN" : "en_US"

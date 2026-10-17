@@ -1,0 +1,52 @@
+{
+  "reviewedSource": "c5a8f3c1",
+  "failedCIHead": "655f1cd1",
+  "ownerBefore": "5e1c3aa9d4d9951b27bc9a65b4d368251c443746",
+  "path": "tests/security/turn/hosted-text-worker.test.mjs",
+  "beforeSha256": "9f0074ea2b6d24be47840305c8a01a1bd3783aff79572404a11f780337006f4f",
+  "afterSha256": "6ff3a6209973f0475b8df2eb51abd9f49a6e5973ce157498061346bcb9379c07",
+  "productionSourceChanged": false,
+  "ciObserved": {
+    "exitCode": 1,
+    "durationMs": 5115.852638,
+    "childStderrAvailable": false
+  },
+  "diagnosis": {
+    "controlledReproduction": "Own occupied loopback port produces EADDRINUSE and actual CLI exit1; proves fixture liveness can fail independently of secret-key headers.",
+    "ciCauseConfirmed": false,
+    "fix": "Verify actual child heartbeat request via private IPC receipt; do not depend on an unrelated random health port.",
+    "deadlineMs": 5000,
+    "noTimeoutIncrease": true
+  },
+  "assertions": [
+    "case-insensitive absence of Authorization",
+    "exact synthetic apikey",
+    "fixed heartbeat URL",
+    "manual redirect/omit credentials",
+    "body excludes synthetic key",
+    "stdout/stderr/private journal exclude synthetic key",
+    "IPC emitted only after request assertions",
+    "independent health contract and conflict failure preserved"
+  ],
+  "checks": {
+    "affectedFile": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "finalHeaderAndParallelDelta": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    "syntax": "PASS",
+    "diffWhitespace": "PASS"
+  },
+  "runtime": "local real Node child processes; three simultaneous header fixtures",
+  "limitations": [
+    "CI log cannot identify the unique original cause",
+    "remote Quality status is UNRUN until Main integrates",
+    "no target, actual key, provider spend or Docker action"
+  ],
+  "reportToMain": "automatic approval rejected cross-chat update; no alternate/indirect message used"
+}

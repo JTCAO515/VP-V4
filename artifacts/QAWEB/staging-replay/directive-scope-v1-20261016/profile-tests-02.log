@@ -1,0 +1,20 @@
+test_actor_room_id_text_null_and_raw_hop_tampering_rejected (__main__.ActualSources) ... ok
+test_real_source_is_truthfully_projected_without_private_actor_output (__main__.ActualSources) ... ok
+test_fake_native_name_is_not_a_semantic_projection (__main__.StaticRejection) ... ok
+test_legacy_90d_binding_unchanged (__main__.StaticRejection) ... ok
+test_missing_unknown_profile_never_reads_private_or_claims (__main__.StaticRejection) ... ok
+test_actor_room_id_text_null_and_raw_hop_tampering_rejected (__main__.SyntheticGate) ... ok
+test_bad_profile_material_source_image_count_rejects_before_operator_reads (__main__.SyntheticGate) ... ok
+test_entry_qualified_hash_binds_real_profile_and_keeps_original_budget (__main__.SyntheticGate) ... ok
+test_existing_used_slot_is_not_reset (__main__.SyntheticGate) ... ok
+test_fake_context_old90d_and_null_rewrite_cannot_qualify (__main__.SyntheticGate) ... ok
+test_real_source_is_truthfully_projected_without_private_actor_output (__main__.SyntheticGate) ... ok
+test_same_authorization_cannot_start_another_window_and_marker_persists (__main__.SyntheticGate) ... ok
+test_second_attempt_still_requires_real_causal_repair (__main__.SyntheticGate) ... ok
+test_unknown_cleanup_keeps_original_active_guard (__main__.SyntheticGate) ... ok
+test_valid_profile_uses_unchanged_window_contract (__main__.SyntheticGate) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.086s
+
+OK
