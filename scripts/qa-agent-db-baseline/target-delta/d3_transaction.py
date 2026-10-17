@@ -31,9 +31,12 @@ class Profile:
  synthetic:bool=False
 def target_profile():
  x=json.loads(source('d2-cumulative-expected-metadata.json'))
- return Profile({'objects':x['beforeD0Objects'],'extra':x['beforeAdditionalMetadata']},{'objects':x['expectedAfterD0Objects'],'extra':x['expectedAfterAdditionalMetadata']})
+ # Observed read-only on the same fixed project; d3-work-shape.json/sql preserve provenance.
+ shape={'relnatts':10,'droppedSlots':[]}
+ return Profile({'objects':x['beforeD0Objects'],'extra':x['beforeAdditionalMetadata'],'workShape':shape},{'objects':x['expectedAfterD0Objects'],'extra':x['expectedAfterAdditionalMetadata'],'workShape':{'relnatts':11,'droppedSlots':[]}})
 def capture_sql():
- return "SELECT jsonb_build_object('objects',a.snapshot->'objects','extra',b.metadata-'readOnly') AS state FROM ("+catalog_query()+') a CROSS JOIN ('+extra_query()+') b'
+ shape="(SELECT jsonb_build_object('relnatts',c.relnatts,'droppedSlots',(SELECT coalesce(jsonb_agg(a.attnum ORDER BY a.attnum),'[]'::jsonb) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid AND a.attnum>0 AND a.attisdropped)) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='turn_private' AND c.relname='work')"
+ return "SELECT jsonb_build_object('objects',a.snapshot->'objects','extra',b.metadata-'readOnly','workShape',"+shape+") AS state FROM ("+catalog_query()+') a CROSS JOIN ('+extra_query()+') b'
 def timestamp(value):
  d=datetime.datetime.fromisoformat(value.replace('Z','+00:00'))
  if d.tzinfo is None:raise ValueError('UTC_OFFSET_REQUIRED')
@@ -48,7 +51,7 @@ def validate_scope(scope,synthetic=False):
  return scope
 def assertion(state,code):
  return "do $d3check$ declare observed jsonb; begin select q.state into observed from ("+capture_sql()+") q; if observed is distinct from "+lit(json.dumps(state,separators=(',',':')))+"::jsonb then raise exception using message='D3_SCOPED_METADATA_MISMATCH',errcode='"+code+"';end if;end $d3check$;\n"
-def compile_transaction(profile,mode,scope):
+def compile_transaction(profile,mode,scope,*,_body=None,_operation=None):
  if mode not in ('rollback','apply'):raise ValueError('INVALID_MODE')
  validate_scope(scope,profile.synthetic)
  role_check="current_user<>'postgres' or current_database()<>'postgres'" if not profile.synthetic else "current_user<>'postgres'"
@@ -65,19 +68,28 @@ end $d3gate$;
  end_gate="do $d3end$ begin if clock_timestamp()>="+lit(scope['window_end'])+"::timestamptz then raise exception using message='D3_EXECUTION_INTERVAL_CLOSED',errcode='P0302';end if;end $d3end$;\n"
  terminator='COMMIT;' if mode=='apply' else 'ROLLBACK;'
  expected=profile.after if mode=='apply' else profile.before
- receipt={'phase':'COMMIT_RETURNED' if mode=='apply' else 'ROLLBACK_RETURNED','run_id':scope['run_id'],'target':scope['target'],'candidate_sha256':digest(candidate())}
- return header+gate+locks+assertion(profile.before,'P0303')+candidate()+'\n'+assertion(profile.after,'P0304')+end_gate+terminator+'\n'+assertion(expected,'P0307')+'SELECT '+lit(json.dumps(receipt,separators=(',',':')))+'::jsonb AS execution_receipt;\n'
+ receipt={'phase':'COMMIT_RETURNED' if mode=='apply' else 'ROLLBACK_RETURNED','operation':_operation or mode,'run_id':scope['run_id'],'target':scope['target'],'candidate_sha256':digest(candidate())}
+ return header+gate+locks+assertion(profile.before,'P0303')+(_body if _body is not None else candidate())+'\n'+assertion(profile.after,'P0304')+end_gate+terminator+'\n'+assertion(expected,'P0307')+'SELECT '+lit(json.dumps(receipt,separators=(',',':')))+'::jsonb AS execution_receipt;\n'
+def compile_safe_stop(profile,scope):
+ import copy
+ stopped=copy.deepcopy(profile.after);before_names={o['name']:o for o in profile.before['objects']};sql=[]
+ for o in stopped['objects']:
+  if o['kind']!='function' or not o['definitions'] or before_names[o['name']]['definitions'] is not None:continue
+  d=o['definitions'][0];sql.append('revoke all on function '+o['name']+'('+d['signature']+') from public,anon,authenticated,service_role;')
+  d['acl']=[['postgres','postgres','EXECUTE',False]]
+ assert len(sql)==18
+ return compile_transaction(Profile(profile.after,stopped,profile.synthetic),'apply',scope,_body='\n'.join(sql),_operation='safe-stop'),stopped
 def inspect_sql(profile):
  before=lit(json.dumps(profile.before,separators=(',',':')));after=lit(json.dumps(profile.after,separators=(',',':')))
  return "BEGIN READ ONLY;\nSELECT jsonb_build_object('classification',case when q.state="+before+"::jsonb then 'BEFORE_OBSERVED' when q.state="+after+"::jsonb then 'AFTER_OBSERVED' else 'MIXED_OR_DRIFT' end,'readOnly',current_setting('transaction_read_only')) AS recovery FROM ("+capture_sql()+") q;\nROLLBACK;\n"
-def outcome(receipt,scope,observation=None):
+def outcome(receipt,scope,observation=None,expected_operation='apply'):
  # No command, retry, inverse migration, or write is returned by this classifier.
- valid=isinstance(receipt,dict) and receipt.get('phase')=='COMMIT_RETURNED' and receipt.get('run_id')==scope['run_id'] and receipt.get('target')==scope['target'] and receipt.get('candidate_sha256')==digest(candidate())
+ valid=isinstance(receipt,dict) and receipt.get('phase')=='COMMIT_RETURNED' and receipt.get('operation')==expected_operation and receipt.get('run_id')==scope['run_id'] and receipt.get('target')==scope['target'] and receipt.get('candidate_sha256')==digest(candidate())
  if valid:return {'state':'COMMIT_ACKNOWLEDGED','next':'authorized acceptance only','automaticWrite':False}
  known=observation if observation in ('BEFORE_OBSERVED','AFTER_OBSERVED','MIXED_OR_DRIFT') else 'OBSERVATION_FAILED'
  return {'state':'COMMIT_OUTCOME_UNKNOWN','observed':known,'next':'STOP; preserve request/receipt; read-only reconciliation and external writer review; no automatic retry or inverse','automaticWrite':False}
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('dry-run','inspect','rollback','apply'),default='dry-run');p.add_argument('--emit',action='store_true')
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('dry-run','inspect','rollback','apply','safe-stop'),default='dry-run');p.add_argument('--emit',action='store_true')
  for key in ('writer','approval-reference','concurrency-reference','window-start','window-end','run-id'):p.add_argument('--'+key)
  args=p.parse_args();profile=target_profile()
  if args.mode=='dry-run':
@@ -85,7 +97,7 @@ def main():
  if args.mode=='inspect':query=inspect_sql(profile);scope=None
  else:
   scope={'target':PROJECT,**{key:getattr(args,key) for key in ('writer','approval_reference','concurrency_reference','window_start','window_end','run_id')}}
-  try:query=compile_transaction(profile,args.mode,scope)
+  try:query=compile_safe_stop(profile,scope)[0] if args.mode=='safe-stop' else compile_transaction(profile,args.mode,scope)
   except (ValueError,TypeError) as e:p.error(str(e))
  request={'tool':'supabase.execute_sql','arguments':{'link_id':LINK,'project_id':PROJECT,'query':query},'mode':args.mode,'source':SOURCE,'scope':scope,'authorization':'External verified instruction required. This request/flag/reference does not grant permission. NOT SUBMITTED.'}
  if args.emit:
