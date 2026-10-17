@@ -5,10 +5,12 @@ HERE=Path(__file__).resolve().parent;sys.path.insert(0,str(HERE.parent))
 from run import Fixture,IMAGE,lit
 from propose import PIN,D0,OUT,ROOT,evidence,fixed,proposal,definition
 from d2_compat import legacy,grants,constraints
+from d2_worker_compat import sources as worker_sources,qa_claim_variant,work_mode_extension
 A='10000000-0000-4000-8000-000000000001';B='10000000-0000-4000-8000-000000000002';SA='20000000-0000-4000-8000-000000000001';SB='20000000-0000-4000-8000-000000000002';P='40000000-0000-4000-8000-000000000001';T='50000000-0000-4000-8000-000000000001';TASK='60000000-0000-4000-8000-000000000001'
 def main():
  f=Fixture();db='d2_compat';plan,ddl,target=proposal();old,trace=legacy();acl,matrix=grants(plan)
- report={'status':'FAIL','scope':'known legacy functions/constraints and synthetic admission; NOT target replica or worker acceptance','checks':[],'cleanup':'UNKNOWN','target':'UNRUN','provider':'UNRUN','workerDispatch':'UNRUN','sourceHashes':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [HERE/'d2_verify.py',HERE/'d2_compat.py',HERE/'propose.py']}}
+ qa_original,qa_variant,qa_variant_proof=qa_claim_variant();assert ddl.count(qa_original)==1;ddl=ddl.replace(qa_original,qa_variant)
+ report={'status':'FAIL','scope':'known legacy functions/constraints and synthetic admission/worker isolation; NOT target replica or dispatch acceptance','checks':[],'cleanup':'UNKNOWN','target':'UNRUN','provider':'UNRUN','workerDispatch':'UNRUN','sourceHashes':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [HERE/'d2_verify.py',HERE/'d2_compat.py',HERE/'d2_worker_compat.py',HERE/'propose.py']}}
  def sql(s,**kw):return f.sql(s,db,**kw)
  def mark(s):report['checks'].append({'name':s,'status':'PASS'})
  def native(action,payload=None,actor=A,session=SA,check=True):
@@ -25,6 +27,12 @@ def main():
   for n in ('assistant_messages','assistant_goals','assistant_conversations','service_task_capacity','service_task_capacity_settings'):sql('drop table turn_private.'+n+';')
   sql('alter table turn_private.work drop column execution_mode;alter table turn_private.service_tasks drop column capacity_enforced;alter table turn_private.grounded_turns drop column selected_place_request;')
   for n,s in old.items():sql(re.sub(r'^create function','create or replace function',s,flags=re.I))
+  worker_old,worker_patch,worker_proof=worker_sources()
+  for s in worker_old.values():sql(s)
+  sql('grant execute on function public.claim_turn_work() to service_role;revoke all on function public.claim_turn_work() from public,anon,authenticated;revoke all on function turn_private.task_history(uuid),turn_private.bound_task_history(),turn_private.lock_text_work(uuid,uuid) from public,anon,authenticated,service_role;create trigger bound_task_history before insert on turn_private.service_task_turns for each row execute function turn_private.bound_task_history();alter trigger baseline_require_task on turn_private.text_content rename to require_text_task;')
+  def worker_meta():return json.loads(sql("select jsonb_object_agg(n.nspname||'.'||p.proname,jsonb_build_object('bodyHash',encode(sha256(convert_to(p.prosrc,'UTF8')),'hex'),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl::text)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname,p.proname) in (('public','claim_turn_work'),('turn_private','lock_text_work'),('turn_private','bound_task_history'),('turn_private','task_history'));")[1])
+  worker_before=worker_meta()
+  for x in worker_proof:assert worker_before[x['name']]['bodyHash']==x['beforeBodyHash']
   sql('grant execute on function public.native_session_v2(text,uuid) to service_role;')
   for c in constraints():
    assert c['matchesD0']
@@ -55,12 +63,17 @@ def main():
   extension="alter table turn_private.text_policies drop constraint text_policies_context_mode_check;alter table turn_private.text_policies add constraint text_policies_context_mode_check check(context_mode in ('current_input_v1','task_history_v1','knowledge_intent_v1','qa_session_history_v1'));alter table turn_private.service_task_turns drop constraint service_task_turns_relationship_check;alter table turn_private.service_task_turns add constraint service_task_turns_relationship_check check(relationship in ('new_goal','clarification','repair','qa_followup','qa_correction'));"
   extension+=re.sub(r'^create function','create or replace function',definition(qa,'turn_private.require_text_task'),flags=re.I)
   extension+="create trigger qa_link_mode_v1 before insert or update on turn_private.service_task_turns for each row execute function turn_private.qa_link_mode_v1();"
-  before=cat();sql('begin;'+ddl+extension+acl+'rollback;');assert cat()==before and legacy_rows()==retained
+  extension+=work_mode_extension()
+  before=cat();sql('begin;'+ddl+extension+worker_patch+acl+'rollback;');assert cat()==before and legacy_rows()==retained and worker_meta()==worker_before
   mark('full local admission candidate including least-privilege grants rolls back to exact before metadata')
-  sql('begin;'+ddl+extension+acl+'commit;')
+  sql('begin;'+ddl+extension+worker_patch+acl+'commit;')
+  worker_after=worker_meta()
+  for x in worker_proof:
+   assert worker_after[x['name']]['bodyHash']==x.get('afterBodyHash',x['beforeBodyHash'])
+   assert worker_after[x['name']]['acl']==worker_before[x['name']]['acl'] and worker_after[x['name']]['owner']==worker_before[x['name']]['owner']
   assert legacy_rows()==retained
   after={x['name']:x for x in cat()}
-  changed={e['name'] for e in plan['newDefinitions']}|{'turn_private.text_policies','turn_private.service_task_turns','turn_private.require_text_task'}
+  changed={e['name'] for e in plan['newDefinitions']}|{'turn_private.text_policies','turn_private.service_task_turns','turn_private.require_text_task','turn_private.work'}
   assert [o for o in before if o['name'] not in changed]==[after[o['name']] for o in before if o['name'] not in changed]
   for m in matrix:
    d=after[m['name']]['definitions'][0];actual_roles={a[0] for a in d['acl']};assert actual_roles=={'postgres'}|{r for r in ('authenticated','service_role') if m[r]}
@@ -85,6 +98,50 @@ def main():
   assert sql('select count(*) from public.turns where thread_id='+lit(h)+';')[1]=='1'
   assert sql('select task_id from turn_private.service_task_turns where turn_id='+lit(T)+';')[1]==TASK
   mark('ordinary Native admission/replay/reopen with matched old guarded start/read functions; consent, byte-change, cross-actor and direct legacy admission bypass denied')
+  # Reproduce old worker collision in a rollback-only local transaction, then verify the patch.
+  original=re.sub(r'^create function','create or replace function',worker_old['public.claim_turn_work'],flags=re.I)
+  collision=json.loads(sql('begin;'+original+"set local role service_role;select public.claim_turn_work();rollback;")[1]);assert collision['kind']=='leased' and collision['turnId']==T
+  assert json.loads(sql('select public.claim_turn_work();',role='service_role')[1])['kind']=='empty'
+  claim=json.loads(sql('select public.qa_claim_work_v1('+lit(A)+','+lit(P)+');',role='service_role')[1]);assert claim['kind']=='leased' and claim['turnId']==T
+  lease=claim['leaseToken'];assert sql('select turn_private.lock_text_work('+lit(T)+','+lit(lease)+');')[1]=='f'
+  qa_input=json.loads(sql('select public.qa_read_work_v1('+lit(T)+','+lit(lease)+');',role='service_role')[1]);assert qa_input['kind']=='qa_input' and qa_input['serviceTaskId']==TASK
+  mark('old global worker QA theft reproduced and rolled back; minimal patch excludes QA, legacy text lock refuses QA, original QA claim/read obtains correct Task under service role')
+  planning="insert into turn_private.work(turn_id,owner_id,session_id,max_attempts,lease_ms,execution_mode) values ("+','.join(map(lit,[lt2,A,SA]))+",3,10000,'planning_comparison_v1');"
+  assert json.loads(sql('begin;'+planning+'set local role service_role;select public.claim_turn_work();rollback;')[1])['kind']=='empty'
+  # Independent actor's first answer uses actual original SQL budget/dispatch/settle ports,
+  # with synthetic usage/output and no provider or worker daemon.
+  hb=native('create',actor=B,session=SB)['thread']['id'];tb,taskb,scopeb=[str(uuid.uuid4()) for _ in range(3)]
+  native('qa_accept_policy_v1',{'p_policy_id':P,'p_notice_hash':'a'*64},actor=B,session=SB)
+  dbb={**data,'p_thread_id':hb,'p_turn_id':tb,'p_idempotency_key':tb,'p_task_id':taskb,'p_text':'Synthetic first answer question'}
+  assert native('qa_submit_message_v1',dbb,actor=B,session=SB)['kind']=='accepted'
+  def service(name,args):return json.loads(sql('select public.'+name+'('+','.join(args)+');',role='service_role')[1])
+  cb=service('qa_claim_work_v1',list(map(lit,[B,P])));assert cb['turnId']==tb;lb=cb['leaseToken']
+  ib=service('qa_read_work_v1',list(map(lit,[tb,lb])));assert ib['serviceTaskId']==taskb
+  sql('insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values ('+lit(scopeb)+','+lit(B)+",'CNY',1000,1000,5,1,true,now()+interval '1 hour');insert into public.model_budget_provider_limits values ("+lit(scopeb)+",'qwen','synthetic','synthetic',1000,100,true);")
+  assert service('qa_ready_groups_v3',['1',lit('synthetic'),lit('synthetic'),lit('https://example.invalid/qa'),lit(B),lit(P),lit(scopeb),lit('a'*64)])['kind']=='disabled'
+  assert service('reserve_model_budget',list(map(lit,[scopeb,B,tb,lb,'qwen','synthetic','synthetic']))+['100'])['kind']=='reserved'
+  assert service('qa_authorize_dispatch_v2',list(map(lit,[tb,lb,scopeb,P,'qwen',ib['contextDigest'],B,'a'*64])))['kind']=='authorized'
+  assert service('qa_complete_work_v1',list(map(lit,[tb,lb,'answered','Synthetic answer'])))['kind']=='blocked'
+  assert service('finish_model_budget',list(map(lit,[scopeb,B,lb,'settle']))+['7'])['kind']=='settled'
+  assert service('qa_complete_work_v1',list(map(lit,[tb,lb,'answered','Synthetic answer'])))['kind']=='finished'
+  rb=native('qa_read_session_v1',{'p_thread_id':hb},actor=B,session=SB);assert rb['messages'][0]['output']=='Synthetic answer'
+  report['workerDispatch']='SYNTHETIC_SQL_ONLY'
+  mark('canonical mode column and planning exclusion; independent ordinary actor first answer through real SQL reserve/dispatch/settle/complete/reopen, no answer before settled synthetic usage; ready remains disabled')
+  # Invalid auth with uncertain budget must remain unresolved, never cancelled/released.
+  sql('update turn_private.work set state=\'queued\',lease_token=null,expires_at=null where turn_id='+lit(T)+';delete from auth.sessions where id='+lit(SA)+';')
+  # Record the intentional synthetic auth revocation before preservation comparisons.
+  retained=legacy_rows()
+  pending='insert into public.model_budget_attempts(scope_id,attempt_id,task_id,provider,model,price_version,reserved_micros,status) values ('+','.join(map(lit,[ls,str(uuid.uuid4()),T]))+",'qwen','synthetic','synthetic',100,'pending');"
+  unresolved=json.loads(sql('begin;'+pending+'set local role service_role;select public.qa_claim_work_v1('+lit(A)+','+lit(P)+');rollback;')[1]);assert unresolved['kind']=='reconciliation_required' and unresolved['turnId']==T
+  assert sql('select state from turn_private.work where turn_id='+lit(T)+';')[1]=='queued'
+  cancelled=json.loads(sql('select public.qa_claim_work_v1('+lit(A)+','+lit(P)+');',role='service_role')[1]);assert cancelled['kind']=='empty'
+  assert sql('select state from turn_private.work where turn_id='+lit(T)+';')[1]=='cancelled'
+  assert sql('select status from public.turns where id='+lit(T)+';')[1]=='accepted'
+  assert sql('select encode(sha256(convert_to(input_text,\'UTF8\')),\'hex\') from turn_private.text_content where turn_id='+lit(T)+';')[1]==hashlib.sha256(data['p_text'].encode()).hexdigest()
+  # Deliberately introduced local scope drift must fail before any helper execution.
+  drift,_=sql("begin;create function turn_private.cancel_unclaimable_turn_v1(uuid,uuid) returns void language plpgsql as $$begin raise exception using errcode='P0999';end$$;set local role service_role;select public.qa_claim_work_v1("+lit(A)+','+lit(P)+');rollback;',check=False);assert drift.returncode!=0 and b'P0201' in drift.stderr
+  report['qaClaimVariant']=qa_variant_proof
+  mark('standalone QA invalid-session cancellation preserves original turn/text; pending budget remains reconciliation-required; later assistant-helper scope drift refuses with P0201')
   snapshot=sql("select md5((select jsonb_agg(to_jsonb(x))::text from turn_private.text_content x)||(select jsonb_agg(to_jsonb(x))::text from turn_private.service_task_turns x));")[1]
   for e in plan['newDefinitions']:sql('revoke all on function '+e['name']+'('+e['signature']+') from public,anon,authenticated,service_role;')
   assert sql("select md5((select jsonb_agg(to_jsonb(x))::text from turn_private.text_content x)||(select jsonb_agg(to_jsonb(x))::text from turn_private.service_task_turns x));")[1]==snapshot
@@ -93,14 +150,14 @@ def main():
   assert legacy_rows()==retained
   mark('safe STOP preserves exact new request and Task linkage; worker disabled and no claim/dispatch/provider invoked')
   # Preserve exact tested source subset as an explicitly gated proposal, never a target runner.
-  (OUT/'d2-admission-proposal.sql').write_text("-- LOCAL-VALIDATED SOURCE SUBSET ONLY. Missing global-worker/trigger/schema proofs; no target lease.\nBEGIN;\nDO $$BEGIN RAISE EXCEPTION 'D2_DEPENDENCIES_UNVERIFIED';END$$;\n"+ddl+extension+acl+'\nROLLBACK;\n')
-  report['status']='PASS_D2_BOUNDED_ADMISSION';report['proposalSha256']=hashlib.sha256((OUT/'d2-admission-proposal.sql').read_bytes()).hexdigest()
+  (OUT/'d2-admission-worker-proposal.sql').write_text("-- LOCAL-VALIDATED SOURCE CANDIDATE ONLY. Fresh pins/review/concurrency/target lease and real canary remain required.\nBEGIN;\nDO $$BEGIN RAISE EXCEPTION 'D2_NO_TARGET_APPLY_LEASE';END$$;\n"+ddl+extension+worker_patch+acl+'\nROLLBACK;\n')
+  report['status']='PASS_D2_BOUNDED_ADMISSION_WORKER_ISOLATION';report['proposalSha256']=hashlib.sha256((OUT/'d2-admission-worker-proposal.sql').read_bytes()).hexdigest()
  except BaseException as e:report['error']=str(e) if isinstance(e,(RuntimeError,AssertionError)) else type(e).__name__
  finally:
   try:report['cleanup']='PASS' if f.close() else 'UNKNOWN'
   except BaseException:report['cleanup']='UNKNOWN';report['status']='FAIL'
   path=OUT/('d2-run-'+f.nonce+'.json');path.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'status':report['status'],'checks':len(report['checks']),'cleanup':report['cleanup'],'error':report.get('error'),'evidence':str(path)}))
- return 0 if report['status']=='PASS_D2_BOUNDED_ADMISSION' and report['cleanup']=='PASS' else 1
+ return 0 if report['status']=='PASS_D2_BOUNDED_ADMISSION_WORKER_ISOLATION' and report['cleanup']=='PASS' else 1
 if __name__=='__main__':
  if sys.argv[1:]!=['--run']:raise SystemExit('EXPLICIT_SYNTHETIC_RUN_REQUIRED')
  raise SystemExit(main())
