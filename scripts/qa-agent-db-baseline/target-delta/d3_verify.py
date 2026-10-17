@@ -40,9 +40,10 @@ def main():
   f.call_sql('alter table public.chat_threads add column d3_drift text;');reject(compile_transaction(profile,'apply',ctx),'P0303');f.call_sql('alter table public.chat_threads drop column d3_drift;')
   f.call_sql('alter function public.native_session_v2(text,uuid) rename to d3_missing_native;');reject(compile_transaction(profile,'apply',ctx),'P0303');f.call_sql('alter function public.d3_missing_native(text,uuid) rename to native_session_v2;')
   f.call_sql('alter role authenticated bypassrls;');reject(compile_transaction(profile,'apply',ctx),'P0303');f.call_sql('alter role authenticated nobypassrls;')
+  f.call_sql('grant service_role to authenticated;');reject(compile_transaction(profile,'apply',ctx),'P0303');f.call_sql('revoke service_role from authenticated;')
   f.call_sql('revoke execute on function public.native_prepare_v2(uuid,uuid,uuid) from service_role;');reject(compile_transaction(profile,'apply',ctx),'P0303');f.call_sql('grant execute on function public.native_prepare_v2(uuid,uuid,uuid) to service_role;')
   assert f.snapshot()==before
-  mark('structure drift, missing routine, changed role flag and revoked required permission each refuse before delta')
+  mark('structure drift, missing routine, changed role flag, transitive role escalation and revoked required permission each refuse before delta')
   wrong=scope();wrong['window_start']='2000-01-01T00:00:00+00:00';wrong['window_end']='2000-01-01T00:01:00+00:00';reject(compile_transaction(profile,'apply',wrong),'P0302')
   r,_=f.call_sql(compile_transaction(profile,'apply',ctx),role='authenticated',actor=legacy['owner'],session=legacy['session'],check=False);assert r.returncode and b'P0301' in r.stderr
   for change in ({'writer':'wrong'},{'target':'wrong'},{'approval_reference':''},{'concurrency_reference':''}):

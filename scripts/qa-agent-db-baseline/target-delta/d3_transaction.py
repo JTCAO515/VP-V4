@@ -33,10 +33,15 @@ def target_profile():
  x=json.loads(source('d2-cumulative-expected-metadata.json'))
  # Observed read-only on the same fixed project; d3-work-shape.json/sql preserve provenance.
  shape={'relnatts':10,'droppedSlots':[]}
- return Profile({'objects':x['beforeD0Objects'],'extra':x['beforeAdditionalMetadata'],'workShape':shape},{'objects':x['expectedAfterD0Objects'],'extra':x['expectedAfterAdditionalMetadata'],'workShape':{'relnatts':11,'droppedSlots':[]}})
+ # Exact observed finite reachability matrix, including transitive membership;
+ # role flags alone cannot establish effective execution isolation.
+ roles=('anon','authenticated','postgres','service_role')
+ reach=[{'from':a,'to':b,'member':a==b or a=='postgres','usage':a==b or a=='postgres'} for a in roles for b in roles]
+ return Profile({'objects':x['beforeD0Objects'],'extra':x['beforeAdditionalMetadata'],'workShape':shape,'roleReachability':reach},{'objects':x['expectedAfterD0Objects'],'extra':x['expectedAfterAdditionalMetadata'],'workShape':{'relnatts':11,'droppedSlots':[]},'roleReachability':reach})
 def capture_sql():
  shape="(SELECT jsonb_build_object('relnatts',c.relnatts,'droppedSlots',(SELECT coalesce(jsonb_agg(a.attnum ORDER BY a.attnum),'[]'::jsonb) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid AND a.attnum>0 AND a.attisdropped)) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='turn_private' AND c.relname='work')"
- return "SELECT jsonb_build_object('objects',a.snapshot->'objects','extra',b.metadata-'readOnly','workShape',"+shape+") AS state FROM ("+catalog_query()+') a CROSS JOIN ('+extra_query()+') b'
+ reach="(WITH wanted(name) AS (VALUES ('postgres'),('anon'),('authenticated'),('service_role')) SELECT jsonb_agg(jsonb_build_object('from',a.name,'to',b.name,'member',CASE WHEN ar.oid IS NULL OR br.oid IS NULL THEN NULL ELSE pg_catalog.pg_has_role(ar.oid,br.oid,'MEMBER') END,'usage',CASE WHEN ar.oid IS NULL OR br.oid IS NULL THEN NULL ELSE pg_catalog.pg_has_role(ar.oid,br.oid,'USAGE') END) ORDER BY a.name,b.name) FROM wanted a CROSS JOIN wanted b LEFT JOIN pg_catalog.pg_roles ar ON ar.rolname=a.name LEFT JOIN pg_catalog.pg_roles br ON br.rolname=b.name)"
+ return "SELECT jsonb_build_object('objects',a.snapshot->'objects','extra',b.metadata-'readOnly','workShape',"+shape+",'roleReachability',"+reach+") AS state FROM ("+catalog_query()+') a CROSS JOIN ('+extra_query()+') b'
 def timestamp(value):
  d=datetime.datetime.fromisoformat(value.replace('Z','+00:00'))
  if d.tzinfo is None:raise ValueError('UTC_OFFSET_REQUIRED')
