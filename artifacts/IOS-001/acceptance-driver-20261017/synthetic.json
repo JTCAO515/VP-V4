@@ -1,0 +1,121 @@
+{
+  "schema": "ios-nativeqa-acceptance/1",
+  "mode": "SYNTHETIC",
+  "overall": "UNRUN",
+  "product_revision": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "synthetic_driver": "PASS",
+  "checks": [
+    {
+      "stage": "native_profile_login",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "PROFILE_CREDENTIALS_LOGIN_MODELED_ONLY_NOT_NATIVESESSION_AUTH"
+    },
+    {
+      "stage": "explicit_notice_consent",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "original_question_submit",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "bounded_response_read",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "saved_session_read",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "original_request_bytes",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "process_exit",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    },
+    {
+      "stage": "reopen_same_session",
+      "status": "PASS",
+      "evidence_kind": "synthetic_actual_consumer_process",
+      "reason": "SYNTHETIC_ONLY_NO_TARGET_ACCEPTANCE"
+    }
+  ],
+  "scope_diagnostics": [],
+  "blockers": [
+    "REAL_PROFILE_AUTH_UNRUN",
+    "REAL_UI_APP_ADAPTER_NOT_REGISTERED"
+  ],
+  "optional_observations": {
+    "authoritative_task_binding": {
+      "status": "UNRUN",
+      "reason": "NOT_EXPOSED_BY_QA_AGENT_1; SEPARATE_CONTROLLED_METADATA_IF_REQUIRED"
+    }
+  },
+  "identity": {
+    "session_id": "e1e7620d-22bd-4886-906c-5380b4fecd2f",
+    "request_id": "291809c3-8b4b-4dfd-940f-dd803ffe32b1",
+    "turn_id": "291809c3-8b4b-4dfd-940f-dd803ffe32b1",
+    "service_task_id": null,
+    "original_body_sha256": "93e97b7597b82b674095c722dfeb30556982983920132bd47df9cc3c2b8f1930",
+    "input_utf8_sha256": "f43f4243e5a28ec55bcdf7b049c8fe73ffa85e49a180030b774931638e6beaa8",
+    "answer_utf8_sha256": "ad6875fc991e2ce49a90d1acb6fae983106819e03c8684d1675b46b8dca559ba"
+  },
+  "product_effects": {
+    "network_requests": 0,
+    "auth_requests": 0,
+    "consent_posts": 0,
+    "generation_posts": 0,
+    "provider_calls": 0
+  },
+  "resources": {
+    "simulators_created": [],
+    "shared_app_or_keychain_access": false,
+    "temporary_test_namespace_cleaned": true
+  },
+  "synthetic_processes": [
+    {
+      "phase": "first",
+      "pid": 43007,
+      "submission_count": 1
+    },
+    {
+      "phase": "reopen",
+      "pid": 43008,
+      "submission_count": 1
+    }
+  ],
+  "synthetic_trace": [
+    "SYNTHETIC_AUTH_MODEL: POST api/auth/native/v2/credentials",
+    "SYNTHETIC_AUTH_MODEL: POST api/auth/native/v2/login",
+    "GET api/qa-agent/native/v1/policy",
+    "GET api/qa-agent/native/v1/policy",
+    "POST api/qa-agent/native/v1/consent",
+    "GET api/qa-agent/native/v1/policy",
+    "GET api/qa-agent/native/v1/sessions",
+    "POST api/qa-agent/native/v1/sessions",
+    "GET api/qa-agent/native/v1/policy",
+    "POST api/qa-agent/native/v1/sessions/e1e7620d-22bd-4886-906c-5380b4fecd2f/messages",
+    "GET api/qa-agent/native/v1/sessions/e1e7620d-22bd-4886-906c-5380b4fecd2f/messages/291809c3-8b4b-4dfd-940f-dd803ffe32b1",
+    "GET api/qa-agent/native/v1/sessions/e1e7620d-22bd-4886-906c-5380b4fecd2f",
+    "GET api/qa-agent/native/v1/policy",
+    "GET api/qa-agent/native/v1/sessions",
+    "GET api/qa-agent/native/v1/sessions/e1e7620d-22bd-4886-906c-5380b4fecd2f",
+    "GET api/qa-agent/native/v1/policy",
+    "GET api/qa-agent/native/v1/sessions",
+    "GET api/qa-agent/native/v1/sessions/e1e7620d-22bd-4886-906c-5380b4fecd2f"
+  ]
+}

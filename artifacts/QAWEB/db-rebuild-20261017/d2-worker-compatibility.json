@@ -1,0 +1,94 @@
+{
+  "status": "SOURCE_ONLY",
+  "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "targetReady": false,
+  "objects": [
+    {
+      "name": "public.claim_turn_work",
+      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "beforeBodyHash": "b38608a798a68f0339e63f1e062032f125bc8724c1b775a85fc2c18f69f43979",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": true,
+        "authenticated": false
+      },
+      "afterBodyHash": "b30938d24c80434d260d830a971cf772c2f2d3268839ad9783670ff81f84a5d5",
+      "beforeFragment": "p.context_mode in ('task_history_v1','knowledge_intent_v1')",
+      "afterFragment": "p.context_mode in ('task_history_v1','knowledge_intent_v1','qa_session_history_v1')",
+      "scope": "QA exclusion; global claimer also filters canonical execution_mode=text before and after locking; preserve original cancellation, lock order, owner and ACL"
+    },
+    {
+      "name": "turn_private.bound_task_history",
+      "source": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+      "beforeBodyHash": "6db14f7d0e2655c2a05301216f4830bd8909a9d623c9543984051fade9f67442",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}",
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      }
+    },
+    {
+      "name": "turn_private.lock_text_work",
+      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "beforeBodyHash": "f32e3d267ae9f040d745141b8bdf2af92e2ec0171bb6d1857e0366cb887be3f7",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}",
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      },
+      "afterBodyHash": "5ce7cb89f0738632b3539b1fdfd51598c80b7095d49072285c58799ee987a2a7",
+      "beforeFragment": "if not found or not turn_private.text_policy_current(c.policy_id) then return false; end if;",
+      "afterFragment": "if not found or not turn_private.text_policy_current(c.policy_id) or exists(select 1 from turn_private.text_policies where id=c.policy_id and context_mode='qa_session_history_v1') then return false; end if;",
+      "scope": "QA exclusion; global claimer also filters canonical execution_mode=text before and after locking; preserve original cancellation, lock order, owner and ACL"
+    },
+    {
+      "name": "turn_private.task_history",
+      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "beforeBodyHash": "8e21c2d3e8dec5da6e15438e620c0aeacd7108c450114b5f3121a7028b02dbcc",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}",
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      }
+    }
+  ],
+  "newQaClaimVariant": {
+    "name": "public.qa_claim_work_v1",
+    "targetBefore": "absent",
+    "fixedSourceBodyHash": "8233806e8b7fd7bc83a3c31175d7820f56a1ef289af7c975e0639fc27a280fba",
+    "candidateBodyHash": "ef042205141ba0b19873541c6f5775c1f849a81244ffd327e1fd1e1a80cec901",
+    "change": "new standalone QA claimer retains original work cancellation and all receipt/budget filters; excludes unavailable assistant-only observer under runtime absence guard",
+    "premiseObjects": [
+      "turn_private.assistant_conversations",
+      "turn_private.assistant_goals",
+      "turn_private.assistant_messages",
+      "turn_private.cancel_unclaimable_turn_v1",
+      "turn_private.assistant_event_link_v1"
+    ],
+    "scopeChangeSqlstate": "P0201",
+    "noStubOrAnchorCreated": true,
+    "reference": "20261010020000_assistant_events.sql: observer returns without terminal/event update for non-assistant-linked legacy Tasks"
+  },
+  "newColumn": {
+    "name": "turn_private.work.execution_mode",
+    "before": "absent",
+    "source": "20260927060000_vpj80_planning_comparison.sql",
+    "ddl": "alter table turn_private.work add column execution_mode text not null default 'text'\n  check(execution_mode in ('text','planning_comparison_v1'));\n",
+    "scope": "exact single additive column declaration only; no planning tables or activation"
+  },
+  "unresolved": [
+    "fresh whole candidate pins, independent review, concurrency interval and exact target apply/activation lease"
+  ]
+}

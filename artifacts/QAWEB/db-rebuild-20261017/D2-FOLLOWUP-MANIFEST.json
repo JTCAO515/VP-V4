@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "f54f060783afa61b6a2d6dcec0517dd18967da7b",
+  "status": "PASS_SOURCE_LOCAL_SYNTHETIC_FIRST_ANSWER_ONLY",
+  "targetReady": false,
+  "targetMetadataReads": 1,
+  "targetWrites": 0,
+  "actualReadOnly": "on",
+  "providerCalls": 0,
+  "workerDaemonStarted": false,
+  "finalGroups": 8,
+  "cleanup": "PASS",
+  "files": {
+    "D2-FOLLOWUP-DELIVERY.md": "60ca80503a3fb23487206b2033cc47ad6214a1ed7300e5efaaf2ebfe1221b5b0",
+    "d2-followup-target-metadata.json": "22a3346097b69afb20351bd0a66775daf261725f4d4a7ca571e0a23c3296e5e1",
+    "d2-followup-source-matches.json": "ec69e4941a6d60e9f06da655915d9d51231f846a21acf95eadc88a4c5fbd75f5",
+    "d2-worker-compatibility.json": "9a04103bd3e649dcc006eaa7387371fb0109e9bae1a925e798328e00f50ff71d",
+    "d2-worker-proposal.sql": "5379737917ea54f7921da499876b82dc1aca3217e8e91dc20b426212186f8419",
+    "d2-admission-worker-proposal.sql": "9de644a995c589d1ac810cca69aed6893d7ab024d1660fa3a60edda9a6a11507",
+    "d2-cumulative-expected-metadata.json": "6b1bbfed6ec89ae0a39ab3d733c5d97b8db2eec75ddb9941454248aa4514b193",
+    "d2-run-ef8731e2b3eb4a3ca1c75838191cd609.json": "4eea58cd7296660f464f288fb7e34633d94121793cced6d66b34b0b789e866f8",
+    "d2-run-4c9226eda5704eee8870902de728e833.json": "1d2777ff70eab1fecb99f721e8e888650595577e34f67a98858926495dbe9c8e",
+    "d2-run-1b1bad5c38a44ed0971d086508785bd1.json": "55e399885cc22389ec4b6e15424610df6e2400880d00684bdbe398bfe00658d6"
+  }
+}

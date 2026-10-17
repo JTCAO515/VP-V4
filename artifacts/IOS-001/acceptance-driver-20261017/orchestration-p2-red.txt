@@ -1,0 +1,41 @@
+test_actual_failure_and_skipped_or_unrun_are_distinct (test_real_ui.RealUIOracleTests) ... ok
+test_complete_ui_flow_does_not_require_body_or_task_hook (test_real_ui.RealUIOracleTests) ... ok
+test_live_adapter_without_required_runner_inputs_does_not_call_tools (test_real_ui.RealUIOracleTests) ... ok
+test_optional_body_hash_requires_exact_observation_provenance (test_real_ui.RealUIOracleTests) ... ok
+test_prebuilt_copy_drops_credentials_and_keeps_original_file (test_real_ui.RealUIOracleTests) ... ok
+test_scope_json_alone_or_zero_selected_tests_cannot_pass (test_real_ui.RealUIOracleTests) ... ok
+test_wrong_actor_request_session_bytes_or_missing_checkpoints_reject (test_real_ui.RealUIOracleTests) ... ok
+test_run_failed_summary_outranks_export_error (test_real_ui.RealUIOrchestrationTests) ... FAIL
+test_run_failed_summary_without_attachment_is_fail_before_export (test_real_ui.RealUIOrchestrationTests) ... FAIL
+test_run_nonzero_process_cannot_be_masked_by_pass_summary_and_missing_attachment (test_real_ui.RealUIOrchestrationTests) ... FAIL
+test_run_pass_requires_single_executed_case_and_observation (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_without_known_failure_and_missing_attachment_is_unrun (test_real_ui.RealUIOrchestrationTests) ... ok
+
+======================================================================
+FAIL: test_run_failed_summary_outranks_export_error (test_real_ui.RealUIOrchestrationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-ios-acceptance-driver-20261017/tests/contract/ios-realservice/acceptance/test_real_ui.py", line 149, in test_run_failed_summary_outranks_export_error
+    self.assertIsInstance(result, ui.UIFailed)
+AssertionError: CalledProcessError(1, 'SYNTHETIC_EXPORT_FAILURE') is not an instance of <class 'nativeqa_real_ui.UIFailed'>
+
+======================================================================
+FAIL: test_run_failed_summary_without_attachment_is_fail_before_export (test_real_ui.RealUIOrchestrationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-ios-acceptance-driver-20261017/tests/contract/ios-realservice/acceptance/test_real_ui.py", line 142, in test_run_failed_summary_without_attachment_is_fail_before_export
+    self.assertIsInstance(result, ui.UIFailed)
+AssertionError: UIUnavailable('SYNTHETIC_NO_ATTACHMENT') is not an instance of <class 'nativeqa_real_ui.UIFailed'>
+
+======================================================================
+FAIL: test_run_nonzero_process_cannot_be_masked_by_pass_summary_and_missing_attachment (test_real_ui.RealUIOrchestrationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/p0-ios-acceptance-driver-20261017/tests/contract/ios-realservice/acceptance/test_real_ui.py", line 155, in test_run_nonzero_process_cannot_be_masked_by_pass_summary_and_missing_attachment
+    self.assertIsInstance(result, ui.UIFailed)
+AssertionError: UIUnavailable('SYNTHETIC_NO_ATTACHMENT') is not an instance of <class 'nativeqa_real_ui.UIFailed'>
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.008s
+
+FAILED (failures=3)

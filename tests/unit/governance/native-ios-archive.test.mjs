@@ -45,6 +45,54 @@ test("existing native simulator gate is unchanged by the archive path", () => {
   assert.doesNotMatch(native, /archive\.py|secrets\./);
 });
 
+test("CI exact toolchain qualification does not widen the Archive gate", () => {
+  const code = String.raw`
+import json, os, sys, tempfile
+from pathlib import Path
+from unittest.mock import patch
+sys.path.insert(0, 'scripts/ios')
+import ci, archive
+legacy = frozenset({'Xcode 26.6\nBuild version 17F113', 'Xcode 27.0\nBuild version 27A266a'})
+current = 'Xcode 27.1\nBuild version 27A9275'
+assert ci.XCODE_VERSIONS == archive.XCODE_VERSIONS == legacy
+assert current not in archive.XCODE_VERSIONS
+assert ci.RUNTIME == 'com.apple.CoreSimulator.SimRuntime.iOS-26-5'
+assert ci.DEVICE == 'iPhone 17 Pro'
+observed = []
+with tempfile.TemporaryDirectory() as temporary:
+    for index, version in enumerate([*sorted(legacy), current, 'Xcode 27.1\nBuild version 27A9276', 'Xcode 28.0\nBuild version UNKNOWN']):
+        calls = []
+        def run(command, **kwargs):
+            calls.append(command)
+            if command == ['xcodebuild', '-version']: output = version
+            elif command == ['xcodebuild', '-list', '-project', ci.PROJECT]: output = 'synthetic project listing'
+            elif command == ['git', 'rev-parse', 'HEAD']: output = 'a' * 40
+            else: raise AssertionError('Unexpected build, signing, Simulator or archive command: ' + repr(command))
+            return type('Result', (), {'returncode': 0, 'stdout': output})()
+        output = Path(temporary) / str(index)
+        with patch.object(sys, 'argv', ['ci.py', '--output', str(output), '--preflight', '--build-only']), patch.dict(os.environ, {'DEVELOPER_DIR': temporary}), patch.object(ci.subprocess, 'run', side_effect=run):
+            if version in legacy or version == current:
+                ci.main()
+                metadata = json.loads((output / 'environment.json').read_text())
+                assert metadata['xcode'] == version and metadata['simulatorTestsRun'] is False
+                assert metadata['distributionSigned'] is False
+            else:
+                try: ci.main()
+                except RuntimeError as error: assert 'no automatic fallback' in str(error)
+                else: raise AssertionError('Unknown version/build was accepted')
+                assert calls == [['xcodebuild', '-version']]
+                assert not (output / 'environment.json').exists()
+        observed.append(version)
+assert ci.XCODE_VERSIONS == archive.XCODE_VERSIONS == legacy
+print('PASS exact CI qualification, wrong-build refusal and unchanged Archive scope')
+`;
+  const result = spawnSync("python3", ["-c", code], {
+    encoding: "utf8", env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /PASS exact CI qualification, wrong-build refusal and unchanged Archive scope/);
+});
+
 test("archive script unit tests pass", () => {
   const result = spawnSync("python3", ["-m", "unittest", "discover", "-s", "scripts/ios", "-p", "test_*.py"], {
     encoding: "utf8",

@@ -1,0 +1,59 @@
+{
+  "status": "LOCAL_ADMISSION_SUBSET_ONLY",
+  "targetReady": false,
+  "orderedChanges": [
+    "preflight exact D0 and added dependency pins; currently blocked",
+    "18 missing QA functions as fixed D1 ordered definitions",
+    "two constraints expanded as finite supersets",
+    "exact known require_text_task extension; no ownership/ACL change",
+    "new qa_link_mode_v1 trigger; preserve existing triggers",
+    "7 authenticated + 6 service grants on new functions only; blocked for actual target",
+    "postflight and authorized transaction outcome; no actual COMMIT runner exists"
+  ],
+  "existingChanges": [
+    {
+      "object": "turn_private.text_policies.text_policies_context_mode_check",
+      "kind": "constraint finite-set superset",
+      "beforeHash": "ec45def753b01710646dc1c7e7d763552b2d941b1773a12b9b5ed685adf9d1a0",
+      "afterHash": "9e28255c7068b854b3c5bb2df6174fdda3e66dd3ecdfda2323f6a395b289e6e1",
+      "noOldValuesRemoved": true
+    },
+    {
+      "object": "turn_private.service_task_turns.service_task_turns_relationship_check",
+      "kind": "constraint finite-set superset",
+      "beforeHash": "6ee8689e85d67fe5229f581324a3427e1e06a66976758733eee5cf13785ba3ab",
+      "afterHash": "44ee1dfb942494162677db6fb6b49d286413ce3d0aabc7b5c8e43fcd98e1578e",
+      "noOldValuesRemoved": true
+    },
+    {
+      "object": "turn_private.require_text_task()",
+      "kind": "preserve old checks and additionally require Task linkage for qa_session_history_v1",
+      "beforeBodyHash": "67c08548eb1730582534bd017c4dfe464a9458a316750834b2e27fc327712ba8",
+      "afterBodyHash": "d8fc462f5945c17afb925d55bb173cf5463e146f76237092b665edbcc8652929",
+      "ownerAndAcl": "preserve existing"
+    },
+    {
+      "object": "turn_private.service_task_turns.qa_link_mode_v1",
+      "kind": "new trigger enforcing QA relationship/context pairing",
+      "before": "absent",
+      "afterDefinitionHash": "a47d7c5cea8b1cbb1d57de2df15cad3cdc63497a67c47a8a751625e2e071e082",
+      "existingTriggers": "preserve; bound_task_history real function identity remains a gate"
+    }
+  ],
+  "explicitlyPreserved": [
+    "cancel_chat_turn guarded legacy body",
+    "start_chat_turn guarded legacy body",
+    "read_text_turn grounded-version body",
+    "all existing ACL/RLS/owner",
+    "service_tasks expected_result constraint including reviewed_answer",
+    "grounded_turns columns and constraint",
+    "capacity/assistant anchor absence"
+  ],
+  "unrun": [
+    "shared global-worker isolation",
+    "invalid-session claim cancellation branch",
+    "worker reserve/dispatch/settle/complete on representative",
+    "real role/schema/trigger identity",
+    "actual target apply, provider and native device"
+  ]
+}

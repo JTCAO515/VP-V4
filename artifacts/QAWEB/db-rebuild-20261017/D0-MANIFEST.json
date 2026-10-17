@@ -1,0 +1,40 @@
+{
+  "status": "PASS_D0_METADATA_EVIDENCE",
+  "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "queryAudit": {
+    "scope": "82 exact namespace/name entries; pg_catalog only except version/name migration ledger",
+    "businessRpcCalls": 0,
+    "targetWrites": 0,
+    "functionOrExpressionPlaintextReturned": false,
+    "transactions": "BEGIN READ ONLY / ROLLBACK",
+    "environmentObservedReadOnly": "on",
+    "catalogObservedReadOnly": "on",
+    "ledgerReadOnly": "explicit transaction; ledger query returns version/name only"
+  },
+  "checks": [
+    "Python AST parse",
+    "82-object allowlist matches both catalogs",
+    "classification total and 21 ports",
+    "expression hashes restricted to SHA256 or null",
+    "ledger fields version/name only",
+    "local cleanup PASS",
+    "frozen script tree unchanged from 7f",
+    "git diff --check"
+  ],
+  "files": {
+    "D0-TARGET-DELTA.md": "935a6604d09d99e454f167e0b7942fc6cefe045167b82fbc0d0200f22808edf0",
+    "d0-allowlist.json": "61171422405f10d3eed681e8b617c6d03f612e39d7a11fe6ef32a20cf655c361",
+    "d0-build-query.py": "362e002c90a2202e05a3c8cc48cee537eb89db3669b9547f0c8ee825b04afd58",
+    "d0-catalog.sql": "248f8a85ead398001f179785f28a2f1a79ff40d8151addf4a580d76970d4b6e7",
+    "d0-compare.py": "e0476e7ee1a37db342a151978a9a9f1f401fd811e27d1f75a3a9e5e995ec903d",
+    "d0-comparison.json": "63ec11075b41d6059ab6b0afca88a6ad0e7a8b0eb499ec9cca195f6fb98f6bfb",
+    "d0-ledger.json": "8be2e8cd257e7fcb051a93f35f7f686fcc32c5778de2ed088a5685aab49e59c1",
+    "d0-ledger.sql": "083a98978fc0579baf04c95976a5ef73c9bbc1b4f0a6feca75d87937a8d191c4",
+    "d0-local-catalog.json": "887f63d555f682009160eb4974475bf62ab383bf068a52dc682bafd54643d2c0",
+    "d0-local-proof.json": "41ca7dd36b2c93b5bbea7b46eec55d8fe9c7253fea3806b1c43f9cc38b70d24c",
+    "d0-local-reference.py": "5b66db3ed9d6a710f71dec76fd4f55eb7cc2fd3d3709aab4735d0d114046a668",
+    "d0-target-catalog.json": "e4c12c1335bb8be0b61b77fd8f9e3ece3b31cd18814b8f4650bdec613bc1f582",
+    "d0-target-environment.json": "fb6aa399524f12245a87dca217a52318edcab8e8d4afa9b7d841d8f1f36f5fef"
+  }
+}

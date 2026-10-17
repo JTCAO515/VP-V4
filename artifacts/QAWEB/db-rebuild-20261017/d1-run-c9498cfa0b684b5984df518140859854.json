@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "scope": "synthetic representative, NOT target replica or full Native QA write acceptance",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "fixed7f": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "fixedD0": "0762e867cbc3801448b0f6c8caa4fef5dbc766ca",
+  "checks": [],
+  "cleanup": "PASS",
+  "target": "UNRUN",
+  "provider": "UNRUN",
+  "realAuth": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/propose.py": "1ecaca3a9af11681e4bbce2a16243510d9fcb17690adfc6f8b48224ea2a6e78f",
+    "scripts/qa-agent-db-baseline/target-delta/verify_local.py": "2b11a58aa3306ce286fc437375ac52482b57ac498eacd6b08539dcceefa6c9a9"
+  },
+  "candidateBodySha256": "8c778916736f991e1e04e04cfb4ea6fd59dfded3934f3cac0a8d959ba7e64a5f",
+  "containerId": "953d0dc6528ad6acc5583868e94e06bc1d8fb512c86fac692bcfc58de7dfedf8",
+  "nonce": "c9498cfa0b684b5984df518140859854",
+  "error": "SQL_2BP01"
+}

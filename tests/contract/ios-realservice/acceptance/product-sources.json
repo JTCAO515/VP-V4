@@ -1,0 +1,9 @@
+{
+  "revision": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "sha256": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "9c5d85de6043f5de8e07978ba40a3ea13f9a885be3aec636a09f42d154e45af3",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAContract.swift": "76650dae6fdabdffdfdff4b8b2e6088316f7485b1587ef4514841384a99fd941",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQACancellationContract.swift": "bf8fd073f8054f35126726e5a8a8695cc38eec572e14298ec689d0759319b70a",
+    "ios/VisePanda/VisePanda/Features/RealServiceEntry/NativeQA/NativeQAStore.swift": "71d4f03eb4ed3eced60fdfc204dc837583de3b84260698efba9f76f17aaa7e50"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "table": "work",
+  "schema": "turn_private",
+  "readOnly": "on",
+  "relnatts": 10,
+  "droppedSlots": []
+}

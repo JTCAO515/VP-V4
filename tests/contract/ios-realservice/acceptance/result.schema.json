@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NativeQA acceptance result with explicit operator UI execution and typed provenance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "mode",
+    "overall",
+    "product_revision",
+    "synthetic_driver",
+    "checks",
+    "scope_diagnostics",
+    "blockers",
+    "optional_observations",
+    "identity",
+    "product_effects",
+    "resources"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ios-nativeqa-acceptance/1"
+    },
+    "mode": {
+      "enum": [
+        "DRY_RUN",
+        "SYNTHETIC",
+        "REAL"
+      ]
+    },
+    "overall": {
+      "enum": [
+        "UNRUN",
+        "FAIL",
+        "PASS"
+      ]
+    },
+    "product_revision": {
+      "const": "cf33285eceb4cb340a9fe70e975c643c023f5035"
+    },
+    "synthetic_driver": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "UNRUN"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "status",
+          "evidence_kind",
+          "reason"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "native_profile_login",
+              "explicit_notice_consent",
+              "original_question_submit",
+              "bounded_response_read",
+              "saved_session_read",
+              "original_request_bytes",
+              "process_exit",
+              "reopen_same_session"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "UNRUN"
+            ]
+          },
+          "evidence_kind": {
+            "enum": [
+              "none",
+              "synthetic_actual_consumer_process",
+              "real_xctest_ui_with_operator_actions"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scope_diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "optional_observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authoritative_task_binding"
+      ],
+      "properties": {
+        "authoritative_task_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "reason"
+          ],
+          "properties": {
+            "status": {
+              "const": "UNRUN"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "request_id",
+        "turn_id",
+        "service_task_id",
+        "original_body_sha256",
+        "input_utf8_sha256",
+        "answer_utf8_sha256"
+      ],
+      "properties": {
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            }
+          ]
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            }
+          ]
+        },
+        "turn_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            }
+          ]
+        },
+        "service_task_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            }
+          ]
+        },
+        "original_body_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          ]
+        },
+        "input_utf8_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          ]
+        },
+        "answer_utf8_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          ]
+        }
+      }
+    },
+    "product_effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network_requests",
+        "auth_requests",
+        "consent_posts",
+        "generation_posts",
+        "provider_calls"
+      ],
+      "properties": {
+        "network_requests": {
+          "enum": [
+            0,
+            null
+          ]
+        },
+        "auth_requests": {
+          "enum": [
+            0,
+            null
+          ]
+        },
+        "consent_posts": {
+          "enum": [
+            0,
+            null
+          ]
+        },
+        "generation_posts": {
+          "enum": [
+            0,
+            null
+          ]
+        },
+        "provider_calls": {
+          "enum": [
+            0,
+            null
+          ]
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "simulators_created",
+        "shared_app_or_keychain_access",
+        "temporary_test_namespace_cleaned"
+      ],
+      "properties": {
+        "simulators_created": {
+          "const": []
+        },
+        "shared_app_or_keychain_access": {
+          "const": false
+        },
+        "temporary_test_namespace_cleaned": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "synthetic_processes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "phase",
+          "pid",
+          "submission_count"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "phase": {
+            "enum": [
+              "first",
+              "reopen"
+            ]
+          },
+          "pid": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "submission_count": {
+            "const": 1
+          }
+        }
+      }
+    },
+    "synthetic_trace": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "real_ui_driver": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "UNRUN",
+            "FAIL"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "evidence_kind": {
+          "const": "real_xctest_ui_with_operator_actions"
+        },
+        "observation": {
+          "type": "object"
+        },
+        "summary": {
+          "type": "object"
+        },
+        "private_run_directory": {
+          "type": "string"
+        },
+        "runner_created_simulator": {
+          "const": false
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overall": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "real_ui_driver"
+        ],
+        "properties": {
+          "mode": {
+            "const": "REAL"
+          },
+          "real_ui_driver": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            }
+          },
+          "checks": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                },
+                "evidence_kind": {
+                  "const": "real_xctest_ui_with_operator_actions"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

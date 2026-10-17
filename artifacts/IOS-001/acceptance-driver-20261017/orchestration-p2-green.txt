@@ -1,0 +1,31 @@
+test_default_is_dry_run_unrun_with_zero_product_effects (test_driver.DriverTests) ... ok
+test_duplicate_or_oversize_scope_is_invalid (test_driver.DriverTests) ... ok
+test_explicit_execute_never_bypasses_missing_scope (test_driver.DriverTests) ... ok
+test_explicit_valid_scope_without_prebuilt_adapter_stays_unrun (test_driver.DriverTests) ... ok
+test_missing_scope_never_defaults_to_a_target (test_driver.DriverTests) ... ok
+test_real_mode_does_not_execute_from_scope_metadata_alone (test_driver.DriverTests) ... ok
+test_report_refuses_to_overwrite_existing_bytes (test_driver.DriverTests) ... ok
+test_result_oracle_rejects_fake_real_pass_or_effects (test_driver.DriverTests) ... ok
+test_scope_rejects_expired_unbounded_or_unapproved_metadata (test_driver.DriverTests) ... ok
+test_scope_rejects_foreign_source_actor_budget_and_shared_resource (test_driver.DriverTests) ... ok
+test_scope_rejects_secrets_without_echoing_them (test_driver.DriverTests) ... ok
+test_scope_requires_exact_nonproduction_origin (test_driver.DriverTests) ... ok
+test_actual_failure_and_skipped_or_unrun_are_distinct (test_real_ui.RealUIOracleTests) ... ok
+test_complete_ui_flow_does_not_require_body_or_task_hook (test_real_ui.RealUIOracleTests) ... ok
+test_live_adapter_without_required_runner_inputs_does_not_call_tools (test_real_ui.RealUIOracleTests) ... ok
+test_optional_body_hash_requires_exact_observation_provenance (test_real_ui.RealUIOracleTests) ... ok
+test_prebuilt_copy_drops_credentials_and_keeps_original_file (test_real_ui.RealUIOracleTests) ... ok
+test_scope_json_alone_or_zero_selected_tests_cannot_pass (test_real_ui.RealUIOracleTests) ... ok
+test_wrong_actor_request_session_bytes_or_missing_checkpoints_reject (test_real_ui.RealUIOracleTests) ... ok
+test_run_failed_summary_outranks_export_error (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_failed_summary_without_attachment_is_fail_before_export (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_nonzero_exit_with_unreadable_summary_remains_fail (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_nonzero_process_cannot_be_masked_by_pass_summary_and_missing_attachment (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_pass_requires_single_executed_case_and_observation (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_without_known_failure_and_missing_attachment_is_unrun (test_real_ui.RealUIOrchestrationTests) ... ok
+test_run_zero_exit_with_unreadable_summary_stays_unrun (test_real_ui.RealUIOrchestrationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.291s
+
+OK

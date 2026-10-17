@@ -1,0 +1,17 @@
+{
+  "status": "PASS_IMMUTABLE_REQUEST_RECORD",
+  "matrixSourceCommit": "fee33c48181a23260298c896dcb6106865d6016a",
+  "matrixRun": "d3-run-ca177ce267ed4fcda187cf4bb167b89c.json",
+  "unchangedMatrixCode": [
+    "target_profile",
+    "capture_sql",
+    "compile_transaction",
+    "compile_safe_stop",
+    "assertion",
+    "inspect_sql",
+    "outcome",
+    "validate_scope"
+  ],
+  "scope": "Only CLI artifact persistence changed; reuse actual eight SQL cases without rerunning unchanged transaction code.",
+  "sourceSha256": "5a6f827a577c616c1dc6f8656b63c3e0786eeedea707c45b96400ede7fb42af6"
+}

@@ -1,0 +1,38 @@
+{
+  "fixedSource": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "method": "same-name dollar-quoted CREATE FUNCTION bodies only; does not prove absence of transformations, renames, dynamic DDL or other source provenance",
+  "objects": [
+    {
+      "name": "public.cancel_chat_turn",
+      "targetBodyHash": "ab34886536e1f6bf19bf49303098ff8b80b29f9dda97292afb34d07d21af56b6",
+      "matches": []
+    },
+    {
+      "name": "public.start_chat_turn",
+      "targetBodyHash": "f11fb44b85d490a5c52ded04e15499a5175adb5a4e43a41c4579432dbb01d535",
+      "matches": []
+    },
+    {
+      "name": "public.read_text_turn",
+      "targetBodyHash": "eeb0d2ddbd3517d141c83f5eacfaf262f7a697255ec4851001c28792be6cc827",
+      "matches": [
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+          "offset": 37388
+        }
+      ]
+    },
+    {
+      "name": "turn_private.require_text_task",
+      "targetBodyHash": "67c08548eb1730582534bd017c4dfe464a9458a316750834b2e27fc327712ba8",
+      "matches": [
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+          "offset": 30681
+        }
+      ]
+    }
+  ]
+}

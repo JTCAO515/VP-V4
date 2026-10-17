@@ -1,0 +1,44 @@
+{
+  "status": "PASS_D2_BOUNDED_ADMISSION_WORKER_ISOLATION",
+  "scope": "known legacy functions/constraints and synthetic admission/worker isolation; NOT target replica or dispatch acceptance",
+  "checks": [
+    {
+      "name": "four legacy function bodies and three locally instantiated constraints exactly match D0; fourth constraint source hash matches without resolver stub",
+      "status": "PASS"
+    },
+    {
+      "name": "full local admission candidate including least-privilege grants rolls back to exact before metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "7 authenticated and 6 service grants only on new functions; 5 internal-only, anon/PUBLIC denied; existing ACL and unrelated captured objects preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary Native admission/replay/reopen with matched old guarded start/read functions; consent, byte-change, cross-actor and direct legacy admission bypass denied",
+      "status": "PASS"
+    },
+    {
+      "name": "old global worker QA theft reproduced and rolled back; minimal patch excludes QA, legacy text lock refuses QA, original QA claim/read obtains correct Task under service role",
+      "status": "PASS"
+    },
+    {
+      "name": "safe STOP preserves exact new request and Task linkage; worker disabled and no claim/dispatch/provider invoked",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "target": "UNRUN",
+  "provider": "UNRUN",
+  "workerDispatch": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d2_verify.py": "f06a0b2e1b29d0888a3007f325ced285eee632b240fdcf6060bab341cac361e9",
+    "scripts/qa-agent-db-baseline/target-delta/d2_compat.py": "7de8029200e4b8d7d6c1b0fa2fe1f897ebc66434f82b135b9fb215e77f4a3a09",
+    "scripts/qa-agent-db-baseline/target-delta/d2_worker_compat.py": "2fc15e52b7d47f4758433dcfc8260e0358cf81e3a000b959950c938216e23687",
+    "scripts/qa-agent-db-baseline/target-delta/propose.py": "3267e08b47f72bdc46af1da429c07590ff3bf8adb46d79be8c889950415ce034"
+  },
+  "containerId": "cb97dece05a91fc0839de9c7ee1b3211d2720eb6141b1e1feb43418acd415aa1",
+  "nonce": "ef8731e2b3eb4a3ca1c75838191cd609",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "proposalSha256": "1187331c5e1f6cdb857dffbc7ec17c8c9b78b124af2dc226b5fa33899fa7f585"
+}

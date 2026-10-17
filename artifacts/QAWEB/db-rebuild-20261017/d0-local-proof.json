@@ -1,0 +1,22 @@
+{
+  "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "status": "PASS_CATALOG_REFERENCE",
+  "cleanup": "PASS",
+  "scope": "catalog only; no seed, contracts matrix, provider or target writes",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/acl.sql": "3ae461a785319c828d1c977acf9ad9feb9c4ed721605432ce561eda2f6047d63",
+    "scripts/qa-agent-db-baseline/assemble.py": "ba155ef6fcf7e9a42e5019326cee584f4090ba808f7141d2675f1e4d7a3f4916",
+    "scripts/qa-agent-db-baseline/baseline.sql": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8",
+    "scripts/qa-agent-db-baseline/contracts.py": "dace4fc134b8f945ab3fd042393c120c31c6a8772c21a619370fd56e349d9526",
+    "scripts/qa-agent-db-baseline/platform.sql": "b8f1cea2563fd7e67a7662e6f55e729be5cc7d6b01b54973e53c612e1a6ff48e",
+    "scripts/qa-agent-db-baseline/port-coverage.json": "e092c6bbd45c5fdf3b943127634b8762d11e56cb7a0de0b7439ac0a871959b93",
+    "scripts/qa-agent-db-baseline/reuse-map.json": "f2b4c415c5444e3fdec87bb6c2a8867e6dd4170a882d885421e3c25faa87a4a0",
+    "scripts/qa-agent-db-baseline/run.py": "62133619ad1fecedb485103c3b71793d86476d6ef660571513c8b9aa94bb15ce",
+    "scripts/qa-agent-db-baseline/schema-overlay.sql": "e91b444b2c1f5027bcb124ee9577223b512be807279fe6b3d73eb6ba70580dc6",
+    "scripts/qa-agent-db-baseline/service-ports.json": "aa19302219d8a4474022a4e1d7cb9b97009e9539c4bfad1e1f4ba89a2b882571",
+    "scripts/qa-agent-db-baseline/write-ports-acl.sql": "7c5f2187feebc3fb63399325ece6eaa3d6406dce4af708ffe4682db52e5ce54c"
+  },
+  "containerId": "28b6f3791c4fadfb2ddd19630a6243820d7ddfbbbfcc771d120f2a51a54d7849",
+  "nonce": "4f874fccdc5a4f1492b084a50ab3d060"
+}
