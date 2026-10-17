@@ -1,0 +1,25 @@
+--- a/ios/VisePanda/VisePanda/App/NativeQAEntryView.swift
++++ b/ios/VisePanda/VisePanda/App/NativeQAEntryView.swift
+@@ -21,0 +22,3 @@
++#if NATIVE_QA_ACCEPTANCE
++    @State private var acceptanceObservation = NativeQAAcceptanceObservation()
++#endif
+@@ -33,0 +37,3 @@
++#if NATIVE_QA_ACCEPTANCE
++                port?.acceptanceObservation = acceptanceObservation
++#endif
+@@ -40,0 +47,3 @@
++#if NATIVE_QA_ACCEPTANCE
++            acceptanceObservation.clear()
++#endif
+@@ -41,0 +51,10 @@
++#if NATIVE_QA_ACCEPTANCE
++        .overlay(alignment: .topLeading) {
++            if let value = acceptanceObservation.encoded(scope: port?.scope) {
++                Text("CANARY OBSERVATION · not approval")
++                    .font(.caption2)
++                    .accessibilityIdentifier("native.qa.acceptance.observation")
++                    .accessibilityValue(value)
++            }
++        }
++#endif

@@ -1,0 +1,63 @@
+import SwiftUI
+
+@MainActor
+enum NativeQAEntryRollout {
+    static func enabled(arguments: [String] = ProcessInfo.processInfo.arguments,
+                        configuration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:]) -> Bool {
+        if arguments.contains("-V10RealServiceFrontend") { return true }
+        // An installed QA build opens the real entry without remote launch overrides.
+        return configuration["VisePandaNativeTaskContext"] == "qa_session_v1"
+            && configuration["VisePandaNativeEnvironment"] == "staging"
+            && NativeSession.resolveEndpoint(arguments: [], bundleConfiguration: configuration) != nil
+    }
+}
+
+@MainActor
+struct NativeQAEntryView: View {
+    let chinese: Bool
+    var isActive = true
+    @Environment(AppSettings.self) private var settings
+    @State private var port: NativeQASessionTransport?
+    @State private var signingIn = false
+#if NATIVE_QA_ACCEPTANCE
+    @State private var acceptanceObservation = NativeQAAcceptanceObservation()
+#endif
+
+    var body: some View {
+        Group {
+            if let port, port.matches(session: settings.nativeSession) {
+                NativeQAServiceView(transport: port, chinese: chinese, isActive: isActive,
+                                    onSignIn: { signingIn = true }, cancellationPersistence: port.cancellationJournal)
+                    .id(ObjectIdentifier(port))
+            } else { ProgressView() }
+        }
+        .task(id: ObjectIdentifier(settings.nativeSession)) {
+            if port?.matches(session: settings.nativeSession) != true {
+                port = settings.nativeSession.makeNativeQATransport()
+#if NATIVE_QA_ACCEPTANCE
+                port?.acceptanceObservation = acceptanceObservation
+#endif
+            }
+        }
+        .sheet(isPresented: $signingIn) {
+            NavigationStack { ProfileView(showSubscriptionEntry: false) }
+        }
+        .onChange(of: settings.nativeSession.dataScope) { _, scope in
+            if scope != nil { signingIn = false }
+#if NATIVE_QA_ACCEPTANCE
+            acceptanceObservation.clear()
+#endif
+        }
+#if NATIVE_QA_ACCEPTANCE
+        .overlay(alignment: .topLeading) {
+            if let value = acceptanceObservation.encoded(scope: port?.scope) {
+                Text("CANARY OBSERVATION · not approval")
+                    .font(.caption2)
+                    .accessibilityIdentifier("native.qa.acceptance.observation")
+                    .accessibilityValue(value)
+            }
+        }
+#endif
+        .accessibilityIdentifier("native.qa.entry")
+    }
+}
