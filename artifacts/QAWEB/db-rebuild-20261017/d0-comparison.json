@@ -1,0 +1,966 @@
+{
+  "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "status": "PASS_BOUNDED_CATALOG_COMPARISON",
+  "counts": {
+    "UNKNOWN": 5,
+    "reuse-exact": 29,
+    "different-owner-or-shape": 22,
+    "absent": 26
+  },
+  "applicationObjects": 77,
+  "managedAuthDependencies": 5,
+  "catalogColumnsOnly": true,
+  "ledgerRows": 75,
+  "objects": [
+    {
+      "name": "auth.jwt",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true
+    },
+    {
+      "name": "auth.role",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true
+    },
+    {
+      "name": "auth.sessions",
+      "kind": "table",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true
+    },
+    {
+      "name": "auth.uid",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true
+    },
+    {
+      "name": "auth.users",
+      "kind": "table",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true
+    },
+    {
+      "name": "identity_private.guard_mobile_rpc_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.guard_mobile_write_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.mobile_access_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.mobile_accounts",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.mobile_attempts",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.mobile_login_proofs",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.mobile_session_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "identity_private.prepare_mobile_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.accept_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.cancel_chat_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "bodyHash",
+        "searchPath"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.chat_threads",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_thread_insert",
+            "baseline_thread_read",
+            "baseline_thread_update"
+          ],
+          "targetOnly": [
+            "chat thread owner archives",
+            "chat thread owner inserts",
+            "chat thread owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [
+            "hide_text_on_thread_archive"
+          ],
+          "targetOnly": [
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_threads_owner"
+          ],
+          "targetOnly": [
+            "chat_threads_owner_created_idx"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.chat_turn_events",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat event owner selects"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat_turn_events_thread_turn_sequence_idx"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.chat_turn_idempotency",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat idempotency owner selects"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.dispatch_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.enqueue_turn_work",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.finish_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.hosted_worker_heartbeat",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.model_budget_attempts",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "model_budget_attempts_provider_idx",
+            "model_budget_attempts_task_idx"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.model_budget_provider_limits",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {}
+    },
+    {
+      "name": "public.model_budget_scopes",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {}
+    },
+    {
+      "name": "public.native_prepare_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.native_session_v2",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.qa_accept_policy_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v2",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_cancellation_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_claim_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_complete_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_list_sessions_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_native_session_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_read_policy_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_read_session_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_read_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_ready_groups_v3",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_submit_message_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.qa_submit_turn_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "public.read_hosted_worker_status",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.read_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.read_text_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.reserve_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "public.start_chat_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.start_text_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "public.trips",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_trip_read"
+          ],
+          "targetOnly": [
+            "trip owner deletes",
+            "trip owner inserts",
+            "trip owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [],
+          "targetOnly": [
+            "ai10_fault_after_trip_update",
+            "capture_initial_trip_version",
+            "guard_archived_trip_content",
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "trips_owner_id_idx"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "constraints",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [
+            "turns_id_owner_unique"
+          ],
+          "changed": []
+        },
+        "policies": {
+          "localOnly": [
+            "baseline_turn_read"
+          ],
+          "targetOnly": [
+            "turn owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [],
+          "targetOnly": [
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_turns_thread"
+          ],
+          "targetOnly": [
+            "turns_id_owner_unique",
+            "turns_owner_id_idx",
+            "turns_thread_created_idx"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.user_profiles",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_profile_read"
+          ],
+          "targetOnly": [
+            "user profile owner selects"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "public.withdraw_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.assistant_conversations",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.assistant_event_link_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.assistant_goals",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.assistant_messages",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.cancel_chat_turn_unmetered",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.cancel_unclaimable_turn_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.grounded_turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "selected_place_request"
+          ],
+          "targetOnly": [
+            "place_name",
+            "place_resolution",
+            "place_subject_id",
+            "unanswered_needs"
+          ],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [
+            "grounded_place_selection_shape",
+            "grounded_unanswered_needs_shape"
+          ],
+          "changed": [
+            "grounded_turns_intent_check"
+          ]
+        }
+      }
+    },
+    {
+      "name": "turn_private.hide_text_content",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.hosted_worker_control",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.hosted_worker_heartbeats",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.immutable_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.lock_turn",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.qa_consumer_window_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.qa_history_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.qa_link_mode_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.qa_lock_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.require_text_task",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization."
+    },
+    {
+      "name": "turn_private.reserve_model_budget_unbound",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.service_task_capacity",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.service_task_capacity_settings",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot."
+    },
+    {
+      "name": "turn_private.service_task_turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "service_task_turns_relationship_check"
+          ]
+        },
+        "triggers": {
+          "localOnly": [
+            "qa_link_mode_v1"
+          ],
+          "targetOnly": [
+            "bound_task_history"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "turn_private.service_tasks",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "capacity_enforced"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "service_tasks_expected_result_check"
+          ]
+        }
+      }
+    },
+    {
+      "name": "turn_private.terminal",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.text_consents",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.text_content",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints",
+        "indexes",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [
+            "baseline_text_bounds"
+          ],
+          "targetOnly": [
+            "bounded_text_content"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [
+            "baseline_require_task"
+          ],
+          "targetOnly": [
+            "require_text_task"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_content_thread"
+          ],
+          "targetOnly": [
+            "text_content_owner",
+            "text_content_thread"
+          ],
+          "changed": []
+        }
+      }
+    },
+    {
+      "name": "turn_private.text_dispatches",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.text_owner",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.text_policies",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "text_policies_context_mode_check"
+          ]
+        }
+      }
+    },
+    {
+      "name": "turn_private.text_policy_current",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.valid_text",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior."
+    },
+    {
+      "name": "turn_private.work",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints",
+        "indexes"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "execution_mode"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [
+            "work_execution_mode_check"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "turn_work_owner_ready",
+            "turn_work_ready"
+          ],
+          "changed": []
+        }
+      }
+    }
+  ],
+  "ports": [
+    {
+      "name": "qa_read_policy_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_accept_policy_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_list_sessions_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_read_session_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_submit_message_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "read_text_turn",
+      "classification": "different-owner-or-shape"
+    },
+    {
+      "name": "qa_cancellation_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "native_prepare_v2",
+      "classification": "reuse-exact"
+    },
+    {
+      "name": "native_session_v2",
+      "classification": "different-owner-or-shape"
+    },
+    {
+      "name": "qa_native_session_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_ready_groups_v3",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_claim_work_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_read_work_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_authorize_dispatch_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_authorize_dispatch_v2",
+      "classification": "absent"
+    },
+    {
+      "name": "qa_complete_work_v1",
+      "classification": "absent"
+    },
+    {
+      "name": "reserve_model_budget",
+      "classification": "reuse-exact"
+    },
+    {
+      "name": "dispatch_model_budget",
+      "classification": "reuse-exact"
+    },
+    {
+      "name": "finish_model_budget",
+      "classification": "reuse-exact"
+    },
+    {
+      "name": "read_hosted_worker_status",
+      "classification": "reuse-exact"
+    },
+    {
+      "name": "hosted_worker_heartbeat",
+      "classification": "reuse-exact"
+    }
+  ],
+  "limitations": [
+    "reuse-exact means only equality of fields in d0-catalog.sql, not whole-database equivalence",
+    "No row data, function bodies, policy expressions or default expressions captured",
+    "Schema ACL, inherited roles, dependency closure outside allowlist, concurrent change detection and migration compatibility are not established",
+    "Managed Auth/JWT, provider, worker activation, real service, device, deletion preservation, rollback and target apply remain UNRUN",
+    "Target snapshot and migration ledger are separate read-only transactions; re-pin immediately before any future authorized apply"
+  ]
+}
