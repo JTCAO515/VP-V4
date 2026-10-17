@@ -1,0 +1,127 @@
+{
+  "decision": "DB-REBUILD-20261017",
+  "sourceHead": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "proofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE",
+  "baseQA": "813f9d7fdf956e84fe769e823850e79b79508bf4",
+  "serviceContract": "648f02240faa802ca93276a1b43202215c0affd6",
+  "status": "NATIVE_QA_SQL_BASELINE_COMPLETE_SYNTHETIC_ONLY",
+  "currentRun": {
+    "file": "run-7b58be351544427399ec75a610f9da8b.json",
+    "sha256": "7e183cf82eb36a3772c9bc75330dacafb0433cf07c716b0530267cca76dff425",
+    "namedCheckGroups": 38,
+    "freshDatabases": 2,
+    "uniqueGroupsPerDatabase": 19,
+    "functionCatalogRepeatable": true,
+    "schemaRlsAclRepeatable": true,
+    "cleanup": "PASS"
+  },
+  "sourceProvenance": {
+    "actualExecutionFileHashesRecorded": true,
+    "allMatchFixedHead": true,
+    "files": [
+      "scripts/qa-agent-db-baseline/run.py",
+      "scripts/qa-agent-db-baseline/acl.sql",
+      "scripts/qa-agent-db-baseline/write-ports-acl.sql",
+      "scripts/qa-agent-db-baseline/assemble.py",
+      "scripts/qa-agent-db-baseline/schema-overlay.sql",
+      "scripts/qa-agent-db-baseline/service-ports.json",
+      "scripts/qa-agent-db-baseline/reuse-map.json",
+      "scripts/qa-agent-db-baseline/port-coverage.json",
+      "scripts/qa-agent-db-baseline/contracts.py",
+      "scripts/qa-agent-db-baseline/baseline.sql",
+      "scripts/qa-agent-db-baseline/platform.sql"
+    ],
+    "baselineSha256": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8",
+    "platformAdapterSeparate": true
+  },
+  "coverage": [
+    "all21 reference RPC named-argument and role ABI",
+    "Native session/profile/epoch/RLS",
+    "exact notice+consent",
+    "atomic submit and byte-sensitive duplicate/conflict",
+    "ready exact tuple before LIMIT",
+    "claim/context and canonical Task budget binding",
+    "reserve\u2192dispatch\u2192synthetic usage7\u2192settle\u2192complete\u2192protected reopen",
+    "followup original Task/parent/history",
+    "unknown dispatch/ACK preserves bytes and pending cost, no requeue or zero release",
+    "withdrawal hides content but allows owned cancellation",
+    "missing cancellation receipt remains unknown"
+  ],
+  "unrun": [
+    "real managed Auth/JWT issuer",
+    "real provider or charges",
+    "shared target/cutover",
+    "physical iOS/device acceptance",
+    "non-QA product lifecycle and Browser auxiliary relations"
+  ],
+  "historicalRuns": [
+    {
+      "file": "run-1653b685f5f24a8e889ff248a93c8700.json",
+      "sha256": "54bf13f768d18a5eee3c0dafdfa49064ccc439febf3f76990d436d44e7b22a37",
+      "status": "FAIL",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-238080df6d694bc4bb708006fed26e07.json",
+      "sha256": "db1229290db7bdd347a308df0b7545721fdb82a3718d7f2f00e143c1e75c2639",
+      "status": "FAIL",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-499414f131a949cba329e549b88e63e2.json",
+      "sha256": "4bae5f5b73579c41b121ab8b40d649c837302f041f1f3f5c95ddd432bb8d07b7",
+      "status": "PASS_NATIVE_QA_WRITE_SQL_SYNTHETIC",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-57aaae46df954d1694f61ccc9dce2712.json",
+      "sha256": "92a42dd435daf64a726f6c58b45bc0f0f6ee7b3e12d1e97d4c9a179592dba70d",
+      "status": "PASS_NATIVE_QA_WRITE_SQL_SYNTHETIC",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-5c514bbfdc8a4ff4949dd4190cc87d45.json",
+      "sha256": "19f7efa2305d6ea29ff669d82eb7729e8c32cbac1a0f89480bee5e8b74d58b7e",
+      "status": "PASS_NATIVE_SESSION_READ_SLICE",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-9fd887e17075422f8c6ee5eb11b4cfb2.json",
+      "sha256": "ce9d1ff87a83e1be91e46201ab7d7bef7aa25b1ac0c615eecfff633ea2eacb6f",
+      "status": "FAIL",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-acbf5302b12f4866bc0c6f2f6b77b54c.json",
+      "sha256": "b45eb02904e5b66a06c031e3d747f74bfd8bec8eec192e67d726df1f3eedbdaa",
+      "status": "PASS_NATIVE_QA_WRITE_SQL_SYNTHETIC",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-bbc46adb807b492a897974b484361dff.json",
+      "sha256": "7d385f11c7b2425c55ac998f1e60f66b50fec7f974d843527a0e5e45e4a55a9d",
+      "status": "PASS_M1_SESSION_DATABASE_CONTRACT",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-ccccffbf183445a3b6b72d02a1e1580a.json",
+      "sha256": "1d5f82ef8fa68e1520073d2c76ba4a05111d4eb362d0568c22903f2c74d312a0",
+      "status": "PASS_NATIVE_QA_WRITE_SQL_SYNTHETIC",
+      "cleanup": "PASS"
+    },
+    {
+      "file": "run-daec58dfbb5b4f77b764b3a02f59ee86.json",
+      "sha256": "c9adbfe21444c777b5262e3737606407833f5d1a65c502d420d7fdca3f4c3364",
+      "status": "PASS_NATIVE_SESSION_READ_SLICE",
+      "cleanup": "PASS"
+    }
+  ],
+  "historicalLimits": "Read-slice proof e225 remains separate. Earlier write runs used intermediate bytes/labels; only currentRun is mapped by all execution hashes to7f0352. Initial SQL42883 was a fixture GRANT signature mismatch, fixed using original heartbeat signature. No failed record rewritten.",
+  "fixtureInterface": "Original Fixture.start/sql/close preserved; seed/tuple documented in scripts/qa-agent-db-baseline/WRITE-SEED.md. No new service adapter.",
+  "noOldMaterialLedgerOrTargetAccess": true,
+  "old958Unchanged": true,
+  "scopePathsOnly": [
+    "scripts/qa-agent-db-baseline/**",
+    "artifacts/QAWEB/db-rebuild-20261017/**"
+  ]
+}

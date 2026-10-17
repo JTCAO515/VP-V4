@@ -1,7 +1,14 @@
 {
   "qaBase": "813f9d7fdf956e84fe769e823850e79b79508bf4",
-  "scope": "native session create/list/read, policy-consent and retained-message/unknown-ACK projection",
+  "scope": "Native QA admission, idempotency, claim/context, model budget, dispatch, settlement/completion, protected reopen and cancellation; synthetic Auth/provider only",
   "sourceObjects": [
+    {
+      "kind": "function",
+      "name": "turn_private.valid_text",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "481305740b80453775480618bc06f05c71d445c7d9c48fd639dc14aecd14b7fe"
+    },
     {
       "kind": "table",
       "name": "public.trips",
@@ -22,6 +29,20 @@
       "source": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
       "sourceSha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9",
       "objectSha256": "87841e1eed73a3b7c181639dbe75a6bc12f67146e3944c2bf7a066b58366a00e"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_turn_events",
+      "source": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+      "sourceSha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9",
+      "objectSha256": "a9f506c5022f0e71ea669832d4863ed7908b51e8fa7ca69ee2c5f06bf9e06e78"
+    },
+    {
+      "kind": "table",
+      "name": "public.chat_turn_idempotency",
+      "source": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+      "sourceSha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9",
+      "objectSha256": "2727e34145cfc8700200b4caffe921d45be6e5516a7a1568eb2587413e970100"
     },
     {
       "kind": "table",
@@ -122,6 +143,62 @@
       "objectSha256": "1ad0d537b580abdcdd067c0db1383927bd50ebc84f0d89f3e64fadd589bdec0e"
     },
     {
+      "kind": "table",
+      "name": "turn_private.grounded_turns",
+      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+      "objectSha256": "ba52ebf0146b65490da666e231632dcbd92fa289ebdecd63ee0da84cbd476da1"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_capacity_settings",
+      "source": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+      "sourceSha256": "c8465ff6aee2903f3e9038078d235e68c25b242788dc0b4a61125c0256b779ee",
+      "objectSha256": "b74416467d0705d09e48fb9e1d28f4d565cee1a6a447f59db9dc33a46de44bc3"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.service_task_capacity",
+      "source": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+      "sourceSha256": "c8465ff6aee2903f3e9038078d235e68c25b242788dc0b4a61125c0256b779ee",
+      "objectSha256": "aa2c6862c6700532e3a630069f927c5862525c1b842354df26e3b33e8e3101c5"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.hosted_worker_control",
+      "source": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "sourceSha256": "06a72f9f2ee71849e4fd545bda2a4dbd14353765fc5dbef1c95881f3fa681ff5",
+      "objectSha256": "dca49e900c5c8aecc829d6ba7e07009604e4371c974cf7f8914087a8541d8161"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.hosted_worker_heartbeats",
+      "source": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "sourceSha256": "06a72f9f2ee71849e4fd545bda2a4dbd14353765fc5dbef1c95881f3fa681ff5",
+      "objectSha256": "9d8b9e3f2dc151b17c0acc93c4cf53556435f4333820ea9335aa1d59e77be804"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_conversations",
+      "source": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+      "sourceSha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3",
+      "objectSha256": "c9963cc1d27eb5dbcac0592404c8654d704ca088ff5cbc1eb414085fc666d088"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_goals",
+      "source": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+      "sourceSha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3",
+      "objectSha256": "99aee6244d209b3fed3b6cc646f761a23eecc8fc4110617a98046b125ebecdb0"
+    },
+    {
+      "kind": "table",
+      "name": "turn_private.assistant_messages",
+      "source": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+      "sourceSha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3",
+      "objectSha256": "71690070c364fbd4c78ef0ce95127ab9f5d386038afc9384f8ae5389dbaf4d14"
+    },
+    {
       "kind": "function",
       "name": "identity_private.prepare_mobile_v2",
       "source": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
@@ -172,13 +249,6 @@
     },
     {
       "kind": "function",
-      "name": "turn_private.valid_text",
-      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
-      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
-      "objectSha256": "481305740b80453775480618bc06f05c71d445c7d9c48fd639dc14aecd14b7fe"
-    },
-    {
-      "kind": "function",
       "name": "turn_private.lock_turn",
       "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
       "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
@@ -221,17 +291,31 @@
     },
     {
       "kind": "function",
+      "name": "public.start_text_turn",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "c6d68d8a95a7093f80b381dc0b2f99e0a894869c0543134a0ce88b1c717c36e6"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.terminal",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "ed9c00844747b846a1f18440cb73c42b70fa84cf7f84a609e7c853223aae82ba"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.hide_text_content",
+      "source": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sourceSha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81",
+      "objectSha256": "1f4bec938a8bbf1d576f8cac4df46e7444cf8143fa87aa9ecae31a7168e2c909"
+    },
+    {
+      "kind": "function",
       "name": "public.read_text_policy",
       "source": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
       "sourceSha256": "156ec168fabffa251df49e4b255d5f6f6d2f1711adf06d0a5736c4aee7f1cc75",
       "objectSha256": "d518038068b6d8ee667dd8057598d4e19a59b838ea70a016120b8242dd525d4d"
-    },
-    {
-      "kind": "function",
-      "name": "public.read_text_turn",
-      "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
-      "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
-      "objectSha256": "aa73a56ba28569f785f2217a6c3b562b2a569aaa26e57924d56075c5dd719e6a"
     },
     {
       "kind": "function",
@@ -270,15 +354,199 @@
     },
     {
       "kind": "function",
+      "name": "turn_private.qa_consumer_window_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "f6a25239e964bac8310944abe4795daf2bbdc8b9abf1479a8da7d4d796dc3b60"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_link_mode_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "c8e95908746a1a80d792d11b673091e650fe6108e10f249e1142ae4a6d871f00"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.require_text_task",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "0720bbc9e59c8b2254524274de71d299195dac4fd935ccdcf23328aa92a4571b"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.qa_lock_work_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "13b97a6be079cb1ae506d535fd6cb6f02bb44eb24add116cf1e12f5a49777548"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_submit_turn_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "382f514cad74f30572901e4ddc7ffde8d4be98a9c43ff0c7b7556f36def89414"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_submit_message_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "7da2d0c8e056990fe7b387b75e293aa98a6068d5ce70f0c9055b40ff11d78bdf"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_claim_work_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "63bff9517a04ee8b7b9960950e1c82c689c5e82027c38b4296e661c3c7b2572f"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_read_work_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "31e226b754d366fb69cb87bea38703815d2f14a2eceebc3aba970c0422e36035"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_authorize_dispatch_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "121732e336109cefa85a2ee3c8969826aaeffeff3898c94363ef3893a8cccbf9"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_complete_work_v1",
+      "source": "supabase/migrations/20261013050429_qa_agent_web.sql",
+      "sourceSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "objectSha256": "a90bcca8156c305860893ec0e20eab668bf09784b8f9c2b17d9fea695118d920"
+    },
+    {
+      "kind": "function",
       "name": "public.qa_native_session_v1",
       "source": "supabase/migrations/20261016060000_qa_native_session.sql",
       "sourceSha256": "a70fbf6581668df6e1515e02267891fb2183dda13a543e7dc420a7affc0c4033",
       "objectSha256": "c9bd1f8040b7d6daac22c065d8cc09805ded24424421915d4d78c42d2b057874"
+    },
+    {
+      "kind": "function",
+      "name": "public.enqueue_turn_work",
+      "source": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+      "sourceSha256": "e7d04e2c0598ed0707c05e90d8720e5eca08da22b1c78d59f52b03ac89912705",
+      "objectSha256": "c31acefb032585b36211baced91821f6df9df6daafd497d6e6f189667ade9be5"
+    },
+    {
+      "kind": "function",
+      "name": "public.start_chat_turn",
+      "source": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "sourceSha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d",
+      "objectSha256": "1ff9226eb80b5aa7108d38e125a396c233cdcc783b07ec72cd391358b83cbb98"
+    },
+    {
+      "kind": "function",
+      "name": "public.reserve_model_budget",
+      "source": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "sourceSha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d",
+      "objectSha256": "2c76f8414fd015c4820cf41d1aed751ea346ed168f1f415f998fbef11a22eeef"
+    },
+    {
+      "kind": "function",
+      "name": "public.dispatch_model_budget",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "82a0d118c27e450c13c92f993956ae858836b25010e5b0816729f31b4c80dc83"
+    },
+    {
+      "kind": "function",
+      "name": "public.finish_model_budget",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "3ce615d15163360ebedb3bab3f0f1a2f06b9cded524311aadedb2a9caaefcfb8"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_ready_groups_v3",
+      "source": "supabase/migrations/20261016040522_qa_runtime_binding.sql",
+      "sourceSha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
+      "objectSha256": "3b96c19f156052b194e3d5c3d5799bf35570cd10f84e058bdb4f97201c64d370"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_authorize_dispatch_v2",
+      "source": "supabase/migrations/20261016040522_qa_runtime_binding.sql",
+      "sourceSha256": "a83928dacb9a7177c07b8d7f29bade5505414faa097fd072d90a2c6c77b2403c",
+      "objectSha256": "6fd214b33b4c802b0b8aeffbf9e9001535c0c3ac1342ceca6cdb7bf935dbceb6"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_hosted_worker_status",
+      "source": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "sourceSha256": "06a72f9f2ee71849e4fd545bda2a4dbd14353765fc5dbef1c95881f3fa681ff5",
+      "objectSha256": "4c9a1a84f4cb1d8e3ba9aa6e31bcdd0a3fef6048bb52b054af41a9bf15118d7e"
+    },
+    {
+      "kind": "function",
+      "name": "public.hosted_worker_heartbeat",
+      "source": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "sourceSha256": "06a72f9f2ee71849e4fd545bda2a4dbd14353765fc5dbef1c95881f3fa681ff5",
+      "objectSha256": "50a52804a3b5997e3e9acc3175963590df67dd9034ddde9255dce2d5306a2de9"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.assistant_event_link_v1",
+      "source": "supabase/migrations/20261010020000_assistant_events.sql",
+      "sourceSha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062",
+      "objectSha256": "5f6a96473fb67f8bbd9d03409bc66871cc35f133970ae97d524f185fa03c77bf"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.cancel_unclaimable_turn_v1",
+      "source": "supabase/migrations/20261010020000_assistant_events.sql",
+      "sourceSha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062",
+      "objectSha256": "5ad8a57652cd25118f3aedf18237901b35d8c8388a8629be4c829c030c4f65c9"
+    },
+    {
+      "kind": "function",
+      "name": "public.read_text_turn",
+      "source": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+      "sourceSha256": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
+      "objectSha256": "4f01947275b2479d610cb63bfcdf2ade5ce4248b1ddfe7ba9a03a423c9532ad0"
+    },
+    {
+      "kind": "function",
+      "name": "public.cancel_chat_turn",
+      "source": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+      "sourceSha256": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
+      "objectSha256": "641b2cffaa7ef742a3bb17b74b607f3334a40a882679e119a8d6a8e59f4b18bc"
+    },
+    {
+      "kind": "function",
+      "name": "public.qa_cancellation_v1",
+      "source": "supabase/migrations/20261015043710_agent001_qa_cancellation.sql",
+      "sourceSha256": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
+      "objectSha256": "3a0a5973e21609d3d927b4e159bf4d63bd65fac86e97cc19b83e9917e995f1b2"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.reserve_model_budget_unbound",
+      "source": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sourceSha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0",
+      "objectSha256": "104a019c20d75eb07b47766eab1efb9879242cac8d7dbecd93c4e643d0a4460d",
+      "transform": "original historical SET SCHEMA + RENAME only"
+    },
+    {
+      "kind": "function",
+      "name": "turn_private.cancel_chat_turn_unmetered",
+      "source": "supabase/migrations/20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+      "sourceSha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950",
+      "objectSha256": "490166bdb95748f85493d702fcc4b9e8d628bdbff03c33f2ff95cffc5b42ed33",
+      "transform": "original historical SET SCHEMA + RENAME only"
     }
   ],
-  "baselineSha256": "b110c0f2ef5408d7c8a1a7331a8a0eb89112b223a66c3822ff8a6dd8cc1b48f7",
+  "baselineSha256": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8",
   "historyReplayed": false,
   "authProfile": "synthetic claims/session tables; NOT GoTrue or real JWT verification",
-  "unsupported": "submit/dispatch/worker/cancellation/TripProposal writers are NOT installed, not replaced by success stubs",
+  "unsupported": "Trip/Place/Guide/Conversation writers are not exposed; required empty dependency anchors are private. No success stubs.",
   "schemaScope": "Selected original table definitions plus explicit schema-overlay.sql; not a whole-catalog equivalence claim"
 }

@@ -34,19 +34,20 @@ historical migrations. Original append-only migration files are untouched.
 reuse-map.json lists source/blob hashes and coverage. This is selected-port
 compatibility, not whole-catalog or whole-history equivalence.
 
-Current PASS slice: native_prepare/session epoch + trusted proof requirement,
-user_profiles owner read, native create/list/read/reopen, precise QA policy and
-consent, persisted **fixture-seeded** message projection, unknown-ACK projection,
-consent withdrawal, RLS/role/epoch negatives. Real Auth/provider/target/device are
-UNRUN. The seeded answer does not prove worker generation or message admission.
+Current SQL slice covers original Native session/profile/policy/consent, atomic
+message admission and byte-sensitive idempotency, scoped claim/context, tuple-bound
+budget reserve/dispatch, synthetic usage settlement, durable completion/reopen,
+follow-up history, unknown ACK/reconciliation and cancellation. Answers are written
+by qa_complete_work_v1 after dispatch/settlement, not fixture-seeded. See WRITE-SEED.md
+for exact consumer input. Real Auth/provider/target/device remain UNRUN.
 
-Missing write slice: qa_submit_message admission, byte-idempotency, cancellation,
-ready/claim, budget/dispatch/result completion and durable usage remain uninstalled.
-They fail as technical missing functions (42883), not forged blocked/unavailable
-policy outcomes, accepted turns or free answers. Browser auxiliary relations are
-outside this Native increment. No TripProposal writer exists: ordinary clients
-cannot write Trips. Continue the required Native write dependency closure before
-calling this a complete first-answer baseline.
+Browser auxiliary relations and non-QA product writers are outside this baseline.
+Private empty anchors satisfy read-only conditional dependencies; no fake success
+functions or whole-catalog fingerprint bypasses are installed. Existing function
+bodies are selected from pinned source; two historical schema/rename operations
+are materialized explicitly. This does not claim the full original catalogue or
+its broad product lifecycle graph is recreated. TripProposal writers stay absent
+and ordinary clients cannot write Trips. Target migration remains a separate scope.
 
 ## Non-destructive transition plan — not executed
 

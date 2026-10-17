@@ -5,7 +5,7 @@
     {
       "name": "qa_read_policy_v1",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_policy_id",
@@ -16,7 +16,7 @@
     {
       "name": "qa_accept_policy_v1",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_policy_id",
@@ -31,7 +31,7 @@
     {
       "name": "qa_list_sessions_v1",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_limit",
@@ -42,7 +42,7 @@
     {
       "name": "qa_read_session_v1",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_thread_id",
@@ -53,7 +53,7 @@
     {
       "name": "qa_submit_message_v1",
       "caller": "authenticated",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_thread_id",
@@ -92,7 +92,7 @@
     {
       "name": "read_text_turn",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_turn_id",
@@ -103,7 +103,7 @@
     {
       "name": "qa_cancellation_v1",
       "caller": "authenticated",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_action",
@@ -122,7 +122,7 @@
     {
       "name": "native_prepare_v2",
       "caller": "existing trusted identity service only",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_owner",
@@ -141,7 +141,7 @@
     {
       "name": "native_session_v2",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_action",
@@ -156,7 +156,7 @@
     {
       "name": "qa_native_session_v1",
       "caller": "authenticated",
-      "state": "INSTALLED_READ_SLICE",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_action",
@@ -175,7 +175,7 @@
     {
       "name": "qa_ready_groups_v3",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_limit",
@@ -214,7 +214,7 @@
     {
       "name": "qa_claim_work_v1",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_owner_id",
@@ -229,7 +229,7 @@
     {
       "name": "qa_read_work_v1",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_turn_id",
@@ -244,7 +244,7 @@
     {
       "name": "qa_authorize_dispatch_v1",
       "caller": "service_role/internal delegated authority",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_turn_id",
@@ -275,7 +275,7 @@
     {
       "name": "qa_authorize_dispatch_v2",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_turn_id",
@@ -314,7 +314,7 @@
     {
       "name": "qa_complete_work_v1",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_turn_id",
@@ -337,7 +337,7 @@
     {
       "name": "reserve_model_budget",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_scope_id",
@@ -376,7 +376,7 @@
     {
       "name": "dispatch_model_budget",
       "caller": "service_role/internal v1 authority",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_scope_id",
@@ -395,7 +395,7 @@
     {
       "name": "finish_model_budget",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_scope_id",
@@ -422,13 +422,13 @@
     {
       "name": "read_hosted_worker_status",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": []
     },
     {
       "name": "hosted_worker_heartbeat",
       "caller": "service_role",
-      "state": "UNIMPLEMENTED_TECHNICAL_REFUSAL",
+      "state": "INSTALLED_ORIGINAL_SQL_PORT",
       "parameters": [
         {
           "name": "p_worker_id",
@@ -473,5 +473,5 @@
       ]
     }
   ],
-  "notFullFirstAnswer": true
+  "scope": "Native QA synthetic SQL write/read lifecycle; not real Auth/provider/target/device or whole-app catalogue"
 }

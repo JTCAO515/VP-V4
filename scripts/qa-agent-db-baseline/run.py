@@ -42,7 +42,7 @@ class Fixture:
    time.sleep(.1)
   raise RuntimeError('READINESS_TIMEOUT')
  def sql(self,text,db='postgres',role=None,actor=None,session=None,anonymous=False,check=True):
-  assert self.cid and time.monotonic()<self.end;self.own()
+  assert self.cid and time.monotonic()<self.end and re.fullmatch('[a-z][a-z0-9_]{0,62}',db);self.own()
   claims={'sub':actor,'session_id':session,'role':role,'is_anonymous':anonymous}
   prefix="\\set VERBOSITY sqlstate\nset statement_timeout='10s';set lock_timeout='2s';\n"
   if role:
@@ -62,17 +62,18 @@ def main():
  report={'kind':'SYNTHETIC_EMPTY_POSTGRES_ONLY','status':'FAIL','realAuth':'UNRUN','provider':'UNRUN','target':'UNRUN','cleanup':'UNKNOWN','image':IMAGE,'checks':[]}
  f=Fixture()
  try:
-  sql=build();f.start();report['nonce']=f.nonce;report['containerId']=f.cid
+  sql=build();report['baselineSha256']=hashlib.sha256(sql.encode()).hexdigest();report['executionSourceHashes']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in HERE.iterdir() if p.suffix in ('.py','.sql','.json')};f.start();report['nonce']=f.nonce;report['containerId']=f.cid
   assert f.sql("select count(*) from pg_tables where schemaname='public';")[1]=='0'
   # Cluster roles are global, second isolated database reuses only these fixed empty-fixture roles.
-  fingerprints=[]
+  fingerprints=[];schemas=[]
   for number in (1,2):
    db='baseline_'+str(number);f.sql('create database '+db+';')
    platform=(HERE/'platform.sql').read_text()
    if number==2:platform=re.sub(r'create role (?:anon|authenticated|service_role)[^;]*;','',platform)
    f.sql(platform,db);f.sql(sql,db);report['checks'].extend(exercise(f,db))
    fingerprint=f.sql("select md5(string_agg(n.nspname||'.'||p.proname||':'||pg_get_functiondef(p.oid),E'\\n' order by n.nspname,p.proname)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','identity_private','turn_private') and p.prokind='f';",db)[1];fingerprints.append(fingerprint)
-  assert fingerprints[0]==fingerprints[1];report['functionCatalogRepeatable']=True;report['status']='PASS_NATIVE_SESSION_READ_SLICE';report['baselineSha256']=hashlib.sha256(sql.encode()).hexdigest()
+   schema=f.sql("select md5(jsonb_build_object('columns',(select jsonb_agg(jsonb_build_array(table_schema,table_name,column_name,data_type,is_nullable,column_default) order by table_schema,table_name,ordinal_position) from information_schema.columns where table_schema in ('public','identity_private','turn_private')),'policies',(select jsonb_agg(jsonb_build_array(schemaname,tablename,policyname,roles,cmd,qual,with_check) order by schemaname,tablename,policyname) from pg_policies where schemaname in ('public','identity_private','turn_private')),'constraints',(select jsonb_agg(jsonb_build_array(n.nspname,c.relname,k.conname,pg_get_constraintdef(k.oid)) order by n.nspname,c.relname,k.conname) from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','identity_private','turn_private')),'acl',(select jsonb_agg(jsonb_build_array(n.nspname,c.relname,c.relrowsecurity,c.relacl::text) order by n.nspname,c.relname) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname in ('public','identity_private','turn_private')))::text);",db)[1];schemas.append(schema)
+  assert fingerprints[0]==fingerprints[1] and schemas[0]==schemas[1];report['schemaRlsAclRepeatable']=True;report['schemaFingerprint']=schemas[0];report['functionCatalogRepeatable']=True;report['status']='PASS_NATIVE_QA_WRITE_SQL_SYNTHETIC';report['baselineSha256']=hashlib.sha256(sql.encode()).hexdigest()
  except BaseException as error:report['error']=str(error) if isinstance(error,(RuntimeError,AssertionError)) else type(error).__name__
  finally:
   try:report['cleanup']='PASS' if f.close() else 'UNKNOWN'
