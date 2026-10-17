@@ -1,0 +1,45 @@
+{
+  "status": "PASS_D1_BOUNDED_REPRESENTATIVE",
+  "scope": "synthetic representative, NOT target replica or full Native QA write acceptance",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "fixed7f": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "fixedD0": "0762e867cbc3801448b0f6c8caa4fef5dbc766ca",
+  "checks": [
+    {
+      "name": "representative omits all 26 absent objects and three absent columns; adds typed target extra columns and explicit synthetic legacy sentinels",
+      "status": "PASS"
+    },
+    {
+      "name": "matching synthetic preflight still refuses unresolved target candidate with no catalog or row changes",
+      "status": "PASS"
+    },
+    {
+      "name": "transaction rollback removes new definitions and preserves all existing metadata and synthetic rows",
+      "status": "PASS"
+    },
+    {
+      "name": "18 additive revoked definitions match source body hashes; all existing catalog, identities, archived/hidden/revoked rows, unknown bytes, Task lineage and pending budget unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "local-only Native create/list/read/reopen, archived exclusion, cross-actor and stale-epoch refusal with existing native service permission retained",
+      "status": "PASS"
+    },
+    {
+      "name": "safe STOP revokes only new entrypoints, retains postchange thread and exact unknown bytes; worker remains disabled",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "target": "UNRUN",
+  "provider": "UNRUN",
+  "realAuth": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/propose.py": "f4e4808b4b27e43722304ba0502641c6a0040139c1164d9bc847176ee32745b4",
+    "scripts/qa-agent-db-baseline/target-delta/verify_local.py": "19c7cf7a8513587dd6a569e911bda7272e92f36f121198aea805febfccb134ea"
+  },
+  "candidateBodySha256": "8c778916736f991e1e04e04cfb4ea6fd59dfded3934f3cac0a8d959ba7e64a5f",
+  "containerId": "2c2d8af05cf00c7f8225af8a7849fd39083a29607058cbb3fb706469c35866a0",
+  "nonce": "b94089dae0c949fb9bac6c12f6e7b8bb",
+  "beforeRowsSha256": "9804ffbe1a87312dd5f348960d6102b61913de359b4d51a7d3d267baa7b1b594"
+}
