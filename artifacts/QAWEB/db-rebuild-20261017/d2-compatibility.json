@@ -1,0 +1,258 @@
+{
+  "status": "SOURCE_COMPATIBILITY_CANDIDATE_ONLY",
+  "fixedSource": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "fixedD0": "0762e867cbc3801448b0f6c8caa4fef5dbc766ca",
+  "targetReady": false,
+  "functions": [
+    {
+      "name": "public.cancel_chat_turn",
+      "source": "20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+      "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "sourceSha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950",
+      "transformationMigration": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "bodyHash": "ab34886536e1f6bf19bf49303098ff8b80b29f9dda97292afb34d07d21af56b6",
+      "matchesD0": true,
+      "action": "preserve existing body; only require_text_task QA extension may be separately proposed"
+    },
+    {
+      "name": "public.start_chat_turn",
+      "source": "20260911200339_vpj_07_service_task_records.sql",
+      "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "sourceSha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d",
+      "transformationMigration": "20260917064821_vpj_04_reapply_mobile_guard_start_chat.sql",
+      "bodyHash": "f11fb44b85d490a5c52ded04e15499a5175adb5a4e43a41c4579432dbb01d535",
+      "matchesD0": true,
+      "action": "preserve existing body; only require_text_task QA extension may be separately proposed"
+    },
+    {
+      "name": "public.read_text_turn",
+      "source": "20260912190000_vpj_16_grounded_turn.sql",
+      "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+      "transformationMigration": null,
+      "bodyHash": "eeb0d2ddbd3517d141c83f5eacfaf262f7a697255ec4851001c28792be6cc827",
+      "matchesD0": true,
+      "action": "preserve existing body; only require_text_task QA extension may be separately proposed"
+    },
+    {
+      "name": "turn_private.require_text_task",
+      "source": "20260912190000_vpj_16_grounded_turn.sql",
+      "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389",
+      "transformationMigration": null,
+      "bodyHash": "67c08548eb1730582534bd017c4dfe464a9458a316750834b2e27fc327712ba8",
+      "matchesD0": true,
+      "action": "preserve existing body; only require_text_task QA extension may be separately proposed"
+    }
+  ],
+  "constraints": [
+    {
+      "table": "turn_private.text_policies",
+      "name": "text_policies_context_mode_check",
+      "repositoryDerivedDefinition": "CHECK ((context_mode = ANY (ARRAY['current_input_v1'::text, 'task_history_v1'::text, 'knowledge_intent_v1'::text])))",
+      "computedHash": "ec45def753b01710646dc1c7e7d763552b2d941b1773a12b9b5ed685adf9d1a0",
+      "targetHash": "ec45def753b01710646dc1c7e7d763552b2d941b1773a12b9b5ed685adf9d1a0",
+      "matchesD0": true,
+      "action": "QA superset candidate; target execution gated"
+    },
+    {
+      "table": "turn_private.service_tasks",
+      "name": "service_tasks_expected_result_check",
+      "repositoryDerivedDefinition": "CHECK ((expected_result = ANY (ARRAY['text_answer'::text, 'reviewed_answer'::text])))",
+      "computedHash": "4d2e42f48832ef6b3422adb99866e4acdd8472056ff4a8e5e9018c0bdb098fb8",
+      "targetHash": "4d2e42f48832ef6b3422adb99866e4acdd8472056ff4a8e5e9018c0bdb098fb8",
+      "matchesD0": true,
+      "action": "preserve"
+    },
+    {
+      "table": "turn_private.service_task_turns",
+      "name": "service_task_turns_relationship_check",
+      "repositoryDerivedDefinition": "CHECK ((relationship = ANY (ARRAY['new_goal'::text, 'clarification'::text, 'repair'::text])))",
+      "computedHash": "6ee8689e85d67fe5229f581324a3427e1e06a66976758733eee5cf13785ba3ab",
+      "targetHash": "6ee8689e85d67fe5229f581324a3427e1e06a66976758733eee5cf13785ba3ab",
+      "matchesD0": true,
+      "action": "QA superset candidate; target execution gated"
+    },
+    {
+      "table": "turn_private.grounded_turns",
+      "name": "grounded_turns_intent_check",
+      "repositoryDerivedDefinition": "CHECK (((knowledge_review_private.question_definition(intent) IS NOT NULL) OR (intent = ANY (ARRAY['clarification'::text, 'unsupported'::text, 'technical_failure'::text, 'blocked'::text]))))",
+      "computedHash": "ea9e989a1f11a630ff6036e2bb11305455a9d76ebc142276bc0d60245df10ad2",
+      "targetHash": "ea9e989a1f11a630ff6036e2bb11305455a9d76ebc142276bc0d60245df10ad2",
+      "matchesD0": true,
+      "action": "preserve"
+    }
+  ],
+  "newFunctionAcl": [
+    {
+      "name": "public.qa_accept_policy_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_cancellation_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_read_policy_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_ready_groups_v3",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "turn_private.qa_consumer_window_v1",
+      "authenticated": false,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "turn_private.qa_history_v1",
+      "authenticated": false,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "turn_private.qa_link_mode_v1",
+      "authenticated": false,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_claim_work_v1",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_read_session_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_submit_turn_v1",
+      "authenticated": false,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "turn_private.qa_lock_work_v1",
+      "authenticated": false,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_complete_work_v1",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_list_sessions_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_read_work_v1",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_submit_message_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v1",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_native_session_v1",
+      "authenticated": true,
+      "service_role": false,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v2",
+      "authenticated": false,
+      "service_role": true,
+      "anon": false,
+      "PUBLIC": false,
+      "owner": "postgres",
+      "existingObject": false
+    }
+  ],
+  "existingObjectAclChanges": [],
+  "unresolved": [
+    "global claimer and lock_text_work QA isolation",
+    "bound_task_history/task_history metadata and live dependency identity",
+    "cancellation event helper closure for invalid session branch",
+    "schema ACL and role inheritance",
+    "fresh pins, concurrency interval, target write and activation leases"
+  ]
+}
