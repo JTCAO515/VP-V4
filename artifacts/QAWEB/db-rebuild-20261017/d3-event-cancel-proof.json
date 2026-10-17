@@ -1,0 +1,20 @@
+{
+  "status": "PASS_BOUNDED_EVENT_CANCEL",
+  "checks": [
+    "ordinary admission creates initial event; repeated cancel yields one actual terminal receipt; pending budget unchanged, no zero-cost inference",
+    "explicit synthetic missing initial event fails SQL23502 atomically; no cancelled receipt; read remains pending/unknown"
+  ],
+  "cleanup": "PASS",
+  "scope": "targetlike synthetic event/cancel distinction only",
+  "initialEventCount": 1,
+  "missingEventSqlstate": "23502",
+  "sourceBodyChanges": 0,
+  "identity": {
+    "kind": "LOCAL_SYNTHETIC_ONLY",
+    "nonce": "9d452c5bac194e1c97f759e7044c8a5b",
+    "containerId": "d35d65b1fefc6c8efe8e65142a1c980b19d308beab9a8be56bf6a0e530935d70",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "database": "d3_targetlike",
+    "targetReplica": false
+  }
+}

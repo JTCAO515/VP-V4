@@ -1,0 +1,54 @@
+{
+  "status": "PASS_D3_TRANSACTION_CASES",
+  "checks": [
+    {
+      "name": "real local DDL path passes before/after guards and rolls back with original metadata and bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "structure drift, missing routine, changed role flag and revoked required permission each refuse before delta",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong role, expired interval and incomplete/wrong external scope reject; scope strings never create permission",
+      "status": "PASS"
+    },
+    {
+      "name": "second local cooperating writer is rejected by actual transaction advisory lock; this does not prove real deployment quiescence",
+      "status": "PASS"
+    },
+    {
+      "name": "postcondition mismatch aborts whole transaction and preserves original records",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit synthetic apply reaches actual COMMIT and acknowledged exact after-state",
+      "status": "PASS"
+    },
+    {
+      "name": "discarded local commit acknowledgment reconciles read-only to AFTER but never authorizes automatic retry or inverse; wrong receipt also UNKNOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit local safe STOP keeps postchange thread and old exact bytes; changed grants classify drift rather than pretending rollback",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "realTarget": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d3_verify.py": "769fedae728b220081453457aed6fa457ac29d3d29e303bd622bc70d65a3e9d2",
+    "scripts/qa-agent-db-baseline/target-delta/d3_transaction.py": "73a79c0f4c09bfb0d0cbc4a42fe7570ad6544fb394e647dd58efb0cff27a09a1",
+    "scripts/qa-agent-db-baseline/target-delta/local_fixture.py": "008d4d611a6d501c463cc0e0e3ba73148532a4d2ad5f2c1e53d27c0d04e1a4e0"
+  },
+  "phase": "unknown",
+  "unknownResultModel": "Acknowledgment deliberately discarded after successful local COMMIT; not an actual transport outage.",
+  "identity": {
+    "kind": "LOCAL_SYNTHETIC_ONLY",
+    "nonce": "fca5f4fb3ae3481eb5a7c8a2a8cba7a0",
+    "containerId": "e46a717accdce55c421d328ef07530563609f4f40ee40d922f9441353eb07632",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "database": "d3_targetlike",
+    "targetReplica": false
+  }
+}
