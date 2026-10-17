@@ -93,6 +93,8 @@ def outcome(receipt,scope,observation=None,expected_operation='apply'):
  if valid:return {'state':'COMMIT_ACKNOWLEDGED','next':'authorized acceptance only','automaticWrite':False}
  known=observation if observation in ('BEFORE_OBSERVED','AFTER_OBSERVED','MIXED_OR_DRIFT') else 'OBSERVATION_FAILED'
  return {'state':'COMMIT_OUTCOME_UNKNOWN','observed':known,'next':'STOP; preserve request/receipt; read-only reconciliation and external writer review; no automatic retry or inverse','automaticWrite':False}
+def write_once(path,text):
+ with path.open('x') as f:f.write(text)
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('dry-run','inspect','rollback','apply','safe-stop'),default='dry-run');p.add_argument('--emit',action='store_true')
  for key in ('writer','approval-reference','concurrency-reference','window-start','window-end','run-id'):p.add_argument('--'+key)
@@ -106,7 +108,11 @@ def main():
   except (ValueError,TypeError) as e:p.error(str(e))
  request={'tool':'supabase.execute_sql','arguments':{'link_id':LINK,'project_id':PROJECT,'query':query},'mode':args.mode,'source':SOURCE,'scope':scope,'authorization':'External verified instruction required. This request/flag/reference does not grant permission. NOT SUBMITTED.'}
  if args.emit:
-  (OUT/('d3-'+args.mode+'-request.json')).write_text(json.dumps(request,indent=2)+'\n')
+  text=json.dumps(request,indent=2)+'\n'
+  if scope:
+   try:write_once(OUT/('d3-'+args.mode+'-'+scope['run_id']+'-request.json'),text)
+   except FileExistsError:p.error('REQUEST_ALREADY_EXISTS_OR_OUTCOME_UNKNOWN: original bytes preserved; do not regenerate or retry blindly')
+  else:(OUT/('d3-'+args.mode+'-request.json')).write_text(text)
   print(json.dumps({'emitted':True,'mode':args.mode,'submitted':False,'sha256':digest(query)}))
  else:print(json.dumps({'mode':args.mode,'validated':True,'submitted':False,'emitRequired':True,'sha256':digest(query)}))
 if __name__=='__main__':main()

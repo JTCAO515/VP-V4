@@ -14,6 +14,8 @@ Modes:
 
 The last three modes require explicit `--writer`, `--approval-reference`, `--concurrency-reference`, `--window-start`, `--window-end`, `--run-id`. The target/link and original DB owner are fixed constants, not operator-selectable DSNs. Times require an offset and a bounded interval; the database checks its own clock before and after the transaction. References must point to actual externally verified instructions and arrangements, not invented values. The flags, JSON, run UUID and compiler validation **do not create or prove authorization**. No target write scope currently exists, so this delivery emits no actual apply/rollback/safe-stop request.
 
+Write-action request files include their run ID and use exclusive creation. A duplicate cannot replace the original bytes. This is an output artifact, not a submission ledger: the compiler neither submits nor knows whether an operator already submitted it. Preserve the official tool result alongside it; never regenerate a pending operation to bypass unknown-result handling.
+
 Only after the exact action has external authorization may its operator generate the request, review its fixed tool arguments/query, and submit it once using the existing tool. Do not paste SQL fragments separately, delete guards, substitute another target, or use a command-line account/DSN fallback. Use a fresh run ID for a genuinely new authorized action; never turn an unknown outcome into a new attempt automatically.
 
 ## Actual transaction path
@@ -27,6 +29,8 @@ Only after the exact action has external authorization may its operator generate
 7. Assert the corresponding state again and return phase/run ID/target/candidate digest. An error here can be **after COMMIT**; never report every error as rollback.
 
 Work's `relnatts=10` and no dropped slots were verified through a separate narrow read-only catalog query. This closes the column-ordinal gap: PostgreSQL retains dropped slots, so visible-column count is insufficient. Local targetlike fixtures retain a dropped slot from construction and use a correspondingly explicit synthetic profile. Real CLI modes cannot accept a synthetic profile override.
+
+The fresh snapshot also checks the 4×4 transitive MEMBER/USAGE reachability matrix for postgres/anon/authenticated/service_role. The observed ordinary roles cannot inherit each other's or postgres privileges; postgres can reach the other three. A changed role membership refuses just like a changed ACL. This supplements role flags and scoped effective function/schema privileges without inspecting passwords or user records.
 
 ## Outcomes and recovery
 
