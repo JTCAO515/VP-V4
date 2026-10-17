@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "legacy ordinary caller positive remains eligible after delta with D0 ACL",
+    "new QA excluded from legacy worker",
+    "legacy direct QA bypass rejected by business guard not missing execute permission",
+    "standalone invalid-session cancellation",
+    "unknown budget preserved",
+    "event helper appearance refuses"
+  ],
+  "cleanup": "PASS",
+  "phase": "install",
+  "status": "PASS_LOCAL_FIXTURE_SEAM",
+  "identity": {
+    "kind": "LOCAL_SYNTHETIC_ONLY",
+    "nonce": "0bf5d22ea48846b29ddf95e97700c595",
+    "containerId": "fd7ffb16b1e04dce866f88b348eb6399773be173fe37a900f454d31cb465ecd3",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "database": "d3_targetlike",
+    "targetReplica": false
+  }
+}
