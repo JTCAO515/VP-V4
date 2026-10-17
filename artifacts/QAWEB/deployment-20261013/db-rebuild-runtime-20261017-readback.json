@@ -1,0 +1,155 @@
+{
+  "observedAt": "2026-10-17T00:31:13.872431+00:00",
+  "identity": "jtcao515",
+  "project": {
+    "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "accountId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "rootDirectory": null,
+    "framework": "nextjs",
+    "ssoProtection": null
+  },
+  "passwordProtectionConfigured": false,
+  "deployment": {
+    "id": "dpl_BQMkEzLYq6YVzpw4nJrpy8TgM3Qp",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "target": null,
+    "readyState": "READY",
+    "createdAt": 1792194468282,
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "164b157fa61147c271904087de51b46333f908b5",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "alias": {
+    "alias": "qatesting.go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "deploymentId": "dpl_BQMkEzLYq6YVzpw4nJrpy8TgM3Qp"
+  },
+  "domain": {
+    "name": "qatesting.go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "gitBranch": "codex/qaw005-independent-target-20261013",
+    "verified": true
+  },
+  "resourceMutations": 0,
+  "envValuesReadOrDumped": false,
+  "protectionObservation": {
+    "projectSsoConfigured": false,
+    "passwordProtectionConfigured": false,
+    "customQaHostAnonymousReachability": "seehttp; no bypass used",
+    "randomPreviewHostnameProtection": "UNRUN_NOT_REQUESTED"
+  },
+  "publicHttpObservedAt": "2026-10-17T00:31:39.449925+00:00",
+  "publicHttp": [
+    {
+      "path": "/qa",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "requestId": "sin1::qsvft-1792197095946-7f56cfa16a86"
+    },
+    {
+      "path": "/api/qa-agent/policy",
+      "httpStatus": 503,
+      "contentType": "application/json",
+      "location": null,
+      "requestId": "sin1::iad1::csf9r-1792197097695-5e6d7f93b288",
+      "version": "qa-agent/1",
+      "errorCode": "PROVIDER_UNAVAILABLE",
+      "ack": "not_submitted"
+    }
+  ],
+  "gitComparisonWithQa164b": [
+    {
+      "path": "app/qa",
+      "deployedGitObject": "1bdb1e1cb788839bb981efc8a881985ef713ad6a",
+      "qa164bGitObject": "1bdb1e1cb788839bb981efc8a881985ef713ad6a",
+      "same": true
+    },
+    {
+      "path": "app/api/qa-agent",
+      "deployedGitObject": "19a583df93ebf90fa4991cc9e9f29ba8383b63ed",
+      "qa164bGitObject": "19a583df93ebf90fa4991cc9e9f29ba8383b63ed",
+      "same": true
+    },
+    {
+      "path": "components/qa-agent",
+      "deployedGitObject": "dc7958d1d70553fda501ccb5c33c34a6c25316e8",
+      "qa164bGitObject": "dc7958d1d70553fda501ccb5c33c34a6c25316e8",
+      "same": true
+    },
+    {
+      "path": "lib/server/qa-agent",
+      "deployedGitObject": "49bdb02e52f8c85a07a34f522a20ef0a9674ddeb",
+      "qa164bGitObject": "49bdb02e52f8c85a07a34f522a20ef0a9674ddeb",
+      "same": true
+    },
+    {
+      "path": "lib/server/qa-agent-context",
+      "deployedGitObject": "c1f03b5f1d66c15084b75b2dfdc3c23931d1ec34",
+      "qa164bGitObject": "c1f03b5f1d66c15084b75b2dfdc3c23931d1ec34",
+      "same": true
+    },
+    {
+      "path": "lib/server/jobs",
+      "deployedGitObject": "a39e6d012590cca5881686dedf047a3f5856d3a0",
+      "qa164bGitObject": "a39e6d012590cca5881686dedf047a3f5856d3a0",
+      "same": true
+    }
+  ],
+  "aliasMatchesDeployment": true,
+  "authenticatedUserOrRealAnswerAcceptance": "UNRUN",
+  "workspace": {
+    "path": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-deploy-20261013",
+    "head": "13f6412795995bebc9792a55c43719e33fbbd87f",
+    "initialTrackedDirty": false,
+    "projectId": "4f2191db-3e04-4042-94b5-ec94ff67b427",
+    "membershipVerifiedWith": "official list_threads corrected valid limit50; own thread entry",
+    "tooling": "VercelCLI59.20.0/Node26.8.2; existingidentityjtcao515/knowngetters succeeded"
+  },
+  "ecs": {
+    "observedAt": "2026-10-17T00:32:29.814062+00:00",
+    "originalWorkbenchTab": "1443631079",
+    "initialSession": "DISCONNECTED",
+    "normalReconnectAttempts": 1,
+    "reconnectSucceeded": true,
+    "method": "sameoriginalinstance/root/prepopulatedexistingpasswordlessauthentication; no parameter or permission change",
+    "newCredentialsReadOrEntered": false,
+    "instanceIdMatch": true,
+    "uid": 0,
+    "arch": "x86_64",
+    "bootId": "7ef6364a-f3a0-4fe7-8b7f-4431db4a7600",
+    "bootMatchesPriorPin": true,
+    "fixedWorkerContainerExists": false,
+    "workerState": "ABSENT",
+    "running": false,
+    "runtimeImageId": null,
+    "runtimeSourceLabel": "NOT_APPLICABLE_NO_CONTAINER",
+    "existingCandidateImageId": "sha256:1ec86928ef66bd78c24d7dd79b361582fde2f5d7cc97f1295a29b6b5282fd943",
+    "candidateIsNotRunningService": true,
+    "enabledHeartbeat": "NOT_QUERIED_SEPARATE_DB_OWNER",
+    "envKeysLogsUserRowsRead": false,
+    "hostStateMutations": 0
+  },
+  "boundaries": {
+    "protectedQaChrome1443631083Touched": false,
+    "ciDetailsRead": false,
+    "databaseQueries": 0,
+    "providerOrBusinessPost": 0,
+    "deploymentAliasEnvironmentWrites": 0,
+    "workerStartStopBuildPull": 0,
+    "newLoginIdentityOrCredential": false,
+    "sourceOrHandoffChanged": false,
+    "newWindowRecoveryOrEAttempted": false
+  },
+  "result": "READONLY_METADATA_PREPARATION_COMPLETE_STOP",
+  "nextSuggestionsOnly": [
+    "Keep final image/source/profile/target/actual policy/actor/DB activation requirements with their exact owners; this result grants no action",
+    "After accepted new minimal DB/API implementation, Main can issue a separately reviewed exact runtime/deployment execution package",
+    "Do not infer service readiness from matching sources, READY or public200; real iOS login/answer/save/reopen remain UNRUN"
+  ]
+}

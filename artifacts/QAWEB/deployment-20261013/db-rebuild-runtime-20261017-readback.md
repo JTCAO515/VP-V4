@@ -1,0 +1,17 @@
+# DB-REBUILD #683/#230 runtime metadata preparation
+
+Only original read-only deployment/host metadata was refreshed. Original worktree began clean at13f6412795995bebc9792a55c43719e33fbbd87f. Official own-thread readback confirms VPV10 project4f2191db-3e04-4042-94b5-ec94ff67b427. Existing Vercel CLI59.20.0 identityjtcao515 and explicit original project/team known GET operations succeeded; no alternate account/login/credential, list403 or create403 retry occurred.
+
+At2026-10-17T00:31:13Z, the QA alias and deployment independently resolve to **dpl_BQMkEzLYq6YVzpw4nJrpy8TgM3Qp**, READY Preview(targetnull), exact **164b157fa61147c271904087de51b46333f908b5**, original independent-target QA branch/project/team. No merge-to-deploy inference or deployment/alias write was used. Deployed app/qa, app/api/qa-agent, components/qa-agent, lib/server/qa-agent, context and jobs Git objects all match the specified QA164b source. This is source equivalence, not Auth/runtime acceptance.
+
+Project SSO protection metadata isnull and password protection is not configured. The authorized custom QA hostname is anonymously reachable: /qa200, policy503PROVIDER_UNAVAILABLE/not_submitted. No protection bypass, temporary link or random Preview hostname was requested, and no claim about every other deployment's protection is made. No environment value, cookie/token or private response body was read/dumped. QA Chrome1443631083 was not claimed or operated.
+
+Original Workbench1443631079 existed but was disconnected. Exactly one official return-to-login flow automatically restored the same instance and already-enabled passwordless/root prefilled parameters, then succeeded without entering new credentials or changing any setting. An initial unpopulated loading form was allowed to finish normally; no password/credential option was selected. No VNC/SSH workaround/new session destination was used.
+
+At2026-10-17T00:32:29.814062Z, read-only instance metadata confirms approved identity, root/x86_64 and unchanged boot7ef6364a-f3a0-4fe7-8b7f-4431db4a7600. Known fixed vp-hosted-text-worker container lookup succeeded: ABSENT/runningfalse; runtime image/source label is not applicable. The existing candidate image1ec86928 remains available, which does not establish a running service or current-source runtime compatibility. No Env, logs, credentials or user rows were inspected. Enabled/heartbeat were intentionally not queried here; the DB metadata owner has that separate scope.
+
+No host/service start/stop/build/pull/profile change, deployment/alias/env/flag/model/provider/businessPOST, targetSQL/DDL/DML/GRANT, production/TF, data capture/recovery/E or new paid resource action occurred. No shared source/HANDOFF/CI edit or delegation. The only browser state action was the one expressly permitted normal reconnect; original resources and snapshots remain.
+
+PASS: actual deployment/source/alias/anonymous boundary, original account/project membership, host identity/boot and fixed-container lookup. Not ready: no running fixed worker, current policy read503. UNRUN: user Auth, real model answer, save/reopen/sameSession and iOS end-to-end. Minimal next step is for exact owners to deliver the accepted new DB/API/runtime package, then Main may issue precise execution leases; this readback itself grants no activation or online switch.
+
+Evidence: db-rebuild-runtime-20261017-readback.json. Scope complete, STOP, no in-flight operation.
