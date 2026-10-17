@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/root-busy-stop-RED.log",
+      "inputSha256": "50964b295cff2726d65e572acf5a8b7d34702eda788f44cc31715a83ad90d3b4",
+      "normalizedSha256": "560e0296593b4321581a7e7fe49b6338dc79f78f1effd6e0a94125f8f2e2f2fc",
+      "normalization": "absolute worktree prefix plus trailing line whitespace only; failure facts/checks retained"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/durability-RED.log",
+      "inputSha256": "e437adc98859ae37451c12a67d1f627b5b34e2692778af54e54fb76e4da98143",
+      "normalizedSha256": "8343546a59920570bb008423c101630bd645925276f4a0ccf52925f963ec6e52",
+      "normalization": "absolute worktree prefix plus trailing line whitespace only; failure facts/checks retained"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests-sandbox-FAIL.log",
+      "inputSha256": "ada5364062144cf2834a355c7dd2a8b229c72cc15232f049f87da2bd28df9b7c",
+      "normalizedSha256": "d8f5a9d4a019ad48ea8b6b637bf1939c59a320a6b92b86c5c3eb7414a3180c13",
+      "normalization": "absolute worktree prefix plus trailing line whitespace only; failure facts/checks retained"
+    }
+  ],
+  "privateRawCopiesRetained": true,
+  "noTestsRerunForWhitespace": true
+}

@@ -384,6 +384,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
         p_unavailable: state.unavailable, p_skipped: state.skipped, p_stop_reason: state.stopReason,
       }, stop).catch(() => null);
       const ok = record(value) && value.kind === "ok" && typeof value.enabled === "boolean";
+      if (!ok && acceptance) await dependencies.qaAcceptance!.control.requestStop();
       try { dependencies.onHeartbeat?.(ok, ok ? value.enabled as boolean : null); } catch { /* observer only */ }
       return ok ? { enabled: value.enabled as boolean } : null;
     },
@@ -396,9 +397,15 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
         p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint,
         p_owner_id: qaBinding!.ownerId, p_policy_id: qaBinding!.policyId, p_scope_id: qaBinding!.scopeId,
         p_notice_hash: qaBinding!.noticeHash } : { p_limit: profile.groupLimit };
-      const value = await rpc(discovery, parameters, stop);
+      const value = await rpc(discovery, parameters, stop).catch(async error => {
+        if (acceptance) await dependencies.qaAcceptance!.control.requestStop();
+        throw error;
+      });
       if (record(value) && value.kind === "disabled") return "disabled";
-      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
+      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) {
+        if (acceptance) await dependencies.qaAcceptance!.control.requestStop();
+        return null;
+      }
       // This exact object is internal, never accepted from discovery JSON. The
       // same owner lane serializes planning after that owner's text groups.
       return planningTarget ? [...value.groups,planningTarget] : value.groups;
@@ -419,7 +426,10 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
           ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
         }, qaTarget);
         return { ownerId: job.ownerId, poll: async stop => {
-          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+          if (!journaled.has(digest)) {
+            try { await dependencies.journal.job(digest, job); journaled.add(digest); }
+            catch (error) { if (acceptance) await dependencies.qaAcceptance!.control.requestStop(); throw error; }
+          }
           const result = await poll(stop);
           // Existing heartbeat vocabulary remains unchanged. SQL retains the
           // dispatched attempt for explicit reconciliation, never a second send.
@@ -447,16 +457,15 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       const selected = makePoll(selectedJob), key = createHash("sha256").update(JSON.stringify(job)).digest("hex");
       return { ownerId: job.ownerId, poll: stop => pollPlaceGroup(key, ordinary, selected, stop) };
     },
-    record: dependencies.journal.event,
+    record: acceptance ? async event => {
+      try { await dependencies.journal.event(event); }
+      catch (error) { await dependencies.qaAcceptance!.control.requestStop(); throw error; }
+    } : dependencies.journal.event,
   }, signal);
   if (acceptance && result.reason === "unavailable") {
-    // Also persist heartbeat/discovery failures that happened before a lease.
-    // Busy, unresolved, expired or exhausted controllers already refuse entry;
-    // never steal their lock or reset them to manufacture a stop receipt.
-    try {
-      const permit = await dependencies.qaAcceptance!.control.enter(new AbortController().signal);
-      await permit.finish("stopped");
-    } catch { /* existing run state/lock remains authoritative and fail closed */ }
+    // An admission mutex refusal is transient, not a durable stop. Persist a
+    // veto that does not need the active attempt's lock; never steal that lock.
+    await dependencies.qaAcceptance!.control.requestStop();
   }
   return result;
   };

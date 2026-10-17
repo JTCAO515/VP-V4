@@ -75,7 +75,7 @@ test('actual Node CLI imports and receives canonical grant; missing/expired/mism
 
 test('real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots',async t=>{
  const f=await setup(t);await initializeQaAcceptanceJournal(f.path,f.grant);let physical=0,claims=0;
- const loop=async(fail=false,run=f)=>{
+ const loop=async(fail=false,run=f,options={})=>{
   const f=run;
   const controller=new AbortController(),turn=randomUUID(),attempt=randomUUID();let finished=false,beats=0;
   const deps={qaProjectRef:qaBinding.projectRef,qaBinding,qaAcceptance:{control:openQaAcceptanceJournal(f.path,f.grant),sourceCommit},
@@ -83,10 +83,11 @@ test('real hosted root, sole context composer and HTTP transport share durable t
    workerCredential:()=> 'sb_secret_synthetic_worker',providerCredential:()=> 'synthetic-provider',
    journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},event:async event=>{if(finished&&event.phase==='cycle')controller.abort();}},
    fetch:async(url,init)=>{
-    if(String(url)===endpoint){physical++;const body=JSON.parse(init.body);assert.equal(body.enable_thinking,false);assert.equal(body.max_tokens,512);
+    if(String(url)===endpoint){physical++;await options.hold?.();const body=JSON.parse(init.body);assert.equal(body.enable_thinking,false);assert.equal(body.max_tokens,512);
      if(fail)throw Error('Synthetic physical failure');
      return Response.json({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:'answered',text:'Synthetic result'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}});}
     const name=new URL(url).pathname.split('/').at(-1);
+    if(options.preLeaseFailure&&name==='hosted_worker_heartbeat')return Response.json({synthetic:'unavailable'},{status:503});
     if(name==='qa_claim_work_v1')claims++;
     if(name==='qa_complete_work_v1')finished=true;
     const values={hosted_worker_heartbeat:{kind:'ok',enabled:++beats>1},qa_ready_groups_v3:{kind:'groups',groups:[{ownerId:qaBinding.ownerId,policyId:qaBinding.policyId,contextMode:'qa_session_history_v1',provider:'qwen',endpoint,noticeHash:qaBinding.noticeHash,scopes:[{scopeId:qaBinding.scopeId,model:PROTOCOL_MODELS.qwen,priceVersion:f.profile.qwen.priceVersion}]}]},
@@ -102,6 +103,20 @@ test('real hosted root, sole context composer and HTTP transport share durable t
  const failed=await setup(t);await initializeQaAcceptanceJournal(failed.path,failed.grant);
  assert.equal((await loop(true,failed)).reason,'unavailable');assert.equal(physical,3);assert.equal(claims,3);
  assert.equal((await loop(false,failed)).reason,'unavailable');assert.equal(physical,3);assert.equal(claims,3);
+ const shared=await setup(t);await initializeQaAcceptanceJournal(shared.path,shared.grant);
+ let arrived,release;const reached=new Promise(r=>arrived=r),held=new Promise(r=>release=r);
+ const running=loop(false,shared,{hold:async()=>{arrived();await held;}});await reached;
+ const beforeCalls=physical,beforeClaims=claims;
+ assert.equal((await loop(false,shared,{preLeaseFailure:true})).reason,'unavailable');
+ assert.equal(physical,beforeCalls);assert.equal(claims,beforeClaims);
+ release();assert.equal((await running).finished,1);
+ assert.equal((await loop(false,shared)).reason,'unavailable');
+ assert.equal(physical,beforeCalls,'B pre-lease failure must stop C after A succeeds');
+ assert.equal(claims,beforeClaims,'C must not acquire a new SQL lease');
+ const nextJob=qaJobConfig(shared.profile,qaBinding.ownerId,qaBinding.policyId,qaBinding.scopeId,endpoint);
+ const helper=new URL('./acceptance-fixture.mjs',import.meta.url).href;
+ const restarted=`const {acceptanceWorker}=await import(${JSON.stringify(helper)});const w=acceptanceWorker({path:process.argv[1],grant:JSON.parse(process.argv[2]),job:JSON.parse(process.argv[3])});console.log(JSON.stringify({result:await w.run(),claims:w.claims,physical:w.physical}));`;
+ assert.deepEqual(JSON.parse(execFileSync(process.execPath,['--experimental-strip-types','--input-type=module','-e',restarted,shared.path,JSON.stringify(shared.grant),JSON.stringify(nextJob)],{encoding:'utf8',stdio:['pipe','pipe','pipe']})),{result:'unavailable',claims:0,physical:0});
  const missing={qaBinding,qaProjectRef:qaBinding.projectRef,build:sourceCommit,qwenEndpoint:endpoint};
  assert.throws(()=>createHostedTextWorker(f.profile,missing),'acceptance profile without root controller fails before keys/RPC');
 });

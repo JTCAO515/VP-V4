@@ -25,6 +25,8 @@ export type QaAcceptancePermit = Readonly<{
 export type QaAcceptanceControl = Readonly<{
   binding: QaAcceptanceBinding;
   enter(signal: AbortSignal): Promise<QaAcceptancePermit>;
+  /** Sticky veto independent of the active attempt's mutex. Never a fee receipt. */
+  requestStop(): Promise<void>;
 }>;
 
 type Entry = { sequence: number; at: number; kind: string; operationId?: string;
@@ -69,10 +71,16 @@ async function syncParent(path: string) {
   try { await directory.sync(); } finally { await directory.close(); }
 }
 
+async function hasStopIntent(path: string) {
+  try { await lstat(path + ".stop"); return true; }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return false; throw error; }
+}
+
 /** Read-only startup eligibility, before credentials or SQL. This never creates
  * or resets a run; a busy/incomplete read fails closed. enter rechecks under lock. */
 export async function verifyQaAcceptanceJournal(path: string, grant: QaAcceptanceGrant) {
   validateGrant(grant); await privateParent(path, grant.runId);
+  if (await hasStopIntent(path)) throw failure();
   try { await lstat(path + ".lock"); throw failure(); }
   catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
   const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -131,9 +139,23 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
   validateGrant(supplied);
   const grant: QaAcceptanceGrant = JSON.parse(JSON.stringify(supplied));
   const binding = Object.freeze({ ...grant.binding });
-  return Object.freeze({ binding, async enter(signal: AbortSignal) {
+  return Object.freeze({ binding, async requestStop() {
+    await privateParent(path, grant.runId);
+    let marker: FileHandle;
+    try { marker = await open(path + ".stop", constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === "EEXIST") return; throw error; }
+    // A root that has no lease still needs a durable veto while another worker
+    // owns the attempt lock. Existence (even an incomplete/error marker) denies;
+    // no code removes it. It never changes the active Turn, answer or money hold.
+    try {
+      await marker.writeFile(JSON.stringify({ schemaVersion: "qa-acceptance-stop/1", runId: grant.runId,
+        grantDigest: acceptanceDigest(grant), reason: "root_unavailable" }) + "\n");
+      await marker.sync(); await syncParent(path);
+    } finally { await marker.close(); }
+  }, async enter(signal: AbortSignal) {
     if (signal.aborted) throw failure();
     await privateParent(path, grant.runId);
+    if (await hasStopIntent(path)) throw failure();
     // Original journal file is the authority. This separate exclusive lock only
     // serializes read/append/physical-send/usage/settlement as one whole attempt.
     const lockPath = path + ".lock";
@@ -170,7 +192,7 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
         if (!Number.isSafeInteger(at) || at < lastAt || at < grant.activatedAt) throw failure();
         return at;
       };
-      if (active || stopped || calls >= 2 || signal.aborted || now() >= grant.expiresAt) throw failure();
+      if (active || stopped || calls >= 2 || signal.aborted || now() >= grant.expiresAt || await hasStopIntent(path)) throw failure();
       const operationId = randomUUID(); let dispatched = false, finished = false;
       let writes = Promise.resolve();
       const append = (entry: Omit<Entry, "sequence" | "at">) => {
@@ -190,17 +212,17 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
         async beforeDispatch(input: Readonly<{ turnId: string; attemptId: string; requestDigest: string }>) {
           if (finished || dispatched || signal.aborted || now() >= grant.expiresAt || !record(input)
             || !exact(input, ["turnId", "attemptId", "requestDigest"]) || !uuid(input.turnId) || !uuid(input.attemptId)
-            || !hash(input.requestDigest) || turns.has(input.turnId) || attempts.has(input.attemptId)) throw failure();
+            || !hash(input.requestDigest) || turns.has(input.turnId) || attempts.has(input.attemptId) || await hasStopIntent(path)) throw failure();
           // Durable intent BEFORE physical send. A crash consumes this slot and
           // stops the run; it never means the provider request was not received.
           dispatched = true;
           await append({ kind: "dispatch", operationId, ...input });
-          if (signal.aborted || now() >= grant.expiresAt) throw failure();
+          if (signal.aborted || now() >= grant.expiresAt || await hasStopIntent(path)) throw failure();
         },
         async finish(outcome: "success" | "empty" | "stopped") {
           if (finished) throw failure(); finished = true;
           try {
-            const kind = outcome === "success" && dispatched ? "success" : outcome === "empty" && !dispatched ? "empty" : "stopped";
+            const kind = await hasStopIntent(path) ? "stopped" : outcome === "success" && dispatched ? "success" : outcome === "empty" && !dispatched ? "empty" : "stopped";
             await append({ kind, operationId });
           } finally { await unlock(); }
         },

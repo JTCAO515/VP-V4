@@ -94,7 +94,7 @@
     },
     {
       "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/durability-RED.log",
-      "sha256": "e437adc98859ae37451c12a67d1f627b5b34e2692778af54e54fb76e4da98143"
+      "sha256": "8343546a59920570bb008423c101630bd645925276f4a0ccf52925f963ec6e52"
     },
     {
       "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/hosted-entry-first-FAIL.log",
@@ -106,7 +106,7 @@
     },
     {
       "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests-sandbox-FAIL.log",
-      "sha256": "ada5364062144cf2834a355c7dd2a8b229c72cc15232f049f87da2bd28df9b7c"
+      "sha256": "d8f5a9d4a019ad48ea8b6b637bf1939c59a320a6b92b86c5c3eb7414a3180c13"
     },
     {
       "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests.log",
@@ -133,5 +133,7 @@
   "realProviderCalls": 0,
   "realTargetCalls": 0,
   "feesAuthorized": false,
-  "scope": "Only this independent product guard increment on QA575; prior blocked D2 branch ancestry and its documents/fixtures are excluded."
+  "scope": "Only this independent product guard increment on QA575; prior blocked D2 branch ancestry and its documents/fixtures are excluded.",
+  "historicalSourceHead": "c2c9a27a48ee38f06b95df90719e9318ce2648fc",
+  "scopeNote": "Historical c2 source/verification; new root stop-intent repair is separately pinned. Log-only whitespace normalization does not rerun or reclassify failures."
 }

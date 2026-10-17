@@ -17,7 +17,7 @@ test at tests/security/qa-agent-service/acceptance-durability.test.mjs:10:102
 ✖ durability fault initial-directory-sync stays stopped for a separate process, with no successor claim or send (185.079375ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
     {
   +   claims: 1,
   +   physical: 1,
@@ -26,7 +26,7 @@ test at tests/security/qa-agent-service/acceptance-durability.test.mjs:10:102
   -   physical: 0,
   -   result: 'unavailable'
     }
-  
+
       at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-durability.test.mjs:28:9)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
@@ -42,7 +42,7 @@ test at tests/security/qa-agent-service/acceptance-durability.test.mjs:10:102
 ✖ durability fault release-directory-sync stays stopped for a separate process, with no successor claim or send (203.342666ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
     {
   +   claims: 1,
   +   physical: 1,
@@ -51,7 +51,7 @@ test at tests/security/qa-agent-service/acceptance-durability.test.mjs:10:102
   -   physical: 0,
   -   result: 'unavailable'
     }
-  
+
       at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-durability.test.mjs:28:9)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
