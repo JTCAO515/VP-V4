@@ -75,17 +75,25 @@ def prepare_xctestrun(source, destination, scope):
     destination.chmod(0o600)
 
 
+def require_pass_summary(summary, returncode=0):
+    """Known execution failure outranks every optional/missing observation artifact."""
+    if isinstance(summary, dict) and type(summary.get("failedTests")) is int and summary["failedTests"] > 0:
+        raise UIFailed("REAL_UI_CASE_FAILED")
+    if returncode != 0:
+        raise UIFailed("XCODEBUILD_UI_CASE_NOT_SUCCESSFUL")
+    expected = {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}
+    if not isinstance(summary, dict) or any(type(summary.get(key)) is not int or summary[key] != count for key, count in expected.items()):
+        raise UIUnavailable("EXACT_UI_CASE_DID_NOT_PASS")
+
+
 def verify_observation(value, scope, summary):
     """Evidence oracle only. Input metadata cannot trigger UI/auth/network operations."""
+    require_pass_summary(summary)
     allowed = {"schema", "run_id", "product_revision", "status", "automatic_form_submission_actions", "input_hash_source", "answer_hash_source", "service_task_id", "original_body_sha256", "profile_login_fields_observed", "actor_subject", "accepted_service_ui_observed", "approved_draft_observed", "request_id", "turn_id", "input_utf8_sha256", "response_status_label", "answer_utf8_sha256", "session_id", "fresh_session_observed", "original_body_hash_source", "process_exit_observed", "reopened_actor_subject", "reopened_session_id", "reopened_request_id", "reopened_input_utf8_sha256", "reopened_answer_utf8_sha256", "observed_question_count"}
     if not isinstance(value, dict) or not set(value) <= allowed or value.get("service_task_id") is not None:
         raise UIUnavailable("UI_OBSERVATION_FIELDS_INVALID")
     if value.get("input_hash_source") != "accessibility_label_utf8" or value.get("answer_hash_source") != "accessibility_label_utf8":
         raise UIUnavailable("UI_HASH_PROVENANCE_INVALID")
-    if type(summary.get("failedTests")) is int and summary["failedTests"] > 0:
-        raise UIFailed("REAL_UI_CASE_FAILED")
-    if any(type(summary.get(key)) is not int or summary[key] != expected for key, expected in {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}.items()):
-        raise UIUnavailable("EXACT_UI_CASE_DID_NOT_PASS")
     if value.get("schema") != "nativeqa-operator-ui/1" or value.get("status") != "COMPLETE" or value.get("run_id") != scope["run_id"] or value.get("product_revision") != scope["product_revision"]:
         raise UIUnavailable("UI_OBSERVATION_SOURCE_OR_RUN_MISMATCH")
     for key in ("profile_login_fields_observed", "accepted_service_ui_observed", "approved_draft_observed", "fresh_session_observed", "process_exit_observed"):
@@ -154,13 +162,18 @@ def run(scope, xctestrun, run_dir):
         completed = subprocess.run(["/usr/bin/xcodebuild", "test-without-building", "-xctestrun", str(private_run),
             "-destination", "platform=iOS Simulator,id=" + udid, "-only-testing:" + CASE,
             "-parallel-testing-enabled", "NO", "-test-iterations", "1", "-resultBundlePath", str(result)], stdout=log, stderr=subprocess.STDOUT, timeout=900)
-    summary = json.loads(command(["/usr/bin/xcrun", "xcresulttool", "get", "test-results", "summary", "--path", str(result), "--compact"]))
+    try:
+        summary = json.loads(command(["/usr/bin/xcrun", "xcresulttool", "get", "test-results", "summary", "--path", str(result), "--compact"]))
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        # A failed process cannot become UNRUN merely because its result bundle is unavailable.
+        if completed.returncode != 0:
+            raise UIFailed("XCODEBUILD_UI_CASE_NOT_SUCCESSFUL") from error
+        raise UIUnavailable("UI_SUMMARY_UNAVAILABLE") from error
+    require_pass_summary(summary, completed.returncode)
     exported = run_dir / "json-attachments"
     command(["/usr/bin/xcrun", "xcresulttool", "export", "attachments", "--path", str(result), "--output-path", str(exported), "--filter", "*.json"])
     value = find_attachment(exported, scope["run_id"])
     observed = verify_observation(value, scope, summary)
-    if completed.returncode != 0:
-        raise UIFailed("XCODEBUILD_UI_CASE_NOT_SUCCESSFUL")
     return {"status": "PASS", "evidence_kind": "real_xctest_ui_with_operator_actions", "observation": observed,
             "summary": {key: summary[key] for key in ("totalTestCount", "passedTests", "failedTests", "skippedTests")},
             "private_run_directory": str(run_dir.resolve()), "runner_created_simulator": False}

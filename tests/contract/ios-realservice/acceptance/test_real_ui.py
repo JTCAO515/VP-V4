@@ -95,5 +95,87 @@ class RealUIOracleTests(unittest.TestCase):
             with self.assertRaises(ui.UIUnavailable): ui.run(self.scope, None, None)
 
 
+class RealUIOrchestrationTests(unittest.TestCase):
+    """Entire run() path with mocked commands/process/plists/attachments; no external tools."""
+    def invoke_run(self, summary, returncode=0, export_error=False, missing_attachment=False, summary_error=False):
+        from types import SimpleNamespace
+        scope = candidate()
+        info = {"CFBundleIdentifier": scope["bundle_identifier"], "VisePandaNativeEnvironment": "staging",
+                "VisePandaNativeTaskContext": "qa_session_v1", "VisePandaStagingAPIOrigin": scope["origin"]}
+        calls = []
+        def fake_command(arguments, **kwargs):
+            calls.append(arguments)
+            if "simctl" in arguments and "list" in arguments:
+                return json.dumps({"devices": {"SYNTHETIC": [{"udid": scope["resource_udid"], "name": "VP-NativeQA-Acceptance-" + scope["run_id"], "state": "Booted"}]}})
+            if "get_app_container" in arguments:
+                return "/SYNTHETIC/QA.app\n"
+            if "summary" in arguments:
+                if summary_error:
+                    import subprocess
+                    raise subprocess.CalledProcessError(1, "SYNTHETIC_SUMMARY_UNAVAILABLE")
+                return json.dumps(summary)
+            if "export" in arguments:
+                if export_error:
+                    import subprocess
+                    raise subprocess.CalledProcessError(1, "SYNTHETIC_EXPORT_FAILURE")
+                return ""
+            raise AssertionError("Unexpected mocked command")
+        with tempfile.TemporaryDirectory(prefix="nativeqa-mocked-orchestration-") as tmp:
+            run_dir = Path(tmp) / "new-run"
+            with patch.object(ui, "command", side_effect=fake_command), \
+                 patch.object(ui, "read_plist", return_value=info), \
+                 patch.object(ui, "prepare_xctestrun"), \
+                 patch.object(ui.subprocess, "run", return_value=SimpleNamespace(returncode=returncode)) as process, \
+                 patch.object(ui, "find_attachment", side_effect=ui.UIUnavailable("SYNTHETIC_NO_ATTACHMENT") if missing_attachment else None,
+                              return_value=completed_observation(scope)) as attachment, \
+                 patch.object(ui, "print", create=True):
+                try:
+                    result = ui.run(scope, Path(tmp) / "SYNTHETIC.xctestrun", run_dir)
+                except Exception as error:
+                    result = error
+                return result, calls, attachment.call_count, process.call_count
+
+    def test_run_failed_summary_without_attachment_is_fail_before_export(self):
+        summary = {"totalTestCount": 1, "passedTests": 0, "failedTests": 1, "skippedTests": 0}
+        result, calls, reads, processes = self.invoke_run(summary, returncode=65, missing_attachment=True)
+        self.assertIsInstance(result, ui.UIFailed)
+        self.assertFalse(any("export" in call for call in calls)); self.assertEqual(reads, 0)
+        self.assertEqual(processes, 1)
+
+    def test_run_failed_summary_outranks_export_error(self):
+        summary = {"totalTestCount": 1, "passedTests": 0, "failedTests": 1, "skippedTests": 0}
+        result, calls, reads, _ = self.invoke_run(summary, returncode=65, export_error=True)
+        self.assertIsInstance(result, ui.UIFailed)
+        self.assertFalse(any("export" in call for call in calls)); self.assertEqual(reads, 0)
+
+    def test_run_nonzero_process_cannot_be_masked_by_pass_summary_and_missing_attachment(self):
+        summary = {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}
+        result, calls, reads, _ = self.invoke_run(summary, returncode=65, missing_attachment=True)
+        self.assertIsInstance(result, ui.UIFailed)
+        self.assertFalse(any("export" in call for call in calls)); self.assertEqual(reads, 0)
+
+    def test_run_nonzero_exit_with_unreadable_summary_remains_fail(self):
+        result, calls, reads, _ = self.invoke_run({}, returncode=65, summary_error=True)
+        self.assertIsInstance(result, ui.UIFailed)
+        self.assertFalse(any("export" in call for call in calls)); self.assertEqual(reads, 0)
+
+    def test_run_zero_exit_with_unreadable_summary_stays_unrun(self):
+        result, calls, reads, _ = self.invoke_run({}, returncode=0, summary_error=True)
+        self.assertIsInstance(result, ui.UIUnavailable); self.assertNotIsInstance(result, ui.UIFailed)
+        self.assertFalse(any("export" in call for call in calls)); self.assertEqual(reads, 0)
+
+    def test_run_without_known_failure_and_missing_attachment_is_unrun(self):
+        summary = {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}
+        result, _, _, _ = self.invoke_run(summary, missing_attachment=True)
+        self.assertIsInstance(result, ui.UIUnavailable); self.assertNotIsInstance(result, ui.UIFailed)
+
+    def test_run_pass_requires_single_executed_case_and_observation(self):
+        summary = {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}
+        result, calls, reads, processes = self.invoke_run(summary)
+        self.assertIsInstance(result, dict); self.assertEqual(result["status"], "PASS")
+        self.assertEqual(reads, 1); self.assertEqual(processes, 1)
+        self.assertEqual(sum("export" in call for call in calls), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
