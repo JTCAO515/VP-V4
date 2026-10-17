@@ -107,10 +107,16 @@ test('real hosted root, sole context composer and HTTP transport share durable t
  let arrived,release;const reached=new Promise(r=>arrived=r),held=new Promise(r=>release=r);
  const running=loop(false,shared,{hold:async()=>{arrived();await held;}});await reached;
  const beforeCalls=physical,beforeClaims=claims;
- assert.equal((await loop(false,shared,{preLeaseFailure:true})).reason,'unavailable');
+ let bResult;
+ const failB=()=>loop(false,shared,{preLeaseFailure:true});
+ try { bResult=await (globalThis.__qaDenyStopCreation?globalThis.__qaDenyStopCreation(failB):failB()); }
+ catch(error){bResult={reason:'unavailable',thrown:error.code??error.name};}
+ assert.equal(bResult.reason,'unavailable');
  assert.equal(physical,beforeCalls);assert.equal(claims,beforeClaims);
  release();assert.equal((await running).finished,1);
- assert.equal((await loop(false,shared)).reason,'unavailable');
+ const cResult=await loop(false,shared);
+ if(globalThis.__qaDenyStopCreation)console.log(JSON.stringify({case:'root-stop-create-refusal',bResult,cResult,additionalClaims:claims-beforeClaims,additionalPhysical:physical-beforeCalls}));
+ assert.equal(cResult.reason,'unavailable');
  assert.equal(physical,beforeCalls,'B pre-lease failure must stop C after A succeeds');
  assert.equal(claims,beforeClaims,'C must not acquire a new SQL lease');
  const nextJob=qaJobConfig(shared.profile,qaBinding.ownerId,qaBinding.policyId,qaBinding.scopeId,endpoint);

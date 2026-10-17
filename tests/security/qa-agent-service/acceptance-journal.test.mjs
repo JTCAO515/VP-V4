@@ -57,7 +57,8 @@ test('crash after durable enter retains original lock and denies a restarted wor
 test('root stop intent persists without stealing an active permit and vetoes its not-yet-sent request',async t=>{
  const f=await fixture(t),active=openQaAcceptanceJournal(f.path,f.grant),other=openQaAcceptanceJournal(f.path,f.grant);
  const permit=await active.enter(new AbortController().signal);await other.requestStop();
- assert.ok((await lstat(f.path+'.lock')).isFile());assert.ok((await lstat(f.path+'.stop')).isFile());
+ assert.ok((await lstat(f.path+'.lock')).isFile());assert.ok((await read(f.path)).some(e=>e.kind==='veto'));
+ await assert.rejects(lstat(f.path+'.stop'),{code:'ENOENT'});
  await assert.rejects(permit.beforeDispatch({turnId:'33333333-3333-4333-8333-333333333333',attemptId:'44444444-4444-4444-8444-444444444444',requestDigest:'a'.repeat(64)}));
  await permit.finish('stopped');await assert.rejects(verifyQaAcceptanceJournal(f.path,f.grant));
  assert.deepEqual(await childRun(f),{result:'unavailable',physical:0,claims:0});
