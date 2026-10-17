@@ -6,6 +6,8 @@ import type { BudgetAttempt } from "../model-gateway/budget/durable.ts";
 import type { TextProviderBinding, TextWorkerConfig } from "../turn/text-worker.ts";
 import type { DurableTurnLease } from "../turn/durable-worker.ts";
 import { record, uuid } from "./service.ts";
+import { createHash } from "node:crypto";
+import type { QaAcceptanceControl, QaAcceptancePermit } from "./acceptance-journal.ts";
 
 export type QaWorkerRpc = (name: string, params: Readonly<Record<string, string | number | null>>, signal: AbortSignal) => Promise<unknown>;
 type BudgetTurn = Extract<ReturnType<CostGuard["startTurn"]>, { kind: "turn" }>;
@@ -20,6 +22,8 @@ export type QaExecutorDependencies = Readonly<{
   invokeContext: (input: QaContextInvocation) => Promise<ProtocolOutcome>;
   provider: TextProviderBinding;
   recordUsage: RecordValidatedUsage;
+  /** Trusted hosted run controller; never supplied by a job, request or discovery. */
+  acceptance?: QaAcceptanceControl;
 }>;
 export type QaExecutionResult = "empty" | "finished" | "unavailable" | "reconciliation_required";
 
@@ -30,6 +34,27 @@ export type QaExecutionResult = "empty" | "finished" | "unavailable" | "reconcil
 export async function executeQaWork(
   ownerId: string, policyId: string, config: TextWorkerConfig,
   dependencies: QaExecutorDependencies, signal: AbortSignal,
+): Promise<QaExecutionResult> {
+  if (!dependencies.acceptance) return executeOriginalQaWork(ownerId, policyId, config, dependencies, signal);
+  const binding = dependencies.acceptance.binding;
+  if (binding.ownerId !== ownerId || binding.policyId !== policyId || binding.scopeId !== config.scopeId) return "unavailable";
+  let permit: QaAcceptancePermit;
+  try { permit = await dependencies.acceptance.enter(signal); } catch { return "unavailable"; }
+  let result: QaExecutionResult = "unavailable", acceptedSuccess = false;
+  try {
+    result = await executeOriginalQaWork(ownerId, policyId, config, dependencies, signal, permit, () => { acceptedSuccess = true; });
+  } catch { result = "unavailable"; }
+  finally {
+    try { await permit.finish(result === "empty" ? "empty" : result === "finished" && acceptedSuccess ? "success" : "stopped"); }
+    catch { result = "unavailable"; }
+  }
+  return result;
+}
+
+async function executeOriginalQaWork(
+  ownerId: string, policyId: string, config: TextWorkerConfig,
+  dependencies: QaExecutorDependencies, signal: AbortSignal,
+  acceptance?: QaAcceptancePermit, acceptSuccess?: () => void,
 ): Promise<QaExecutionResult> {
   if (!uuid(ownerId) || !uuid(policyId) || !uuid(config.scopeId) || !/^[A-Za-z0-9._-]{1,100}$/.test(config.priceVersion)
     || !Number.isSafeInteger(config.reservedMicros) || config.reservedMicros < 1 || config.reservedMicros > 1_000_000_000_000
@@ -87,6 +112,12 @@ export async function executeQaWork(
     const guardedTransport: ProtocolTransport = async request => {
       if (!dispatchAuthorized || sent || controller.signal.aborted || request.signal.aborted) throw new Error("QA dispatch unavailable");
       sent = true;
+      if (acceptance) {
+        if (typeof request.body !== "string") throw new Error("QA acceptance request unavailable");
+        await acceptance.beforeDispatch({ turnId: lease.turnId, attemptId: lease.leaseToken,
+          requestDigest: createHash("sha256").update(request.body).digest("hex") });
+        if (controller.signal.aborted || request.signal.aborted) throw new Error("QA acceptance request unavailable");
+      }
       return bounded(() => dependencies.provider.transport(request), controller.signal);
     };
     const outcome = await bounded(() => dependencies.invokeContext({ lease, input: raw, budget: guard, rpc: contextRpc,
@@ -95,6 +126,8 @@ export async function executeQaWork(
     const priceable = outcome.kind === "protocol_validated" || (outcome.kind === "unavailable" && outcome.code === "SAFETY_BLOCKED");
     const actualMicros = priceable && outcome.usage ? dependencies.provider.price(outcome.usage) : null;
     if (actualMicros === null || !outcome.usage || !dispatchAuthorized || !sent) return "unavailable";
+    if (acceptance && (outcome.usage.inputTokens > 991808 || outcome.usage.outputTokens > config.maxOutputTokens
+      || actualMicros > config.reservedMicros || actualMicros > 6500000)) return "unavailable";
     // Real validated usage is persisted before settlement. Unknown price/usage or
     // ACK retains the original pending attempt; it never becomes a free retry.
     await bounded(() => dependencies.recordUsage(validatedUsageReceipt({ schemaVersion: "validated-model-usage/1", attempt,
@@ -106,7 +139,9 @@ export async function executeQaWork(
       text: textTurnFailureCopy[["en", "zh", "es", "ru", "ar"].includes(String(raw.locale)) ? raw.locale as Locale : "en"][outcome.kind === "unavailable" && outcome.code === "SAFETY_BLOCKED" ? "blocked" : "technical_failure"] };
     if (!answer) return "unavailable";
     const completion = await call("qa_complete_work_v1", { ...keys, p_kind: answer.outcome, p_text: answer.text });
-    return record(completion) && completion.kind === "finished" && !controller.signal.aborted ? "finished" : "unavailable";
+    if (!record(completion) || completion.kind !== "finished" || controller.signal.aborted) return "unavailable";
+    if (["answered", "partial", "clarification"].includes(answer.outcome)) acceptSuccess?.();
+    return "finished";
   } catch { return "unavailable"; }
   finally {
     clearTimeout(timer); signal.removeEventListener("abort", abort);

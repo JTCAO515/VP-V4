@@ -1,0 +1,33 @@
+{
+  "status": "FAIL_TEST_HARNESS_ARGV",
+  "pass": 11,
+  "fail": 1,
+  "skip": 0,
+  "cause": "node -e dynamic import did not have the actual CLI argv length2; production guard correctly rejected. Replace test invocation with preload and actual entry file, no production guard change.",
+  "sourcePins": [
+    {
+      "path": "lib/server/qa-agent/acceptance-journal.ts",
+      "sha256": "e0809507b3e693993223d676d0d228d4c5c35f2aafbd968d9e077eefe2c7940f"
+    },
+    {
+      "path": "lib/server/qa-agent/hosted-profile.ts",
+      "sha256": "e9162593ab80646cd9758a2c02a9b5101d258631b25bb744517eefb4eea40800"
+    },
+    {
+      "path": "lib/server/jobs/hosted-text-worker.ts",
+      "sha256": "2a919ceb38d4b1048dbf3d68d82c5093c9abe01c6d0a5842cb9db28e14af0784"
+    },
+    {
+      "path": "lib/server/jobs/run-hosted-text-worker.mjs",
+      "sha256": "9c850dd2e42f1ff81d05f2c7742c9005af679df70b864561fb891cad07306bd4"
+    },
+    {
+      "path": "deploy/hosted-worker/validate-qa-target.mjs",
+      "sha256": "be5e949f99a949ce5522c80441151d32af0da28b3ae47bf8bd3edb6b85c9ff32"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-hosted.test.mjs",
+      "sha256": "1511fc0c86da0538f4daf01ef111c04350a516122ee48949dc1ca7c2956f9709"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{"case":"control-stop-create-refusal","b":{"denied":1,"bError":"EACCES"},"c":{"result":"finished","claims":1,"physical":1}}
+(node:5679) ExperimentalWarning: Module mocking is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5679) DeprecationWarning: mock.module(): options.namedExports is deprecated. Use options.exports instead.
+{"case":"root-stop-create-refusal","bResult":{"reason":"unavailable","thrown":"EACCES"},"cResult":{"reason":"stopped","polls":1,"finished":1,"unavailable":0,"skipped":0},"additionalClaims":1,"additionalPhysical":1}
+✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7299.195208
+
+✖ failing tests:
+
+test at tests/security/qa-agent-service/acceptance-hosted.test.mjs:76:1
+✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'stopped'
+  - 'unavailable'
+
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-hosted.test.mjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'stopped',
+    expected: 'unavailable',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+✖ control stop survives denied sidecar creation while A owns dispatch; new process C cannot claim/send (189.632375ms)
+✖ original hosted-root chain preserves B failure with sidecar creation denied until after A completes (7332.316208ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7611.041667
+
+✖ failing tests:
+
+test at tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:10:1
+✖ control stop survives denied sidecar creation while A owns dispatch; new process C cannot claim/send (189.632375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+  +   claims: 1,
+  +   physical: 1,
+  +   result: 'finished'
+  -   claims: 0,
+  -   physical: 0,
+  -   result: 'unavailable'
+    }
+
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:25:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { result: 'finished', claims: 1, physical: 1 },
+    expected: { result: 'unavailable', claims: 0, physical: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:28:1
+✖ original hosted-root chain preserves B failure with sidecar creation denied until after A completes (7332.316208ms)
+  Error: Command failed: /opt/homebrew/Cellar/node/26.8.2/bin/node --experimental-strip-types --experimental-test-module-mocks --import data:text/javascript,import%20%7Bmock%7D%20from%20'node%3Atest'%3Bconst%20fs%3Dawait%20import('node%3Afs%2Fpromises')%3Bconst%20%7Bdefault%3Aunused%2C...named%7D%3Dfs%3Blet%20armed%3Dfalse%3B%0A%20mock.module('node%3Afs%2Fpromises'%2C%7BnamedExports%3A%7B...named%2Copen%3Aasync(...args)%3D%3E%7Bif(armed%26%26String(args%5B0%5D).endsWith('.stop'))throw%20Object.assign(Error('synthetic%20stop%20create%20denied')%2C%7Bcode%3A'EACCES'%7D)%3Breturn%20fs.open(...args)%3B%7D%7D%7D)%3B%0A%20globalThis.__qaDenyStopCreation%3Dasync%20action%3D%3E%7Barmed%3Dtrue%3Btry%7Breturn%20await%20action()%3B%7Dfinally%7Barmed%3Dfalse%3B%7D%7D%3B --test --test-name-pattern=real hosted root <worktree>/tests/security/qa-agent-service/acceptance-hosted.test.mjs
+      at genericNodeError (node:internal/errors:999:15)
+      at wrappedFn (node:internal/errors:544:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:35:14)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    status: 1,
+    signal: null,
+    output: [ null, '(node:5679) ExperimentalWarning: Module mocking is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:5679) DeprecationWarning: mock.module(): options.namedExports is deprecated. Use options.exports instead.\n{"case":"root-stop-create-refusal","bResult":{"reason":"unavailable","thrown":"EACCES"},"cResult":{"reason":"stopped","polls":1,"finished":1,"unavailable":0,"skipped":0},"additionalClaims":1,"additionalPhysical":1}\n✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 7299.195208\n\n✖ failing tests:\n\ntest at tests/security/qa-agent-service/acceptance-hosted.test.mjs:76:1\n✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + \'stopped\'\n  - \'unavailable\'\n  \n      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-hosted.test.mjs:119:9)\n      at async Test.run (node:internal/test_runner/test:1409:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: \'ERR_ASSERTION\',\n    actual: \'stopped\',\n    expected: \'unavailable\',\n    operator: \'strictEqual\',\n    diff: \'simple\'\n  }\n', '' ],
+    pid: 5678,
+    stdout: '(node:5679) ExperimentalWarning: Module mocking is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:5679) DeprecationWarning: mock.module(): options.namedExports is deprecated. Use options.exports instead.\n{"case":"root-stop-create-refusal","bResult":{"reason":"unavailable","thrown":"EACCES"},"cResult":{"reason":"stopped","polls":1,"finished":1,"unavailable":0,"skipped":0},"additionalClaims":1,"additionalPhysical":1}\n✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 7299.195208\n\n✖ failing tests:\n\ntest at tests/security/qa-agent-service/acceptance-hosted.test.mjs:76:1\n✖ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (7193.02325ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + \'stopped\'\n  - \'unavailable\'\n  \n      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-hosted.test.mjs:119:9)\n      at async Test.run (node:internal/test_runner/test:1409:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: \'ERR_ASSERTION\',\n    actual: \'stopped\',\n    expected: \'unavailable\',\n    operator: \'strictEqual\',\n    diff: \'simple\'\n  }\n',
+    stderr: ''
+  }

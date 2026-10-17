@@ -1,0 +1,60 @@
+{"case":"control-stop-create-refusal","b":{"denied":1,"bError":"EACCES"},"c":{"result":"finished","claims":1,"physical":1}}
+
+✖ control stop survives denied sidecar creation while A owns dispatch; new process C cannot claim/send (189.834791ms)
+✖ original hosted-root chain preserves B failure with sidecar creation denied until after A completes (34.312375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 319.250791
+
+✖ failing tests:
+
+test at tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:10:1
+✖ control stop survives denied sidecar creation while A owns dispatch; new process C cannot claim/send (189.834791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+  +   claims: 1,
+  +   physical: 1,
+  +   result: 'finished'
+  -   claims: 0,
+  -   physical: 0,
+  -   result: 'unavailable'
+    }
+
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:25:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { result: 'finished', claims: 1, physical: 1 },
+    expected: { result: 'unavailable', claims: 0, physical: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:28:1
+✖ original hosted-root chain preserves B failure with sidecar creation denied until after A completes (34.312375ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /root-stop-create-refusal/. Input:
+
+  ''
+
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-stop-creation.test.mjs:36:29)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /root-stop-create-refusal/,
+    operator: 'match',
+    diff: 'simple'
+  }

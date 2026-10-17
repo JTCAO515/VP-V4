@@ -1,7 +1,7 @@
 /** Offline package binding only. No credentials, network or activation authority. */
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {parseQaHostedProfile} from '../../lib/server/qa-agent/hosted-profile.ts';
+import {parseQaHostedProfile,requireQaAcceptanceTarget} from '../../lib/server/qa-agent/hosted-profile.ts';
 import {readApprovedQaTarget} from '../../lib/server/qa-agent/target.ts';
 import {isQwenEndpoint} from '../../lib/server/model-gateway/adapters/provider-endpoints.ts';
 
@@ -18,6 +18,8 @@ function prepare(profile,target){
     ||target.startupState!=='disabled'||target.restartPolicy!=='no')throw Error('target');
   if(profile?.schemaVersion!=='vpj07-hosted-text-worker/4'||profile.projectRef!==target.projectRef)throw Error('profile target');
   const checked=parseQaHostedProfile(profile);
+  requireQaAcceptanceTarget(checked,{schemaVersion:'qa-runtime-binding/1',projectRef:target.projectRef,
+    ownerId:target.ownerId,policyId:target.policyId,scopeId:target.scopeId,noticeHash:target.noticeHash},target.qwenEndpoint,target.build);
   if(/^(?:sb_secret_|sk-|token_|password_)/i.test(checked.qwen.priceVersion))throw Error('profile');
   const profileJson=JSON.stringify(checked)+'\n';
   return {profileJson,targetJson:JSON.stringify({...target,profileSha256:hash(profileJson)})+'\n'};

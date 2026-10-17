@@ -1,0 +1,139 @@
+{
+  "kind": "QA_ACCEPTANCE_WIRED_FINAL_LOCAL_PROOF",
+  "base": "575941ae37b6ff0c6b3c74ea485ceedbe40cf52b",
+  "coreCheckpoint": "728eafbea44f242010d860293048caa2402a8f16",
+  "sourcePins": [
+    {
+      "path": "lib/server/qa-agent/acceptance-journal.ts",
+      "sha256": "b83cdd52303247169b9ad4c11ae062c3e82a07883d81e07843db69541e98a8a1"
+    },
+    {
+      "path": "lib/server/qa-agent/executor.ts",
+      "sha256": "e68493f205297e6fa81e0a4f819015033f8cdd7bbef9f2c96c5dd91a29b12735"
+    },
+    {
+      "path": "lib/server/qa-agent/worker.ts",
+      "sha256": "10e075a12cd4ed49fd74f47ac51bd3f30173e19ca131905b4cb2c360a5bbd9ab"
+    },
+    {
+      "path": "lib/server/qa-agent/hosted-profile.ts",
+      "sha256": "2e1b9ebc2f9b671bfc61dbb3df0d7807c97309f195b54e097db01564e18c3bb4"
+    },
+    {
+      "path": "lib/server/jobs/hosted-text-worker.ts",
+      "sha256": "4ef536cc93626b5ca50838aab356881e8f6992f24dadc6ce995600de60e0c287"
+    },
+    {
+      "path": "lib/server/jobs/run-hosted-text-worker.mjs",
+      "sha256": "9c850dd2e42f1ff81d05f2c7742c9005af679df70b864561fb891cad07306bd4"
+    },
+    {
+      "path": "deploy/hosted-worker/validate-qa-target.mjs",
+      "sha256": "be5e949f99a949ce5522c80441151d32af0da28b3ae47bf8bd3edb6b85c9ff32"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-fixture.mjs",
+      "sha256": "ce30984715a8d6222413c7856cc8448d5e13d5c27cb48bd99887750e14165891"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-journal.test.mjs",
+      "sha256": "128432274350904d702201b88767d957575e36163c2933b9541742b4ed0b17a3"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-hosted.test.mjs",
+      "sha256": "e1fc1929567ae8389755ed149a8ce482749096b543ba587573fc992d002f21b1"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-durability.test.mjs",
+      "sha256": "ada687b498bd4adeea767c2fb13ea3b22e51cb05164079b44bbf5f19c0ab1158"
+    }
+  ],
+  "verification": {
+    "originalCore": "19/19 PASS zero skip before root wiring",
+    "wiredBeforeP2": "101 discovered:98 PASS,0 FAIL,3 expected opt-in DB SKIP; not added to earlier counts",
+    "afterP2": "16/16 PASS zero skip:4 injected durability faults +9 controller/worker +3 canonical/CLI/root cases",
+    "canonicalInstaller": "2/2 PASS zero skip; real existing shell parsing of unchanged3-line runtime output",
+    "typecheck": "PASS after P2",
+    "policyLint": "PASS after P2:902 files",
+    "docsCheck": "PASS",
+    "diffCheck": "PASS",
+    "actualLocalNode": "v26.8.2",
+    "bakedNode22ImageRun": "UNRUN; no image/host installation or container started"
+  },
+  "p2": {
+    "red": "durability-RED.log:2 PASS/2 FAIL; initial/release-directory fsync failures allowed a restarted worker to claim/send",
+    "redSource": "working tree before fix; complete WIP SHA not captured; core728 contains the same faulty release order",
+    "green": "durability-GREEN.log:16 PASS; injected initial-dir-sync and release-dir-sync failures, file fsync that completed then returned unknown ACK, and pre-effect unlink EACCES all leave a blocking lock; separate process and same-process successors have no claim/provider",
+    "fix": "Poison initial directory sync failure; perform directory sync and closes while lock exists. Unlink last, with no fallible durability operation afterwards. A power-loss resurrection of the un-fsynced deletion only denies further calls conservatively."
+  },
+  "wiring": {
+    "profile": "optional closed acceptance grant within canonical /4; fixed proposal tariff/reserve/output/timeout and concurrency1/groupLimit1; no new flag/env-key fallback",
+    "validator": "Original canonical target/profile SHA256 and baked build checks retained, plus full40 source SHA/project/actor/policy/scope/notice/config/job digest equality. Emits same3 lines, so ecs-worker-files.sh unchanged.",
+    "cli": "Existing real entry file executed with Node preload test module mocks; ready exact journal reaches mocked secret-stage stop, missing/expired/stopped/wrong tuple/build refuses before real secret stage. No actual key read or fetch. Runtime only opens existing canonical qa-acceptance-<runId>.jsonl; never initializes/resets.",
+    "root": "Actual hosted root -> existing sole context composer -> existing HTTP transport -> original executor guard. Durable intent before physical send; mutex through usage/settlement/completion; first failure sticky, global2 slots, absolute expiry, maxConsecutiveFailures1. Pre-lease heartbeat/discovery unavailable also attempts durable stop under same mutex without stealing locks."
+  },
+  "authorizationLimits": [
+    "Canonical grant is reviewed nonsecret configuration, not proof of human fee approval or account/actor entitlement. Existing SQL/session/policy/consent/budget/defaultdisabled guards remain authoritative.",
+    "Initializer is an explicit exclusive journal-owner API, not called by the production CLI. It must only provision once after separate authorized gates. Deleting/recreating the protected journal/directory or issuing a new run is not a restart/recovery mechanism and is not authorized here. Runtime missing file fails closed.",
+    "Concurrency/restart guarantee is for all instances sharing the original sole host persistent journal directory. No cross-host distributed ledger or filesystem tamper-proof guarantee is claimed.",
+    "No real target SQL, provider, billing, worker activation/deployment, credentials or permissions were used or changed. No real account/profile/actor data included."
+  ],
+  "retainedFailures": [
+    "hosted-entry-first-FAIL.log:11 PASS/1 FAIL; test used node-e argv, corrected test to actual entry file with preload, production argv guard retained",
+    "wired-tests-sandbox-FAIL.log:96 PASS/2 FAIL/3 SKIP; default sandbox local bind probe returned EPERM, unchanged loopback tests passed with authorized local socket permission",
+    "durability-RED.log:real reproduced independent P2; retained"
+  ],
+  "logs": [
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/canonical-installer-tests.log",
+      "sha256": "a50faaa354a6dc8a8ae8687825043cb75743756ef011a62ef7df90d73126f9a4"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/durability-GREEN.log",
+      "sha256": "bf6ef2222a4e44cd683b34922c89f3947d2fd9e6287e56c5ccb0eb3f5ce93b11"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/durability-RED.log",
+      "sha256": "8343546a59920570bb008423c101630bd645925276f4a0ccf52925f963ec6e52"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/hosted-entry-first-FAIL.log",
+      "sha256": "b6122905d0c1e075782da3f404df48cef6d6439113eb5a958bb75a626274eb6c"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/scoped-tests.log",
+      "sha256": "6aa45a72ea3f389250f7a170ceaa3ee6f466b1bceb351a1edf462833f780aaa4"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests-sandbox-FAIL.log",
+      "sha256": "d8f5a9d4a019ad48ea8b6b637bf1939c59a320a6b92b86c5c3eb7414a3180c13"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests.log",
+      "sha256": "894f5da95985840d72f542dda14a1224a0ad56870d74ab6bc27ba6eaed8ead5d"
+    }
+  ],
+  "publicLogRedactions": [
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/hosted-entry-first-FAIL.log",
+      "originalSha256": "95e51c128edc286898b2bead4be8c4260f8b22128b904d120465d8ffa1b4436b",
+      "redaction": "absolute worktree prefix only; checks/counts/failures retained"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/durability-RED.log",
+      "originalSha256": "8c5d57eca7d4610bb1cae30eebb88c86f2e1f5826e41eab6932dc252e57aa073",
+      "redaction": "absolute worktree prefix only; checks/counts/failures retained"
+    },
+    {
+      "path": "artifacts/QAWEB-005/acceptance-dispatch-guard-20261017/wired-tests-sandbox-FAIL.log",
+      "originalSha256": "87ae8bca6564262373d20e5ee72a1b65e30346eda6cd7e4a32998a4e6f5e3e6b",
+      "redaction": "absolute worktree prefix only; checks/counts/failures retained"
+    }
+  ],
+  "realProviderCalls": 0,
+  "realTargetCalls": 0,
+  "feesAuthorized": false,
+  "scope": "Only this independent product guard increment on QA575; prior blocked D2 branch ancestry and its documents/fixtures are excluded.",
+  "historicalSourceHead": "c2c9a27a48ee38f06b95df90719e9318ce2648fc",
+  "scopeNote": "Historical c2 source/verification; new root stop-intent repair is separately pinned. Log-only whitespace normalization does not rerun or reclassify failures."
+}

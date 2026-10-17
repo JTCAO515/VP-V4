@@ -5,6 +5,7 @@ import type { HostedTariff } from "../jobs/hosted-text-worker.ts";
 import type { QaWorkerConfiguration, LegacyQaWorkerConfiguration, IndependentQaWorkerConfiguration } from "./worker.ts";
 import { exact, record, uuid } from "./service.ts";
 import { requireQaRuntimeBinding, type QaRuntimeBinding } from "./runtime-binding.ts";
+import { acceptanceDigest, requireQaAcceptanceGrant, type QaAcceptanceGrant } from "./acceptance-journal.ts";
 
 export type LegacyQaHostedProfile = Readonly<{
   schemaVersion: "vpj07-hosted-text-worker/3";
@@ -13,6 +14,7 @@ export type LegacyQaHostedProfile = Readonly<{
 }>;
 export type IndependentQaHostedProfile = Omit<LegacyQaHostedProfile, "schemaVersion"> & Readonly<{
   schemaVersion: "vpj07-hosted-text-worker/4"; projectRef: string;
+  acceptance?: QaAcceptanceGrant;
 }>;
 export type QaHostedProfile = LegacyQaHostedProfile | IndependentQaHostedProfile;
 const nil = "00000000-0000-4000-8000-000000000000";
@@ -20,7 +22,7 @@ const defaultEndpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/
 const integer = (v: unknown, min: number, max: number): v is number => Number.isSafeInteger(v) && Number(v) >= min && Number(v) <= max;
 /** /4 explicitly approved QA; /3 parsing is retained only for historical evidence. */
 export function parseQaHostedProfile(raw: unknown): QaHostedProfile {
-  if (!record(raw) || !exact(raw, ["schemaVersion", "pollIntervalMs", "maxLifetimeMs", "drainMs", "concurrency", "groupLimit", "modes", "qwen", "planning", ...(raw.schemaVersion === "vpj07-hosted-text-worker/4" ? ["projectRef"] : [])])
+  if (!record(raw) || !exact(raw, ["schemaVersion", "pollIntervalMs", "maxLifetimeMs", "drainMs", "concurrency", "groupLimit", "modes", "qwen", "planning", ...(raw.schemaVersion === "vpj07-hosted-text-worker/4" ? ["projectRef", ...(Object.hasOwn(raw, "acceptance") ? ["acceptance"] : [])] : [])])
     || !["vpj07-hosted-text-worker/3", "vpj07-hosted-text-worker/4"].includes(String(raw.schemaVersion))
     || (raw.schemaVersion === "vpj07-hosted-text-worker/4" && !readApprovedQaTarget(raw.projectRef)) || raw.planning !== null
     || !integer(raw.pollIntervalMs, 1000, 60000) || !integer(raw.maxLifetimeMs, 60000, 86400000) || !integer(raw.drainMs, 0, 60000)
@@ -31,13 +33,21 @@ export function parseQaHostedProfile(raw: unknown): QaHostedProfile {
     || !integer(raw.qwen.reservedMicros, 1, 1_000_000_000_000) || !integer(raw.qwen.maxOutputTokens, 1, 4096) || !integer(raw.qwen.timeoutMs, 1, 60000)
     || !uuid(raw.qwen.configurationId) || !integer(raw.qwen.configurationVersion, 1, Number.MAX_SAFE_INTEGER)) throw new Error("QA hosted profile unavailable");
   const profile = raw as unknown as QaHostedProfile;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/4" && Object.hasOwn(profile, "acceptance")) {
+    const grant = requireQaAcceptanceGrant(profile.acceptance), q = profile.qwen;
+    if (grant.binding.projectRef !== profile.projectRef || grant.binding.configurationId !== q.configurationId
+      || grant.binding.configurationVersion !== q.configurationVersion || profile.concurrency !== 1 || profile.groupLimit !== 1
+      || profile.maxLifetimeMs > 1800000 || q.maxOutputTokens !== 512 || q.timeoutMs !== 15000 || q.reservedMicros !== 6303744
+      || q.pricing.mode !== "flat" || q.pricing.inputMicrosPerMillion !== 6000000
+      || q.pricing.outputMicrosPerMillion !== 24000000 || q.pricing.cachedInputMicrosPerMillion !== null) throw new Error("QA acceptance profile unavailable");
+  }
   // Historical /3 parsing remains available without executing the old QA job.
   const tariff = profile.qwen;
   createStagingTextJob({ schemaVersion: "vpj07-staging-text-job/1", ownerId: nil, policyId: nil,
     budget: { scopeId: nil, priceVersion: tariff.priceVersion, reservedMicros: tariff.reservedMicros, maxOutputTokens: tariff.maxOutputTokens, timeoutMs: tariff.timeoutMs },
     provider: { provider: "qwen", endpoint: defaultEndpoint, configurationId: tariff.configurationId, configurationVersion: tariff.configurationVersion, timeoutMs: tariff.timeoutMs }, pricing: tariff.pricing },
     { workerCredential: () => null, providerCredential: () => null, recordDestination: async () => {} });
-  return Object.freeze({ ...profile, modes: Object.freeze(["qa_session_history_v1"] as const),
+  return Object.freeze({ ...profile, ...(profile.schemaVersion === "vpj07-hosted-text-worker/4" && profile.acceptance ? { acceptance: requireQaAcceptanceGrant(profile.acceptance) } : {}), modes: Object.freeze(["qa_session_history_v1"] as const),
     qwen: Object.freeze({ ...profile.qwen, pricing: Object.freeze({ ...profile.qwen.pricing }) }), planning: null });
 }
 export function requireQaProfileTarget(profile: QaHostedProfile, operatorProjectRef: unknown): IndependentQaTarget {
@@ -67,4 +77,18 @@ export function planQaGroup(profile: QaHostedProfile, raw: unknown, qwenEndpoint
     || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint || !Array.isArray(raw.scopes)) return null;
   const matching = raw.scopes.filter(v => record(v) && uuid(v.scopeId) && v.model === PROTOCOL_MODELS.qwen && v.priceVersion === profile.qwen.priceVersion);
   return matching.length === 1 && matching[0].scopeId === binding.scopeId ? qaJobConfig(profile, binding.ownerId, binding.policyId, binding.scopeId, qwenEndpoint) : null;
+}
+
+/** Same pure target/source binding for the canonical validator and trusted root.
+ * It validates configuration only, never approves money or initializes a run. */
+export function requireQaAcceptanceTarget(profile: IndependentQaHostedProfile, binding: QaRuntimeBinding, endpoint: string, build: string) {
+  if (!profile.acceptance) return null;
+  const grant = requireQaAcceptanceGrant(profile.acceptance);
+  if (endpoint !== defaultEndpoint || !/^[a-f0-9]{40}$/.test(build) || grant.binding.sourceCommit !== build) throw new Error("QA acceptance source unavailable");
+  const job = qaJobConfig(profile, binding.ownerId, binding.policyId, binding.scopeId, endpoint);
+  if (acceptanceDigest(grant.binding) !== acceptanceDigest({ projectRef: binding.projectRef,
+    ownerId: binding.ownerId, policyId: binding.policyId, scopeId: binding.scopeId, noticeHash: binding.noticeHash,
+    configurationId: job.provider.configurationId, configurationVersion: job.provider.configurationVersion,
+    sourceCommit: grant.binding.sourceCommit, jobDigest: acceptanceDigest(job) })) throw new Error("QA acceptance binding unavailable");
+  return grant;
 }

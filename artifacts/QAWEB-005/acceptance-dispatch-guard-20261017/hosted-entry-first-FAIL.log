@@ -1,0 +1,36 @@
+✔ canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses (968.000709ms)
+✖ actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage (368.347667ms)
+✔ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (3100.163292ms)
+✔ two original worker dispatches survive actual process restart; third has no claim/reserve/provider (151.703416ms)
+✔ concurrent worker instances and a separate process cannot overlap the same journal run (114.104459ms)
+✔ first failure or unknown ACK/usage is sticky across restart, with original pending holds (729.509375ms)
+✔ crash after durable enter retains original lock and denies a restarted worker without auto-recovery (145.859375ms)
+✔ expiry during authorized SQL dispatch prevents physical send and preserves pending budget (29.642ms)
+✔ wrong actor/policy/config/source/job binding refuses construction before any RPC or send (10.884416ms)
+✔ empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending (51.121291ms)
+✔ uncontrolled original worker and an independent authorized run do not inherit another run stop (49.478625ms)
+✔ truncated journal, altered grant, and symlink refuse without provider or silent file replacement (34.2355ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4533.077667
+
+✖ failing tests:
+
+test at tests/security/qa-agent-service/acceptance-hosted.test.mjs:50:1
+✖ actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage (368.347667ms)
+  AssertionError [ERR_ASSERTION]: real CLI imported and verified the exact provisioned grant before reaching the test-only stop
+      at TestContext.<anonymous> (file://<worktree>/tests/security/qa-agent-service/acceptance-hosted.test.mjs:66:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
