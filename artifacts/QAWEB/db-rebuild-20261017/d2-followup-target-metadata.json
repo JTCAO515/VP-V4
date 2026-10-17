@@ -1,0 +1,227 @@
+{
+  "roles": [
+    {
+      "name": "anon",
+      "exists": true,
+      "inherit": true,
+      "canLogin": false,
+      "bypassRls": false,
+      "superuser": false
+    },
+    {
+      "name": "authenticated",
+      "exists": true,
+      "inherit": true,
+      "canLogin": false,
+      "bypassRls": false,
+      "superuser": false
+    },
+    {
+      "name": "postgres",
+      "exists": true,
+      "inherit": true,
+      "canLogin": true,
+      "bypassRls": true,
+      "superuser": false
+    },
+    {
+      "name": "service_role",
+      "exists": true,
+      "inherit": true,
+      "canLogin": false,
+      "bypassRls": true,
+      "superuser": false
+    }
+  ],
+  "schemas": [
+    {
+      "acl": "{supabase_admin=UC/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin,supabase_auth_admin=UC/supabase_admin,dashboard_user=UC/supabase_admin,postgres=U/supabase_admin}",
+      "name": "auth",
+      "owner": "supabase_admin",
+      "exists": true,
+      "effectivePrivileges": {
+        "anon": {
+          "usage": true,
+          "create": false
+        },
+        "postgres": {
+          "usage": true,
+          "create": false
+        },
+        "service_role": {
+          "usage": true,
+          "create": false
+        },
+        "authenticated": {
+          "usage": true,
+          "create": false
+        }
+      }
+    },
+    {
+      "acl": "{postgres=UC/postgres,service_role=U/postgres,authenticated=U/postgres}",
+      "name": "identity_private",
+      "owner": "postgres",
+      "exists": true,
+      "effectivePrivileges": {
+        "anon": {
+          "usage": false,
+          "create": false
+        },
+        "postgres": {
+          "usage": true,
+          "create": true
+        },
+        "service_role": {
+          "usage": true,
+          "create": false
+        },
+        "authenticated": {
+          "usage": true,
+          "create": false
+        }
+      }
+    },
+    {
+      "acl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,postgres=U/pg_database_owner,anon=U/pg_database_owner,authenticated=U/pg_database_owner,service_role=U/pg_database_owner}",
+      "name": "public",
+      "owner": "pg_database_owner",
+      "exists": true,
+      "effectivePrivileges": {
+        "anon": {
+          "usage": true,
+          "create": false
+        },
+        "postgres": {
+          "usage": true,
+          "create": true
+        },
+        "service_role": {
+          "usage": true,
+          "create": false
+        },
+        "authenticated": {
+          "usage": true,
+          "create": false
+        }
+      }
+    },
+    {
+      "acl": "{postgres=UC/postgres}",
+      "name": "turn_private",
+      "owner": "postgres",
+      "exists": true,
+      "effectivePrivileges": {
+        "anon": {
+          "usage": false,
+          "create": false
+        },
+        "postgres": {
+          "usage": true,
+          "create": true
+        },
+        "service_role": {
+          "usage": false,
+          "create": false
+        },
+        "authenticated": {
+          "usage": false,
+          "create": false
+        }
+      }
+    }
+  ],
+  "readOnly": "on",
+  "triggers": [
+    {
+      "name": "bound_task_history",
+      "table": "turn_private.service_task_turns",
+      "enabled": "O",
+      "function": "turn_private.bound_task_history",
+      "signature": "",
+      "definitionHash": "2f9038832d0aa0bbe7d827bc8b21b86ff7a8420be2ab20592ce5ff5b3c43d26b"
+    },
+    {
+      "name": "require_text_task",
+      "table": "turn_private.text_content",
+      "enabled": "O",
+      "function": "turn_private.require_text_task",
+      "signature": "",
+      "definitionHash": "212fc84f55b8a02d1ee0514da572810740439f94c8d8b1ede3dab7908443aa52"
+    }
+  ],
+  "functions": [
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "public.claim_turn_work",
+      "owner": "postgres",
+      "exists": true,
+      "bodyHash": "b38608a798a68f0339e63f1e062032f125bc8724c1b775a85fc2c18f69f43979",
+      "signature": "",
+      "searchPath": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": true,
+        "authenticated": false
+      }
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "name": "turn_private.bound_task_history",
+      "owner": "postgres",
+      "exists": true,
+      "bodyHash": "6db14f7d0e2655c2a05301216f4830bd8909a9d623c9543984051fade9f67442",
+      "signature": "",
+      "searchPath": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      }
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "name": "turn_private.lock_text_work",
+      "owner": "postgres",
+      "exists": true,
+      "bodyHash": "f32e3d267ae9f040d745141b8bdf2af92e2ec0171bb6d1857e0366cb887be3f7",
+      "signature": "p_turn uuid, p_token uuid",
+      "searchPath": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      }
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "name": "turn_private.task_history",
+      "owner": "postgres",
+      "exists": true,
+      "bodyHash": "8e21c2d3e8dec5da6e15438e620c0aeacd7108c450114b5f3121a7028b02dbcc",
+      "signature": "p_turn uuid",
+      "searchPath": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "effectiveExecute": {
+        "anon": false,
+        "postgres": true,
+        "service_role": false,
+        "authenticated": false
+      }
+    }
+  ]
+}
