@@ -1,0 +1,41 @@
+{
+  "candidateCommit": "75f1e18e9c2e4f355b1dbb3993af4282f704d79e",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "linkId": "link_6acdbe0471c081919ff47de24ca53b0f",
+  "tool": "mcp__codex_apps__supabase_execute_sql",
+  "toolCallId": "UNKNOWN: not exposed by connector",
+  "querySha256": "68429cad986f7dc3a7c632fdc9c84707ceeb1dcee8585cd152ceae72e51f03ad",
+  "verification": {
+    "database": "postgres",
+    "readOnly": "on",
+    "dbTimeUTC": "2026-10-17T04:20:48.440697Z",
+    "extraDiff": [],
+    "objectDiff": [],
+    "currentRole": {
+      "bypassRls": true,
+      "superuser": false
+    },
+    "currentUser": "postgres",
+    "objectCount": 82,
+    "sessionRole": {
+      "bypassRls": true,
+      "superuser": false
+    },
+    "sessionUser": "postgres",
+    "serverVersion": "17.6",
+    "classification": "MATCH",
+    "workShapeMatch": true,
+    "roleReachabilityMatch": true
+  },
+  "dbTimeShanghai": "2026-10-17T12:20:48.440697+08:00",
+  "candidateApplicability": "MATCH for fixed captured metadata only; apply must repeat fresh guards",
+  "targetWrites": 0,
+  "applicationTableReads": 0,
+  "concurrency": "UNKNOWN; this observation does not establish a future interval or unique active writer",
+  "historicalRows": "UNRUN. Source constraint supersets and no-DML behavior remain verified; actual historical state preservation is not inferred.",
+  "minimumFutureBooleanConditions": [
+    "For any separately authorized representative historical scope: old identity/deletion/revocation state and Task-parent/idempotency associations unchanged",
+    "For that same approved scope: unknown request bytes and pending ledger status unchanged, with no automatic release/settle",
+    "No raw contents, amounts, IDs or derived row digests requested by this package; actual row checks require their exact approved scope"
+  ]
+}
