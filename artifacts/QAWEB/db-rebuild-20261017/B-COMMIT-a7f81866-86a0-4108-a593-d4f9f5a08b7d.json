@@ -1,0 +1,76 @@
+{
+  "status": "COMMITTED_AFTER_MATCH",
+  "runId": "a7f81866-86a0-4108-a593-d4f9f5a08b7d",
+  "tool": "mcp__codex_apps__supabase_execute_sql",
+  "nativeToolCallId": "UNKNOWN: not exposed",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "linkId": "link_6acdbe0471c081919ff47de24ca53b0f",
+  "approvedCandidate": "75f1e18e9c2e4f355b1dbb3993af4282f704d79e",
+  "reviewedCompiler": "b6b503ddd02b77bd638da5f0acc152e91ab848fb",
+  "approvalRecordSha256": "3aff591164c1773fe63d649adb98c542b48ed8f54dc23dc18b1e02e999b0cc72",
+  "drainReceiptSha256": "4e3d3c5c264a6d57d483f98fc469de669819a2055620a72eb329273340155349",
+  "windowUTC": [
+    "2026-10-17T04:28:00.000Z",
+    "2026-10-17T04:38:00.000Z"
+  ],
+  "requestSha256": "89a03c163cc59aec4629fa2b3e31c05961d1de77181c9e89825fd09f12ceff19",
+  "sqlSha256": "b5a8e0ce94df0f3b2535506f47671eb618a8199605595e5c90196b2291bfabc8",
+  "preflight": {
+    "database": "postgres",
+    "readOnly": "on",
+    "dbTimeUTC": "2026-10-17T04:27:46.729223Z",
+    "extraDiff": [],
+    "objectDiff": [],
+    "currentRole": {
+      "bypassRls": true,
+      "superuser": false
+    },
+    "currentUser": "postgres",
+    "objectCount": 82,
+    "sessionRole": {
+      "bypassRls": true,
+      "superuser": false
+    },
+    "sessionUser": "postgres",
+    "serverVersion": "17.6",
+    "classification": "MATCH",
+    "workShapeMatch": true,
+    "relatedActiveQaLeases": 0,
+    "roleReachabilityMatch": true,
+    "relatedStrongTableLocks": 0,
+    "relatedRoutineWriteLocks": 0
+  },
+  "receipt": {
+    "phase": "COMMIT_RETURNED",
+    "run_id": "a7f81866-86a0-4108-a593-d4f9f5a08b7d",
+    "target": "dzqdzetcctkhbrhlxxgn",
+    "operation": "apply",
+    "candidate_sha256": "eeed4dc6d5c8622781d9e31e177614409e049fd196470c7f452e27ba390f7cb8"
+  },
+  "after": {
+    "readOnly": "on",
+    "dbTimeUTC": "2026-10-17T04:28:50.026351Z",
+    "classification": "AFTER_MATCH",
+    "newFunctionCount": 18,
+    "actualAfterSha256": "91a8fc78705ded7282a892e84fe649cb57c575ee333826d444cf6d831a85cd1e",
+    "expectedAfterSha256": "91a8fc78705ded7282a892e84fe649cb57c575ee333826d444cf6d831a85cd1e",
+    "newClientExecuteGrants": 13
+  },
+  "afterTimeShanghai": "2026-10-17T12:28:50.026351+08:00",
+  "commitExactDbTime": "NOT_RETURNED; receipt followed by DB-timed RO verification",
+  "guardResults": {
+    "freshBefore": "PASS or statement would have raised P0303",
+    "fourTableLocks": "ACQUIRED within lock_timeout 2s",
+    "afterInTransaction": "PASS or P0304 would abort",
+    "executionInterval": "PASS at entry and before COMMIT",
+    "afterCommit": "PASS or P0307 would prevent receipt"
+  },
+  "executeSubmissions": 1,
+  "automaticRetry": false,
+  "providerCalls": 0,
+  "heartbeatStarted": false,
+  "workerStarted": false,
+  "safeStopInvoked": false,
+  "grantSignaturePointer": "d2-grants-proposal.sql",
+  "limits": "B schema/permission migration only; no real service/Auth/provider/UI acceptance inferred"
+}
