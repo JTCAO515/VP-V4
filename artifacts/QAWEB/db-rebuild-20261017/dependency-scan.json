@@ -1,0 +1,591 @@
+{
+  "status": "LEXICAL_REFERENCE_ONLY_NOT_BUILD_PLAN",
+  "limit": "Includes table-call false positives and out-of-scope product branches. Actual build uses explicit reuse-map selections, not this graph.",
+  "graph": {
+    "public.hosted_worker_heartbeat": {
+      "file": "20260923090000_vpj_07_hosted_text_worker.sql",
+      "deps": []
+    },
+    "public.read_hosted_worker_status": {
+      "file": "20260923090000_vpj_07_hosted_text_worker.sql",
+      "deps": []
+    },
+    "public.finish_model_budget": {
+      "file": "20260909184816_vpj_59_durable_model_budget.sql",
+      "deps": []
+    },
+    "public.dispatch_model_budget": {
+      "file": "20260909184816_vpj_59_durable_model_budget.sql",
+      "deps": []
+    },
+    "public.reserve_model_budget": {
+      "file": "20260911200339_vpj_07_service_task_records.sql",
+      "deps": [
+        "turn_private.reserve_model_budget_unbound"
+      ]
+    },
+    "turn_private.reserve_model_budget_unbound": null,
+    "public.qa_complete_work_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.qa_lock_work_v1",
+        "turn_private.terminal",
+        "turn_private.valid_text"
+      ]
+    },
+    "turn_private.valid_text": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": []
+    },
+    "turn_private.terminal": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": [
+        "public.chat_turn_events"
+      ]
+    },
+    "public.chat_turn_events": null,
+    "turn_private.qa_lock_work_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.lock_turn",
+        "turn_private.qa_history_v1"
+      ]
+    },
+    "turn_private.qa_history_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.text_policy_current"
+      ]
+    },
+    "turn_private.text_policy_current": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": []
+    },
+    "turn_private.lock_turn": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": []
+    },
+    "public.qa_authorize_dispatch_v2": {
+      "file": "20261016040522_qa_runtime_binding.sql",
+      "deps": [
+        "public.qa_authorize_dispatch_v1"
+      ]
+    },
+    "public.qa_authorize_dispatch_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.dispatch_model_budget",
+        "public.qa_read_work_v1",
+        "turn_private.text_dispatches"
+      ]
+    },
+    "turn_private.text_dispatches": null,
+    "public.qa_read_work_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.qa_history_v1",
+        "turn_private.qa_lock_work_v1"
+      ]
+    },
+    "public.qa_claim_work_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.cancel_unclaimable_turn_v1",
+        "turn_private.lock_turn",
+        "turn_private.qa_history_v1",
+        "turn_private.terminal",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "turn_private.cancel_unclaimable_turn_v1": {
+      "file": "20261010020000_assistant_events.sql",
+      "deps": [
+        "turn_private.assistant_event_link_v1",
+        "turn_private.terminal"
+      ]
+    },
+    "turn_private.assistant_event_link_v1": {
+      "file": "20261010020000_assistant_events.sql",
+      "deps": []
+    },
+    "public.qa_ready_groups_v3": {
+      "file": "20261016040522_qa_runtime_binding.sql",
+      "deps": []
+    },
+    "public.qa_native_session_v1": {
+      "file": "20261016060000_qa_native_session.sql",
+      "deps": []
+    },
+    "public.native_session_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": [
+        "identity_private.mobile_session_v2"
+      ]
+    },
+    "identity_private.mobile_session_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": [
+        "identity_private.mobile_accounts"
+      ]
+    },
+    "identity_private.mobile_accounts": null,
+    "public.native_prepare_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": [
+        "identity_private.prepare_mobile_v2"
+      ]
+    },
+    "identity_private.prepare_mobile_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": []
+    },
+    "public.qa_cancellation_v1": {
+      "file": "20261015043710_agent001_qa_cancellation.sql",
+      "deps": [
+        "identity_private.guard_mobile_rpc_v2",
+        "public.cancel_chat_turn",
+        "turn_private.lock_turn"
+      ]
+    },
+    "public.cancel_chat_turn": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "turn_private.cancel_chat_turn_unmetered",
+        "turn_private.lock_trip_account_v1",
+        "turn_private.text_owner"
+      ]
+    },
+    "turn_private.text_owner": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": [
+        "identity_private.guard_mobile_rpc_v2",
+        "identity_private.mobile_accounts"
+      ]
+    },
+    "identity_private.guard_mobile_rpc_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": [
+        "identity_private.mobile_access_v2"
+      ]
+    },
+    "identity_private.mobile_access_v2": {
+      "file": "20260909223841_vpj_04_native_mobile_sessions.sql",
+      "deps": []
+    },
+    "turn_private.lock_trip_account_v1": {
+      "file": "20261015055708_agent008_trip_service_task_settlement_current.sql",
+      "deps": []
+    },
+    "turn_private.cancel_chat_turn_unmetered": null,
+    "public.read_text_turn": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_text_projection_v1",
+        "turn_private.lock_turn",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "place_actions_private.ask_text_projection_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_history_root_v1",
+        "public.read_grounded_turn"
+      ]
+    },
+    "public.read_grounded_turn": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "guide_private.bound_v1",
+        "knowledge_review_private.question_definition",
+        "knowledge_review_private.resolve_question",
+        "knowledge_review_private.selected_question_input",
+        "place_actions_private.ask_bound_v1",
+        "turn_private.lock_turn",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "place_actions_private.ask_bound_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_basis_v1",
+        "place_actions_private.ask_proof_shape_v1",
+        "turn_private.lock_text_work",
+        "turn_private.lock_trip_account_v1",
+        "turn_private.lock_turn",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "turn_private.lock_text_work": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.lock_turn",
+        "turn_private.task_history",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "turn_private.task_history": {
+      "file": "20260912190000_vpj_16_grounded_turn.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_proof_shape_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_expectation_shape_v1",
+        "place_actions_private.ask_uuid_v1",
+        "place_actions_private.exact_v1"
+      ]
+    },
+    "place_actions_private.exact_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_uuid_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_expectation_shape_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_uuid_v1",
+        "place_actions_private.exact_v1",
+        "place_actions_private.revision_v1",
+        "place_actions_private.selection_v1"
+      ]
+    },
+    "place_actions_private.selection_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": [
+        "place_actions_private.exact_v1",
+        "place_actions_private.utf16_length_v1",
+        "place_actions_private.uuid_v1"
+      ]
+    },
+    "place_actions_private.uuid_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.utf16_length_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.revision_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_basis_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_context_v1",
+        "place_actions_private.ask_expectation_shape_v1",
+        "place_actions_private.hash_v1"
+      ]
+    },
+    "place_actions_private.hash_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_context_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_sources_v1",
+        "place_actions_private.hash_v1",
+        "place_actions_private.mapping_v1",
+        "place_actions_private.saved_v1",
+        "place_actions_private.snapshot_v1",
+        "place_actions_private.utf16_length_v1",
+        "place_actions_private.valid_v1",
+        "recovery_private.ms_v1"
+      ]
+    },
+    "recovery_private.ms_v1": {
+      "file": "20261004030000_local_recovery_guard.sql",
+      "deps": []
+    },
+    "place_actions_private.valid_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": [
+        "place_actions_private.exact_v1",
+        "place_actions_private.revision_v1",
+        "place_actions_private.selection_v1",
+        "place_actions_private.time_v1",
+        "place_actions_private.uuid_v1"
+      ]
+    },
+    "place_actions_private.time_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": []
+    },
+    "place_actions_private.snapshot_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": [
+        "public.trip_content_snapshot",
+        "recovery_private.ms_v1"
+      ]
+    },
+    "public.trip_content_snapshot": {
+      "file": "20261015161024_ios004_online_user_address.sql",
+      "deps": []
+    },
+    "place_actions_private.saved_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": [
+        "place_actions_private.exact_v1",
+        "place_actions_private.hash_v1",
+        "place_actions_private.mapping_v1",
+        "place_actions_private.revision_v1",
+        "place_actions_private.utf16_length_v1",
+        "place_actions_private.uuid_v1"
+      ]
+    },
+    "place_actions_private.mapping_v1": {
+      "file": "20261005010000_vpj20_place_actions.sql",
+      "deps": [
+        "place_actions_private.hash_v1"
+      ]
+    },
+    "place_actions_private.ask_sources_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_mapping_basis_v1",
+        "trip_support_private.typed_claim"
+      ]
+    },
+    "trip_support_private.typed_claim": {
+      "file": "20261003200000_vpj65_trip_item_support.sql",
+      "deps": [
+        "trip_support_private.valid_typed_value"
+      ]
+    },
+    "trip_support_private.valid_typed_value": {
+      "file": "20261003200000_vpj65_trip_item_support.sql",
+      "deps": [
+        "knowledge_review_private.closed_object"
+      ]
+    },
+    "knowledge_review_private.closed_object": {
+      "file": "20260912042452_vpj_15_knowledge_publication.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_mapping_basis_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_claim_basis_v1",
+        "trip_support_private.hash"
+      ]
+    },
+    "trip_support_private.hash": {
+      "file": "20261003200000_vpj65_trip_item_support.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_claim_basis_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_knowledge_scope_v1",
+        "trip_support_private.hash"
+      ]
+    },
+    "place_actions_private.ask_knowledge_scope_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "knowledge_review_private.closed_object"
+      ]
+    },
+    "knowledge_review_private.selected_question_input": {
+      "file": "20260914041000_vpj_16_place_questions.sql",
+      "deps": []
+    },
+    "knowledge_review_private.resolve_question": {
+      "file": "20260914041000_vpj_16_place_questions.sql",
+      "deps": [
+        "knowledge_review_private.closed_object",
+        "knowledge_review_private.question_definition"
+      ]
+    },
+    "knowledge_review_private.question_definition": {
+      "file": "20260914041000_vpj_16_place_questions.sql",
+      "deps": [
+        "knowledge_review_private.question_definition_general_v1"
+      ]
+    },
+    "knowledge_review_private.question_definition_general_v1": null,
+    "guide_private.bound_v1": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": [
+        "guide_private.projection_v1",
+        "turn_private.lock_text_work",
+        "turn_private.lock_turn",
+        "turn_private.text_owner"
+      ]
+    },
+    "guide_private.projection_v1": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": [
+        "guide_private.hash",
+        "guide_private.instant",
+        "guide_private.mapping_v1",
+        "guide_private.proof_v1",
+        "guide_private.unavailable",
+        "guide_private.use_current_v1",
+        "guide_private.utf16",
+        "knowledge_review_private.bounded_text",
+        "knowledge_review_private.closed_object"
+      ]
+    },
+    "knowledge_review_private.bounded_text": {
+      "file": "20260910213151_vpj_15_private_source_assertion.sql",
+      "deps": []
+    },
+    "guide_private.utf16": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": []
+    },
+    "guide_private.use_current_v1": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": [
+        "guide_private.proof_v1"
+      ]
+    },
+    "guide_private.proof_v1": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": []
+    },
+    "guide_private.unavailable": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": []
+    },
+    "guide_private.mapping_v1": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": [
+        "guide_private.hash",
+        "trip_support_private.hash"
+      ]
+    },
+    "guide_private.hash": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": []
+    },
+    "guide_private.instant": {
+      "file": "20261005080000_place_guide.sql",
+      "deps": []
+    },
+    "place_actions_private.ask_history_root_v1": {
+      "file": "20261015083120_agent005_canonical_place_ask.sql",
+      "deps": [
+        "place_actions_private.ask_proof_shape_v1",
+        "turn_private.lock_trip_account_v1",
+        "turn_private.lock_turn",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "public.qa_submit_message_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.chat_threads",
+        "public.qa_submit_turn_v1",
+        "turn_private.text_owner"
+      ]
+    },
+    "public.qa_submit_turn_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.chat_threads",
+        "public.start_text_turn",
+        "turn_private.qa_consumer_window_v1",
+        "turn_private.qa_history_v1",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current",
+        "turn_private.valid_text"
+      ]
+    },
+    "turn_private.service_tasks": null,
+    "turn_private.service_task_turns": null,
+    "turn_private.qa_consumer_window_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "turn_private.valid_text"
+      ]
+    },
+    "public.start_text_turn": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": [
+        "public.enqueue_turn_work",
+        "public.start_chat_turn",
+        "turn_private.text_content",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current",
+        "turn_private.valid_text"
+      ]
+    },
+    "turn_private.text_content": null,
+    "public.start_chat_turn": {
+      "file": "20260911200339_vpj_07_service_task_records.sql",
+      "deps": [
+        "public.chat_turn_events",
+        "public.chat_turn_idempotency",
+        "public.turns"
+      ]
+    },
+    "public.turns": null,
+    "public.chat_turn_idempotency": null,
+    "public.enqueue_turn_work": {
+      "file": "20260910163426_vpj_07_durable_turn_work.sql",
+      "deps": [
+        "turn_private.lock_turn",
+        "turn_private.work"
+      ]
+    },
+    "turn_private.work": null,
+    "public.chat_threads": null,
+    "public.qa_read_session_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.read_text_turn",
+        "turn_private.qa_history_v1",
+        "turn_private.text_owner"
+      ]
+    },
+    "public.qa_list_sessions_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.qa_read_session_v1",
+        "turn_private.text_owner"
+      ]
+    },
+    "public.qa_accept_policy_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.accept_text_policy",
+        "turn_private.text_owner"
+      ]
+    },
+    "public.accept_text_policy": {
+      "file": "20260910171836_vpj_07_text_authorization.sql",
+      "deps": [
+        "turn_private.text_consents",
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    },
+    "turn_private.text_consents": null,
+    "public.qa_read_policy_v1": {
+      "file": "20261013050429_qa_agent_web.sql",
+      "deps": [
+        "public.read_text_policy",
+        "turn_private.text_owner"
+      ]
+    },
+    "public.read_text_policy": {
+      "file": "20260910174748_vpj_07_native_text_consumer.sql",
+      "deps": [
+        "turn_private.text_owner",
+        "turn_private.text_policy_current"
+      ]
+    }
+  }
+}

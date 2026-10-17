@@ -1,0 +1,262 @@
+{
+  "sourceHead": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "originalProofHead": "9a34440a09c6a5d53d4ac9252e64ecfa4054c692",
+  "supplementProofHead": "RESOLVE_COMMIT_CONTAINING_THIS_FILE",
+  "currentRun": {
+    "path": "artifacts/QAWEB/db-rebuild-20261017/run-7b58be351544427399ec75a610f9da8b.json",
+    "sha256": "7e183cf82eb36a3772c9bc75330dacafb0433cf07c716b0530267cca76dff425",
+    "uniqueNamedGroups": 19,
+    "freshDatabasesPerGroup": 2,
+    "observations": 38,
+    "groups": [
+      {
+        "name": "21 original RPC named-argument and role ABI matches fixed service contract",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "native login epoch/idempotent login through original functions; synthetic Auth",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "JSON claims fallback and profile owner RLS",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "native create/list/read/reopen",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "anon/anonymous/stale epoch/cross-actor refusal",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "minimal roles: no client private-content/Trip writer/trusted prepare",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "missing policy/consent cannot admit or create a Turn",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "exact notice policy and explicit consent",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "atomic admission and exact text idempotency; no duplicate queue",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "original worker heartbeat port remains disabled without activation",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "worker control default disabled",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "ready exact tuple matched before LIMIT",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "reserve/dispatch tuple and service ACL; no answer before settled usage",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "synthetic usage settle\u2192complete\u2192durable answer reopen, no seeded answer",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "same Task/parent preserved and bounded prior context",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "unknown dispatch/ACK retains bytes and pending budget; no requeue/release",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "withdrawal protects content; cancellation needs no new consent and never settles cost",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "missing request receipt is unknown, not not_submitted",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      },
+      {
+        "name": "revoked session cannot reopen",
+        "databases": [
+          "baseline_1",
+          "baseline_2"
+        ]
+      }
+    ]
+  },
+  "actualSampledExecutionPins": [
+    {
+      "path": "scripts/qa-agent-db-baseline/run.py",
+      "sampledSha256": "62133619ad1fecedb485103c3b71793d86476d6ef660571513c8b9aa94bb15ce",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/acl.sql",
+      "sampledSha256": "3ae461a785319c828d1c977acf9ad9feb9c4ed721605432ce561eda2f6047d63",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/write-ports-acl.sql",
+      "sampledSha256": "7c5f2187feebc3fb63399325ece6eaa3d6406dce4af708ffe4682db52e5ce54c",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/assemble.py",
+      "sampledSha256": "ba155ef6fcf7e9a42e5019326cee584f4090ba808f7141d2675f1e4d7a3f4916",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/schema-overlay.sql",
+      "sampledSha256": "e91b444b2c1f5027bcb124ee9577223b512be807279fe6b3d73eb6ba70580dc6",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/service-ports.json",
+      "sampledSha256": "aa19302219d8a4474022a4e1d7cb9b97009e9539c4bfad1e1f4ba89a2b882571",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/reuse-map.json",
+      "sampledSha256": "f2b4c415c5444e3fdec87bb6c2a8867e6dd4170a882d885421e3c25faa87a4a0",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/port-coverage.json",
+      "sampledSha256": "e092c6bbd45c5fdf3b943127634b8762d11e56cb7a0de0b7439ac0a871959b93",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/contracts.py",
+      "sampledSha256": "dace4fc134b8f945ab3fd042393c120c31c6a8772c21a619370fd56e349d9526",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/baseline.sql",
+      "sampledSha256": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8",
+      "matchesSourceHead": true
+    },
+    {
+      "path": "scripts/qa-agent-db-baseline/platform.sql",
+      "sampledSha256": "b8f1cea2563fd7e67a7662e6f55e729be5cc7d6b01b54973e53c612e1a6ff48e",
+      "matchesSourceHead": true
+    }
+  ],
+  "repeatability": {
+    "sqlSha256": "f69bd4b8d8cbb9b16e1b2779dbcc25e8661f779a93e9211a5ac4f1c1701e39c8",
+    "functionCatalogRepeatable": true,
+    "schemaRlsAclRepeatable": true,
+    "schemaFingerprint": "451b447bc5fd3b81d6b5decd91f249b8",
+    "limit": "Two independently created databases in one owned fresh cluster; not two hosts, managed Auth, target or concurrent-load proof."
+  },
+  "cleanup": {
+    "result": "PASS",
+    "ownedContainerId": "e4e8de8403f3c6e3e39f848b455a77e040bd096484992984601cc475dd5e2339",
+    "proofMechanism": "Run removes only matching nonce/name/image immutable ID and checks absence on pinned local endpoint. No new cleanup/probe in this supplement."
+  },
+  "sourceDeltaFromC66": [
+    "scripts/qa-agent-db-baseline/README.md",
+    "scripts/qa-agent-db-baseline/WRITE-SEED.md",
+    "scripts/qa-agent-db-baseline/assemble.py",
+    "scripts/qa-agent-db-baseline/baseline.sql",
+    "scripts/qa-agent-db-baseline/contracts.py",
+    "scripts/qa-agent-db-baseline/port-coverage.json",
+    "scripts/qa-agent-db-baseline/reuse-map.json",
+    "scripts/qa-agent-db-baseline/run.py",
+    "scripts/qa-agent-db-baseline/schema-overlay.sql",
+    "scripts/qa-agent-db-baseline/write-ports-acl.sql"
+  ],
+  "support": "Native SQL session/policy/consent/admission/context/budget/dispatch/synthetic-settlement/completion/reopen/cancellation. ABI inventory21 is not21 independent end-to-end scenarios.",
+  "notSupportedOrUnrun": [
+    "managed Auth/JWT issuer and physical device",
+    "real provider/billing",
+    "shared target apply/cutover",
+    "whole-catalog/lifecycle equivalence and non-QA writers",
+    "Browser auxiliary relation acceptance",
+    "transport-lost-ACK API path is independently validated by service owner; producer SQL pending-dispatch case is not that same test"
+  ],
+  "consumerInputs": {
+    "interface": "Fixture.start/sql/close unchanged; new owned instance only",
+    "seedDoc": "scripts/qa-agent-db-baseline/WRITE-SEED.md",
+    "seedDocSha256": "bccb64ac5d63bd39ade9e96cea256509503a0f0a95a1ad49363fe5f52144bdb9",
+    "coverage": "scripts/qa-agent-db-baseline/port-coverage.json",
+    "coverageSha256": "e092c6bbd45c5fdf3b943127634b8762d11e56cb7a0de0b7439ac0a871959b93",
+    "platformFixture": "scripts/qa-agent-db-baseline/platform.sql",
+    "platformSha256": "b8f1cea2563fd7e67a7662e6f55e729be5cc7d6b01b54973e53c612e1a6ff48e"
+  },
+  "history": "All run-* files and c66/e225 evidence retained unchanged; initial inspect/void-harness/signature failures not erased. Only currentRun pins are asserted to match7f. Intermediate runs are not added to38.",
+  "transitionPlan": {
+    "path": "artifacts/QAWEB/db-rebuild-20261017/TRANSITION-PLAN.md",
+    "sha256": "88afefcb78e2ec5f0fdd4b6137d149c016c23534718dcea7ac19714caafca269",
+    "status": "PLAN_ONLY_NO_TARGET_ACTION"
+  },
+  "workThisSupplement": "Read existing records + Git blobs, JSON/diff checks only; no matrix rerun, executable change, material/target/credential access.",
+  "fixtureOperationalGap": {
+    "sqlFixtureEndpoint": "DashScope international endpoint metadata",
+    "trustedServiceTransport": "Existing Beijing/workspace configuration; unchanged",
+    "httpWorkerCompatibility": "UNRUN_NOT_PROVEN_BY_SQL_TUPLE_TEST",
+    "syntheticSettlementMicros": 7,
+    "realProviderUsageValidation": false,
+    "targetSeedApproved": false,
+    "requiredOperationalAuthority": "Original approved service configuration and usage-receipt validation; no allowlist/Workspace/adapter change from this proof"
+  }
+}
