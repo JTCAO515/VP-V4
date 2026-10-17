@@ -30,7 +30,8 @@ export type QaAcceptanceControl = Readonly<{
 type Entry = { sequence: number; at: number; kind: string; operationId?: string;
   turnId?: string; attemptId?: string; requestDigest?: string; grant?: QaAcceptanceGrant };
 const MAX_JOURNAL_BYTES = 262144;
-export const acceptanceDigest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+export const acceptanceDigest = (value: unknown) => createHash("sha256").update(JSON.stringify(value,
+  (_key, item) => record(item) ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest("hex");
 const hash = (v: unknown) => typeof v === "string" && /^[a-f0-9]{64}$/.test(v);
 const failure = () => new Error("QA acceptance run stopped or unavailable");
 
@@ -47,6 +48,12 @@ function validateGrant(value: QaAcceptanceGrant) {
     || !Number.isSafeInteger(b.configurationVersion) || b.configurationVersion < 1) throw failure();
 }
 
+export function requireQaAcceptanceGrant(value: unknown): QaAcceptanceGrant {
+  validateGrant(value as QaAcceptanceGrant);
+  const grant = JSON.parse(JSON.stringify(value)) as QaAcceptanceGrant;
+  return Object.freeze({ ...grant, binding: Object.freeze({ ...grant.binding }) });
+}
+
 async function privateParent(path: string, runId: string) {
   if (!isAbsolute(path) || basename(path) !== `qa-acceptance-${runId}.jsonl`
     || await realpath(dirname(path)) !== dirname(path)) throw failure();
@@ -60,6 +67,49 @@ async function checkFile(file: FileHandle) {
 async function syncParent(path: string) {
   const directory = await open(dirname(path), constants.O_RDONLY | constants.O_DIRECTORY);
   try { await directory.sync(); } finally { await directory.close(); }
+}
+
+/** Read-only startup eligibility, before credentials or SQL. This never creates
+ * or resets a run; a busy/incomplete read fails closed. enter rechecks under lock. */
+export async function verifyQaAcceptanceJournal(path: string, grant: QaAcceptanceGrant) {
+  validateGrant(grant); await privateParent(path, grant.runId);
+  try { await lstat(path + ".lock"); throw failure(); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
+  const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  try {
+    await checkFile(file);
+    const state = replay(await file.readFile("utf8"), grant), now = Date.now();
+    if (state.active || state.stopped || state.calls >= 2 || now < state.lastAt || now < grant.activatedAt || now >= grant.expiresAt) throw failure();
+  } finally { await file.close(); }
+}
+
+function replay(raw: string, grant: QaAcceptanceGrant) {
+  if (!raw.endsWith("\n")) throw failure();
+  const entries: Entry[] = raw.slice(0, -1).split("\n").map(line => JSON.parse(line));
+  if (!entries.length || entries[0].kind !== "authorized" || acceptanceDigest(entries[0].grant) !== acceptanceDigest(grant)) throw failure();
+  let active: string | null = null, activeDispatch = false, stopped = false, calls = 0, lastAt = grant.activatedAt;
+  const turns = new Set<string>(), attempts = new Set<string>();
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    if (!record(e) || e.sequence !== i || !Number.isSafeInteger(e.at) || e.at < lastAt || e.at < grant.activatedAt) throw failure();
+    lastAt = e.at;
+    if (i === 0) { if (!exact(e, ["sequence", "at", "kind", "grant"])) throw failure(); continue; }
+    if (stopped || !uuid(e.operationId)) throw failure();
+    if (e.kind === "enter") {
+      if (active || !exact(e, ["sequence", "at", "kind", "operationId"])) throw failure(); active = e.operationId; activeDispatch = false;
+    } else if (e.kind === "dispatch") {
+      if (active !== e.operationId || activeDispatch || !uuid(e.turnId) || !uuid(e.attemptId) || !hash(e.requestDigest)
+        || !exact(e, ["sequence", "at", "kind", "operationId", "turnId", "attemptId", "requestDigest"])
+        || turns.has(e.turnId) || attempts.has(e.attemptId) || e.at >= grant.expiresAt) throw failure();
+      turns.add(e.turnId); attempts.add(e.attemptId); calls++; activeDispatch = true;
+      if (calls > 2) throw failure();
+    } else if (["success", "empty", "stopped"].includes(e.kind)) {
+      if (active !== e.operationId || !exact(e, ["sequence", "at", "kind", "operationId"])) throw failure();
+      if (e.kind === "success" && !activeDispatch || e.kind === "empty" && activeDispatch) throw failure();
+      active = null; if (e.kind === "stopped") stopped = true;
+    } else throw failure();
+  }
+  return { entries, active, stopped, calls, lastAt, turns, attempts };
 }
 
 /** Explicit, exclusive initialization by the existing journal owner, only after
@@ -80,7 +130,6 @@ export async function initializeQaAcceptanceJournal(path: string, grant: QaAccep
 export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGrant): QaAcceptanceControl {
   validateGrant(supplied);
   const grant: QaAcceptanceGrant = JSON.parse(JSON.stringify(supplied));
-  const grantDigest = acceptanceDigest(grant);
   const binding = Object.freeze({ ...grant.binding });
   return Object.freeze({ binding, async enter(signal: AbortSignal) {
     if (signal.aborted) throw failure();
@@ -92,41 +141,30 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
     let file: FileHandle | undefined, released = false, poisoned = false;
     const unlock = async () => {
       if (released) return; released = true;
-      await file?.close(); await lock.close();
-      // Failed durability keeps the lock. Never grant a successor on an unknown
-      // append, even if the current process is still alive and can clean up.
-      if (!poisoned) { await unlink(lockPath); await syncParent(path); }
+      try {
+        // Every durability/close step that can fail happens while the lock still
+        // exists. In particular NEVER unlink and then fsync the directory: an
+        // fsync error would report failure after making a success log executable.
+        if (!poisoned) await syncParent(path);
+        await file?.close(); await lock.close();
+        // Unlink is the final release operation; do not perform fallible work
+        // afterwards. A crash may resurrect an un-fsynced deletion, which only
+        // stops the run conservatively. An unlink refusal leaves the lock intact.
+        if (!poisoned) await unlink(lockPath);
+      } catch (error) {
+        poisoned = true;
+        await file?.close().catch(() => {}); await lock.close().catch(() => {});
+        throw error;
+      }
     };
     try {
-      await syncParent(path);
+      try { await syncParent(path); } catch (error) { poisoned = true; throw error; }
       file = await open(path, constants.O_RDWR | constants.O_APPEND | constants.O_NOFOLLOW);
       await checkFile(file);
       const raw = await file.readFile("utf8");
-      if (!raw.endsWith("\n")) throw failure();
-      const entries: Entry[] = raw.slice(0, -1).split("\n").map(line => JSON.parse(line));
-      if (!entries.length || entries[0].kind !== "authorized" || acceptanceDigest(entries[0].grant) !== grantDigest) throw failure();
-      let active: string | null = null, activeDispatch = false, stopped = false, calls = 0, lastAt = grant.activatedAt;
-      const turns = new Set<string>(), attempts = new Set<string>();
-      for (let i = 0; i < entries.length; i++) {
-        const e = entries[i];
-        if (!record(e) || e.sequence !== i || !Number.isSafeInteger(e.at) || e.at < lastAt || e.at < grant.activatedAt) throw failure();
-        lastAt = e.at;
-        if (i === 0) { if (!exact(e, ["sequence", "at", "kind", "grant"])) throw failure(); continue; }
-        if (stopped || !uuid(e.operationId)) throw failure();
-        if (e.kind === "enter") {
-          if (active || !exact(e, ["sequence", "at", "kind", "operationId"])) throw failure(); active = e.operationId; activeDispatch = false;
-        } else if (e.kind === "dispatch") {
-          if (active !== e.operationId || activeDispatch || !uuid(e.turnId) || !uuid(e.attemptId) || !hash(e.requestDigest)
-            || !exact(e, ["sequence", "at", "kind", "operationId", "turnId", "attemptId", "requestDigest"])
-            || turns.has(e.turnId) || attempts.has(e.attemptId) || e.at >= grant.expiresAt) throw failure();
-          turns.add(e.turnId); attempts.add(e.attemptId); calls++; activeDispatch = true;
-          if (calls > 2) throw failure();
-        } else if (["success", "empty", "stopped"].includes(e.kind)) {
-          if (active !== e.operationId || !exact(e, ["sequence", "at", "kind", "operationId"])) throw failure();
-          if (e.kind === "success" && !activeDispatch || e.kind === "empty" && activeDispatch) throw failure();
-          active = null; if (e.kind === "stopped") stopped = true;
-        } else throw failure();
-      }
+      const state = replay(raw, grant);
+      const { entries, active, stopped, calls, turns, attempts } = state;
+      let lastAt = state.lastAt;
       const now = () => {
         const at = Date.now();
         if (!Number.isSafeInteger(at) || at < lastAt || at < grant.activatedAt) throw failure();

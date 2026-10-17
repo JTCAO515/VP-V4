@@ -1,7 +1,8 @@
 import { planCanonicalPlaceHostedJob, createCanonicalPlaceGroupPoll } from "../knowledge/place-ask/hosted-scheduling.ts";
-import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
+import { createQaWorker, type QaWorkerConfiguration, type QaWorkerDependencies } from "../qa-agent/worker.ts";
 import { requireQaRuntimeBinding, type QaRuntimeBinding } from "../qa-agent/runtime-binding.ts";
-import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, requireQaAcceptanceTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { acceptanceDigest } from "../qa-agent/acceptance-journal.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
 import { setTimeout as delay } from "node:timers/promises";
 import { createHash } from "node:crypto";
@@ -275,6 +276,7 @@ export type HostedWorkerDependencies = Readonly<{
   /** Operator composition binding; never read from discovery/job payloads. */
   qaProjectRef?: string;
   qaBinding?: QaRuntimeBinding;
+  qaAcceptance?: QaWorkerDependencies["acceptance"];
   workerId: string;
   build: string;
   startedAt: string;
@@ -305,6 +307,12 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   const databaseUrl = getHostedWorkerDatabaseTarget(profile, dependencies.qaProjectRef);
   const qaTarget = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? requireQaProfileTarget(profile, dependencies.qaProjectRef) : undefined;
   const qaBinding = qaTarget ? requireQaRuntimeBinding(dependencies.qaBinding, qaTarget.projectRef) : undefined;
+  const acceptance = profile.schemaVersion === "vpj07-hosted-text-worker/4"
+    ? requireQaAcceptanceTarget(profile, qaBinding!, dependencies.qwenEndpoint, dependencies.build) : null;
+  if (acceptance ? !dependencies.qaAcceptance
+    || dependencies.qaAcceptance.sourceCommit !== acceptance.binding.sourceCommit
+    || acceptanceDigest(dependencies.qaAcceptance.control.binding) !== acceptanceDigest(acceptance.binding)
+    : dependencies.qaAcceptance !== undefined) throw unavailable();
   if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
     || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
@@ -365,7 +373,10 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     if (text.length > 262144) throw unavailable();
     return JSON.parse(text) as unknown;
   };
-  return (signal: AbortSignal) => runHostedTextLoop({ ...profile, requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
+  return async (signal: AbortSignal) => {
+  const result = await runHostedTextLoop({ ...profile,
+    ...(acceptance ? { maxLifetimeMs: Math.max(1, Math.min(profile.maxLifetimeMs, acceptance.expiresAt - Date.now())), maxConsecutiveFailures: 1, drainMs: 0 } : {}),
+    requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
     heartbeat: async (state, stop) => {
       const value = await rpc("hosted_worker_heartbeat", {
         p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,
@@ -404,6 +415,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
           qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
           recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
           invokeContext: createQaContextInvoker(),
+          ...(dependencies.qaAcceptance ? { acceptance: dependencies.qaAcceptance } : {}),
           ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
         }, qaTarget);
         return { ownerId: job.ownerId, poll: async stop => {
@@ -437,6 +449,17 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     },
     record: dependencies.journal.event,
   }, signal);
+  if (acceptance && result.reason === "unavailable") {
+    // Also persist heartbeat/discovery failures that happened before a lease.
+    // Busy, unresolved, expired or exhausted controllers already refuse entry;
+    // never steal their lock or reset them to manufacture a stop receipt.
+    try {
+      const permit = await dependencies.qaAcceptance!.control.enter(new AbortController().signal);
+      await permit.finish("stopped");
+    } catch { /* existing run state/lock remains authoritative and fail closed */ }
+  }
+  return result;
+  };
 }
 
 function int(value: unknown, minimum: number, maximum: number): value is number {

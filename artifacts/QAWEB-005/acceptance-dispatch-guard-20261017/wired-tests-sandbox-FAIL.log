@@ -1,0 +1,144 @@
+✔ canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses (1044.96475ms)
+✔ actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage (1310.126292ms)
+✔ real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots (5121.479667ms)
+✔ two original worker dispatches survive actual process restart; third has no claim/reserve/provider (215.745375ms)
+✔ concurrent worker instances and a separate process cannot overlap the same journal run (124.401708ms)
+✔ first failure or unknown ACK/usage is sticky across restart, with original pending holds (771.720667ms)
+✔ crash after durable enter retains original lock and denies a restarted worker without auto-recovery (150.057583ms)
+✔ expiry during authorized SQL dispatch prevents physical send and preserves pending budget (26.549084ms)
+✔ wrong actor/policy/config/source/job binding refuses construction before any RPC or send (11.766ms)
+✔ empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending (50.961041ms)
+✔ uncontrolled original worker and an independent authorized run do not inherit another run stop (47.997209ms)
+✔ truncated journal, altered grant, and symlink refuse without provider or silent file replacement (36.621875ms)
+✔ append then completion during metadata refresh rereads pending text even with aligned membership (1.076916ms)
+✔ confirmed empty completed result is bounded; real terminal failure and reason remain visible (0.322708ms)
+✔ continuing append after final read is retryable and never returns partial history (0.317083ms)
+✔ stale output plus pending metadata never becomes answered (0.19425ms)
+✔ reread revocation and non-text protected kind fail closed (0.42275ms)
+✔ eight-turn SQL capacity denial is typed, unsubmitted, and original history remains readable (1.549792ms)
+✔ only the protected exact numeric eight-turn limit reaches QA policy wire (0.245375ms)
+✔ other tab admits a Turn between metadata and protected read; bounded refresh preserves Session (0.963375ms)
+✔ protected reread catches another append during metadata refresh without unbounded retries (0.194875ms)
+✔ persistent or continuously changing counts fail closed as retryable, not permission denial (0.422834ms)
+✔ retryable snapshot failure before submit has no unknown admission ACK (0.209583ms)
+✔ revocation and actual foreign Session remain permission failures through bounded rereads (0.302042ms)
+﹣ fixed empty-PG read slice consumed by actual Native QA HTTP/SDK/service; uncovered writes stay technical and unknown (0.419375ms) # SKIP
+﹣ fixed 7f write baseline: original Native API admission and SQL worker result/recovery with synthetic usage only (0.357208ms) # SKIP
+﹣ fixed 7f original worker and context/HTTP transport with own Beijing synthetic seed and no real provider fetch (0.340667ms) # SKIP
+✔ original lease budget identity, one dispatch, real cost and settlement precede saved completion (25.258583ms)
+✔ budget denial and unqualified context cannot physically send (1.733834ms)
+✔ unknown dispatch ACK keeps original pending attempt with zero transport and no retry (0.479ms)
+✔ unknown settlement and completion do not create another physical attempt (0.851708ms)
+✔ transport is independently fenced even if injected composer omits authorization (0.232625ms)
+✔ cancellation bounds a hostile composer and records reserved attempt without publishing (13.673792ms)
+✔ definite SQL blocked dispatch releases reserved budget, never settles a zero cost (0.334416ms)
+✔ unrecognized dispatch ACK and post-authorization transport failure retain pending cost (0.412791ms)
+✔ historical /3 workspace journal validates empty batch and validated usage without any network (3.809959ms)
+✔ historical audit still refuses forged workspace and price; /3 cannot execute or read credentials (1.252042ms)
+✔ independent hosted loop executes sole context composer, original transport and secure usage journal (26.393292ms)
+✔ independent auditor rejects foreign receipt, hash mismatch and inconsistent duplicate usage (0.767125ms)
+✔ current profile v4 uses existing CLI planning:false branch and keeps legacy mode rejection (0.205875ms)
+✔ Independent QA v4 is a closed profile; original v1/v2 do not gain QA mode (1.592583ms)
+✔ QA group must match existing default provider endpoint and exactly one original scope (0.392334ms)
+✔ actual SSR cookie SDK, protected submit and saved readback; duplicate remains original (68.018875ms)
+✔ missing identity, CSRF, invalid and oversized input fail before admission (2.736083ms)
+✔ aborted request lifetime stops SDK and cannot create another admission (1.771792ms)
+✔ capacity error keeps versioned HTTP409/not_submitted distinct from policy refusal (10.195333ms)
+✔ foreground SSR cookie auth stays on the explicitly approved shared target and never selects DB from cookie/origin (25.972416ms)
+✔ foreground operator ref is mandatory and exact; approved shared ref works; missing, wrong-ref, fallback and URL normalization rejected (0.69975ms)
+✔ profile, composition root and job independently agree before credentials or network (1.400959ms)
+✔ actual CLI binds /4 before reading fixed files and refuses env-key fallback without secret access (6.791833ms)
+✔ detail: status-free producer and worker completion trigger one qualified metadata refresh (0.775875ms)
+✔ message: status-free producer and worker completion trigger one qualified metadata refresh (0.209ms)
+✔ normal pending/null and terminal/output do not refresh metadata (0.133667ms)
+✔ still pending after one refresh and inconsistent text cannot manufacture answered (0.31775ms)
+✔ refresh rejects changed Session, inactive Session and missing original Turn (0.291792ms)
+✔ protected foreign Session, policy and Turn are rejected before any refresh (0.185542ms)
+✔ actor denial, protected revocation and revocation during refresh cannot expose output (0.215834ms)
+✔ cookie HTTP reads expose protected reconciliation status without any admission or budget calls (53.83025ms)
+✔ trusted expired-dispatch projection is visible and repeated reads never admit or charge (1.102208ms)
+✔ false remains pending or actual terminal failure; null text alone never infers reconciliation (0.451791ms)
+✔ protected true with stored text/outcome and invalid or absent QA flag are refused (1.78575ms)
+✔ completion racing with protected reconciliation flag rereads to actual stored answer (0.23825ms)
+✔ revoked actor or foreign Session cannot expose protected recovery projection (0.694709ms)
+✔ trusted deployment binding is closed, immutable, canonical and project-bound (0.766167ms)
+✔ planner rejects every foreign qualified tuple and missing binding, retaining scope ambiguity refusal (0.780959ms)
+✔ worker independently refuses foreign jobs before credentials, budget, claim or provider; local direct target remains compatible (0.418958ms)
+✔ hostile discovery cannot turn another independently qualified actor into a claim (11.611542ms)
+✔ strict browser mutation CSRF and cookie-only boundary (11.65075ms)
+✔ QA environment cannot enable production or arbitrary destination (0.355333ms)
+✔ double click, original bytes, lost ACK and retry retain one original admission (1.075208ms)
+✔ accepted is pending, refresh reads original saved text and every outcome (0.473416ms)
+✔ foreign session/request, revoked identity and consent cannot read or submit (0.836834ms)
+✔ client model/history/Trip flags and invalid bodies never reach admission (0.307875ms)
+✔ finite Vercel system preview URLs work without trusting request host headers or other projects (0.306375ms)
+✔ blank original Session then answered followup retain canonical Task and protected history (1.69425ms)
+✔ lost ACK and old request replay after newer turn always use original SQL wrapper (0.550125ms)
+✔ deployed mode flag cannot give legacy consent Session history permission (0.098458ms)
+✔ concrete worker keeps DB and provider credentials on their distinct destinations (14.747959ms)
+✔ worker refuses every Vercel runtime while existing dedicated host remains possible (0.066875ms)
+✔ profile/1 discovers in its bounded queue and claims once (13.221792ms)
+✔ profile/2 discovers in its bounded queue and claims once (0.74975ms)
+✔ profile/4 discovers in its bounded queue and claims once (1.456584ms)
+✔ QA-only installer preflight uses closed v4 profile and retains legacy file-mode branch (346.364667ms)
+✔ only the frozen nonsecret S1 profile reaches Docker Config.Env (143.96425ms)
+✔ profile is closed and reuses the existing tariff/reservation qualification (1.136042ms)
+✔ profile/2 planning scope is closed, optional and canonical (0.415ms)
+✔ uppercase planning target shares the discovered lowercase text owner lane (45.657417ms)
+✔ a group runs only with exactly one qualifying scope, an allowed mode and the bound endpoint (0.251625ms)
+✔ disabled switch performs no discovery or claim and the loop keeps signalling (0.135ms)
+✔ file-mode first heartbeat must still be disabled after read-only precheck (0.07275ms)
+✔ file-mode first disabled heartbeat arms later explicit enable (0.072875ms)
+✔ one owner runs sequentially; different owners run concurrently within the bound (65.872667ms)
+✔ soft stop lets in-flight work drain, then aborts it at the drain deadline (114.193084ms)
+✔ persistent heartbeat/discovery/claim unavailability exits with backoff instead of hot-looping (0.366959ms)
+✔ absolute lifetime ends the loop as expired and a throwing worker factory only skips (0.219208ms)
+✔ CLI fails closed before any I/O without every explicit prerequisite (1796.623ms)
+✖ CLI serves disabled heartbeat, exposes content-free health and drains on SIGTERM (5259.617334ms)
+✔ profile/2 requires separate planning opt-in and removes AMap secret before disabled startup journal (169.031916ms)
+✔ hosted discovery accepts a dedicated Supabase secret key without a Bearer header (108.741459ms)
+✖ occupied synthetic health port reproduces child exit1 without weakening header contract (40.573125ms)
+✔ parallel real CLI header fixtures prove their own IPC receipt without competing health ports (130.047084ms)
+ℹ tests 101
+ℹ suites 0
+ℹ pass 96
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 3
+ℹ todo 0
+ℹ duration_ms 8046.780375
+
+✖ failing tests:
+
+test at tests/security/turn/hosted-text-worker.test.mjs:189:1
+✖ CLI serves disabled heartbeat, exposes content-free health and drains on SIGTERM (5259.617334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + undefined
+  - {
+  -   body: {
+  -     status: 'disabled'
+  -   },
+  -   status: 200
+  - }
+  
+      at TestContext.<anonymous> (file://<worktree>/tests/security/turn/hosted-text-worker.test.mjs:203:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { status: 200, body: { status: 'disabled' } },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/security/turn/hosted-text-worker.test.mjs:252:1
+✖ occupied synthetic health port reproduces child exit1 without weakening header contract (40.573125ms)
+  Error: Synthetic fixture exited before synthetic-health-port-conflict (code 1)
+      at ChildProcess.closed (file://<worktree>/tests/security/turn/hosted-text-worker.test.mjs:227:37)
+      at ChildProcess.wrapper (node:events:639:12)
+      at ChildProcess.emit (node:events:526:24)
+      at maybeClose (node:internal/child_process:1125:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)

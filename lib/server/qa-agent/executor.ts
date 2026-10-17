@@ -126,7 +126,7 @@ async function executeOriginalQaWork(
     const priceable = outcome.kind === "protocol_validated" || (outcome.kind === "unavailable" && outcome.code === "SAFETY_BLOCKED");
     const actualMicros = priceable && outcome.usage ? dependencies.provider.price(outcome.usage) : null;
     if (actualMicros === null || !outcome.usage || !dispatchAuthorized || !sent) return "unavailable";
-    if (acceptance && (outcome.usage.inputTokens > 1000000 || outcome.usage.outputTokens > config.maxOutputTokens
+    if (acceptance && (outcome.usage.inputTokens > 991808 || outcome.usage.outputTokens > config.maxOutputTokens
       || actualMicros > config.reservedMicros || actualMicros > 6500000)) return "unavailable";
     // Real validated usage is persisted before settlement. Unknown price/usage or
     // ACK retains the original pending attempt; it never becomes a free retry.

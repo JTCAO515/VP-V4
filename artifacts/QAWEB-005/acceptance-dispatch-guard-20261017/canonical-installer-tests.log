@@ -1,0 +1,10 @@
+✔ QA package emits its exact reviewed endpoint and rejects stale build, profile and destinations (2025.477125ms)
+✔ actual QA installer parsing carries the validated closed tuple as one nonsecret env value (78.004417ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2147.883375
