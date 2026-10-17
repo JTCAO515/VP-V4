@@ -1,0 +1,50 @@
+{
+  "status": "PASS_D3_TRANSACTION_CASES",
+  "checks": [
+    {
+      "name": "real local DDL path passes before/after guards and rolls back with original metadata and bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "structure drift, missing routine, changed role flag and revoked required permission each refuse before delta",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong role, expired interval and incomplete/wrong external scope reject; scope strings never create permission",
+      "status": "PASS"
+    },
+    {
+      "name": "postcondition mismatch aborts whole transaction and preserves original records",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit synthetic apply reaches actual COMMIT and acknowledged exact after-state",
+      "status": "PASS"
+    },
+    {
+      "name": "discarded local commit acknowledgment reconciles read-only to AFTER but never authorizes automatic retry or inverse; wrong receipt also UNKNOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit local safe STOP keeps postchange thread and old exact bytes; changed grants classify drift rather than pretending rollback",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "realTarget": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d3_verify.py": "419520fe97b68b687a77b5044e8a11060eeb759643fc129dfbb83f3d3bf1f909",
+    "scripts/qa-agent-db-baseline/target-delta/d3_transaction.py": "165bf407bb53ed58b33a38877aa5e97edeeb6c32cab89ec13d9fd90250ac60eb",
+    "scripts/qa-agent-db-baseline/target-delta/local_fixture.py": "008d4d611a6d501c463cc0e0e3ba73148532a4d2ad5f2c1e53d27c0d04e1a4e0"
+  },
+  "phase": "unknown",
+  "unknownResultModel": "Acknowledgment deliberately discarded after successful local COMMIT; not an actual transport outage.",
+  "identity": {
+    "kind": "LOCAL_SYNTHETIC_ONLY",
+    "nonce": "710954d479e14507b3d0c29c7c154d49",
+    "containerId": "4d20c16eecaf3d6f2f5b349568fa2d4e3576daf1d8575635481b2cd3a2c612c1",
+    "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+    "database": "d3_targetlike",
+    "targetReplica": false
+  }
+}

@@ -1,0 +1,1410 @@
+{
+  "status": "SOURCE_CANDIDATE_BLOCKED_FOR_TARGET",
+  "fixedSource": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "fixedD0": "0762e867cbc3801448b0f6c8caa4fef5dbc766ca",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "default": "offline JSON proposal; --emit writes only fixed artifact directory",
+  "targetExecutionSupported": false,
+  "targetReady": false,
+  "commitIncluded": false,
+  "newDefinitions": [
+    {
+      "name": "public.qa_accept_policy_v1",
+      "before": "absent",
+      "signature": "p_policy_id uuid, p_notice_hash text",
+      "bodyHashAfter": "9dcc0fea5f3fe95dfaaa5f863ea731bdd014da4022c99e63c7830ecba665f20b",
+      "ddlSha256": "88471c0b214e54b86e00ab1c50354d586bef0c3c5302346ec7e0c1cc7fc8d0d1",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.accept_text_policy",
+        "turn_private.text_owner",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_cancellation_v1",
+      "before": "absent",
+      "signature": "p_action text, p_thread_id uuid, p_request_id uuid",
+      "bodyHashAfter": "c3d9f9fc55f957840a1adf83e7956d602b7ea3dd0babc8da00488beb09c18b0c",
+      "ddlSha256": "3a0a5973e21609d3d927b4e159bf4d63bd65fac86e97cc19b83e9917e995f1b2",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "auth.jwt",
+        "auth.sessions",
+        "auth.uid",
+        "auth.users",
+        "identity_private.guard_mobile_rpc_v2",
+        "public.cancel_chat_turn",
+        "public.chat_threads",
+        "public.chat_turn_events",
+        "public.chat_turn_idempotency",
+        "public.turns",
+        "turn_private.lock_turn",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_content",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_read_policy_v1",
+      "before": "absent",
+      "signature": "p_policy_id uuid",
+      "bodyHashAfter": "a4719ff4a21d2bdb03edcd71b4bf9f14c8cd8165a7897b1cfb080fa1c5b81855",
+      "ddlSha256": "da3f1e27418595b9a2c3cdfd1d925ed4f979911f0383ae5b16d9cadfd0c0efbd",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.read_text_policy",
+        "turn_private.text_owner",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_ready_groups_v3",
+      "before": "absent",
+      "signature": "p_limit integer, p_model text, p_price_version text, p_endpoint text, p_owner_id uuid, p_policy_id uuid, p_scope_id uuid, p_notice_hash text",
+      "bodyHashAfter": "cb6efea08d4992046e6ccf8021e380fd8b15c01c8033be4ed11596b4eda88e1d",
+      "ddlSha256": "3b96c19f156052b194e3d5c3d5799bf35570cd10f84e058bdb4f97201c64d370",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.model_budget_attempts",
+        "public.model_budget_provider_limits",
+        "public.model_budget_scopes",
+        "turn_private.hosted_worker_control",
+        "turn_private.text_consents",
+        "turn_private.text_content",
+        "turn_private.text_dispatches",
+        "turn_private.text_policies",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "turn_private.qa_consumer_window_v1",
+      "before": "absent",
+      "signature": "p_history jsonb, p_text text",
+      "bodyHashAfter": "af556667a00fcd1ff5daa5bb251c7d18decf790df2ff97fa58009c022b3381cb",
+      "ddlSha256": "f6a25239e964bac8310944abe4795daf2bbdc8b9abf1479a8da7d4d796dc3b60",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "turn_private.valid_text"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "turn_private.qa_history_v1",
+      "before": "absent",
+      "signature": "p_turn uuid",
+      "bodyHashAfter": "47a5b198c54975c8570d9b1174f509783c537b953214ce1db28a122ac723d1fd",
+      "ddlSha256": "fab2314f7082763faaf547a2f34625222c53b4f6435b730101e9868599489148",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.turns",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_consents",
+        "turn_private.text_content",
+        "turn_private.text_policies",
+        "turn_private.text_policy_current"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "turn_private.qa_link_mode_v1",
+      "before": "absent",
+      "signature": "",
+      "bodyHashAfter": "828ddbfbe3bdbee92b36070d2acc4a7ecc4019ed05e7760256c91fbb97b3f6c0",
+      "ddlSha256": "c8e95908746a1a80d792d11b673091e650fe6108e10f249e1142ae4a6d871f00",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "turn_private.service_tasks",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_claim_work_v1",
+      "before": "absent",
+      "signature": "p_owner_id uuid, p_policy_id uuid",
+      "bodyHashAfter": "8233806e8b7fd7bc83a3c31175d7820f56a1ef289af7c975e0639fc27a280fba",
+      "ddlSha256": "75dd3c06869082059e60890c163384b4748a29f454d07cc13b2cd6d23d705963",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.model_budget_attempts",
+        "public.model_budget_scopes",
+        "public.turns",
+        "turn_private.cancel_unclaimable_turn_v1",
+        "turn_private.lock_turn",
+        "turn_private.qa_history_v1",
+        "turn_private.terminal",
+        "turn_private.text_consents",
+        "turn_private.text_content",
+        "turn_private.text_dispatches",
+        "turn_private.text_policies",
+        "turn_private.text_policy_current",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_read_session_v1",
+      "before": "absent",
+      "signature": "p_thread_id uuid",
+      "bodyHashAfter": "c2d59c51456ffa65722fc916d5c4724ea044b83545f5303273880d98634d2b7d",
+      "ddlSha256": "f3c92d7dfbe9407e1285a607035b9eb303043e76cba329a23b930aebc2dbb56e",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.model_budget_attempts",
+        "public.model_budget_scopes",
+        "public.read_text_turn",
+        "public.turns",
+        "turn_private.qa_history_v1",
+        "turn_private.service_tasks",
+        "turn_private.text_content",
+        "turn_private.text_dispatches",
+        "turn_private.text_owner",
+        "turn_private.text_policies",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_submit_turn_v1",
+      "before": "absent",
+      "signature": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_scope_version integer, p_relationship text, p_parent_turn_id uuid",
+      "bodyHashAfter": "7508f37fa803291ad7c209304a5a65419d4ccb13d62448dbdf2002775f3d5bbb",
+      "ddlSha256": "382f514cad74f30572901e4ddc7ffde8d4be98a9c43ff0c7b7556f36def89414",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.model_budget_attempts",
+        "public.start_text_turn",
+        "public.turns",
+        "turn_private.qa_consumer_window_v1",
+        "turn_private.qa_history_v1",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_consents",
+        "turn_private.text_content",
+        "turn_private.text_owner",
+        "turn_private.text_policies",
+        "turn_private.text_policy_current",
+        "turn_private.valid_text"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "turn_private.qa_lock_work_v1",
+      "before": "absent",
+      "signature": "p_turn uuid, p_token uuid",
+      "bodyHashAfter": "db7181256c9bdeebed82667fce1e8256add81ea21862c2a3cda0cc078fee7d58",
+      "ddlSha256": "13b97a6be079cb1ae506d535fd6cb6f02bb44eb24add116cf1e12f5a49777548",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.turns",
+        "turn_private.lock_turn",
+        "turn_private.qa_history_v1",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_complete_work_v1",
+      "before": "absent",
+      "signature": "p_turn_id uuid, p_lease_token uuid, p_kind text, p_text text",
+      "bodyHashAfter": "ec0cd256460d7d0d3f82059588e14420b8923b6e2a84c902cbb713a535d0df82",
+      "ddlSha256": "a90bcca8156c305860893ec0e20eab668bf09784b8f9c2b17d9fea695118d920",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.model_budget_attempts",
+        "turn_private.qa_lock_work_v1",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.terminal",
+        "turn_private.text_content",
+        "turn_private.text_dispatches",
+        "turn_private.valid_text",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_list_sessions_v1",
+      "before": "absent",
+      "signature": "p_limit integer",
+      "bodyHashAfter": "d02db30163998476747f120ea0c6a5b93493d025d2cd43727c2b80211877d071",
+      "ddlSha256": "55ae70eaab0421a6a25695939aca50f3e66408c7d0891b72701fd8e11f2004b8",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.qa_read_session_v1",
+        "public.turns",
+        "turn_private.service_tasks",
+        "turn_private.text_content",
+        "turn_private.text_owner",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_read_work_v1",
+      "before": "absent",
+      "signature": "p_turn_id uuid, p_lease_token uuid",
+      "bodyHashAfter": "0836a9a4ce4207bf218518f91ac3f556d835894547874566b6ff6620fd5740ee",
+      "ddlSha256": "31e226b754d366fb69cb87bea38703815d2f14a2eceebc3aba970c0422e36035",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "turn_private.qa_history_v1",
+        "turn_private.qa_lock_work_v1",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_content",
+        "turn_private.text_policies",
+        "turn_private.work"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_submit_message_v1",
+      "before": "absent",
+      "signature": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_relationship text",
+      "bodyHashAfter": "dee4b022b0b1dcf6036af32f932f9261bd952724d7b318daeb3f4606671d09be",
+      "ddlSha256": "7da2d0c8e056990fe7b387b75e293aa98a6068d5ce70f0c9055b40ff11d78bdf",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.qa_submit_turn_v1",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_owner"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v1",
+      "before": "absent",
+      "signature": "p_turn_id uuid, p_lease_token uuid, p_scope_id uuid, p_policy_id uuid, p_provider text, p_context_digest text",
+      "bodyHashAfter": "a7e99d53cd57a8ada92e7ba60e9710e4d1857e1f30ffafa80290b4980acbe14f",
+      "ddlSha256": "121732e336109cefa85a2ee3c8969826aaeffeff3898c94363ef3893a8cccbf9",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.dispatch_model_budget",
+        "public.model_budget_attempts",
+        "public.model_budget_scopes",
+        "public.qa_read_work_v1",
+        "turn_private.service_tasks",
+        "turn_private.text_content",
+        "turn_private.text_dispatches"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_native_session_v1",
+      "before": "absent",
+      "signature": "p_action text, p_mobile_epoch bigint, p_payload jsonb",
+      "bodyHashAfter": "72d779c1fb3d0073df61ded504167ce02f02bcdea1803538b73ee010d86aae54",
+      "ddlSha256": "c9bd1f8040b7d6daac22c065d8cc09805ded24424421915d4d78c42d2b057874",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.chat_threads",
+        "public.native_session_v2",
+        "public.qa_accept_policy_v1",
+        "public.qa_cancellation_v1",
+        "public.qa_list_sessions_v1",
+        "public.qa_read_policy_v1",
+        "public.qa_read_session_v1",
+        "public.qa_submit_message_v1",
+        "public.read_text_turn",
+        "public.turns"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v2",
+      "before": "absent",
+      "signature": "p_turn_id uuid, p_lease_token uuid, p_scope_id uuid, p_policy_id uuid, p_provider text, p_context_digest text, p_owner_id uuid, p_notice_hash text",
+      "bodyHashAfter": "367ef264e48d3a8cd4a5a49156f353f1d1353cd54ee02c976cbd46437256e8cf",
+      "ddlSha256": "6fd214b33b4c802b0b8aeffbf9e9001535c0c3ac1342ceca6cdb7bf935dbceb6",
+      "source": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+      "directReferences": [
+        "public.model_budget_scopes",
+        "public.qa_authorize_dispatch_v1",
+        "public.qa_read_work_v1",
+        "turn_private.text_policies"
+      ],
+      "referenceMethod": "lexical source references; not complete dynamic dependency proof",
+      "newOwner": "postgres",
+      "clientExposure": "NONE: PUBLIC/anon/authenticated/service_role revoked"
+    }
+  ],
+  "objects": [
+    {
+      "name": "auth.jwt",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true,
+      "action": "retain-managed-auth"
+    },
+    {
+      "name": "auth.role",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true,
+      "action": "retain-managed-auth"
+    },
+    {
+      "name": "auth.sessions",
+      "kind": "table",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true,
+      "action": "retain-managed-auth"
+    },
+    {
+      "name": "auth.uid",
+      "kind": "function",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true,
+      "action": "retain-managed-auth"
+    },
+    {
+      "name": "auth.users",
+      "kind": "table",
+      "classification": "UNKNOWN",
+      "reason": "Managed Auth is not equivalent to synthetic platform shims; retain managed objects.",
+      "targetExists": true,
+      "action": "retain-managed-auth"
+    },
+    {
+      "name": "identity_private.guard_mobile_rpc_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.guard_mobile_write_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.mobile_access_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.mobile_accounts",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.mobile_attempts",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.mobile_login_proofs",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.mobile_session_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "identity_private.prepare_mobile_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.accept_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.cancel_chat_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "bodyHash",
+        "searchPath"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.chat_threads",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_thread_insert",
+            "baseline_thread_read",
+            "baseline_thread_update"
+          ],
+          "targetOnly": [
+            "chat thread owner archives",
+            "chat thread owner inserts",
+            "chat thread owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [
+            "hide_text_on_thread_archive"
+          ],
+          "targetOnly": [
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_threads_owner"
+          ],
+          "targetOnly": [
+            "chat_threads_owner_created_idx"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.chat_turn_events",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat event owner selects"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat_turn_events_thread_turn_sequence_idx"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.chat_turn_idempotency",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [],
+          "targetOnly": [
+            "chat idempotency owner selects"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.dispatch_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.enqueue_turn_work",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.finish_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.hosted_worker_heartbeat",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.model_budget_attempts",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "model_budget_attempts_provider_idx",
+            "model_budget_attempts_task_idx"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.model_budget_provider_limits",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {},
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.model_budget_scopes",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {},
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.native_prepare_v2",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.native_session_v2",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.qa_accept_policy_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_authorize_dispatch_v2",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_cancellation_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_claim_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_complete_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_list_sessions_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_native_session_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_read_policy_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_read_session_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_read_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_ready_groups_v3",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_submit_message_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.qa_submit_turn_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "public.read_hosted_worker_status",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.read_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.read_text_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.reserve_model_budget",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "public.start_chat_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.start_text_turn",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.trips",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_trip_read"
+          ],
+          "targetOnly": [
+            "trip owner deletes",
+            "trip owner inserts",
+            "trip owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [],
+          "targetOnly": [
+            "ai10_fault_after_trip_update",
+            "capture_initial_trip_version",
+            "guard_archived_trip_content",
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "trips_owner_id_idx"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "constraints",
+        "indexes",
+        "policies",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [
+            "turns_id_owner_unique"
+          ],
+          "changed": []
+        },
+        "policies": {
+          "localOnly": [
+            "baseline_turn_read"
+          ],
+          "targetOnly": [
+            "turn owner selects"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [],
+          "targetOnly": [
+            "privacy_trip_write"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_turns_thread"
+          ],
+          "targetOnly": [
+            "turns_id_owner_unique",
+            "turns_owner_id_idx",
+            "turns_thread_created_idx"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.user_profiles",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "acl",
+        "policies"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "policies": {
+          "localOnly": [
+            "baseline_profile_read"
+          ],
+          "targetOnly": [
+            "user profile owner selects"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "public.withdraw_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.assistant_conversations",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.assistant_event_link_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.assistant_goals",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.assistant_messages",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.cancel_chat_turn_unmetered",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.cancel_unclaimable_turn_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.grounded_turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "selected_place_request"
+          ],
+          "targetOnly": [
+            "place_name",
+            "place_resolution",
+            "place_subject_id",
+            "unanswered_needs"
+          ],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [
+            "grounded_place_selection_shape",
+            "grounded_unanswered_needs_shape"
+          ],
+          "changed": [
+            "grounded_turns_intent_check"
+          ]
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.hide_text_content",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.hosted_worker_control",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.hosted_worker_heartbeats",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.immutable_text_policy",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.lock_turn",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.qa_consumer_window_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "turn_private.qa_history_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "turn_private.qa_link_mode_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "turn_private.qa_lock_work_v1",
+      "kind": "function",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "propose-create-revoked"
+    },
+    {
+      "name": "turn_private.require_text_task",
+      "kind": "function",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "bodyHash"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.reserve_model_budget_unbound",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.service_task_capacity",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.service_task_capacity_settings",
+      "kind": "table",
+      "classification": "absent",
+      "reason": "No matching namespace/name in target catalog snapshot.",
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.service_task_turns",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "service_task_turns_relationship_check"
+          ]
+        },
+        "triggers": {
+          "localOnly": [
+            "qa_link_mode_v1"
+          ],
+          "targetOnly": [
+            "bound_task_history"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.service_tasks",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "capacity_enforced"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "service_tasks_expected_result_check"
+          ]
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.terminal",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.text_consents",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.text_content",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints",
+        "indexes",
+        "triggers"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [
+            "baseline_text_bounds"
+          ],
+          "targetOnly": [
+            "bounded_text_content"
+          ],
+          "changed": []
+        },
+        "triggers": {
+          "localOnly": [
+            "baseline_require_task"
+          ],
+          "targetOnly": [
+            "require_text_task"
+          ],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [
+            "baseline_content_thread"
+          ],
+          "targetOnly": [
+            "text_content_owner",
+            "text_content_thread"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.text_dispatches",
+      "kind": "table",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.text_owner",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.text_policies",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "constraints"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "constraints": {
+          "localOnly": [],
+          "targetOnly": [],
+          "changed": [
+            "text_policies_context_mode_check"
+          ]
+        }
+      },
+      "action": "hold-no-ddl"
+    },
+    {
+      "name": "turn_private.text_policy_current",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.valid_text",
+      "kind": "function",
+      "classification": "reuse-exact",
+      "reason": "Equal captured metadata only; excludes row compatibility, effective inherited privileges and runtime behavior.",
+      "action": "reuse-no-ddl"
+    },
+    {
+      "name": "turn_private.work",
+      "kind": "table",
+      "classification": "different-owner-or-shape",
+      "differentFields": [
+        "columns",
+        "constraints",
+        "indexes"
+      ],
+      "reason": "Difference is not a defect finding or overwrite authorization.",
+      "namedDifferences": {
+        "columns": {
+          "localOnly": [
+            "execution_mode"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "constraints": {
+          "localOnly": [
+            "work_execution_mode_check"
+          ],
+          "targetOnly": [],
+          "changed": []
+        },
+        "indexes": {
+          "localOnly": [],
+          "targetOnly": [
+            "turn_work_owner_ready",
+            "turn_work_ready"
+          ],
+          "changed": []
+        }
+      },
+      "action": "hold-no-ddl"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "B1",
+      "objects": [
+        "public.cancel_chat_turn",
+        "public.start_chat_turn"
+      ],
+      "missing": "D0 body hashes do not match scanned same-name repository dollar-quoted definitions; need accepted source provenance or separately authorized bounded definition investigation, plus signature/default/search_path/ACL verification",
+      "risk": "Existing cancellation/admission lineage, deletion and accounting semantics cannot be inferred from hashes."
+    },
+    {
+      "id": "B2",
+      "objects": [
+        "turn_private.text_policies",
+        "turn_private.service_tasks",
+        "turn_private.grounded_turns"
+      ],
+      "missing": "Exact approved constraint semantics matching D0 hashes; three differing constraints and additive column historical semantics",
+      "risk": "Do not narrow valid legacy values, invent backfills or remove target-only columns."
+    },
+    {
+      "id": "B3",
+      "objects": [
+        "turn_private.cancel_unclaimable_turn_v1",
+        "turn_private.assistant_event_link_v1",
+        "turn_private.assistant_conversations",
+        "turn_private.assistant_goals",
+        "turn_private.assistant_messages"
+      ],
+      "missing": "Minimal actual cancellation/event closure compatible with existing target and accepted owners",
+      "risk": "Do not deploy empty fixture anchor tables or success stubs; qa_claim_work_v1 remains unusable."
+    },
+    {
+      "id": "B4",
+      "objects": [
+        "auth",
+        "public",
+        "turn_private",
+        "identity_private"
+      ],
+      "missing": "Fresh bounded schema ACL and role inheritance/attributes, managed Auth required-column/type and session semantics, concurrency/write ownership interval",
+      "risk": "Object ACL equality is not effective execution authority; D0 postgres role is not target-write authorization."
+    },
+    {
+      "id": "B5",
+      "objects": [
+        "public.read_text_turn",
+        "turn_private.require_text_task",
+        "public.native_session_v2"
+      ],
+      "missing": "Two body hashes match repository grounded-turn definitions; compatibility with new QA history and target extra shapes plus existing native_session_v2 service_role EXECUTE must be preserved",
+      "risk": "Do not replace old bodies or revoke existing service caller merely to match fixture."
+    },
+    {
+      "id": "B6",
+      "objects": [
+        "turn_private.work",
+        "turn_private.service_tasks",
+        "turn_private.grounded_turns"
+      ],
+      "missing": "work.execution_mode, service_tasks.capacity_enforced, grounded_turns.selected_place_request are absent; exact future additive definition and historical/default semantics need evidence",
+      "risk": "No automatic ALTER/BACKFILL in this candidate."
+    },
+    {
+      "id": "B7",
+      "objects": [
+        "public.qa_accept_policy_v1",
+        "public.qa_authorize_dispatch_v1",
+        "public.qa_authorize_dispatch_v2",
+        "public.qa_cancellation_v1",
+        "public.qa_claim_work_v1",
+        "public.qa_complete_work_v1",
+        "public.qa_list_sessions_v1",
+        "public.qa_native_session_v1",
+        "public.qa_read_policy_v1",
+        "public.qa_read_session_v1",
+        "public.qa_read_work_v1",
+        "public.qa_ready_groups_v3",
+        "public.qa_submit_message_v1",
+        "public.qa_submit_turn_v1",
+        "turn_private.qa_consumer_window_v1",
+        "turn_private.qa_history_v1",
+        "turn_private.qa_link_mode_v1",
+        "turn_private.qa_lock_work_v1"
+      ],
+      "missing": "Exact source candidate review, fresh pre/post pins, explicit target write lease and commit outcome handling",
+      "risk": "Source direction and old A-D do not grant E/apply; no COMMIT or activation emitted."
+    }
+  ],
+  "rollback": "transaction failure -> ROLLBACK; after acknowledged commit safe STOP retaining all postchange rows; unknown commit -> no blind retry, rollback claim or deletion; reconcile authoritative catalog/receipt under new exact scope",
+  "sourceCandidateOnly": true
+}

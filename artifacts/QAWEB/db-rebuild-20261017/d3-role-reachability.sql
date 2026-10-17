@@ -1,0 +1,1 @@
+BEGIN READ ONLY; WITH wanted(name) AS (VALUES ('postgres'),('anon'),('authenticated'),('service_role')) SELECT jsonb_agg(jsonb_build_object('from',a.name,'to',b.name,'member',pg_catalog.pg_has_role(a.name,b.name,'MEMBER'),'usage',pg_catalog.pg_has_role(a.name,b.name,'USAGE')) ORDER BY a.name,b.name) AS reachability FROM wanted a CROSS JOIN wanted b; ROLLBACK;

@@ -1,0 +1,29 @@
+{
+  "sourceCommit": "7f0352ac99affbb00c67e77ca1ff1b7196b769af",
+  "matches": {
+    "public.claim_turn_work": [
+      {
+        "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+        "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389"
+      }
+    ],
+    "turn_private.bound_task_history": [
+      {
+        "source": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+        "sourceSha256": "6d0f3ccd3a895e987b1b24fa6b341dd309d3c1cf3888669853a198425ad519ef"
+      }
+    ],
+    "turn_private.lock_text_work": [
+      {
+        "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+        "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389"
+      }
+    ],
+    "turn_private.task_history": [
+      {
+        "source": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+        "sourceSha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389"
+      }
+    ]
+  }
+}

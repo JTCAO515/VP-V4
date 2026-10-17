@@ -1,0 +1,36 @@
+{
+  "status": "PASS_CONTROLLED_TRANSACTION_SOURCE_AND_LOCAL_ONLY",
+  "sourceCommit": "b6b503ddd02b77bd638da5f0acc152e91ab848fb",
+  "fixtureSeamCommit": "0909a39ac8cc7255fa6a64c60ffc8b95667d3c72",
+  "matrixSourceCommit": "fee33c48181a23260298c896dcb6106865d6016a",
+  "finalMatrix": "d3-run-ca177ce267ed4fcda187cf4bb167b89c.json",
+  "matrixGroups": 8,
+  "targetMetadataReadsDuringD3": 2,
+  "targetWrites": 0,
+  "actualWriteRequestsGenerated": 0,
+  "providerCalls": 0,
+  "cleanup": "PASS",
+  "targetReady": false,
+  "readOnlyVerification": {
+    "workShape": "observed on",
+    "roleReachability": "explicit BEGIN READ ONLY and ROLLBACK; flag not separately returned"
+  },
+  "files": {
+    "D3-ACTUAL-ACTION-DELTA.md": "2da2fae23e304cae0c90a436523030045d0b2ab62d6e772073de9d95c7f09f7d",
+    "D3-DELIVERY.md": "2e7d8092c2192afc325923be8d7fb07c064bbf9f5d9183d00961440d0d9e82f6",
+    "d3-event-cancel-proof.json": "70d95b7ff5e0beb202b602b00357a36a6f7aaa3719679660930a1f9c26549a5c",
+    "d3-fixture-seam-proof-v2.json": "ada3dcc3f09ef14ec17a80ae0ee809177cacdba6b1a57fc9ea56a232cc25be3d",
+    "d3-fixture-seam-proof.json": "e1174e628014f4d9f7b598f8a070ae180efcdf75a55f4a560eb848ae90ad71f3",
+    "d3-fixture-seam-validation.json": "f39b43f1dd1a38dd68589d20d2202da48d5649d4fc727519b19d350d8cc6687d",
+    "d3-inspect-request.json": "18ea0c382b472b2691d042251928f416d913e52042fe8d5280982ffec89719b6",
+    "d3-request-record-proof.json": "42507cbdbd6e4529af3a910e1d44ebebe367df9595404fe8136110667396e664",
+    "d3-role-reachability.json": "af1cb83a3943730ec5b691236a5c83feeda841d8c7da00aefdc9954de6d84274",
+    "d3-role-reachability.sql": "3af9e909da230547dcaf239fcd2d64452a06e69329af82d666d5221e01d8d380",
+    "d3-run-710954d479e14507b3d0c29c7c154d49.json": "9db61ea5fd3531900e7c604c232f8888b017a470411c8024d020718d646860b3",
+    "d3-run-c27409d0736c40b7974b1d6ec21b4d01.json": "b21a7e260875f6ccd1962a337d95a09f69c3e9428380e42d8eafa06ec2cf7919",
+    "d3-run-ca177ce267ed4fcda187cf4bb167b89c.json": "447a23e2c1a126bddb054d7f19d295a31e427cc1935638c3ffb795c419862477",
+    "d3-run-fca5f4fb3ae3481eb5a7c8a2a8cba7a0.json": "fa05c540d76484b622d8a250fb71540caf303fd254bd532274fb379e7fab0fa5",
+    "d3-work-shape.json": "6b7323036475790ecc9f407098163243fa6b7e01eb30a0f529fa14cf0b994ef5",
+    "d3-work-shape.sql": "c0f1e811abab085bb1c0b2575403ec4e59ab0a58911b2f5e149115f92cdf5ae6"
+  }
+}

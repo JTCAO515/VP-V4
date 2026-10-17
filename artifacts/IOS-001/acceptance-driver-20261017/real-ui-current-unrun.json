@@ -1,0 +1,101 @@
+{
+  "schema": "ios-nativeqa-acceptance/1",
+  "mode": "REAL",
+  "overall": "UNRUN",
+  "product_revision": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "synthetic_driver": "UNRUN",
+  "checks": [
+    {
+      "stage": "native_profile_login",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "explicit_notice_consent",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "original_question_submit",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "bounded_response_read",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "saved_session_read",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "original_request_bytes",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "process_exit",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    },
+    {
+      "stage": "reopen_same_session",
+      "status": "UNRUN",
+      "evidence_kind": "none",
+      "reason": "REAL_CANARY_NOT_EXECUTED"
+    }
+  ],
+  "scope_diagnostics": [
+    "NATIVE_ORIGIN_NOT_APPROVED",
+    "MISSING_ACTOR_SUBJECT",
+    "MISSING_POLICY_ID",
+    "MISSING_BUDGET_SCOPE_ID",
+    "MISSING_RESOURCE_UDID",
+    "MISSING_RUN_ID",
+    "NOTICE_NOT_BOUND",
+    "APPROVED_QUESTION_NOT_BOUND",
+    "COST_LIMIT_MISSING",
+    "EXPLICIT_AUTHORIZATION_REFERENCE_MISSING",
+    "CANARY_WINDOW_NOT_CURRENT_OR_BOUNDED"
+  ],
+  "blockers": [
+    "EXPLICIT_OPERATOR_EXECUTION_NOT_REQUESTED",
+    "SEPARATE_EXACT_CANARY_AUTHORIZATION_REQUIRED"
+  ],
+  "optional_observations": {
+    "authoritative_task_binding": {
+      "status": "UNRUN",
+      "reason": "NOT_EXPOSED_BY_QA_AGENT_1; SEPARATE_CONTROLLED_METADATA_IF_REQUIRED"
+    }
+  },
+  "identity": {
+    "session_id": null,
+    "request_id": null,
+    "turn_id": null,
+    "service_task_id": null,
+    "original_body_sha256": null,
+    "input_utf8_sha256": null,
+    "answer_utf8_sha256": null
+  },
+  "product_effects": {
+    "network_requests": 0,
+    "auth_requests": 0,
+    "consent_posts": 0,
+    "generation_posts": 0,
+    "provider_calls": 0
+  },
+  "resources": {
+    "simulators_created": [],
+    "shared_app_or_keychain_access": false,
+    "temporary_test_namespace_cleaned": null
+  }
+}

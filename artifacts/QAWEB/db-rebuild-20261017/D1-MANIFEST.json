@@ -1,0 +1,20 @@
+{
+  "status": "PASS_SOURCE_AND_BOUNDED_LOCAL_ONLY",
+  "sourceCommit": "98ff87bac0632d507a90e5b5732af9e964b71907",
+  "targetReady": false,
+  "targetReadDuringD1": false,
+  "targetWrites": 0,
+  "frozen7fUnchanged": true,
+  "finalRun": "d1-run-a6ee0c685a9e4f51bb637b12f61d1e90.json",
+  "checks": 6,
+  "cleanup": "PASS",
+  "files": {
+    "D1-DELIVERY.md": "1eb6a763e7e3f067a2bd62eb71333cba52a6eed930576bae093ecc135dba8323",
+    "d1-candidate.sql": "1e1dbfa623cc962fcd56c6f1a32d2489c1dbadee857c4143dd93a54210c55941",
+    "d1-plan.json": "4807a59f0fc34bae46c0a0d727cec49d9a158879a27357cb9e58bf69b940b34c",
+    "d1-run-a6ee0c685a9e4f51bb637b12f61d1e90.json": "ac0a196f0c0e963024e5d36fa86190f6b313e95fb48510a732255f744baf005a",
+    "d1-run-b94089dae0c949fb9bac6c12f6e7b8bb.json": "b3ddeb2581beb9b9d0d763f67b615f98106638b05b978fd6b03e2fa998be69c3",
+    "d1-run-c9498cfa0b684b5984df518140859854.json": "87df85050312d14b1e734777601d46459d088aa12bc5cb7f143de01c594b7228",
+    "d1-source-matches.json": "3a9e57c7f99264471ed1cf2312299e59225cb16495a1d7bd54c55dfb3f45ad05"
+  }
+}

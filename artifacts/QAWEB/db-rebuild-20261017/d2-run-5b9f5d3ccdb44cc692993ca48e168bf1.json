@@ -1,0 +1,39 @@
+{
+  "status": "PASS_D2_BOUNDED_ADMISSION",
+  "scope": "known legacy functions/constraints and synthetic admission; NOT target replica or worker acceptance",
+  "checks": [
+    {
+      "name": "four legacy function bodies and three locally instantiated constraints exactly match D0; fourth constraint source hash matches without resolver stub",
+      "status": "PASS"
+    },
+    {
+      "name": "full local admission candidate including least-privilege grants rolls back to exact before metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "7 authenticated and 6 service grants only on new functions; 5 internal-only, anon/PUBLIC denied; existing ACL and unrelated captured objects preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary Native admission/replay/reopen with matched old guarded start/read functions; consent, byte-change, cross-actor and direct legacy admission bypass denied",
+      "status": "PASS"
+    },
+    {
+      "name": "safe STOP preserves exact new request and Task linkage; worker disabled and no claim/dispatch/provider invoked",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "target": "UNRUN",
+  "provider": "UNRUN",
+  "workerDispatch": "UNRUN",
+  "sourceHashes": {
+    "scripts/qa-agent-db-baseline/target-delta/d2_verify.py": "79a8816974645e20858324706aa363c04cfe1dbba9b4f5eef96fdd4db45632f6",
+    "scripts/qa-agent-db-baseline/target-delta/d2_compat.py": "7de8029200e4b8d7d6c1b0fa2fe1f897ebc66434f82b135b9fb215e77f4a3a09",
+    "scripts/qa-agent-db-baseline/target-delta/propose.py": "3267e08b47f72bdc46af1da429c07590ff3bf8adb46d79be8c889950415ce034"
+  },
+  "containerId": "9941b80e04dde9ad0a3445f9cd6c7a2a9b5e1ea68211a3fbf12ea39d72972e46",
+  "nonce": "5b9f5d3ccdb44cc692993ca48e168bf1",
+  "image": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "proposalSha256": "f1d25b1daa5c7f4bf92b8821c2975a62908a7be17ea16a2e366eb4cdec9276e3"
+}

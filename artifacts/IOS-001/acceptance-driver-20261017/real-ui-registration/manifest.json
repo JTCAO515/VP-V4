@@ -1,0 +1,8 @@
+{
+  "base": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+  "before_sha256": "5d0cd2d0444eadaf8d9219cbf3613a3665c2290ac50d94b2cdadca009c095356",
+  "after_sha256": "1ff54ba628a6b7552319a33b505747044e597a0436eb090ca9eee9a8c277107b",
+  "status": "CANDIDATE_NOT_APPLIED",
+  "purpose": "Register one default-skipped opt-in real UI test; no App observer/Root/journal/config change needed for primary flow"
+}

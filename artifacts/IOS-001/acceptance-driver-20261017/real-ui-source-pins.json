@@ -1,0 +1,18 @@
+{
+  "base": "cf33285eceb4cb340a9fe70e975c643c023f5035",
+  "ui_runner_source": "16eab5ccb3958e73b2d6b7eb2a4adc9b14998ca2",
+  "final_driver_source": "0f1831ea7eaef955b1e9a6bdbcf2fcc7c0c47637",
+  "sha256": {
+    "ios/VisePanda/VisePandaUITests/NativeQAOperatorAcceptanceUITests.swift": "97f975d506a7afe852258c5a4803cc01bd6afab9001a5698e95e6e692cf0489b",
+    "tests/contract/ios-realservice/acceptance/driver.py": "b8e0042b59411d9eaf44adaa1cb77b498491e98b5ade3849f2c4e1632dac29f6",
+    "tests/contract/ios-realservice/acceptance/real_ui.py": "94414d7290bf87996f874d37d64c5febc80788af515843e41b111d7e955b59ec",
+    "tests/contract/ios-realservice/acceptance/test_driver.py": "c7400411b199e2bfc154519c634f1a216ab691b8883424827e97807c5f5f6a2b",
+    "tests/contract/ios-realservice/acceptance/test_real_ui.py": "a761ddd05776befb1bb7de6b37ae4c3fb158f90a1a7ef9243cfa3b19ca72b1bb",
+    "tests/contract/ios-realservice/acceptance/README.md": "bf9750481af2eee3285278cc705fe7bec1ce746e9a11fdec4b6450fafc20406e",
+    "tests/contract/ios-realservice/acceptance/canary.pending.json": "abfb4babb6338e59c2fddcb91dda5925dcf30c44b73ed01a0d24c48235d0d9ff",
+    "tests/contract/ios-realservice/acceptance/result.schema.json": "e58a7660078b151af911d6b0bb3d855641fcab05f5d846f13865b672fb340cf6"
+  },
+  "real_ui_executed": false,
+  "real_network_actions": 0,
+  "simulators_created": []
+}
