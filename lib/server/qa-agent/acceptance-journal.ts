@@ -36,6 +36,9 @@ export const acceptanceDigest = (value: unknown) => createHash("sha256").update(
   (_key, item) => record(item) ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest("hex");
 const hash = (v: unknown) => typeof v === "string" && /^[a-f0-9]{64}$/.test(v);
 const failure = () => new Error("QA acceptance run stopped or unavailable");
+export class QaAcceptanceBusy extends Error {
+  constructor() { super("QA acceptance attempt owns the mutex"); this.name = "QaAcceptanceBusy"; }
+}
 
 function validateGrant(value: QaAcceptanceGrant) {
   if (!record(value) || !exact(value, ["schemaVersion", "runId", "binding", "activatedAt", "expiresAt", "maxPhysicalAttempts", "concurrency", "retries"])
@@ -184,7 +187,9 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
     // Original journal file is the authority. This separate exclusive lock only
     // serializes read/append/physical-send/usage/settlement as one whole attempt.
     const lockPath = path + ".lock";
-    const lock = await open(lockPath, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
+    let lock: FileHandle;
+    try { lock = await open(lockPath, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === "EEXIST") throw new QaAcceptanceBusy(); throw error; }
     let file: FileHandle | undefined, released = false, poisoned = false;
     const unlock = async () => {
       if (released) return; released = true;
@@ -249,9 +254,14 @@ export function openQaAcceptanceJournal(path: string, supplied: QaAcceptanceGran
           try {
             const kind = await hasStopIntent(path, grant) ? "stopped" : outcome === "success" && dispatched ? "success" : outcome === "empty" && !dispatched ? "empty" : "stopped";
             await append({ kind, operationId });
-          } finally { await unlock(); }
+          } catch (error) { poisoned = true; throw error; }
+          finally { await unlock(); }
         },
       });
-    } catch (error) { await unlock(); throw error; }
+    } catch (error) {
+      // Once we own a new fence, failed initialization/validation/IO is never
+      // cleaned into a fresh grant. There may be no readable terminal record.
+      poisoned = true; await unlock(); throw error;
+    }
   } });
 }

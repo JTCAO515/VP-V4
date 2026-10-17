@@ -2,7 +2,7 @@ import { planCanonicalPlaceHostedJob, createCanonicalPlaceGroupPoll } from "../k
 import { createQaWorker, type QaWorkerConfiguration, type QaWorkerDependencies } from "../qa-agent/worker.ts";
 import { requireQaRuntimeBinding, type QaRuntimeBinding } from "../qa-agent/runtime-binding.ts";
 import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, requireQaAcceptanceTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
-import { acceptanceDigest } from "../qa-agent/acceptance-journal.ts";
+import { acceptanceDigest, QaAcceptanceBusy } from "../qa-agent/acceptance-journal.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
 import { setTimeout as delay } from "node:timers/promises";
 import { createHash } from "node:crypto";
@@ -373,16 +373,41 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     if (text.length > 262144) throw unavailable();
     return JSON.parse(text) as unknown;
   };
+  const rootStage = async <T,>(signal: AbortSignal, work: () => Promise<T>): Promise<T> => {
+    if (!acceptance) return work();
+    let permit;
+    // Mutex waiting repeats no RPC/provider operation and never reclaims a lock.
+    // A root cannot experience an external failure outside a durable run permit.
+    for (;;) {
+      if (signal.aborted || Date.now() >= acceptance.expiresAt) throw unavailable();
+      try { permit = await dependencies.qaAcceptance!.control.enter(signal); break; }
+      catch (error) {
+        if (!(error instanceof QaAcceptanceBusy)) throw error;
+        await delay(20, undefined, { signal }).catch(() => {});
+      }
+    }
+    try {
+      const value = await work(); await permit.finish("empty"); return value;
+    } catch (error) {
+      // Any failed append/fsync retains this stage's original mutex. Never
+      // release a root-stage failure and rely solely on a separately created veto.
+      await permit.finish("stopped").catch(() => {}); throw error;
+    }
+  };
   return async (signal: AbortSignal) => {
   const result = await runHostedTextLoop({ ...profile,
     ...(acceptance ? { maxLifetimeMs: Math.max(1, Math.min(profile.maxLifetimeMs, acceptance.expiresAt - Date.now())), maxConsecutiveFailures: 1, drainMs: 0 } : {}),
     requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
     heartbeat: async (state, stop) => {
+      const value = await rootStage(stop, async () => {
       const value = await rpc("hosted_worker_heartbeat", {
         p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,
         p_phase: state.phase, p_result: state.result, p_polls: state.polls, p_finished: state.finished,
         p_unavailable: state.unavailable, p_skipped: state.skipped, p_stop_reason: state.stopReason,
-      }, stop).catch(() => null);
+      }, stop);
+      if (!record(value) || value.kind !== "ok" || typeof value.enabled !== "boolean") throw unavailable();
+      return value;
+      }).catch(() => null);
       const ok = record(value) && value.kind === "ok" && typeof value.enabled === "boolean";
       if (!ok && acceptance) await dependencies.qaAcceptance!.control.requestStop();
       try { dependencies.onHeartbeat?.(ok, ok ? value.enabled as boolean : null); } catch { /* observer only */ }
@@ -397,9 +422,11 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
         p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint,
         p_owner_id: qaBinding!.ownerId, p_policy_id: qaBinding!.policyId, p_scope_id: qaBinding!.scopeId,
         p_notice_hash: qaBinding!.noticeHash } : { p_limit: profile.groupLimit };
-      const value = await rpc(discovery, parameters, stop).catch(async error => {
-        if (acceptance) await dependencies.qaAcceptance!.control.requestStop();
-        throw error;
+      const value = await rootStage(stop, async () => {
+        const value = await rpc(discovery, parameters, stop);
+        if (!(record(value) && value.kind === "disabled") && (!record(value) || value.kind !== "groups"
+          || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit)) throw unavailable();
+        return value;
       });
       if (record(value) && value.kind === "disabled") return "disabled";
       if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) {
@@ -427,7 +454,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
         }, qaTarget);
         return { ownerId: job.ownerId, poll: async stop => {
           if (!journaled.has(digest)) {
-            try { await dependencies.journal.job(digest, job); journaled.add(digest); }
+            try { await rootStage(stop, () => dependencies.journal.job(digest, job)); journaled.add(digest); }
             catch (error) { if (acceptance) await dependencies.qaAcceptance!.control.requestStop(); throw error; }
           }
           const result = await poll(stop);
@@ -458,7 +485,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       return { ownerId: job.ownerId, poll: stop => pollPlaceGroup(key, ordinary, selected, stop) };
     },
     record: acceptance ? async event => {
-      try { await dependencies.journal.event(event); }
+      try { await rootStage(signal, () => dependencies.journal.event(event)); }
       catch (error) { await dependencies.qaAcceptance!.control.requestStop(); throw error; }
     } : dependencies.journal.event,
   }, signal);

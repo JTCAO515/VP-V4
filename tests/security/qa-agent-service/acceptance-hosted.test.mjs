@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
-import {acceptanceDigest,initializeQaAcceptanceJournal,openQaAcceptanceJournal} from '../../../lib/server/qa-agent/acceptance-journal.ts';
+import {acceptanceDigest,initializeQaAcceptanceJournal,openQaAcceptanceJournal,QaAcceptanceBusy} from '../../../lib/server/qa-agent/acceptance-journal.ts';
 import {parseQaHostedProfile,qaJobConfig} from '../../../lib/server/qa-agent/hosted-profile.ts';
 import {createHostedTextWorker} from '../../../lib/server/jobs/hosted-text-worker.ts';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
@@ -78,7 +78,9 @@ test('real hosted root, sole context composer and HTTP transport share durable t
  const loop=async(fail=false,run=f,options={})=>{
   const f=run;
   const controller=new AbortController(),turn=randomUUID(),attempt=randomUUID();let finished=false,beats=0;
-  const deps={qaProjectRef:qaBinding.projectRef,qaBinding,qaAcceptance:{control:openQaAcceptanceJournal(f.path,f.grant),sourceCommit},
+  const originalControl=openQaAcceptanceJournal(f.path,f.grant);
+  const control={...originalControl,enter:async signal=>{try{return await originalControl.enter(signal);}catch(error){if(error instanceof QaAcceptanceBusy)options.onBusy?.();throw error;}}};
+  const deps={qaProjectRef:qaBinding.projectRef,qaBinding,qaAcceptance:{control,sourceCommit},
    workerId:randomUUID(),build:sourceCommit,startedAt:new Date().toISOString(),qwenEndpoint:endpoint,requireInitialDisabled:true,
    workerCredential:()=> 'sb_secret_synthetic_worker',providerCredential:()=> 'synthetic-provider',
    journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},event:async event=>{if(finished&&event.phase==='cycle')controller.abort();}},
@@ -87,7 +89,7 @@ test('real hosted root, sole context composer and HTTP transport share durable t
      if(fail)throw Error('Synthetic physical failure');
      return Response.json({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:'answered',text:'Synthetic result'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}});}
     const name=new URL(url).pathname.split('/').at(-1);
-    if(options.preLeaseFailure&&name==='hosted_worker_heartbeat')return Response.json({synthetic:'unavailable'},{status:503});
+    if(options.preLeaseFailure&&name==='hosted_worker_heartbeat'){options.onPreLeaseRpc?.();return Response.json({synthetic:'unavailable'},{status:503});}
     if(name==='qa_claim_work_v1')claims++;
     if(name==='qa_complete_work_v1')finished=true;
     const values={hosted_worker_heartbeat:{kind:'ok',enabled:++beats>1},qa_ready_groups_v3:{kind:'groups',groups:[{ownerId:qaBinding.ownerId,policyId:qaBinding.policyId,contextMode:'qa_session_history_v1',provider:'qwen',endpoint,noticeHash:qaBinding.noticeHash,scopes:[{scopeId:qaBinding.scopeId,model:PROTOCOL_MODELS.qwen,priceVersion:f.profile.qwen.priceVersion}]}]},
@@ -107,13 +109,14 @@ test('real hosted root, sole context composer and HTTP transport share durable t
  let arrived,release;const reached=new Promise(r=>arrived=r),held=new Promise(r=>release=r);
  const running=loop(false,shared,{hold:async()=>{arrived();await held;}});await reached;
  const beforeCalls=physical,beforeClaims=claims;
- let bResult;
- const failB=()=>loop(false,shared,{preLeaseFailure:true});
- try { bResult=await (globalThis.__qaDenyStopCreation?globalThis.__qaDenyStopCreation(failB):failB()); }
- catch(error){bResult={reason:'unavailable',thrown:error.code??error.name};}
- assert.equal(bResult.reason,'unavailable');
+ let busy;const waiting=new Promise(r=>busy=r);let bRpcs=0;
+ const failB=()=>loop(false,shared,{preLeaseFailure:true,onBusy:busy,onPreLeaseRpc:()=>bRpcs++});
+ const bPromise=(globalThis.__qaDenyStopCreation?globalThis.__qaDenyStopCreation(failB):failB()).catch(error=>({reason:'unavailable',thrown:error.code??error.name}));
+ await Promise.race([waiting,bPromise.then(()=>{throw Error('B failed before owning its root-stage mutex');})]);
+ assert.equal(bRpcs,0,'B must not run heartbeat/discovery while A owns the run');
  assert.equal(physical,beforeCalls);assert.equal(claims,beforeClaims);
  release();assert.equal((await running).finished,1);
+ const bResult=await bPromise;assert.equal(bResult.reason,'unavailable');assert.ok(bRpcs>0);
  const cResult=await loop(false,shared);
  if(globalThis.__qaDenyStopCreation)console.log(JSON.stringify({case:'root-stop-create-refusal',bResult,cResult,additionalClaims:claims-beforeClaims,additionalPhysical:physical-beforeCalls}));
  assert.equal(cResult.reason,'unavailable');
