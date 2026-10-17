@@ -1,0 +1,41 @@
+{
+  "candidate": "75f1e18e9c2e4f355b1dbb3993af4282f704d79e",
+  "reviewedSource": "b6b503ddd02b77bd638da5f0acc152e91ab848fb",
+  "approvalRecordSha256": "3aff591164c1773fe63d649adb98c542b48ed8f54dc23dc18b1e02e999b0cc72",
+  "approvalRecordBytes": 6389,
+  "approvalFileMode": "0600",
+  "approvalParentMode": "0700",
+  "actionDocSha256": "2da2fae23e304cae0c90a436523030045d0b2ab62d6e772073de9d95c7f09f7d",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "linkId": "link_6acdbe0471c081919ff47de24ca53b0f",
+  "writer": "01a133bb-cc6d-7ca1-8db0-9e02bd252e1d",
+  "metadataPreflight": "fresh-before-20261017T042048Z.json",
+  "boundedHistory": {
+    "readOnly": "on",
+    "dbTimeUTC": "2026-10-17T04:22:54.189867Z",
+    "currentRole": {
+      "bypassRls": true,
+      "superuser": false
+    },
+    "currentUser": "postgres",
+    "sessionUser": "postgres",
+    "existingQaPolicyRows": 0,
+    "relationshipViolations": 0,
+    "policyContextViolations": 0,
+    "workLeaseShapeViolations": 0,
+    "existingQaRelationshipRows": 0,
+    "visibleHistoryMissingOwnerLink": 0
+  },
+  "historyQuerySha256": "77f31b53d73cacb031d15cf4131436722d7875ba396906586d84e380bb4a0673",
+  "dbTimeShanghai": "2026-10-17T12:22:54.189867+08:00",
+  "tool": "mcp__codex_apps__supabase_execute_sql",
+  "toolCallId": "UNKNOWN: connector did not expose it",
+  "boundedChecks": "PASS; all returned violation/QA counts zero; not full historical data acceptance",
+  "executionQualification": "NO_GO_PENDING_CURRENT_DRAIN_RECEIPT_AND_MAIN_SHORT_WINDOW",
+  "drainReceipt": "NOT_RECEIVED",
+  "mainExecutionInterval": "NOT_RECEIVED",
+  "targetWrites": 0,
+  "writeLocksTaken": 0,
+  "applyRequestGenerated": false,
+  "rawUserRowsOrContentsPersisted": false
+}
