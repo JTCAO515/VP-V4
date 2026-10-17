@@ -1,0 +1,115 @@
+TAP version 13
+# {"runtime":"v22.23.3","source":"6048c4e68086803aa953d5f0fdddf8e3fcf92c8c","qualification":"readonly-source-overlay-only"}
+# Subtest: durability fault initial-directory-sync stays stopped for a separate process, with no successor claim or send
+ok 1 - durability fault initial-directory-sync stays stopped for a separate process, with no successor claim or send
+  ---
+  duration_ms: 1284.760167
+  type: 'test'
+  ...
+# Subtest: durability fault release-directory-sync stays stopped for a separate process, with no successor claim or send
+ok 2 - durability fault release-directory-sync stays stopped for a separate process, with no successor claim or send
+  ---
+  duration_ms: 1393.703959
+  type: 'test'
+  ...
+# Subtest: durability fault terminal-file-sync stays stopped for a separate process, with no successor claim or send
+ok 3 - durability fault terminal-file-sync stays stopped for a separate process, with no successor claim or send
+  ---
+  duration_ms: 1307.882876
+  type: 'test'
+  ...
+# Subtest: durability fault unlink stays stopped for a separate process, with no successor claim or send
+ok 4 - durability fault unlink stays stopped for a separate process, with no successor claim or send
+  ---
+  duration_ms: 1328.82975
+  type: 'test'
+  ...
+# {"runtime":"v22.23.3","source":"6048c4e68086803aa953d5f0fdddf8e3fcf92c8c","qualification":"readonly-source-overlay-only"}
+# Subtest: canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses
+ok 5 - canonical deployment profile carries the closed acceptance grant without extra CLI/env fields; tuple/build mismatch refuses
+  ---
+  duration_ms: 7319.179795
+  type: 'test'
+  ...
+# Subtest: actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage
+ok 6 - actual Node CLI imports and receives canonical grant; missing/expired/mismatched journals refuse BEFORE mocked secret stage
+  ---
+  duration_ms: 9646.462629
+  type: 'test'
+  ...
+# Subtest: real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots
+ok 7 - real hosted root, sole context composer and HTTP transport share durable two-call control across recreated roots
+  ---
+  duration_ms: 7808.455045
+  type: 'test'
+  ...
+# {"runtime":"v22.23.3","source":"6048c4e68086803aa953d5f0fdddf8e3fcf92c8c","qualification":"readonly-source-overlay-only"}
+# Subtest: two original worker dispatches survive actual process restart; third has no claim/reserve/provider
+ok 8 - two original worker dispatches survive actual process restart; third has no claim/reserve/provider
+  ---
+  duration_ms: 768.523458
+  type: 'test'
+  ...
+# Subtest: concurrent worker instances and a separate process cannot overlap the same journal run
+ok 9 - concurrent worker instances and a separate process cannot overlap the same journal run
+  ---
+  duration_ms: 614.14625
+  type: 'test'
+  ...
+# Subtest: first failure or unknown ACK/usage is sticky across restart, with original pending holds
+ok 10 - first failure or unknown ACK/usage is sticky across restart, with original pending holds
+  ---
+  duration_ms: 4031.932793
+  type: 'test'
+  ...
+# Subtest: crash after durable enter retains original lock and denies a restarted worker without auto-recovery
+ok 11 - crash after durable enter retains original lock and denies a restarted worker without auto-recovery
+  ---
+  duration_ms: 1041.52275
+  type: 'test'
+  ...
+# Subtest: root stop intent persists without stealing an active permit and vetoes its not-yet-sent request
+ok 12 - root stop intent persists without stealing an active permit and vetoes its not-yet-sent request
+  ---
+  duration_ms: 571.970875
+  type: 'test'
+  ...
+# Subtest: expiry during authorized SQL dispatch prevents physical send and preserves pending budget
+ok 13 - expiry during authorized SQL dispatch prevents physical send and preserves pending budget
+  ---
+  duration_ms: 7.056584
+  type: 'test'
+  ...
+# Subtest: wrong actor/policy/config/source/job binding refuses construction before any RPC or send
+ok 14 - wrong actor/policy/config/source/job binding refuses construction before any RPC or send
+  ---
+  duration_ms: 4.680667
+  type: 'test'
+  ...
+# Subtest: empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending
+ok 15 - empty queue consumes no physical slot; replaying same Turn under a new lease stops instead of resending
+  ---
+  duration_ms: 8.146583
+  type: 'test'
+  ...
+# Subtest: uncontrolled original worker and an independent authorized run do not inherit another run stop
+ok 16 - uncontrolled original worker and an independent authorized run do not inherit another run stop
+  ---
+  duration_ms: 9.9265
+  type: 'test'
+  ...
+# Subtest: truncated journal, altered grant, and symlink refuse without provider or silent file replacement
+ok 17 - truncated journal, altered grant, and symlink refuse without provider or silent file replacement
+  ---
+  duration_ms: 6.986208
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 38968.531559

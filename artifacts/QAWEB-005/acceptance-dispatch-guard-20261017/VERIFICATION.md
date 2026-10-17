@@ -3,7 +3,8 @@
 Base: `575941ae37b6ff0c6b3c74ea485ceedbe40cf52b` (QA #754).
 Core checkpoint: `728eafbea44f242010d860293048caa2402a8f16`.
 This independent #680 increment adds no migration, model selector or provider fee
-authorization. Exact final source/log hashes are in `wired-proof.json`.
+authorization. Historical c2 source/log hashes are in `wired-proof.json`; the root-stop repair
+and current runtime qualification are separately pinned in `root-stop-proof.json`.
 
 ## Behavior
 
@@ -53,9 +54,9 @@ path. This is not a distributed cross-host or privileged filesystem-tamper proof
 Actual local Node is26.8.2. Real CLI file execution is tested with Node preload
 module mocks: exact ready journal reaches a deliberate mock secret-stage stop;
 missing/expired/stopped/foreign tuple/build refuses before that stage, with zero
-real secret read or network. This does not claim actual container Node22,
-file-secret installation, hosted startup, target Auth, provider billing or device
-acceptance. Those remain UNRUN.
+real secret read or network. The later qualification below separately executes Node22. Final same-source
+baked-image identity, file-secret installation, hosted startup, target Auth,
+provider billing and device acceptance remain UNRUN.
 
 ## Retained failures
 
@@ -79,3 +80,27 @@ included. Real target/provider/fee/deployment actions were zero. Source completi
 does not permit activation: current exact actor/consent/configuration/price/budget
 receipts, separate fee approval, independent review and protected delivery remain
 required.
+
+## Root pre-lease busy-stop correction
+
+Independent c2 review found one more P2: B could lose its pre-lease stop while A
+held the attempt mutex. The real-root test reproduced C completing a second send
+after B failed and A succeeded. A canonical .stop veto now persists independently
+of the attempt mutex; heartbeat/discovery/journal failures do not silently drop
+it. Existing and future permits consult the veto, and completed in-flight work
+retains its original result/usage/hold semantics. No lock is stolen or stop marker
+automatically removed. A later instance and an actual child process both have
+zero claim/send. Local affected tests:17/17 PASS, zero skip.
+
+The same17 tests also PASS on actual Node22.23.3 from the already-cached pinned
+linux/amd64 image, with fixed6048 source exported from Git and mounted read-only.
+Network none, no keys/credentials or runtime profiles mounted, nonroot, readonly
+filesystem and private temporary storage; owned container removed and verified
+absent. This qualifies the affected Node22 entry/guard code, including deliberate
+mock stop before real secrets. It does not make the older image a new same-source
+baked image or prove actual host/provider acceptance.
+
+The entire candidate diff from728 now passes whitespace checking; only trailing
+whitespace in public failure logs was normalized. Raw copies/digests and all FAIL
+facts remain. No test matrix was rerun for whitespace. Remote branch remainsc2
+while its separate rejected PR publication is unresolved; this repair is local.
