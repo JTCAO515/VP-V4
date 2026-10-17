@@ -1,0 +1,85 @@
+{
+  "observedAt": "2026-10-17T01:32:16.662328+00:00",
+  "sourceSha": "164b157fa61147c271904087de51b46333f908b5",
+  "imageId": "sha256:f807ed1a79297604bc54e9558cb344da21dc9c5d779269459feeba0f42a7f0c2",
+  "validatorSource": "original unchanged /app/deploy/hosted-worker/validate-qa-target.mjs",
+  "localOnly": true,
+  "network": "none",
+  "keysOrRealEnvProvided": false,
+  "hostMounts": "only two explicitly synthetic nonsecret fixture files for canonical checks",
+  "ephemeralJournalTmpfsOnly": true,
+  "cases": [
+    {
+      "case": "inactive UNKNOWN required fields rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    },
+    {
+      "case": "synthetic complete schema accepted",
+      "expectedExit": 0,
+      "actualExit": 0,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "canonical package produced in memory only"
+    },
+    {
+      "case": "synthetic canonical cross-file and baked build accepted",
+      "expectedExit": 0,
+      "actualExit": 0,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "canonical runtime wire accepted",
+      "bindingShapeAndPinsMatch": true
+    },
+    {
+      "case": "cross baked-image build pin rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    },
+    {
+      "case": "profile byte/hash tamper rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    },
+    {
+      "case": "unapproved cross-project target rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    },
+    {
+      "case": "active startup target rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    },
+    {
+      "case": "extra unauthorized target field rejected",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "pass": true,
+      "syntheticOnly": true,
+      "diagnostic": "QA deployment package unavailable."
+    }
+  ],
+  "allPassed": true,
+  "selfContainersRemaining": "",
+  "syntheticFixtureDirectory": "/private/tmp/qa164-synthetic-config-yqz9qq0s",
+  "syntheticProfileSha256": "a441cf15402abaf77e22d04bc00d7666b8b96f7d9c7f4447fcfc354782d63d95",
+  "realRuntimeGo": "NO_GO_REQUIRED_ACTUAL_FIELDS_UNKNOWN",
+  "canonicalSyntheticFilesMustNotBeInstalled": true,
+  "databaseProviderOrRemoteActions": 0
+}

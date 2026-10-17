@@ -1,0 +1,38 @@
+{
+  "profile": {
+    "schemaVersion": "vpj07-hosted-text-worker/4",
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
+    "pollIntervalMs": null,
+    "maxLifetimeMs": null,
+    "drainMs": null,
+    "concurrency": null,
+    "groupLimit": null,
+    "modes": [
+      "qa_session_history_v1"
+    ],
+    "qwen": {
+      "priceVersion": null,
+      "pricing": null,
+      "reservedMicros": null,
+      "maxOutputTokens": null,
+      "timeoutMs": null,
+      "configurationId": null,
+      "configurationVersion": null
+    },
+    "planning": null
+  },
+  "target": {
+    "schemaVersion": "qa-hosted-deployment-target/2",
+    "environment": "staging",
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
+    "databaseUrl": "https://dzqdzetcctkhbrhlxxgn.supabase.co",
+    "ownerId": null,
+    "policyId": null,
+    "scopeId": null,
+    "noticeHash": null,
+    "build": "164b157fa61147c271904087de51b46333f908b5",
+    "qwenEndpoint": null,
+    "startupState": "disabled",
+    "restartPolicy": "no"
+  }
+}

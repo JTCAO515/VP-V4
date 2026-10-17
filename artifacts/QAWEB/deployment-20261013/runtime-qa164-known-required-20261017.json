@@ -1,0 +1,132 @@
+{
+  "state": "INACTIVE_TEMPLATE_NO_GO_RUNTIME",
+  "wireTemplate": "runtime-inactive-qa164-20261017.json",
+  "nullMeans": "UNKNOWN actual reviewed authority/configuration; intentionally rejected by existing validator",
+  "knownPins": {
+    "sourceSha": "164b157fa61147c271904087de51b46333f908b5",
+    "imageId": "sha256:f807ed1a79297604bc54e9558cb344da21dc9c5d779269459feeba0f42a7f0c2",
+    "platform": "linux/amd64",
+    "origin": "https://qatesting.go2china.space",
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
+    "entrypoint": [
+      "node",
+      "--experimental-strip-types",
+      "--disable-warning=ExperimentalWarning",
+      "lib/server/jobs/run-hosted-text-worker.mjs"
+    ],
+    "profileSchema": "vpj07-hosted-text-worker/4",
+    "targetSchema": "qa-hosted-deployment-target/2",
+    "runtimeBindingSchema": "qa-runtime-binding/1",
+    "installer": "deploy/hosted-worker/ecs-worker-files.sh",
+    "validator": "deploy/hosted-worker/validate-qa-target.mjs",
+    "bakedBuildId": "164b157fa61147c271904087de51b46333f908b5"
+  },
+  "inactiveEnvironmentPlan": {
+    "VISEPANDA_HOSTED_TEXT_WORKER": {
+      "candidateValue": "false",
+      "purpose": "inactive only; do not install/start"
+    },
+    "VISEPANDA_HOSTED_WORKER_SECRET_MODE": {
+      "candidateValue": "files",
+      "purpose": "no env-key fallback"
+    },
+    "VISEPANDA_HOSTED_WORKER_PROFILE": {
+      "value": "UNKNOWN_NOT_PREPARED"
+    },
+    "VISEPANDA_QA_RUNTIME_BINDING": {
+      "value": "UNKNOWN_NOT_PREPARED"
+    },
+    "VISEPANDA_QWEN_ENDPOINT": {
+      "value": "UNKNOWN_NOT_APPROVED_HERE"
+    },
+    "VISEPANDA_HOSTED_WORKER_JOURNAL_DIR": {
+      "reference": "existing original private journal; no mount/read/write this task"
+    },
+    "VISEPANDA_HOSTED_WORKER_BUILD": {
+      "sourcePin": "164b157fa61147c271904087de51b46333f908b5"
+    },
+    "VISEPANDA_QA_SUPABASE_PROJECT_REF": {
+      "sourcePin": "dzqdzetcctkhbrhlxxgn"
+    }
+  },
+  "secureReferencesOnly": [
+    {
+      "name": "db.key",
+      "existingReference": "/run/vp-worker-secrets/db.key",
+      "value": "NOT_READ_OR_TRANSFERRED"
+    },
+    {
+      "name": "qwen.key",
+      "existingReference": "/run/vp-worker-secrets/qwen.key",
+      "value": "NOT_READ_OR_TRANSFERRED"
+    }
+  ],
+  "requiredUnknown": [
+    {
+      "fields": [
+        "independent candidate packaging review result"
+      ],
+      "value": "UNKNOWN_PENDING_RESULT",
+      "requiredSource": "Main receipt of independent review; no source/hash or successful build substitutes for it"
+    },
+    {
+      "fields": [
+        "ownerId",
+        "policyId",
+        "scopeId",
+        "noticeHash",
+        "consent/current actor/session qualification"
+      ],
+      "value": "UNKNOWN",
+      "requiredSource": "Main-bound existing actual actor/policy/scope/notice authority; no fabricated approval/signature"
+    },
+    {
+      "fields": [
+        "qwen.configurationId",
+        "configurationVersion",
+        "priceVersion",
+        "pricing",
+        "reservedMicros",
+        "maxOutputTokens",
+        "timeoutMs",
+        "endpoint"
+      ],
+      "value": "UNKNOWN",
+      "requiredSource": "actual reviewed provider/model/tariff/scope and bounded expense coverage"
+    },
+    {
+      "fields": [
+        "pollIntervalMs",
+        "maxLifetimeMs",
+        "drainMs",
+        "concurrency",
+        "groupLimit"
+      ],
+      "value": "UNKNOWN",
+      "requiredSource": "Main bounded runtime execution package; schema limits are not accepted real settings"
+    },
+    {
+      "fields": [
+        "actual DB/API compatibility",
+        "ordinary actor permissions",
+        "runtime eligibility",
+        "global disabled snapshot and first heartbeat guard"
+      ],
+      "value": "UNKNOWN",
+      "requiredSource": "DB/service owners accepted implementation and precise target execution evidence"
+    },
+    {
+      "fields": [
+        "image delivery/host installation/start execution lease"
+      ],
+      "value": "UNKNOWN_NOT_EXECUTED",
+      "requiredSource": "Main exact reviewed package within already authorized scope; true expansions separately identified"
+    }
+  ],
+  "formatPassDoesNotResolveAuthority": true,
+  "schemaAcceptanceIsNotTargetReadiness": true,
+  "syntheticInputsMustNeverBeInstalled": true,
+  "runtimeGo": "NO_GO",
+  "currentTaskRemoteOrProviderOrDbActions": 0,
+  "candidateImageIndependentReview": "UNKNOWN_PENDING_RESULT; handed to independent reviewer by Main"
+}
