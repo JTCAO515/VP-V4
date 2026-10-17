@@ -213,6 +213,10 @@ def validate_result(value):
             raise ValueError("RESULT_IDENTITY_INVALID")
     if (value["mode"] != "REAL" and value["checks"][0]["status"] != "UNRUN") or value["identity"]["service_task_id"] is not None:
         raise ValueError("UNOBSERVED_AUTH_OR_TASK_ID")
+    if value.get("real_ui_driver", {}).get("status") == "PASS":
+        real = value["real_ui_driver"]
+        if value["mode"] != "REAL" or any(type(real.get("summary", {}).get(key)) is not int or real["summary"][key] != count for key, count in {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}.items()) or real.get("observation", {}).get("status") != "COMPLETE":
+            raise ValueError("EXECUTED_REAL_UI_SUMMARY_REQUIRED")
     if value["overall"] == "PASS" and not (value["mode"] == "REAL" and value.get("real_ui_driver", {}).get("status") == "PASS" and all(item["status"] == "PASS" for item in value["checks"])):
         raise ValueError("TARGET_PASS_REQUIRES_EXECUTED_UI_AND_ALL_CHECKPOINTS")
     if value["synthetic_driver"] == "PASS":
@@ -235,6 +239,9 @@ def run_real_ui(scope, args, result):
     except (adapter.UIUnavailable, OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
         result["real_ui_driver"]["reason"] = str(error) if isinstance(error, adapter.UIUnavailable) else "UI_ADAPTER_UNAVAILABLE_OR_FAILED"
         result["blockers"] = [result["real_ui_driver"]["reason"]]
+        if isinstance(error, adapter.UIFailed):
+            result["real_ui_driver"]["status"] = "FAIL"; result["overall"] = "FAIL"
+            return 1
         return 2
     result["real_ui_driver"] = observed
     value = observed["observation"]

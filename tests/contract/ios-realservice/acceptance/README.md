@@ -1,6 +1,6 @@
 # NativeQA acceptance driver — default safe
 
-Pinned product source: `cf33285eceb4cb340a9fe70e975c643c023f5035` (QA after PR753). Existing NativeQA/Auth/HTTP consumer APIs are unchanged. This package prepares and verifies acceptance orchestration; it does **not** claim that a real account, provider, database, App/Keychain or phone was accepted.
+Pinned product source: `cf33285eceb4cb340a9fe70e975c643c023f5035` (QA after PR753). Existing NativeQA/Auth/HTTP consumer APIs are unchanged. This package prepares and implements acceptance orchestration; it does **not** claim that a real account, provider, database, App/Keychain or phone was accepted.
 
 ## Run now
 
@@ -27,21 +27,38 @@ The Profile/credentials/login stage is **modeled only**, not execution of Native
 - checks: fixed ordered native_profile_login, explicit_notice_consent, original_question_submit, bounded_response_read, saved_session_read, original_request_bytes, process_exit, reopen_same_session; each has status/evidence_kind/reason;
 - identity: session_id/request_id/turn_id, optional null service_task_id, SHA256 of original body/input/answer only;
 - optional_observations: nonblocking unobserved authoritative Task binding;
-- scope_diagnostics/blockers and product_effects; real network/Auth/consent/generation/provider counters remain0 in this revision;
+- scope_diagnostics/blockers and product_effects; real network/Auth/consent/generation/provider counters are0 in dry-run/synthetic and unobserved (`null`) in an explicitly executed real run;
 - resources: no simulator IDs, no shared App/Keychain access; synthetic cleanup flag;
 - synthetic_processes/trace only in explicit synthetic results.
 
 No raw prompt, response, credential or HTTP body is exported. Trace contains synthetic method/path names and an explicit SYNTHETIC_AUTH_MODEL label. A synthetic response is never presented as a real Agent answer.
 
-## Real mode is metadata validation only
+## Real mode: default dry-run, explicit operator execution only
 
 ```sh
 python3 tests/contract/ios-realservice/acceptance/driver.py --mode real --scope tests/contract/ios-realservice/acceptance/canary.pending.json
 ```
 
-Exit2/UNRUN is intentional. **There is no real execution switch in this revision, even when candidate scope metadata is structurally valid.** A JSON file or authorization-reference string is not human approval. The pending template has null target/actor/notice/budget/window/resource values and grants nothing. Scope checks reject duplicate/extra/secret fields, wrong pinned source/project/environment, unapproved Native origin, missing exact actor/policy/notice/budget, >1 question, missing cost cap, expired/unbounded window and reserved8F/22BA/0B61 resources. It does not provision or activate any target.
+Without `--execute-real-ui`, exit2/UNRUN is intentional even when scope metadata is structurally valid. A JSON file or authorization-reference string is not human approval. The pending template grants nothing. Scope checks reject duplicate/extra/secret fields, wrong source/project/environment, unapproved Native origin, missing actor/policy/notice/budget/question hash/run UUID, >1 question, missing cost cap, expired/unbounded window and reserved8F/22BA/0B61 resources.
 
-The allowed origin check preserves existing Native server eligibility: the exact approved Preview deployment URL or original staging custom origin. It does not widen the QA alias/server gate. There is no service-role user surrogate, LLM selector, browser-cookie bridge, production/TF/device action, config write or provider call.
+The actual runner source is `ios/VisePanda/VisePandaUITests/NativeQAOperatorAcceptanceUITests.swift`. The sole shared owner must register this **one** opt-in test and prepare its existing project test products; exact cf332 PBX before/patch/after is in `artifacts/IOS-001/acceptance-driver-20261017/real-ui-registration/`. It defaults to XCTest skip **before App launch** when the explicit execution marker/scope is absent. No Root, Session, transport, journal or App observer hook is needed for the main UI flow.
+
+Only after a separate exact canary authorization already exists and the authorized operator deliberately invokes it:
+
+```sh
+# FUTURE AUTHORIZED OPERATOR ONLY. Not executed during this delivery.
+python3 tests/contract/ios-realservice/acceptance/driver.py \
+  --mode real --scope /approved/nonsecret-canary.json --execute-real-ui \
+  --xctestrun /approved/prebuilt/VisePanda.xctestrun --run-dir /new/private/canary-run
+```
+
+The declared dedicated simulator must already be Booted, have name `VP-NativeQA-Acceptance-<run_id>`, and be outside reserved shared resources. Its installed and prebuilt App metadata must match the exact Native staging origin, `qa_session_v1` and bundle. Resource preparation/install remains with the owner; this driver does not create/erase/boot/delete a simulator, uninstall an App, clear drafts/Keychain or sign/upload anything. It patches only a new0600 private copy of the supplied xctestrun, runs only the named UI case once, and strips unrelated targets, app arguments and arbitrary fixture/credential environment variables. A new0700 run directory retains private Xcode artifacts; only the sanitized JSON attachment is exported to the final report.
+
+Follow `OPERATOR_REQUIRED` checkpoints in `<run-dir>/xcodebuild.log` while using the specified simulator window. The test opens the original Profile; the operator enters ordinary credentials/MFA. Machine reads only public actor identity through the original Profile menu and compares the approved actor. Operator reviews notice/explicitly consents, creates a new session and prepares the approved draft **without sending**. Machine checks draft digest; operator presses Send once only after the next checkpoint. The test never types credentials/question text or taps login/consent/create/send. It waits boundedly for the actual saved answer, obtains request/Session IDs and rendered input/answer digests, requires the selected session was created in this run, terminates that App process, relaunches the installed App, verifies the restored actor and selects the same saved history row, then checks the same request and rendered content. It never signs out, retries generation or promises a refund.
+
+`real_ui.py` exports the named JSON attachment from the generated xcresult and checks **exactly1 selected/1passed/0failed/0skipped**, all UI checkpoints, actor, approved question, Session/request/Turn and reopened content. Zero tests, missing registration, timeout/skips, unknown/partial/technical failure or foreign metadata cannot become PASS. Actual XCTest failure is FAIL; unmet prerequisites/skips are UNRUN. Private artifacts remain for operator review. Provider/network/cost counts are unknown (`null`) during a real run; one observed UI question is not a claim that provider attempts/cost were zero.
+
+The allowed origin check preserves existing Native server eligibility: the exact approved Preview deployment URL or original staging custom origin. It does not widen the QA alias/server gate. There is no service-role user surrogate, LLM selector, browser-cookie bridge, production/TF/device operation, or target configuration write by the runner. Real ordinary App Auth/consent/question effects arise only from the future authorized operator's actions; this delivery executed none.
 
 ## Minimal later App hookup (sole integration owner)
 
@@ -51,6 +68,12 @@ The principal missing observation is **original serialized request Data hash bef
 
 Exact **unapplied** before/patch/after for the sole shared owner are under `artifacts/IOS-001/acceptance-driver-20261017/candidates/`, pinned to cf33285e. They add only an optional observer in NativeQASessionTransport and a clearly labeled opt-in test overlay in NativeQAEntryView. The observer itself needs PBX registration; use the compile flag only for a dedicated test build, not default/release/TF. No Root, old Ask, production config or journal change is needed. Re-check exact before hashes or regenerate against the integration head. Candidate syntax was checked; integrated App/PBX/runtime is UNRUN.
 
-After future canary authorization and a separately registered real UI test/runner, acceptance checkpoints are: show ordinary Profile sign-in → verify permitted public actor identity and current notice → explicit user consent → exactly one approved question → capture original command digest/IDs from the scoped observer → wait boundedly for the actual rendered terminal response → record input/response hashes and Session/request IDs → terminate only the dedicated canary App process → relaunch the installed App → use saved history to select the same Session → verify the same request and response bytes/IDs without another POST. Unknown/blocked/partial/technical-failure remain distinct; unknown preserves original command and reads only. No App uninstall, erase, old-draft purge, token extraction or automatic financial/cancellation claim is permitted.
+After future canary authorization and a separately registered real UI test/runner, acceptance checkpoints are: show ordinary Profile sign-in → verify permitted public actor identity and current notice → explicit user consent → exactly one approved question → optionally capture original command digest/IDs from the scoped observer → wait boundedly for the actual rendered terminal response → record input/response hashes and Session/request IDs → terminate only the dedicated canary App process → relaunch the installed App → use saved history to select the same Session → verify the same request and response bytes/IDs without another POST. Unknown/blocked/partial/technical-failure remain distinct; unknown preserves original command and reads only. No App uninstall, erase, old-draft purge, token extraction or automatic financial/cancellation claim is permitted.
 
-The default driver does not register/start that runner or infer authorization from source/configuration. Main must route the two precise shared hooks/PBX and the later authorized UI runner to their owners. Real target readiness, actual Auth/provider/consent/budget/worker, installed package/device, VoiceOver and phone acceptance remain UNRUN here. Existing unchanged App/consumer evidence is reused separately, not rerun as a new matrix.
+The default driver does not register/start the runner or infer authorization from source/configuration; explicit real invocation uses the concrete UI adapter above. Main must route the single UI-test PBX registration to the shared owner and the later authorized real invocation to the canary operator. The two observation hooks are optional for raw original-body digest only; they do not block the main UI flow. Real target readiness, actual Auth/provider/consent/budget/worker, installed package/device, VoiceOver and phone acceptance remain UNRUN here. Existing unchanged App/consumer evidence is reused separately, not rerun as a new matrix.
+
+## Evidence labels and current limits
+
+Real UI question/answer hashes come from accessibility-label UTF8, and are labeled as rendered-content evidence. They are not raw HTTP-body hashes. If the optional scoped test observer is not enabled, `original_body_sha256` remains null and the original serialized-body checkpoint stays UNRUN; JSON is never reconstructed from UI text to fake that proof. The main real UI flow still runs and is reported separately. With the optional body observer, source/actor/notice/run/request/session provenance must match before its digest is accepted. Internal Task ID remains optional/unobserved and is not a global runner prerequisite.
+
+This delivery typechecked the actual UI test source against iOS17/XCTest and tested only finite orchestration/oracle/plist paths with synthetic inputs. It did not register/build/run the test in an App, touch real accounts/notice/model/network, allocate simulator resources or exercise GoTrue. The prior two-process synthetic proof and14 observer checks are unchanged-source evidence and were not rerun for this addition.

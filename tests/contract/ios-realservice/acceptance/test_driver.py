@@ -54,6 +54,24 @@ class DriverTests(unittest.TestCase):
         self.assertIn("EXPLICIT_OPERATOR_EXECUTION_NOT_REQUESTED", report["blockers"])
         self.assertTrue(all(count == 0 for count in report["product_effects"].values()))
 
+    def test_explicit_execute_never_bypasses_missing_scope(self):
+        run = self.invoke("--mode", "real", "--execute-real-ui")
+        value = json.loads(run.stdout)
+        self.assertEqual(run.returncode, 2)
+        self.assertNotIn("real_ui_driver", value)
+        self.assertTrue(all(count == 0 for count in value["product_effects"].values()))
+
+    def test_explicit_valid_scope_without_prebuilt_adapter_stays_unrun(self):
+        value = candidate(); current = datetime.now(timezone.utc)
+        value.update(not_before=(current-timedelta(seconds=1)).isoformat(), expires_at=(current+timedelta(minutes=5)).isoformat())
+        with tempfile.TemporaryDirectory() as tmp:
+            scope = Path(tmp)/"candidate.json"; scope.write_text(json.dumps(value))
+            run = self.invoke("--mode", "real", "--execute-real-ui", "--scope", str(scope))
+        report = json.loads(run.stdout)
+        self.assertEqual(run.returncode, 2)
+        self.assertEqual(report["real_ui_driver"]["status"], "UNRUN")
+        self.assertEqual(report["real_ui_driver"]["reason"], "PREBUILT_XCTESTRUN_AND_NEW_PRIVATE_RUN_DIR_REQUIRED")
+
     def test_missing_scope_never_defaults_to_a_target(self):
         value = json.loads(self.invoke("--mode", "real").stdout)
         self.assertIn("CANARY_SCOPE_NOT_SUPPLIED", value["scope_diagnostics"])

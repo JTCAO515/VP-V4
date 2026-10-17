@@ -16,6 +16,10 @@ class UIUnavailable(Exception):
     pass
 
 
+class UIFailed(UIUnavailable):
+    pass
+
+
 def command(arguments, **kwargs):
     return subprocess.run(arguments, check=True, text=True, capture_output=True, timeout=30, **kwargs).stdout
 
@@ -78,6 +82,8 @@ def verify_observation(value, scope, summary):
         raise UIUnavailable("UI_OBSERVATION_FIELDS_INVALID")
     if value.get("input_hash_source") != "accessibility_label_utf8" or value.get("answer_hash_source") != "accessibility_label_utf8":
         raise UIUnavailable("UI_HASH_PROVENANCE_INVALID")
+    if type(summary.get("failedTests")) is int and summary["failedTests"] > 0:
+        raise UIFailed("REAL_UI_CASE_FAILED")
     if any(type(summary.get(key)) is not int or summary[key] != expected for key, expected in {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0}.items()):
         raise UIUnavailable("EXACT_UI_CASE_DID_NOT_PASS")
     if value.get("schema") != "nativeqa-operator-ui/1" or value.get("status") != "COMPLETE" or value.get("run_id") != scope["run_id"] or value.get("product_revision") != scope["product_revision"]:
@@ -154,7 +160,7 @@ def run(scope, xctestrun, run_dir):
     value = find_attachment(exported, scope["run_id"])
     observed = verify_observation(value, scope, summary)
     if completed.returncode != 0:
-        raise UIUnavailable("XCODEBUILD_UI_CASE_NOT_SUCCESSFUL")
+        raise UIFailed("XCODEBUILD_UI_CASE_NOT_SUCCESSFUL")
     return {"status": "PASS", "evidence_kind": "real_xctest_ui_with_operator_actions", "observation": observed,
             "summary": {key: summary[key] for key in ("totalTestCount", "passedTests", "failedTests", "skippedTests")},
             "private_run_directory": str(run_dir.resolve()), "runner_created_simulator": False}

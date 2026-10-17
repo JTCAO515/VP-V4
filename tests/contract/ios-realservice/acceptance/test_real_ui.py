@@ -43,6 +43,19 @@ class RealUIOracleTests(unittest.TestCase):
             summary = dict(self.summary); summary[field] = replacement
             with self.assertRaises(ui.UIUnavailable): ui.verify_observation(completed_observation(self.scope), self.scope, summary)
 
+    def test_actual_failure_and_skipped_or_unrun_are_distinct(self):
+        failed = dict(self.summary); failed["failedTests"] = 1; failed["passedTests"] = 0
+        with self.assertRaises(ui.UIFailed): ui.verify_observation(completed_observation(self.scope), self.scope, failed)
+        skipped = dict(self.summary); skipped["skippedTests"] = 1; skipped["passedTests"] = 0
+        try:
+            ui.verify_observation(completed_observation(self.scope), self.scope, skipped)
+        except ui.UIFailed:
+            self.fail("A skipped case is UNRUN, not an actual failed canary")
+        except ui.UIUnavailable:
+            pass
+        else:
+            self.fail("A skipped case must not pass")
+
     def test_wrong_actor_request_session_bytes_or_missing_checkpoints_reject(self):
         for field, value in [("actor_subject", "foreign"), ("reopened_request_id", "00000000-0000-4000-8000-000000000012"),
                              ("reopened_session_id", "00000000-0000-4000-8000-000000000012"), ("reopened_answer_utf8_sha256", "d" * 64),
