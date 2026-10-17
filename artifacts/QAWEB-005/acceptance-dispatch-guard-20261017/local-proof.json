@@ -1,0 +1,78 @@
+{
+  "kind": "QA_ACCEPTANCE_ORIGINAL_DISPATCH_GUARD_LOCAL_PROOF",
+  "base": "575941ae37b6ff0c6b3c74ea485ceedbe40cf52b",
+  "branch": "codex/qa-acceptance-dispatch-guard-20261017",
+  "sourcePins": [
+    {
+      "path": "lib/server/qa-agent/acceptance-journal.ts",
+      "sha256": "eebd4ac770b3487ffca88f1def6e6cfa2c201733a6a0054068dffff69f187158"
+    },
+    {
+      "path": "lib/server/qa-agent/executor.ts",
+      "sha256": "aa8cc2e359a1dd64c7717e7619050fd40d838a35596836241f02eb178a341476"
+    },
+    {
+      "path": "lib/server/qa-agent/worker.ts",
+      "sha256": "10e075a12cd4ed49fd74f47ac51bd3f30173e19ca131905b4cb2c360a5bbd9ab"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-fixture.mjs",
+      "sha256": "ce30984715a8d6222413c7856cc8448d5e13d5c27cb48bd99887750e14165891"
+    },
+    {
+      "path": "tests/security/qa-agent-service/acceptance-journal.test.mjs",
+      "sha256": "128432274350904d702201b88767d957575e36163c2933b9541742b4ed0b17a3"
+    }
+  ],
+  "firstSourceWrite": {
+    "tool": "apply_patch",
+    "path": "lib/server/qa-agent/acceptance-journal.ts",
+    "filesystemBirthtimeShanghai": "2026-10-17T12:49:15.601717+08:00",
+    "timePrecision": "filesystem birthtime; native tool event timestamp/commandID not exposed"
+  },
+  "verification": {
+    "targetedWorkerExecutorAcceptance": "19/19 PASS zero skip",
+    "allAffectedServiceProfileDiscovery": "80 discovered /77 PASS /0 FAIL /3 expected opt-in DB consumer SKIP",
+    "skippedNames": [
+      "fixed empty-PG read consumer",
+      "fixed7f Native write consumer",
+      "fixed7f worker transport consumer"
+    ],
+    "typecheck": "PASS: node_modules/.bin/tsc --noEmit --pretty false",
+    "diff": "PASS",
+    "rawLog": "scoped-tests.log",
+    "rawLogSha256": "6aa45a72ea3f389250f7a170ceaa3ee6f466b1bceb351a1edf462833f780aaa4"
+  },
+  "actualConnection": "createQaWorker trusted dependency -> executeQaWork enters persistent controller before claim -> original SQL dispatch authorization -> existing guardedTransport fsync dispatch intent before original provider HTTP transport -> original usage/settlement/completion -> durable success or sticky stop",
+  "persistence": "Canonical qa-acceptance-<authorizedRunId>.jsonl in original private journal domain. Exclusive nofollow lock held across whole invocation incl physical send/usage/settlement. Open-existing on restart only. Truncated/mismatched/unresolved/crashed log/lock fail closed. No auto-recovery/unlink of abandoned lock. New run control records, no second monetary ledger; original SQL budget remains authority. Trusted original journal owner must allocate stable same directory/path and provision grant once under separate activation gates.",
+  "binding": [
+    "runId",
+    "projectRef",
+    "ownerId",
+    "policyId",
+    "scopeId",
+    "noticeHash",
+    "configurationId/version",
+    "sourceCommit",
+    "jobDigest"
+  ],
+  "checks": [
+    "two successes then third: no claim/reserve/provider",
+    "real child process resume and aggregate count persistence",
+    "concurrent instance and child process cannot overlap",
+    "first provider failure/unknown dispatch ACK/settlement ACK/completion ACK/usage or over-cap/duplicate-send sticky-stop next process",
+    "crash leaves lock and unresolved entry; successor does not reset",
+    "expiry at original authorization seam: zero provider,pending budget",
+    "wrong actor/policy/scope/notice/config/source/job refused",
+    "same Turn with new lease refused without physical retry",
+    "normal uncontrolled path and different run unaffected",
+    "truncation,altered header,symlink refuse; raw request/text not journaled"
+  ],
+  "sharedWiring": "UNRUN/NOT_IMPLEMENTED pending exact Main lease: hosted-text-worker.ts dependency injection and run-hosted-text-worker.mjs original private journal stable-run loading/closed grant presence/restart/defaultdisabled. No shared file changed. Do not activate this independently supplied seam as a complete CLI guard.",
+  "providerCalls": 0,
+  "actualFees": 0,
+  "targetCalls": 0,
+  "remote": "STOP; no push/PR; original434 and16b ancestry excluded from feature base",
+  "originalWorktree": "Preserved original434 and node_modules; no source writes there",
+  "remaining": "Exact shared root/CLI lease and implementation, independent review and Testing/Publish; separate real identity/config/price/budget approval before activation"
+}

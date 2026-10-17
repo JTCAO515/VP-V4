@@ -7,6 +7,7 @@ import type { TextWorkerConfig } from "../turn/text-worker.ts";
 import { executeQaWork, type QaExecutorDependencies, type QaWorkerRpc } from "./executor.ts";
 import { record, uuid } from "./service.ts";
 import { requireQaRuntimeBinding, type QaRuntimeBinding } from "./runtime-binding.ts";
+import { acceptanceDigest, type QaAcceptanceControl } from "./acceptance-journal.ts";
 
 export type LegacyQaWorkerConfiguration = Readonly<{
   schemaVersion: "qa-agent-worker/1"; databaseUrl: string; ownerId: string; policyId: string;
@@ -23,6 +24,8 @@ export type QaWorkerDependencies = Readonly<{
   invokeContext: QaExecutorDependencies["invokeContext"];
   qwenEndpoint?: string;
   fetch?: typeof fetch;
+  /** Separately reviewed root grant + actual source pin, never job/discovery data. */
+  acceptance?: Readonly<{ control: QaAcceptanceControl; sourceCommit: string }>;
 }>;
 const RPCS = new Set(["qa_claim_work_v1", "qa_read_work_v1", "qa_authorize_dispatch_v1", "qa_complete_work_v1", "reserve_model_budget", "finish_model_budget"]);
 
@@ -37,6 +40,13 @@ export function createQaWorker(configuration: QaWorkerConfiguration, dependencie
   const target = requireQaTarget(compositionTarget);
   const binding = target.kind === "independent" ? requireQaRuntimeBinding(dependencies.qaBinding, target.projectRef) : null;
   if (binding && (config.ownerId !== binding.ownerId || config.policyId !== binding.policyId || config.budget.scopeId !== binding.scopeId)) throw unavailable();
+  if (dependencies.acceptance) {
+    const accepted = dependencies.acceptance;
+    if (!binding || acceptanceDigest(accepted.control.binding) !== acceptanceDigest({ projectRef: binding.projectRef,
+      ownerId: binding.ownerId, policyId: binding.policyId, scopeId: binding.scopeId, noticeHash: binding.noticeHash,
+      configurationId: config.provider.configurationId, configurationVersion: config.provider.configurationVersion,
+      sourceCommit: accepted.sourceCommit, jobDigest: acceptanceDigest(config) })) throw unavailable();
+  }
   const price = createTextJobPrice(config.pricing);
   const transport = createProviderHttpTransport(config.provider, { credential: dependencies.providerCredential,
     recordDestination: dependencies.recordDestination, qwenEndpoint: dependencies.qwenEndpoint, ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}) });
@@ -74,7 +84,8 @@ export function createQaWorker(configuration: QaWorkerConfiguration, dependencie
   };
   return (signal: AbortSignal) => executeQaWork(config.ownerId, config.policyId, config.budget, { rpc,
     provider: { provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
-    invokeContext: dependencies.invokeContext, recordUsage: dependencies.recordUsage }, signal);
+    invokeContext: dependencies.invokeContext, recordUsage: dependencies.recordUsage,
+    ...(dependencies.acceptance ? { acceptance: dependencies.acceptance.control } : {}) }, signal);
 }
 /** Pure job/target/price validation for runtime and historical read-only audit.
  * Validating a journal does not create or infer a trusted deployment binding. */
