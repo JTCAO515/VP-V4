@@ -13,5 +13,8 @@
   "not_before": null,
   "expires_at": null,
   "resource_udid": null,
-  "authorization_reference": null
+  "authorization_reference": null,
+  "run_id": null,
+  "bundle_identifier": "space.go2china.VisePanda",
+  "question_utf8_sha256": null
 }

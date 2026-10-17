@@ -16,7 +16,7 @@ NOW = datetime(2026, 10, 17, 0, 0, tzinfo=timezone.utc)
 
 
 def candidate():
-    return {"schema": "ios-nativeqa-canary/1", "product_revision": driver.PRODUCT_REVISION,
+    return {"run_id": "00000000-0000-4000-8000-000000000005", "bundle_identifier": "space.go2china.VisePanda", "question_utf8_sha256": "b" * 64, "schema": "ios-nativeqa-canary/1", "product_revision": driver.PRODUCT_REVISION,
             "project_ref": driver.PROJECT_REF, "native_environment": "staging",
             "origin": "https://vp-v4-syntheticonly-jtcao515s-projects.vercel.app",
             "actor_subject": "00000000-0000-4000-8000-000000000001", "policy_id": "00000000-0000-4000-8000-000000000002",
@@ -39,7 +39,7 @@ class DriverTests(unittest.TestCase):
         self.assertTrue(all(count == 0 for count in value["product_effects"].values()))
         self.assertFalse(value["resources"]["shared_app_or_keychain_access"])
 
-    def test_real_mode_refuses_even_structurally_valid_candidate_metadata(self):
+    def test_real_mode_does_not_execute_from_scope_metadata_alone(self):
         value = candidate()
         current = datetime.now(timezone.utc)
         value.update(not_before=(current - timedelta(seconds=1)).isoformat(), expires_at=(current + timedelta(minutes=5)).isoformat())
@@ -51,7 +51,7 @@ class DriverTests(unittest.TestCase):
         self.assertEqual(run.returncode, 2)
         self.assertEqual(report["scope_diagnostics"], [])
         self.assertEqual(report["overall"], "UNRUN")
-        self.assertIn("REAL_EXECUTION_DISABLED_IN_THIS_REVISION", report["blockers"])
+        self.assertIn("EXPLICIT_OPERATOR_EXECUTION_NOT_REQUESTED", report["blockers"])
         self.assertTrue(all(count == 0 for count in report["product_effects"].values()))
 
     def test_missing_scope_never_defaults_to_a_target(self):

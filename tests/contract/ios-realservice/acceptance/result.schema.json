@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Default-safe NativeQA acceptance result (current revision cannot claim target PASS)",
+  "title": "NativeQA acceptance result with explicit operator UI execution and typed provenance",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -31,7 +31,8 @@
     "overall": {
       "enum": [
         "UNRUN",
-        "FAIL"
+        "FAIL",
+        "PASS"
       ]
     },
     "product_revision": {
@@ -82,7 +83,8 @@
           "evidence_kind": {
             "enum": [
               "none",
-              "synthetic_actual_consumer_process"
+              "synthetic_actual_consumer_process",
+              "real_xctest_ui_with_operator_actions"
             ]
           },
           "reason": {
@@ -232,19 +234,34 @@
       ],
       "properties": {
         "network_requests": {
-          "const": 0
+          "enum": [
+            0,
+            null
+          ]
         },
         "auth_requests": {
-          "const": 0
+          "enum": [
+            0,
+            null
+          ]
         },
         "consent_posts": {
-          "const": 0
+          "enum": [
+            0,
+            null
+          ]
         },
         "generation_posts": {
-          "const": 0
+          "enum": [
+            0,
+            null
+          ]
         },
         "provider_calls": {
-          "const": 0
+          "enum": [
+            0,
+            null
+          ]
         }
       }
     },
@@ -305,6 +322,79 @@
       "items": {
         "type": "string"
       }
+    },
+    "real_ui_driver": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "UNRUN",
+            "FAIL"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "evidence_kind": {
+          "const": "real_xctest_ui_with_operator_actions"
+        },
+        "observation": {
+          "type": "object"
+        },
+        "summary": {
+          "type": "object"
+        },
+        "private_run_directory": {
+          "type": "string"
+        },
+        "runner_created_simulator": {
+          "const": false
+        }
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overall": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "real_ui_driver"
+        ],
+        "properties": {
+          "mode": {
+            "const": "REAL"
+          },
+          "real_ui_driver": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            }
+          },
+          "checks": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                },
+                "evidence_kind": {
+                  "const": "real_xctest_ui_with_operator_actions"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
